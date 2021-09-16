@@ -2,17 +2,16 @@
  * Copyright (c) 2016 Holger Nahrstaedt (TU Berlin)
  */
 
-#include <iostream>
-#include <sstream>
-
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
-#include "wavelib.h"
-
+#include <iostream>
+#include <sstream>
 #include <vector>
+
+#include "wavelib.h"
 
 namespace patch {
 template <typename T>
