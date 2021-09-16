@@ -76,7 +76,7 @@ auto main() -> int
     auto const* thresh = "soft";
     auto const* cmethod = "direct"; // The other option is "fft"
 
-    ifp = fopen("pieceregular1024.txt", "r");
+    ifp = fopen("testData/pieceregular1024.txt", "r");
     i = 0;
     if (ifp == nullptr) {
         printf("Cannot Open File");
@@ -101,7 +101,7 @@ auto main() -> int
         sig[i] = temp[i];
     }
 
-    ifp = fopen("PieceRegular10.txt", "r");
+    ifp = fopen("testData/PieceRegular10.txt", "r");
     i = 0;
     if (ifp == nullptr) {
         printf("Cannot Open File");

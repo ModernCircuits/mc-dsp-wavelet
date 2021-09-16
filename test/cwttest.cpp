@@ -44,7 +44,7 @@ auto main() -> int
     J = 11 * subscale; // Total Number of scales
     a0 = 2; //power
 
-    ifp = fopen("sst_nino3.dat", "r");
+    ifp = fopen("testData/sst_nino3.dat", "r");
     i = 0;
     if (ifp == nullptr) {
         printf("Cannot Open File");

@@ -36,7 +36,7 @@ auto main() -> int
     char const* name = "db4";
     obj = wave_init(name); // Initialize the wavelet
 
-    ifp = fopen("signal.txt", "r");
+    ifp = fopen("testData/signal.txt", "r");
     i = 0;
     if (ifp == nullptr) {
         printf("Cannot Open File");

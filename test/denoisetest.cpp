@@ -77,7 +77,7 @@ auto main() -> int
     char const* thresh = "soft"; // soft or hard
     char const* level = "all"; // noise estimation at "first" or "all" levels. modwt only has the option of "all"
 
-    ifp = fopen("pieceregular1024.txt", "r");
+    ifp = fopen("testData/pieceregular1024.txt", "r");
     i = 0;
     if (ifp == nullptr) {
         printf("Cannot Open File");
@@ -102,7 +102,7 @@ auto main() -> int
         sig[i] = temp[i];
     }
 
-    ifp = fopen("PieceRegular10.txt", "r");
+    ifp = fopen("testData/PieceRegular10.txt", "r");
     i = 0;
     if (ifp == nullptr) {
         printf("Cannot Open File");
@@ -134,7 +134,7 @@ auto main() -> int
     //visushrink(inp,N,J,wname,method,ext,thresh,level,oup);
     //sureshrink(inp,N,J,wname,method,ext,thresh,level,oup);
     // modwtshrink(sig,N,J,wname,cmethod,ext,thresh,oup); See modwtdenoisetest.c
-    //ofp = fopen("denoiseds.txt", "w");
+    //ofp = fopen("testData/denoiseds.txt", "w");
 
     printf("Signal - Noisy Signal Stats \n");
     printf("RMSE %g\n", rmse(N, sig, inp));

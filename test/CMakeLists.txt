@@ -1,37 +1,31 @@
-add_executable(cwttest cwttest.cpp)
-target_link_libraries(cwttest wavelib)
+function(wavelib_add_test _target)
+  add_executable(${_target} "${_target}.cpp")
+  add_test(NAME ${_target} COMMAND ${_target})
+  target_link_libraries(${_target} PRIVATE wavelib)
+  add_custom_command(
+      TARGET
+          ${_target}
+      COMMAND
+          ${CMAKE_COMMAND} -E copy_directory
+          ${CMAKE_CURRENT_SOURCE_DIR}/testData
+          $<TARGET_FILE_DIR:${_target}>/testData
+      POST_BUILD
+  )
+endfunction()
 
-add_executable(dwttest dwttest.cpp)
-target_link_libraries(dwttest wavelib)
+wavelib_add_test(cwttest)
+wavelib_add_test(dwttest)
+wavelib_add_test(swttest)
+wavelib_add_test(modwttest)
+wavelib_add_test(dwpttest)
+wavelib_add_test(wtreetest)
+wavelib_add_test(dwt2test)
+wavelib_add_test(swt2test)
+wavelib_add_test(modwt2test)
 
-add_executable(swttest swttest.cpp)
-target_link_libraries(swttest wavelib)
+wavelib_add_test(denoisetest)
+target_link_libraries(denoisetest PRIVATE wauxlib)
 
-add_executable(modwttest modwttest.cpp)
-target_link_libraries(modwttest wavelib)
+wavelib_add_test(modwtdenoisetest)
+target_link_libraries(modwtdenoisetest PRIVATE wauxlib)
 
-add_executable(dwpttest dwpttest.cpp)
-target_link_libraries(dwpttest wavelib)
-
-add_executable(wtreetest wtreetest.cpp)
-target_link_libraries(wtreetest wavelib)
-
-add_executable(denoisetest denoisetest.cpp)
-target_link_libraries(denoisetest wauxlib wavelib)
-
-add_executable(modwtdenoisetest modwtdenoisetest.cpp)
-target_link_libraries(modwtdenoisetest wauxlib wavelib)
-
-add_executable(dwt2test dwt2test.cpp)
-target_link_libraries(dwt2test wavelib)
-
-add_executable(swt2test swt2test.cpp)
-target_link_libraries(swt2test wavelib)
-
-add_executable(modwt2test modwt2test.cpp)
-target_link_libraries(modwt2test wavelib)
-
-set_target_properties(cwttest dwttest swttest modwttest dwpttest wtreetest denoisetest modwtdenoisetest dwt2test swt2test modwt2test
-        PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/test"
-        )

@@ -37,7 +37,7 @@ auto main() -> int
     obj = wave_init(name);
     wave_summary(obj);
 
-    ifp = fopen("signal.txt", "r");
+    ifp = fopen("testData/signal.txt", "r");
     i = 0;
     if (ifp == nullptr) {
         printf("Cannot Open File");
