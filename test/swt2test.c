@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
-#include "../header/wavelib.h"
+#include "wavelib.h"
 
 double absmax(double *array, int N) {
 	double max;
@@ -54,13 +54,13 @@ int main() {
 			oup[i*cols + k] = 0.0;
 		}
 	}
-	
+
 	wavecoeffs = swt2(wt, inp);
 
 	cLL = getWT2Coeffs(wt, wavecoeffs, J, "A", &ir, &ic);
 
 	dispWT2Coeffs(cLL, ir, ic);
-	
+
 	iswt2(wt, wavecoeffs, oup);
 
 	for (i = 0; i < N; ++i) {
@@ -72,7 +72,7 @@ int main() {
 	wt2_summary(wt);
 
 	printf("Abs Max %g \n", amax);
-	
+
 	wave_free(obj);
 	wt2_free(wt);
 	free(inp);

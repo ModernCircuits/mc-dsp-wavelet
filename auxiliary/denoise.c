@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "waux.h"
-#include "../header/wauxlib.h"
+#include "wauxlib.h"
 
 denoise_object denoise_init(int length, int J,const char* wname) {
 	denoise_object obj = NULL;
@@ -35,9 +35,9 @@ void visushrink(double *signal,int N,int J,const char *wname,const char *method,
 	double *dout,*lnoise;
 
 	wave = wave_init(wname);
-	
+
 	filt_len = wave->filtlength;
-	
+
 	MaxIter = (int) (log((double)N / ((double)filt_len - 1.0)) / log(2.0));
 
 	if (J > MaxIter) {

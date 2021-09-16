@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 
-#include "../header/wauxlib.h"
+#include "wauxlib.h"
 
 static double rmse(int N,double *x,double *y) {
 	double rms;
@@ -104,7 +104,7 @@ int main() {
 	for(i = 0; i < N;++i) {
 		inp[i] = temp[i];
 	}
-	
+
     modwtshrink(sig,N,J,wname,cmethod,ext,thresh,oup);
 
 

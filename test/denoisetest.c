@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 
-#include "../header/wauxlib.h"
+#include "wauxlib.h"
 
 static double rmse(int N,double *x,double *y) {
 	double rms;
@@ -59,9 +59,9 @@ int main() {
 	char *method = "dwt";// Available - dwt, swt and modwt. modwt works only with modwtshrink. The other two methods work with
 	// visushrink and sureshrink
 	char *ext = "sym";// sym and per work with dwt. swt and modwt only use per extension when called through denoise.
-	// You can use sy extension if you directly call modwtshrink with cmethod set to fft. See modwtdenoisetest.c file 
+	// You can use sy extension if you directly call modwtshrink with cmethod set to fft. See modwtdenoisetest.c file
 	char *thresh = "soft";// soft or hard
-	char *level = "all"; // noise estimation at "first" or "all" levels. modwt only has the option of "all" 
+	char *level = "all"; // noise estimation at "first" or "all" levels. modwt only has the option of "all"
 
 	ifp = fopen("pieceregular1024.txt", "r");
 	i = 0;

@@ -1,20 +1,6 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+project(wauxlib)
 
-set(SOURCE_FILES denoise.c
-				 waux.c
-)
-
-set(HEADER_FILES waux.h)
-
-add_library(wauxlib STATIC ${SOURCE_FILES} ${HEADER_FILES})
-
-target_link_libraries(wauxlib wavelib)
-
-set_property(TARGET wauxlib PROPERTY FOLDER "lib")
-
-target_include_directories(wauxlib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-
-install(TARGETS wauxlib
-    EXPORT wavelib-targets
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+add_library(${PROJECT_NAME})
+target_sources(${PROJECT_NAME} PRIVATE denoise.c waux.h waux.c)
+target_link_libraries(${PROJECT_NAME} PRIVATE wavelib)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

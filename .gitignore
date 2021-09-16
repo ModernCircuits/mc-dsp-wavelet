@@ -2,6 +2,8 @@
 Bin/
 Testing/
 .vscode/
+/build
+/cmake-build-*
 
 #cmake ignore
 CMakeCache.txt

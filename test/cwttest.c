@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "../header/wavelib.h"
+#include "wavelib.h"
 
 int main() {
 	int i, N, J,subscale,a0,iter,nd,k;
@@ -53,21 +53,21 @@ int main() {
 	cwt(wt, inp);
 
 	printf("\n MEAN %g \n", wt->smean);
-	
+
 	mn = 0.0;
 
 	for (i = 0; i < N; ++i) {
 		mn += sqrt(wt->output[i].re * wt->output[i].re + wt->output[i].im * wt->output[i].im);
 	}
-	
+
 	cwt_summary(wt);
 
 	printf("\n abs mean %g \n", mn / N);
-	
+
 	printf("\n\n");
 	printf("Let CWT w = w(j, n/2 - 1) where n = %d\n\n", N);
 	nd = N/2 - 1;
-	
+
 	printf("%-15s%-15s%-15s%-15s \n","j","Scale","Period","ABS(w)^2");
 	for(k = 0; k < wt->J;++k) {
 		iter = nd + k * N;

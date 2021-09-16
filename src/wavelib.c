@@ -8,7 +8,7 @@
 #include <string.h>
 
 #include "cwt.h"
-#include "../header/wavelib.h"
+#include "wavelib.h"
 #include "wtmath.h"
 
 wave_object wave_init(const char* wname) {
@@ -301,7 +301,7 @@ cwt_object cwt_init(const char* wave, double param,int siglength, double dt, int
 			param = 6.0;
 		}
 		strcpy(obj->wave,"morlet");
-		
+
 	}
 	else if (!strcmp(wave, "paul")) {
 		s0 = 2 * dt;
@@ -315,7 +315,7 @@ cwt_object cwt_init(const char* wave, double param,int siglength, double dt, int
 			param = 4.0;
 		}
 		strcpy(obj->wave,"paul");
-	
+
 	}
 	else if (!strcmp(wave, "dgauss") || !strcmp(wave, "dog")) {
 		s0 = 2 * dt;
@@ -984,7 +984,7 @@ double *getDWTmra(wt_object wt, double *wavecoeffs) {
 	J = wt->J;
 	mra = (double*)malloc(sizeof(double)* wt->siglength*(J + 1));
 	access = 0;
-	
+
 
 	// Approximation MRA
 	getDWTRecCoeff(wt->output + access, wt->length, "appx", wt->ext, J, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra);
@@ -996,7 +996,7 @@ double *getDWTmra(wt_object wt, double *wavecoeffs) {
 		getDWTRecCoeff(wt->output + access, wt->length, "det", wt->ext, i, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra+N);
 		N += wt->siglength;
 	}
-	
+
 	return mra;
 }
 
@@ -1520,7 +1520,7 @@ void setCWTScales(cwt_object wt, double s0, double dj,const char *type,int power
 		}
 		wt->sflag = 1;
 		wt->pow = power;
-		
+
 	}
 	else if (!strcmp(wt->type, "lin") || !strcmp(wt->type, "linear")) {
 		for (i = 0; i < wt->J; ++i) {
@@ -1613,7 +1613,7 @@ void icwt(cwt_object wt, double *cwtop) {
 	for(i = 0; i < N;++i) {
 		cwtop[i] += wt->smean;
 	}
-	
+
 }
 
 static void idwt1(wt_object wt,double *temp, double *cA_up,double *cA, int len_cA,double *cD,int len_cD,double *X_lp,double *X_hp,double *X) {
@@ -2391,10 +2391,10 @@ static void getSWTRecCoeff(double *coeff, int *length, const char *ctype, int le
 			N1 = 2 * len0 + lf;
 
 
-			
+
 			conv_direct(cL0, N1, lpr, lf, oup00L);
 
-			
+
 			conv_direct(cH0, N1, hpr, lf, oup00H);
 
 			for (i = lf - 1; i < 2 * len0 + lf - 1; ++i) {
@@ -2472,13 +2472,13 @@ double *getSWTmra(wt_object wt, double *wavecoeffs) {
 	getSWTRecCoeff(wt->output + access, wt->length, "appx", J, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra);
 	// Details MRA
 	N = wt->siglength;
-	
+
 	for (i = J; i > 0; --i) {
 		access += wt->length[J - i];
 		getSWTRecCoeff(wt->output + access, wt->length, "det", i, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra+N);
 		N += wt->siglength;
 	}
-	
+
 	return mra;
 }
 
@@ -2805,7 +2805,7 @@ static void modwt_fft(wt_object wt, const double *inp) {
 		for (i = 0; i < N; ++i) {
 			index[i] = (M *i) % N;
 		}
-		
+
 		for (i = 0; i < N; ++i) {
 			tmp1 = cA[i].re;
 			tmp2 = cA[i].im;
@@ -2861,7 +2861,7 @@ static void conj_complex(fft_data *x, int N) {
 	}
 }
 
-static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* appx,fft_data *det, fft_data* cA,fft_data *cD, int *index, const char *ctype, int level, 
+static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* appx,fft_data *det, fft_data* cA,fft_data *cD, int *index, const char *ctype, int level,
 	int J, fft_data *low_pass, fft_data *high_pass, int N) {
 
 	int iter,M,i;
@@ -2891,7 +2891,7 @@ static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* app
 				appx[i].re /= N;
 				appx[i].im /= N;
 			}
-			
+
 			M /= 2;
 		}
 	}
@@ -2928,7 +2928,7 @@ static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* app
 		exit(-1);
 	}
 
-	
+
 }
 
 double* getMODWTmra(wt_object wt, double *wavecoeffs) {
@@ -3002,7 +3002,7 @@ double* getMODWTmra(wt_object wt, double *wavecoeffs) {
 	M = (int)pow(2.0, (double)J - 1.0);
 	lenacc = N;
 
-	// 
+	//
 	for (i = 0; i < N; ++i) {
 		sig[i].re = (fft_type)wt->output[i];
 		sig[i].im = 0.0;
@@ -3080,7 +3080,7 @@ void imodwt_fft(wt_object wt, double *oup) {
 	low_pass = (fft_data*)malloc(sizeof(fft_data)* N);
 	high_pass = (fft_data*)malloc(sizeof(fft_data)* N);
 	index = (int*)malloc(sizeof(int)*N);
-	
+
 
 	// N-point FFT of low pass and high pass filters
 
@@ -3120,7 +3120,7 @@ void imodwt_fft(wt_object wt, double *oup) {
 	M = (int)pow(2.0, (double)J - 1.0);
 	lenacc = N;
 
-	// 
+	//
 	for (i = 0; i < N; ++i) {
 		sig[i].re = (fft_type)wt->output[i];
 		sig[i].im = 0.0;
@@ -3315,7 +3315,7 @@ void setDWT2Extension(wt2_object wt, const char *extension) {
 			exit(-1);
 		}
 	}
-	
+
 }
 
 void setDWPTEntropy(wpt_object wt, const char *entropy, double eparam) {
@@ -3406,12 +3406,12 @@ double* dwt2(wt2_object wt, double *inp) {
 			aLH = aHL - cdim;
 			wt->coeffaccess[clen-2] = aLH;
 			aLL = aLH - cdim;
-			
+
 			N -= 3 * cdim;
 			ic = cols_i;
 			istride = ic;
 			ostride = ic;
-			
+
 			for (i = 0; i < ic; ++i) {
 				dwt_per_stride(lp_dn1 + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff+aLL+i, rows_i, wavecoeff+aLH+i, istride, ostride);
 			}
@@ -3509,7 +3509,7 @@ void idwt2(wt2_object wt, double *wavecoeff, double *oup) {
 	rows = wt->rows;
 	cols = wt->cols;
 	J = wt->J;
-	
+
 
 	if (!strcmp(wt->ext, "per")) {
 		N = rows > cols ? 2 * rows : 2 * cols;
@@ -3526,7 +3526,7 @@ void idwt2(wt2_object wt, double *wavecoeff, double *oup) {
 			i--;
 		}
 
-		
+
 
 		X_lp = (double*)malloc(sizeof(double)* (N + 2 * lf - 1));
 		cL = (double*)calloc(dim1*dim2, sizeof(double));
@@ -3559,7 +3559,7 @@ void idwt2(wt2_object wt, double *wavecoeff, double *oup) {
 			ir *= 2;
 			istride = 1;
 			ostride = 1;
-			
+
 			for (i = 0; i < ir; ++i) {
 				idwt_per_stride(cL+i*ic, ic, cH+i*ic, wt->wave->lpr, wt->wave->hpr, lf, X_lp, istride, ostride);
 
@@ -3582,7 +3582,7 @@ void idwt2(wt2_object wt, double *wavecoeff, double *oup) {
 					}
 				}
 			}
-			
+
 
 			orig = oup;
 		}
@@ -3671,7 +3671,7 @@ void idwt2(wt2_object wt, double *wavecoeff, double *oup) {
 	}
 
 	free(out);
-	
+
 }
 
 double* swt2(wt2_object wt, double *inp) {
