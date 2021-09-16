@@ -21,10 +21,14 @@ double absmax(double* array, int N)
 
 int main()
 {
-    int i, J, N;
+    int i;
+    int J;
+    int N;
     wave_object obj;
     wpt_object wt;
-    double *inp, *oup, *diff;
+    double *inp;
+    double *oup;
+    double *diff;
 
     char const* name = "db4";
     obj = wave_init(name); // Initialize the wavelet

@@ -5,7 +5,7 @@
 
 #include "wauxlib.h"
 
-static double rmse(int N, double* x, double* y)
+static double rmse(int N, const double* x, const double* y)
 {
     double rms;
     int i;
@@ -21,9 +21,16 @@ static double rmse(int N, double* x, double* y)
     return rms;
 }
 
-static double corrcoef(int N, double* x, double* y)
+static double corrcoef(int N, const double* x, const double* y)
 {
-    double cc, xm, ym, tx, ty, num, den1, den2;
+    double cc;
+    double xm;
+    double ym;
+    double tx;
+    double ty;
+    double num;
+    double den1;
+    double den2;
     int i;
     xm = ym = 0.0;
     for (i = 0; i < N; ++i) {
@@ -54,8 +61,12 @@ int main()
     /*
     modwtshrink can also be called from the denoise object. See denoisetest.c for more information
     */
-    double *sig, *inp, *oup;
-    int i, N, J;
+    double *sig;
+    double *inp;
+    double *oup;
+    int i;
+    int N;
+    int J;
     FILE* ifp;
 
     double temp[2400];
@@ -67,12 +78,12 @@ int main()
 
     ifp = fopen("pieceregular1024.txt", "r");
     i = 0;
-    if (!ifp) {
+    if (ifp == nullptr) {
         printf("Cannot Open File");
         exit(100);
     }
 
-    while (!feof(ifp)) {
+    while (feof(ifp) == 0) {
         fscanf(ifp, "%lf \n", &temp[i]);
         i++;
     }
@@ -92,12 +103,12 @@ int main()
 
     ifp = fopen("PieceRegular10.txt", "r");
     i = 0;
-    if (!ifp) {
+    if (ifp == nullptr) {
         printf("Cannot Open File");
         exit(100);
     }
 
-    while (!feof(ifp)) {
+    while (feof(ifp) == 0) {
         fscanf(ifp, "%lf \n", &temp[i]);
         i++;
     }

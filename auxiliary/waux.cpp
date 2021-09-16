@@ -6,10 +6,12 @@ int compare_double(const void* a, const void* b)
     double arg1 = *(const double*)a;
     double arg2 = *(const double*)b;
 
-    if (arg1 < arg2)
+    if (arg1 < arg2) {
         return -1;
-    if (arg1 > arg2)
+}
+    if (arg1 > arg2) {
         return 1;
+}
     return 0;
 }
 
@@ -28,7 +30,9 @@ double mean(const double* vec, int N)
 
 double var(const double* vec, int N)
 {
-    double v, temp, m;
+    double v;
+    double temp;
+    double m;
     int i;
     v = 0.0;
     m = mean(vec, N);
@@ -77,7 +81,8 @@ double mad(double* x, int N)
 int minindex(const double* arr, int N)
 {
     double min;
-    int index, i;
+    int index;
+    int i;
 
     min = DBL_MAX;
     index = 0;
@@ -118,7 +123,9 @@ void getDWTDetail(wt_object wt, double* detail, int N, int level)
 	....
 	Level J : Length of D(1), ie N, is stored in wt->length[J]
 	*/
-    int i, iter, J;
+    int i;
+    int iter;
+    int J;
     J = wt->J;
 
     if (level > J || level < 1) {
@@ -137,18 +144,30 @@ void getDWTDetail(wt_object wt, double* detail, int N, int level)
     }
 }
 
-void getDWTRecCoeff(double* coeff, int* length, const char* ctype, const char* ext, int level, int J, double* lpr,
+void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, const char* ext, int level, int J, double* lpr,
     double* hpr, int lf, int siglength, double* reccoeff)
 {
 
-    int i, j, k, det_len, N, l, m, n, v, t, l2;
-    double *out, *X_lp, *filt;
+    int i;
+    int j;
+    int k;
+    int det_len;
+    int N;
+    int l;
+    int m;
+    int n;
+    int v;
+    int t;
+    int l2;
+    double *out;
+    double *X_lp;
+    double *filt;
     out = (double*)malloc(sizeof(double) * (siglength + 1));
     l2 = lf / 2;
     m = -2;
     n = -1;
-    if (!strcmp(ext, "per")) {
-        if (!strcmp((ctype), "appx")) {
+    if (strcmp(ext, "per") == 0) {
+        if (strcmp((ctype), "appx") == 0) {
             det_len = length[0];
         } else {
             det_len = length[J - level + 1];
@@ -166,7 +185,7 @@ void getDWTRecCoeff(double* coeff, int* length, const char* ctype, const char* e
 
             //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp, X_hp, out);
 
-            if (!strcmp((ctype), "det") && j == level) {
+            if ((strcmp((ctype), "det") == 0) && j == level) {
                 filt = hpr;
             } else {
                 filt = lpr;
@@ -207,8 +226,8 @@ void getDWTRecCoeff(double* coeff, int* length, const char* ctype, const char* e
 
         free(X_lp);
 
-    } else if (!strcmp(ext, "sym")) {
-        if (!strcmp((ctype), "appx")) {
+    } else if (strcmp(ext, "sym") == 0) {
+        if (strcmp((ctype), "appx") == 0) {
             det_len = length[0];
         } else {
             det_len = length[J - level + 1];
@@ -226,7 +245,7 @@ void getDWTRecCoeff(double* coeff, int* length, const char* ctype, const char* e
 
             //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp, X_hp, out);
 
-            if (!strcmp((ctype), "det") && j == level) {
+            if ((strcmp((ctype), "det") == 0) && j == level) {
                 filt = hpr;
             } else {
                 filt = lpr;
@@ -277,8 +296,11 @@ void getDWTRecCoeff(double* coeff, int* length, const char* ctype, const char* e
 
 void autocovar(const double* vec, int N, double* acov, int M)
 {
-    double m, temp1, temp2;
-    int i, t;
+    double m;
+    double temp1;
+    double temp2;
+    int i;
+    int t;
     m = mean(vec, N);
 
     if (M > N) {

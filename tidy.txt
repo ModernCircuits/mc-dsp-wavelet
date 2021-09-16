@@ -1,0 +1,1 @@
+-cert-oop54-cpp,-cert-err58-cpp,clang-analyzer-*,-clang-analyzer-optin.performance.Padding,concurrency-*,hicpp-*,-hicpp-avoid-c-arrays,-hicpp-uppercase-literal-suffix,-hicpp-signed-bitwise,-hicpp-special-member-functions,

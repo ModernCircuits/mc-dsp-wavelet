@@ -33,8 +33,19 @@ int main()
 {
     wave_object obj;
     wt2_object wt;
-    int i, k, J, rows, cols, N, ir, ic;
-    double *inp, *wavecoeffs, *oup, *cLL, *diff;
+    int i;
+    int k;
+    int J;
+    int rows;
+    int cols;
+    int N;
+    int ir;
+    int ic;
+    double *inp;
+    double *wavecoeffs;
+    double *oup;
+    double *cLL;
+    double *diff;
     double amax;
     rows = 51;
     cols = 40;

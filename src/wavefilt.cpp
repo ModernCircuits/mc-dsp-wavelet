@@ -3168,8 +3168,9 @@ int filtlength(const char* name)
     }
     if (len > 2 && strstr(name, "db") != NULL) {
         new_str = (char*)malloc(sizeof(char) * (len - 2 + 1));
-        for (i = 2; i < len + 1; i++)
+        for (i = 2; i < len + 1; i++) {
             new_str[i - 2] = name[i];
+}
 
         N = atoi(new_str);
         free(new_str);
@@ -3179,7 +3180,7 @@ int filtlength(const char* name)
         }
 
         return N * 2;
-    } else if (!strcmp(name, "bior1.1")) {
+    } if (!strcmp(name, "bior1.1")) {
         return 2;
     }
 
@@ -3350,14 +3351,14 @@ int filtcoef(const char* name, double* lp1, double* hp1, double* lp2, double* hp
 
         return N;
     }
-    if (!strcmp(name, "db2")) {
+    if (strcmp(name, "db2") == 0) {
         copy_reverse(db2, N, lp1);
         qmf_wrev(db2, N, hp1);
         copy(db2, N, lp2);
         qmf_even(db2, N, hp2);
 
         return N;
-    } else if (!strcmp(name, "db3")) {
+    } if (!strcmp(name, "db3")) {
         copy_reverse(db3, N, lp1);
         qmf_wrev(db3, N, hp1);
         copy(db3, N, lp2);

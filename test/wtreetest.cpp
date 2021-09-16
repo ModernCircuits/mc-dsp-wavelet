@@ -6,11 +6,16 @@
 
 int main()
 {
-    int i, J, N, len;
-    int X, Y;
+    int i;
+    int J;
+    int N;
+    int len;
+    int X;
+    int Y;
     wave_object obj;
     wtree_object wt;
-    double *inp, *oup;
+    double *inp;
+    double *oup;
 
     char const* name = "db3";
     obj = wave_init(name); // Initialize the wavelet

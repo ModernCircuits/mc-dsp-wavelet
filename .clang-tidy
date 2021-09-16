@@ -1,4 +1,4 @@
-Checks:          '*-,bugprone-*,cert-*,readability-*'
+Checks:          '*-,bugprone-*,cert-*,modernize-*,readability-*,performance-*,-readability-magic-numbers,-readability-function-cognitive-complexity,-modernize-avoid-c-arrays'
 WarningsAsErrors: '*'
 FormatStyle:     none
 ...

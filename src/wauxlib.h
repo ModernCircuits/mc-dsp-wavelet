@@ -46,7 +46,7 @@ void setDenoiseParameters(denoise_object obj, const char* thresh, const char* le
 
 void denoise_free(denoise_object object);
 
-void getDWTRecCoeff(double* coeff, int* length, const char* ctype, const char* ext, int level, int J, double* lpr,
+void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, const char* ext, int level, int J, double* lpr,
     double* hpr, int lf, int siglength, double* reccoeff);
 
 double mad(double* x, int N);

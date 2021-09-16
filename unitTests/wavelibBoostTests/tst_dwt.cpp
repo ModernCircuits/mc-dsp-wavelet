@@ -38,7 +38,7 @@ double absmax(double* array, int N)
     return max;
 }
 
-double sum1(double* array, int N)
+double sum1(const double* array, int N)
 {
     double sum;
     int i;
@@ -49,7 +49,7 @@ double sum1(double* array, int N)
     }
     return sum;
 }
-double sum2(double* array, int N)
+double sum2(const double* array, int N)
 {
     double sum;
     int i;
@@ -60,7 +60,7 @@ double sum2(double* array, int N)
     }
     return sum;
 }
-double sum3(double* array, int N)
+double sum3(const double* array, int N)
 {
     double sum;
     int i;
@@ -72,7 +72,7 @@ double sum3(double* array, int N)
     return sum;
 }
 // np.sum(w[2*m:(2*N+2*m)]*w[0:2*N])
-double sum4(double* array, int N)
+double sum4(const double* array, int N)
 {
     double sum;
     int i;
@@ -84,7 +84,7 @@ double sum4(double* array, int N)
     return sum;
 }
 // np.sum(w[2 * m:(2 * N)] * w[0:2 * N - 2 * m])
-double sum5(double* array, int N, int m)
+double sum5(const double* array, int N, int m)
 {
     double sum;
     int i;
@@ -96,7 +96,7 @@ double sum5(double* array, int N, int m)
     return sum;
 }
 
-double RMS_Error(double* data, double* rec, int N)
+double RMS_Error(const double* data, const double* rec, int N)
 {
     int i;
     double sum = 0;
@@ -106,7 +106,7 @@ double RMS_Error(double* data, double* rec, int N)
     return sqrt(sum / ((double)N - 1));
 }
 
-double REL_Error(double* data, double* rec, int N)
+double REL_Error(const double* data, const double* rec, int N)
 {
     int i;
     double sum1 = 0;
@@ -132,8 +132,11 @@ void DWTReconstructionTest()
 
     wave_object obj;
     wt_object wt;
-    double *inp, *out;
-    int N, i, J;
+    double *inp;
+    double *out;
+    int N;
+    int i;
+    int J;
     double epsilon = 1e-15;
 
     N = 79926;
@@ -202,26 +205,29 @@ void DWTReconstructionTest()
 
                     wt = wt_init(obj, (char*)"dwt", N,
                         J); // Initialize the wavelet transform object
-                    if (sym_per == 0)
+                    if (sym_per == 0) {
                         setDWTExtension(wt,
                             (char*)"sym"); // Options are "per" and "sym".
                     // Symmetric is the default option
-                    else
+                    } else {
                         setDWTExtension(wt, (char*)"per");
-                    if (direct_fft == 0)
+}
+                    if (direct_fft == 0) {
                         setWTConv(wt, (char*)"direct");
-                    else
+                    } else {
                         setWTConv(wt, (char*)"fft");
+}
 
                     dwt(wt, inp); // Perform DWT
 
                     idwt(wt, out); // Perform IDWT (if needed)
                     // Test Reconstruction
 
-                    if (direct_fft == 0)
+                    if (direct_fft == 0) {
                         epsilon = 1e-8;
-                    else
+                    } else {
                         epsilon = 1e-10;
+}
                     // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
@@ -247,8 +253,15 @@ void DWT2ReconstructionTest()
 {
     wave_object obj;
     wt2_object wt;
-    int i, k, J, N, rows, cols;
-    double *inp, *wavecoeffs, *out;
+    int i;
+    int k;
+    int J;
+    int N;
+    int rows;
+    int cols;
+    double *inp;
+    double *wavecoeffs;
+    double *out;
     double epsilon;
 
     rows = 1024;
@@ -322,22 +335,24 @@ void DWT2ReconstructionTest()
 
                     wt = wt2_init(obj, (char*)"dwt", rows, cols,
                         J); // Initialize the wavelet transform object
-                    if (sym_per == 0)
+                    if (sym_per == 0) {
                         setDWT2Extension(wt,
                             (char*)"sym"); // Options are "per" and "sym".
                     // Symmetric is the default option
-                    else
+                    } else {
                         setDWT2Extension(wt, (char*)"per");
+}
 
                     wavecoeffs = dwt2(wt, inp); // Perform DWT
 
                     idwt2(wt, wavecoeffs, out); // Perform IDWT (if needed)
                     // Test Reconstruction
 
-                    if (direct_fft == 0)
+                    if (direct_fft == 0) {
                         epsilon = 1e-8;
-                    else
+                    } else {
                         epsilon = 1e-10;
+}
                     // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
@@ -365,8 +380,11 @@ void MODWTReconstructionTest()
 
     wave_object obj;
     wt_object wt;
-    double *inp, *out;
-    int N, i, J;
+    double *inp;
+    double *out;
+    int N;
+    int i;
+    int J;
     double epsilon = 1e-15;
     double err;
 
@@ -405,29 +423,32 @@ void MODWTReconstructionTest()
                     wt = wt_init(obj, (char*)"modwt", N,
                         J); // Initialize the wavelet transform object
 
-                    if (direct_fft == 0)
+                    if (direct_fft == 0) {
                         setWTConv(wt, (char*)"direct");
-                    else
+                    } else {
                         setWTConv(wt, (char*)"fft");
+}
 
-                    if (sym_per == 0)
+                    if (sym_per == 0) {
                         setDWTExtension(wt,
                             (char*)"per"); // Options are "per" and "sym".
                     // Symmetric is the default option
-                    else if (sym_per == 1 && direct_fft == 1)
+                    } else if (sym_per == 1 && direct_fft == 1) {
                         setDWTExtension(wt, (char*)"sym");
-                    else
+                    } else {
                         break;
+}
 
                     modwt(wt, inp); // Perform DWT
 
                     imodwt(wt, out); // Perform IDWT (if needed)
                     // Test Reconstruction
 
-                    if (direct_fft == 0)
+                    if (direct_fft == 0) {
                         epsilon = 1e-8;
-                    else
+                    } else {
                         epsilon = 1e-10;
+}
                     // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
@@ -455,8 +476,15 @@ void MODWT2ReconstructionTest()
 {
     wave_object obj;
     wt2_object wt;
-    int i, k, J, N, rows, cols;
-    double *inp, *wavecoeffs, *out;
+    int i;
+    int k;
+    int J;
+    int N;
+    int rows;
+    int cols;
+    double *inp;
+    double *wavecoeffs;
+    double *out;
     double epsilon;
 
     rows = 1024;
@@ -498,18 +526,20 @@ void MODWT2ReconstructionTest()
 
                     wt = wt2_init(obj, (char*)"modwt", rows, cols,
                         J); // Initialize the wavelet transform object
-                    if (sym_per == 0)
+                    if (sym_per == 0) {
                         setDWT2Extension(wt, (char*)"per"); // Options are "per"
+}
 
                     wavecoeffs = modwt2(wt, inp); // Perform DWT
 
                     imodwt2(wt, wavecoeffs, out); // Perform IDWT (if needed)
                     // Test Reconstruction
 
-                    if (direct_fft == 0)
+                    if (direct_fft == 0) {
                         epsilon = 1e-8;
-                    else
+                    } else {
                         epsilon = 1e-10;
+}
                     // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
@@ -537,8 +567,11 @@ void SWTReconstructionTest()
 
     wave_object obj;
     wt_object wt;
-    double *inp, *out;
-    int N, i, J;
+    double *inp;
+    double *out;
+    int N;
+    int i;
+    int J;
     double epsilon = 1e-15;
     double err;
 
@@ -609,29 +642,32 @@ void SWTReconstructionTest()
                     wt = wt_init(obj, (char*)"swt", N,
                         J); // Initialize the wavelet transform object
 
-                    if (direct_fft == 0)
+                    if (direct_fft == 0) {
                         setWTConv(wt, (char*)"direct");
-                    else
+                    } else {
                         setWTConv(wt, (char*)"fft");
+}
 
-                    if (sym_per == 0)
+                    if (sym_per == 0) {
                         setDWTExtension(wt,
                             (char*)"per"); // Options are "per" and "sym".
                     // Symmetric is the default option
-                    else if (sym_per == 1 && direct_fft == 1)
+                    } else if (sym_per == 1 && direct_fft == 1) {
                         setDWTExtension(wt, (char*)"sym");
-                    else
+                    } else {
                         break;
+}
 
                     swt(wt, inp); // Perform DWT
 
                     iswt(wt, out); // Perform IDWT (if needed)
                     // Test Reconstruction
 
-                    if (direct_fft == 0)
+                    if (direct_fft == 0) {
                         epsilon = 1e-8;
-                    else
+                    } else {
                         epsilon = 1e-10;
+}
                     // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
@@ -659,8 +695,15 @@ void SWT2ReconstructionTest()
 {
     wave_object obj;
     wt2_object wt;
-    int i, k, J, N, rows, cols;
-    double *inp, *wavecoeffs, *out;
+    int i;
+    int k;
+    int J;
+    int N;
+    int rows;
+    int cols;
+    double *inp;
+    double *wavecoeffs;
+    double *out;
     double epsilon;
 
     rows = 1024;
@@ -734,18 +777,20 @@ void SWT2ReconstructionTest()
 
                     wt = wt2_init(obj, (char*)"swt", rows, cols,
                         J); // Initialize the wavelet transform object
-                    if (sym_per == 0)
+                    if (sym_per == 0) {
                         setDWT2Extension(wt, (char*)"per"); // Options are "per"
+}
 
                     wavecoeffs = swt2(wt, inp); // Perform DWT
 
                     iswt2(wt, wavecoeffs, out); // Perform IDWT (if needed)
                     // Test Reconstruction
 
-                    if (direct_fft == 0)
+                    if (direct_fft == 0) {
                         epsilon = 1e-8;
-                    else
+                    } else {
                         epsilon = 1e-10;
+}
                     // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
@@ -773,8 +818,11 @@ void DWPTReconstructionTest()
 
     wave_object obj;
     wpt_object wt;
-    double *inp, *out;
-    int N, i, J;
+    double *inp;
+    double *out;
+    int N;
+    int i;
+    int J;
     double epsilon = 1e-8;
 
     N = 79926;
@@ -842,17 +890,19 @@ void DWPTReconstructionTest()
                     // J = 3;
 
                     wt = wpt_init(obj, N, J); // Initialize the wavelet transform object
-                    if (sym_per == 0)
+                    if (sym_per == 0) {
                         setDWPTExtension(wt,
                             (char*)"sym"); // Options are "per" and "sym".
                     // Symmetric is the default option
-                    else
+                    } else {
                         setDWPTExtension(wt, (char*)"per");
+}
 
-                    if (ent == 0)
+                    if (ent == 0) {
                         setDWPTEntropy(wt, (char*)"shannon", 0);
-                    else
+                    } else {
                         setDWPTEntropy(wt, (char*)"logenergy", 0);
+}
 
                     dwpt(wt, inp); // Perform DWT
 
@@ -883,11 +933,21 @@ void DWPTReconstructionTest()
 
 void CWTReconstructionTest()
 {
-    int i, N, J, subscale, a0;
-    double *inp, *oup;
-    double dt, dj, s0, pi, t;
+    int i;
+    int N;
+    int J;
+    int subscale;
+    int a0;
+    double *inp;
+    double *oup;
+    double dt;
+    double dj;
+    double s0;
+    double pi;
+    double t;
     double epsilon;
-    int it1, it2;
+    int it1;
+    int it2;
     cwt_object wt;
 
     char* wave[3];
@@ -951,7 +1011,11 @@ void DBCoefTests()
 {
     wave_object obj;
     double epsilon = 1e-15;
-    double t1, t2, t3, t4, t5;
+    double t1;
+    double t2;
+    double t3;
+    double t4;
+    double t5;
     std::vector<std::string> waveletNames;
     waveletNames.resize(38);
     for (unsigned int i = 0; i < waveletNames.size(); i++) {
@@ -988,7 +1052,11 @@ void CoifCoefTests()
 {
     wave_object obj;
     double epsilon = 1e-15;
-    double t1, t2, t3, t4, t5;
+    double t1;
+    double t2;
+    double t3;
+    double t4;
+    double t5;
     std::vector<std::string> waveletNames;
     waveletNames.resize(17);
     for (unsigned int i = 0; i < waveletNames.size(); i++) {
@@ -1025,7 +1093,11 @@ void SymCoefTests()
 {
     wave_object obj;
     double epsilon = 1e-10;
-    double t1, t2, t3, t4, t5;
+    double t1;
+    double t2;
+    double t3;
+    double t4;
+    double t5;
     std::vector<std::string> waveletNames;
     for (unsigned int i = 1; i < 20; i++) {
         waveletNames.push_back(std::string("sym") + patch::to_string(i + 1));
@@ -1061,7 +1133,12 @@ void BiorCoefTests()
 {
     wave_object obj;
     double epsilon = 1e-10;
-    double t1, t2, t3, t4, t5, t6;
+    double t1;
+    double t2;
+    double t3;
+    double t4;
+    double t5;
+    double t6;
     std::vector<std::string> waveletNames;
     waveletNames.push_back("bior1.1");
     waveletNames.push_back("bior1.3");
@@ -1107,7 +1184,12 @@ void RBiorCoefTests()
 {
     wave_object obj;
     double epsilon = 1e-10;
-    double t1, t2, t3, t4, t5, t6;
+    double t1;
+    double t2;
+    double t3;
+    double t4;
+    double t5;
+    double t6;
     std::vector<std::string> waveletNames;
     waveletNames.push_back("rbior1.1");
     waveletNames.push_back("rbior1.3");

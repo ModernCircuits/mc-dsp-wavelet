@@ -23,8 +23,12 @@ int main()
 {
     wave_object obj;
     wt_object wt;
-    double *inp, *out, *diff;
-    int N, i, J;
+    double *inp;
+    double *out;
+    double *diff;
+    int N;
+    int i;
+    int J;
 
     FILE* ifp;
     double temp[1200];
@@ -34,11 +38,11 @@ int main()
 
     ifp = fopen("signal.txt", "r");
     i = 0;
-    if (!ifp) {
+    if (ifp == nullptr) {
         printf("Cannot Open File");
         exit(100);
     }
-    while (!feof(ifp)) {
+    while (feof(ifp) == 0) {
         fscanf(ifp, "%lf \n", &temp[i]);
         i++;
     }

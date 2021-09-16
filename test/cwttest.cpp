@@ -6,10 +6,27 @@
 
 int main()
 {
-    int i, N, J, subscale, a0, iter, nd, k;
-    double *inp, *oup;
-    double dt, dj, s0, param, mn;
-    double td, tn, den, num, recon_mean, recon_var;
+    int i;
+    int N;
+    int J;
+    int subscale;
+    int a0;
+    int iter;
+    int nd;
+    int k;
+    double *inp;
+    double *oup;
+    double dt;
+    double dj;
+    double s0;
+    double param;
+    double mn;
+    double td;
+    double tn;
+    double den;
+    double num;
+    double recon_mean;
+    double recon_var;
     cwt_object wt;
 
     FILE* ifp;
@@ -29,11 +46,11 @@ int main()
 
     ifp = fopen("sst_nino3.dat", "r");
     i = 0;
-    if (!ifp) {
+    if (ifp == nullptr) {
         printf("Cannot Open File");
         exit(100);
     }
-    while (!feof(ifp)) {
+    while (feof(ifp) == 0) {
         fscanf(ifp, "%lf \n", &temp[i]);
         i++;
     }
