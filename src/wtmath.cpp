@@ -3,9 +3,16 @@ Copyright (c) 2018, Rafat Hussain
 */
 #include "wtmath.h"
 
-void dwt_per_stride(double* inp, int N, double* lpd, double* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
+void dwt_per_stride(const double* inp, int N, const double* lpd, const double* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
 {
-    int l, l2, isodd, i, t, len_avg, is, os;
+    int l;
+    int l2;
+    int isodd;
+    int i;
+    int t;
+    int len_avg;
+    int is;
+    int os;
 
     len_avg = lpd_len;
     l2 = len_avg / 2;
@@ -58,10 +65,14 @@ void dwt_per_stride(double* inp, int N, double* lpd, double* hpd, int lpd_len, d
     }
 }
 
-void dwt_sym_stride(double* inp, int N, double* lpd, double* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
+void dwt_sym_stride(const double* inp, int N, const double* lpd, const double* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
 {
-    int i, l, t, len_avg;
-    int is, os;
+    int i;
+    int l;
+    int t;
+    int len_avg;
+    int is;
+    int os;
     len_avg = lpd_len;
 
     for (i = 0; i < len_cA; ++i) {
@@ -87,10 +98,14 @@ void dwt_sym_stride(double* inp, int N, double* lpd, double* hpd, int lpd_len, d
     }
 }
 
-void modwt_per_stride(int M, double* inp, int N, double* filt, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
+void modwt_per_stride(int M, const double* inp, int N, const double* filt, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
 {
-    int l, i, t, len_avg;
-    int is, os;
+    int l;
+    int i;
+    int t;
+    int len_avg;
+    int is;
+    int os;
     len_avg = lpd_len;
 
     for (i = 0; i < len_cA; ++i) {
@@ -115,10 +130,17 @@ void modwt_per_stride(int M, double* inp, int N, double* filt, int lpd_len, doub
     }
 }
 
-void swt_per_stride(int M, double* inp, int N, double* lpd, double* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
+void swt_per_stride(int M, const double* inp, int N, const double* lpd, const double* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
 {
-    int l, l2, isodd, i, t, len_avg, j;
-    int is, os;
+    int l;
+    int l2;
+    int isodd;
+    int i;
+    int t;
+    int len_avg;
+    int j;
+    int is;
+    int os;
     len_avg = M * lpd_len;
     l2 = len_avg / 2;
     isodd = N % 2;
@@ -165,10 +187,18 @@ void swt_per_stride(int M, double* inp, int N, double* lpd, double* hpd, int lpd
     }
 }
 
-void idwt_per_stride(double* cA, int len_cA, double* cD, double* lpr, double* hpr, int lpr_len, double* X, int istride, int ostride)
+void idwt_per_stride(const double* cA, int len_cA, const double* cD, const double* lpr, const double* hpr, int lpr_len, double* X, int istride, int ostride)
 {
-    int len_avg, i, l, m, n, t, l2;
-    int is, ms, ns;
+    int len_avg;
+    int i;
+    int l;
+    int m;
+    int n;
+    int t;
+    int l2;
+    int is;
+    int ms;
+    int ns;
 
     len_avg = lpr_len;
     l2 = len_avg / 2;
@@ -201,10 +231,18 @@ void idwt_per_stride(double* cA, int len_cA, double* cD, double* lpr, double* hp
     }
 }
 
-void idwt_sym_stride(double* cA, int len_cA, double* cD, double* lpr, double* hpr, int lpr_len, double* X, int istride, int ostride)
+void idwt_sym_stride(const double* cA, int len_cA, const double* cD, const double* lpr, const double* hpr, int lpr_len, double* X, int istride, int ostride)
 {
-    int len_avg, i, l, m, n, t, v;
-    int ms, ns, is;
+    int len_avg;
+    int i;
+    int l;
+    int m;
+    int n;
+    int t;
+    int v;
+    int ms;
+    int ns;
+    int is;
     len_avg = lpr_len;
     m = -2;
     n = -1;
@@ -228,10 +266,14 @@ void idwt_sym_stride(double* cA, int len_cA, double* cD, double* lpr, double* hp
     }
 }
 
-void imodwt_per_stride(int M, double* cA, int len_cA, double* cD, double* filt, int lf, double* X, int istride, int ostride)
+void imodwt_per_stride(int M, const double* cA, int len_cA, const double* cD, const double* filt, int lf, double* X, int istride, int ostride)
 {
-    int len_avg, i, l, t;
-    int is, os;
+    int len_avg;
+    int i;
+    int l;
+    int t;
+    int is;
+    int os;
 
     len_avg = lf;
 
@@ -256,9 +298,19 @@ void imodwt_per_stride(int M, double* cA, int len_cA, double* cD, double* filt, 
 
 void idwt2_shift(int shift, int rows, int cols, double* lpr, double* hpr, int lf, double* A, double* H, double* V, double* D, double* oup)
 {
-    int i, k, N, ir, ic, J, dim1, dim2;
-    int istride, ostride;
-    double *cL, *cH, *X_lp;
+    int i;
+    int k;
+    int N;
+    int ir;
+    int ic;
+    int J;
+    int dim1;
+    int dim2;
+    int istride;
+    int ostride;
+    double* cL;
+    double* cH;
+    double* X_lp;
 
     N = rows > cols ? 2 * rows : 2 * cols;
 
@@ -325,9 +377,12 @@ void idwt2_shift(int shift, int rows, int cols, double* lpr, double* hpr, int lf
     free(cH);
 }
 
-int upsamp(double* x, int lenx, int M, double* y)
+int upsamp(const double* x, int lenx, int M, double* y)
 {
-    int N, i, j, k;
+    int N;
+    int i;
+    int j;
+    int k;
 
     if (M < 0) {
         return -1;
@@ -357,9 +412,12 @@ int upsamp(double* x, int lenx, int M, double* y)
     return N;
 }
 
-int upsamp2(double* x, int lenx, int M, double* y)
+int upsamp2(const double* x, int lenx, int M, double* y)
 {
-    int N, i, j, k;
+    int N;
+    int i;
+    int j;
+    int k;
     // upsamp2 returns even numbered output. Last value is set to zero
     if (M < 0) {
         return -1;
@@ -389,9 +447,10 @@ int upsamp2(double* x, int lenx, int M, double* y)
     return N;
 }
 
-int downsamp(double* x, int lenx, int M, double* y)
+int downsamp(const double* x, int lenx, int M, double* y)
 {
-    int N, i;
+    int N;
+    int i;
 
     if (M < 0) {
         return -1;
@@ -433,9 +492,10 @@ int per_ext(double *sig, int len, int a,double *oup) {
 }
 */
 
-int per_ext(double* sig, int len, int a, double* oup)
+int per_ext(const double* sig, int len, int a, double* oup)
 {
-    int i, len2;
+    int i;
+    int len2;
     double temp1;
     double temp2;
     for (i = 0; i < len; ++i) {
@@ -472,9 +532,10 @@ int symm_ext(double *sig, int len, int a, double *oup) {
 }
 */
 
-int symm_ext(double* sig, int len, int a, double* oup)
+int symm_ext(const double* sig, int len, int a, double* oup)
 {
-    int i, len2;
+    int i;
+    int len2;
     double temp1;
     double temp2;
     // oup is of length len + 2 * a
@@ -508,9 +569,8 @@ static int iabs(int N)
 {
     if (N >= 0) {
         return N;
-    } else {
-        return -N;
     }
+    return -N;
 }
 
 void circshift(double* array, int N, int L)
@@ -543,7 +603,9 @@ void circshift(double* array, int N, int L)
 
 int testSWTlength(int N, int J)
 {
-    int ret, div, i;
+    int ret;
+    int div;
+    int i;
     ret = 1;
 
     div = 1;
@@ -551,7 +613,7 @@ int testSWTlength(int N, int J)
         div *= 2;
     }
 
-    if (N % div) {
+    if ((N % div) != 0) {
         ret = 0;
     }
 
@@ -569,10 +631,11 @@ int wmaxiter(int sig_len, int filt_len)
     return lev;
 }
 
-static double entropy_s(double* x, int N)
+static double entropy_s(const double* x, int N)
 {
     int i;
-    double val, x2;
+    double val;
+    double x2;
 
     val = 0.0;
 
@@ -588,7 +651,8 @@ static double entropy_s(double* x, int N)
 static double entropy_t(double* x, int N, double t)
 {
     int i;
-    double val, x2;
+    double val;
+    double x2;
     if (t < 0) {
         printf("Threshold value must be >= 0");
         exit(1);
@@ -608,7 +672,8 @@ static double entropy_t(double* x, int N, double t)
 static double entropy_n(double* x, int N, double p)
 {
     int i;
-    double val, x2;
+    double val;
+    double x2;
     if (p < 1) {
         printf("Norm power value must be >= 1");
         exit(1);
@@ -622,10 +687,11 @@ static double entropy_n(double* x, int N, double p)
     return val;
 }
 
-static double entropy_l(double* x, int N)
+static double entropy_l(const double* x, int N)
 {
     int i;
-    double val, x2;
+    double val;
+    double x2;
 
     val = 0.0;
 
@@ -642,13 +708,13 @@ double costfunc(double* x, int N, char* entropy, double p)
 {
     double val;
 
-    if (!strcmp(entropy, "shannon")) {
+    if (strcmp(entropy, "shannon") == 0) {
         val = entropy_s(x, N);
-    } else if (!strcmp(entropy, "threshold")) {
+    } else if (strcmp(entropy, "threshold") == 0) {
         val = entropy_t(x, N, p);
-    } else if (!strcmp(entropy, "norm")) {
+    } else if (strcmp(entropy, "norm") == 0) {
         val = entropy_n(x, N, p);
-    } else if (!strcmp(entropy, "logenergy") || !strcmp(entropy, "log energy") || !strcmp(entropy, "energy")) {
+    } else if ((strcmp(entropy, "logenergy") == 0) || (strcmp(entropy, "log energy") == 0) || (strcmp(entropy, "energy") == 0)) {
         val = entropy_l(x, N);
     } else {
         printf("Entropy must be one of shannon, threshold, norm or energy");

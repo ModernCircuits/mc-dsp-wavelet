@@ -12,7 +12,9 @@ fft_object fft_init(int N, int sgn)
     fft_object obj = NULL;
     // Change N/2 to N-1 for longvector case
 
-    int twi_len, ct, out;
+    int twi_len;
+    int ct;
+    int out;
     out = dividebyN(N);
 
     if (out == 1) {
@@ -22,7 +24,8 @@ fft_object fft_init(int N, int sgn)
         twi_len = N;
         obj->lt = 0;
     } else {
-        int K, M;
+        int K;
+        int M;
         K = (int)pow(2.0, ceil(log10(N) / log10(2.0)));
 
         if (K < 2 * N - 2) {
@@ -52,7 +55,9 @@ fft_object fft_init(int N, int sgn)
 static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj, int sgn, int N, int l, int inc)
 {
 
-    int radix, m, ll;
+    int radix;
+    int m;
+    int ll;
     if (N > 1) {
         radix = obj->factors[inc];
         //printf("%d \n",radix);
@@ -475,7 +480,9 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         op[5].im = tau8i - tau9r;
 
     } else if (radix == 2) {
-        int k, tkm1, ind;
+        int k;
+        int tkm1;
+        int ind;
         fft_type wlr, wli;
         fft_type tau1r, tau1i, tau2r, tau2i;
         m = N / 2;
@@ -504,7 +511,10 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         }
 
     } else if (radix == 3) {
-        int k, tkm1, tkm2, ind;
+        int k;
+        int tkm1;
+        int tkm2;
+        int ind;
         fft_type wlr, wli, wl2r, wl2i;
         fft_type tau0r, tau0i, tau1r, tau1i, tau2r, tau2i;
         fft_type ar, ai, br, bi, cr, ci;
@@ -555,7 +565,11 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         }
 
     } else if (radix == 4) {
-        int k, tkm1, tkm2, tkm3, ind;
+        int k;
+        int tkm1;
+        int tkm2;
+        int tkm3;
+        int ind;
         fft_type wlr, wli, wl2r, wl2i, wl3r, wl3i;
         fft_type tau0r, tau0i, tau1r, tau1i, tau2r, tau2i, tau3r, tau3i;
         fft_type ar, ai, br, bi, cr, ci, dr, di;
@@ -661,7 +675,12 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         }
 
     } else if (radix == 5) {
-        int k, tkm1, tkm2, tkm3, tkm4, ind;
+        int k;
+        int tkm1;
+        int tkm2;
+        int tkm3;
+        int tkm4;
+        int ind;
         fft_type wlr, wli, wl2r, wl2i, wl3r, wl3i, wl4r, wl4i;
         fft_type tau0r, tau0i, tau1r, tau1i, tau2r, tau2i, tau3r, tau3i;
         fft_type ar, ai, br, bi, cr, ci, dr, di, er, ei;
@@ -846,7 +865,14 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         }
 
     } else if (radix == 7) {
-        int k, tkm1, tkm2, tkm3, tkm4, tkm5, tkm6, ind;
+        int k;
+        int tkm1;
+        int tkm2;
+        int tkm3;
+        int tkm4;
+        int tkm5;
+        int tkm6;
+        int ind;
         fft_type wlr, wli, wl2r, wl2i, wl3r, wl3i, wl4r, wl4i, wl5r, wl5i, wl6r, wl6i;
         fft_type tau0r, tau0i, tau1r, tau1i, tau2r, tau2i, tau3r, tau3i;
         fft_type ar, ai, br, bi, cr, ci, dr, di, er, ei, fr, fi, gr, gi;
@@ -1111,7 +1137,15 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         }
 
     } else if (radix == 8) {
-        int k, tkm1, tkm2, tkm3, tkm4, tkm5, tkm6, tkm7, ind;
+        int k;
+        int tkm1;
+        int tkm2;
+        int tkm3;
+        int tkm4;
+        int tkm5;
+        int tkm6;
+        int tkm7;
+        int ind;
         fft_type wlr, wli, wl2r, wl2i, wl3r, wl3i, wl4r, wl4i, wl5r, wl5i, wl6r, wl6i, wl7r, wl7i;
         fft_type tau0r, tau0i, tau1r, tau1i, tau2r, tau2i, tau3r, tau3i;
         fft_type ar, ai, br, bi, cr, ci, dr, di, er, ei, fr, fi, gr, gi, hr, hi;
@@ -1285,8 +1319,15 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         }
 
     } else {
-        int k, i, ind;
-        int M, tkm, u, v, t, tt;
+        int k;
+        int i;
+        int ind;
+        int M;
+        int tkm;
+        int u;
+        int v;
+        int t;
+        int tt;
         fft_type temp1r, temp1i, temp2r, temp2i;
         fft_type* wlr = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
         fft_type* wli = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
@@ -1355,8 +1396,9 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
                 for (v = 0; v < M; v++) {
                     //int ind2 = (u+v)%M;
                     t = (u + 1) * (v + 1);
-                    while (t >= radix)
+                    while (t >= radix) {
                         t -= radix;
+                    }
                     tt = t - 1;
 
                     temp1r += c1[tt] * taur[v];
@@ -1388,7 +1430,9 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
 static void bluestein_exp(fft_data* hl, fft_data* hlt, int len, int M)
 {
     fft_type PI, theta, angle;
-    int l2, len2, i;
+    int l2;
+    int len2;
+    int i;
     PI = 3.1415926535897932384626433832795;
     theta = PI / len;
     l2 = 0;
@@ -1420,8 +1464,13 @@ static void bluestein_exp(fft_data* hl, fft_data* hlt, int len, int M)
 static void bluestein_fft(fft_data* data, fft_data* oup, fft_object obj, int sgn, int N)
 {
 
-    int K, M, ii, i;
-    int def_lt, def_N, def_sgn;
+    int K;
+    int M;
+    int ii;
+    int i;
+    int def_lt;
+    int def_N;
+    int def_sgn;
     fft_type scale, temp;
     fft_data* yn;
     fft_data* hk;
@@ -1534,8 +1583,10 @@ void fft_exec(fft_object obj, fft_data* inp, fft_data* oup)
         //fftct_radix3_dit_rec(inp,oup,obj, obj->sgn, obj->N);
         //fftct_mixed_rec(inp,oup,obj, obj->sgn, obj->N);
         //printf("%f \n", 1.785);
-        int l, inc;
-        int nn, sgn1;
+        int l;
+        int inc;
+        int nn;
+        int sgn1;
         nn = obj->N;
         sgn1 = obj->sgn;
         l = 1;
@@ -1544,7 +1595,8 @@ void fft_exec(fft_object obj, fft_data* inp, fft_data* oup)
         mixed_radix_dit_rec(oup, inp, obj, sgn1, nn, l, inc);
     } else if (obj->lt == 1) {
         //printf("%f \n", 1.785);
-        int nn, sgn1;
+        int nn;
+        int sgn1;
         nn = obj->N;
         sgn1 = obj->sgn;
         bluestein_fft(inp, oup, obj, sgn1, nn);
@@ -1623,7 +1675,12 @@ int dividebyN(int N)
 
 int factors(int M, int* arr)
 {
-    int i, N, num, mult, m1, m2;
+    int i;
+    int N;
+    int num;
+    int mult;
+    int m1;
+    int m2;
     i = 0;
     N = M;
     while (N % 53 == 0) {
@@ -1741,7 +1798,8 @@ int factors(int M, int* arr)
 
 void twiddle(fft_data* vec, int N, int radix)
 {
-    int K, KL;
+    int K;
+    int KL;
     fft_type theta, theta2;
     theta = PI2 / N;
     KL = N / radix;
@@ -1755,9 +1813,14 @@ void twiddle(fft_data* vec, int N, int radix)
     }
 }
 
-void longvectorN(fft_data* sig, int* array, int tx)
+void longvectorN(fft_data* sig, const int* array, int tx)
 {
-    int L, i, Ls, ct, j, k;
+    int L;
+    int i;
+    int Ls;
+    int ct;
+    int j;
+    int k;
     fft_type theta;
     L = 1;
     ct = 0;

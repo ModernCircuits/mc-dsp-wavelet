@@ -2,12 +2,23 @@
 
 void meyer(int N, double lb, double ub, double* phi, double* psi, double* tgrid)
 {
-    int M, i;
+    int M;
+    int i;
     double* w;
-    double delta, j;
-    double theta, x, x2, x3, x4, v, cs, sn;
+    double delta;
+    double j;
+    double theta;
+    double x;
+    double x2;
+    double x3;
+    double x4;
+    double v;
+    double cs;
+    double sn;
     double wf;
-    fft_data *phiw, *psiw, *oup;
+    fft_data* phiw;
+    fft_data* psiw;
+    fft_data* oup;
     fft_object obj;
 
     M = divideby(N, 2);
@@ -92,7 +103,11 @@ void meyer(int N, double lb, double ub, double* phi, double* psi, double* tgrid)
 
 void gauss(int N, int p, double lb, double ub, double* psi, double* t)
 {
-    double delta, num, den, t2, t4;
+    double delta;
+    double num;
+    double den;
+    double t2;
+    double t4;
     int i;
 
     if (lb >= ub) {

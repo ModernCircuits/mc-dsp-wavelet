@@ -2,9 +2,19 @@
 
 static void nsfft_fd(fft_object obj, fft_data* inp, fft_data* oup, double lb, double ub, double* w)
 {
-    int M, N, i, j, L;
-    double delta, den, theta, tempr, tempi, plb;
-    double *temp1, *temp2;
+    int M;
+    int N;
+    int i;
+    int j;
+    int L;
+    double delta;
+    double den;
+    double theta;
+    double tempr;
+    double tempi;
+    double plb;
+    double* temp1;
+    double* temp2;
 
     N = obj->N;
     L = N / 2;
@@ -64,10 +74,18 @@ static void nsfft_fd(fft_object obj, fft_data* inp, fft_data* oup, double lb, do
 
 static void nsfft_bk(fft_object obj, fft_data* inp, fft_data* oup, double lb, double ub, double* t)
 {
-    int M, N, i, j, L;
+    int M;
+    int N;
+    int i;
+    int j;
+    int L;
     double* w;
-    double delta, den, plb, theta;
-    double *temp1, *temp2;
+    double delta;
+    double den;
+    double plb;
+    double theta;
+    double* temp1;
+    double* temp2;
     fft_data* inpt;
 
     N = obj->N;
@@ -144,9 +162,8 @@ static double fix(double x)
     // Rounds to the integer nearest to zero
     if (x >= 0.) {
         return floor(x);
-    } else {
-        return ceil(x);
     }
+    return ceil(x);
 }
 
 int nint(double N)
@@ -175,8 +192,18 @@ double cwt_gamma(double x)
 
     // numerator and denominator coefficients for 1 <= x <= 2
 
-    double y, oup, fact, sum, y2, yi, z, nsum, dsum;
-    int swi, n, i;
+    double y;
+    double oup;
+    double fact;
+    double sum;
+    double y2;
+    double yi;
+    double z;
+    double nsum;
+    double dsum;
+    int swi;
+    int n;
+    int i;
 
     double spi = 0.9189385332046727417803297;
     double pi = 3.1415926535897932384626434;
@@ -286,7 +313,7 @@ double cwt_gamma(double x)
         }
     }
 
-    if (swi) {
+    if (swi != 0) {
         oup = -oup;
     }
     if (fact != 1.) {

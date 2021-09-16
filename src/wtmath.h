@@ -10,39 +10,39 @@ Copyright (c) 2014, Rafat Hussain
 extern "C" {
 #endif
 
-void dwt_per_stride(double* inp, int N, double* lpd, double* hpd, int lpd_len,
+void dwt_per_stride(const double* inp, int N, const double* lpd, const double* hpd, int lpd_len,
     double* cA, int len_cA, double* cD, int istride, int ostride);
 
-void dwt_sym_stride(double* inp, int N, double* lpd, double* hpd, int lpd_len,
+void dwt_sym_stride(const double* inp, int N, const double* lpd, const double* hpd, int lpd_len,
     double* cA, int len_cA, double* cD, int istride, int ostride);
 
-void modwt_per_stride(int M, double* inp, int N, double* filt, int lpd_len,
+void modwt_per_stride(int M, const double* inp, int N, const double* filt, int lpd_len,
     double* cA, int len_cA, double* cD, int istride, int ostride);
 
-void swt_per_stride(int M, double* inp, int N, double* lpd, double* hpd, int lpd_len,
+void swt_per_stride(int M, const double* inp, int N, const double* lpd, const double* hpd, int lpd_len,
     double* cA, int len_cA, double* cD, int istride, int ostride);
 
-void idwt_per_stride(double* cA, int len_cA, double* cD, double* lpr, double* hpr,
+void idwt_per_stride(const double* cA, int len_cA, const double* cD, const double* lpr, const double* hpr,
     int lpr_len, double* X, int istride, int ostride);
 
-void idwt_sym_stride(double* cA, int len_cA, double* cD, double* lpr, double* hpr,
+void idwt_sym_stride(const double* cA, int len_cA, const double* cD, const double* lpr, const double* hpr,
     int lpr_len, double* X, int istride, int ostride);
 
-void imodwt_per_stride(int M, double* cA, int len_cA, double* cD, double* filt,
+void imodwt_per_stride(int M, const double* cA, int len_cA, const double* cD, const double* filt,
     int lf, double* X, int istride, int ostride);
 
 void idwt2_shift(int shift, int rows, int cols, double* lpr, double* hpr, int lf,
     double* A, double* H, double* V, double* D, double* oup);
 
-int upsamp(double* x, int lenx, int M, double* y);
+int upsamp(const double* x, int lenx, int M, double* y);
 
-int upsamp2(double* x, int lenx, int M, double* y);
+int upsamp2(const double* x, int lenx, int M, double* y);
 
-int downsamp(double* x, int lenx, int M, double* y);
+int downsamp(const double* x, int lenx, int M, double* y);
 
-int per_ext(double* sig, int len, int a, double* oup);
+int per_ext(const double* sig, int len, int a, double* oup);
 
-int symm_ext(double* sig, int len, int a, double* oup);
+int symm_ext(const double* sig, int len, int a, double* oup);
 
 void circshift(double* array, int N, int L);
 

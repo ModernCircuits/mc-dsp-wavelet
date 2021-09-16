@@ -25,14 +25,18 @@ double factorial(int N)
 
     return fact[N];
 }
-static void wave_function(int nk, double dt, int mother, double param, double scale1, double* kwave, double pi, double* period1,
+static void wave_function(int nk, double dt, int mother, double param, double scale1, const double* kwave, double pi, double* period1,
     double* coi1, fft_data* daughter)
 {
 
-    double norm, expnt, fourier_factor;
-    int k, m;
+    double norm;
+    double expnt;
+    double fourier_factor;
+    int k;
+    int m;
     double temp;
-    int sign, re;
+    int sign;
+    int re;
 
     if (mother == 0) {
         //MORLET
@@ -113,16 +117,27 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
 }
 
 void cwavelet(const double* y, int N, double dt, int mother, double param, double s0, double dj, int jtot, int npad,
-    double* wave, double* scale, double* period, double* coi)
+    double* wave, const double* scale, double* period, double* coi)
 {
 
-    int i, j, k, iter;
-    double ymean, freq1, pi, period1, coi1;
-    double tmp1, tmp2;
+    int i;
+    int j;
+    int k;
+    int iter;
+    double ymean;
+    double freq1;
+    double pi;
+    double period1;
+    double coi1;
+    double tmp1;
+    double tmp2;
     double scale1;
     double* kwave;
-    fft_object obj, iobj;
-    fft_data *ypad, *yfft, *daughter;
+    fft_object obj;
+    fft_object iobj;
+    fft_data* ypad;
+    fft_data* yfft;
+    fft_data* daughter;
 
     (void)s0;
     (void)dj; /* yes, we need these parameters unused */
@@ -217,8 +232,10 @@ void cwavelet(const double* y, int N, double dt, int mother, double param, doubl
 
 void psi0(int mother, double param, double* val, int* real)
 {
-    double pi, coeff;
-    int m, sign;
+    double pi;
+    double coeff;
+    int m;
+    int sign;
 
     m = (int)param;
     pi = 4.0 * atan(1.0);
@@ -262,8 +279,10 @@ void psi0(int mother, double param, double* val, int* real)
 
 static int maxabs(double* array, int N)
 {
-    double maxval, temp;
-    int i, index;
+    double maxval;
+    double temp;
+    int i;
+    int index;
     maxval = 0.0;
     index = -1;
 
@@ -280,10 +299,22 @@ static int maxabs(double* array, int N)
 
 double cdelta(int mother, double param, double psi0)
 {
-    int N, i, j, iter;
-    double *delta, *scale, *period, *wave, *coi, *mval;
-    double den, cdel;
-    double subscale, dt, dj, s0;
+    int N;
+    int i;
+    int j;
+    int iter;
+    double* delta;
+    double* scale;
+    double* period;
+    double* wave;
+    double* coi;
+    double* mval;
+    double den;
+    double cdel;
+    double subscale;
+    double dt;
+    double dj;
+    double s0;
     int jtot;
     int maxarr;
 
@@ -354,10 +385,13 @@ double cdelta(int mother, double param, double psi0)
     return cdel;
 }
 
-void icwavelet(double* wave, int N, double* scale, int jtot, double dt, double dj, double cdelta, double psi0, double* oup)
+void icwavelet(const double* wave, int N, double* scale, int jtot, double dt, double dj, double cdelta, double psi0, double* oup)
 {
-    int i, j, iter;
-    double den, coeff;
+    int i;
+    int j;
+    int iter;
+    double den;
+    double coeff;
 
     coeff = sqrt(dt) * dj / (cdelta * psi0);
 

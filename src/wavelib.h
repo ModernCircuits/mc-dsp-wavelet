@@ -230,7 +230,7 @@ double* getSWTmra(wt_object wt, double* wavecoeffs);
 
 void modwt(wt_object wt, const double* inp);
 
-void imodwt(wt_object wt, double* dwtop);
+void imodwt(wt_object wt, double* oup);
 
 double* getMODWTmra(wt_object wt, double* wavecoeffs);
 
@@ -272,7 +272,7 @@ void idwt2(wt2_object wt, double* wavecoeff, double* oup);
 
 double* swt2(wt2_object wt, double* inp);
 
-void iswt2(wt2_object wt, double* wavecoeffs, double* oup);
+void iswt2(wt2_object wt, const double* wavecoeffs, double* oup);
 
 double* modwt2(wt2_object wt, double* inp);
 

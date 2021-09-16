@@ -7,7 +7,7 @@ Copyright (c) 2016, Holger Nahrstaedt
 
 #include "conv.h"
 #include <stdio.h>
-#define _USE_MATH_DEFINES
+#define USE_MATH_DEFINES
 #include "math.h"
 
 #ifdef __cplusplus

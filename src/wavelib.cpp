@@ -40,7 +40,9 @@ wave_object wave_init(const char* wname)
 
 wt_object wt_init(wave_object wave, const char* method, int siglength, int J)
 {
-    int size, i, MaxIter;
+    int size;
+    int i;
+    int MaxIter;
     wt_object obj = NULL;
 
     size = wave->filtlength;
@@ -61,12 +63,12 @@ wt_object wt_init(wave_object wave, const char* method, int siglength, int J)
         obj = (wt_object)malloc(sizeof(struct wt_set) + sizeof(double) * (siglength + 2 * J * (size + 1)));
         obj->outlength = siglength + 2 * J * (size + 1); // Default
         strcpy(obj->ext, "sym"); // Default
-    } else if (!strcmp(method, "dwt") || !strcmp(method, "DWT")) {
+    } else if ((strcmp(method, "dwt") == 0) || (strcmp(method, "DWT") == 0)) {
         obj = (wt_object)malloc(sizeof(struct wt_set) + sizeof(double) * (siglength + 2 * J * (size + 1)));
         obj->outlength = siglength + 2 * J * (size + 1); // Default
         strcpy(obj->ext, "sym"); // Default
-    } else if (!strcmp(method, "swt") || !strcmp(method, "SWT")) {
-        if (!testSWTlength(siglength, J)) {
+    } else if ((strcmp(method, "swt") == 0) || (strcmp(method, "SWT") == 0)) {
+        if (testSWTlength(siglength, J) == 0) {
             printf("\n For SWT the signal length must be a multiple of 2^J. \n");
             exit(-1);
         }
@@ -74,12 +76,12 @@ wt_object wt_init(wave_object wave, const char* method, int siglength, int J)
         obj = (wt_object)malloc(sizeof(struct wt_set) + sizeof(double) * (siglength * (J + 1)));
         obj->outlength = siglength * (J + 1); // Default
         strcpy(obj->ext, "per"); // Default
-    } else if (!strcmp(method, "modwt") || !strcmp(method, "MODWT")) {
+    } else if ((strcmp(method, "modwt") == 0) || (strcmp(method, "MODWT") == 0)) {
 
-        if (!strstr(wave->wname, "haar")) {
-            if (!strstr(wave->wname, "db")) {
-                if (!strstr(wave->wname, "sym")) {
-                    if (!strstr(wave->wname, "coif")) {
+        if (strstr(wave->wname, "haar") == nullptr) {
+            if (strstr(wave->wname, "db") == nullptr) {
+                if (strstr(wave->wname, "sym") == nullptr) {
+                    if (strstr(wave->wname, "coif") == nullptr) {
                         printf("\n MODWT is only implemented for orthogonal wavelet families - db, sym and coif \n");
                         exit(-1);
                     }
@@ -111,15 +113,15 @@ wt_object wt_init(wave_object wave, const char* method, int siglength, int J)
     obj->cfftset = 0;
     obj->lenlength = J + 2;
     obj->output = &obj->params[0];
-    if (!strcmp(method, "dwt") || !strcmp(method, "DWT")) {
+    if ((strcmp(method, "dwt") == 0) || (strcmp(method, "DWT") == 0)) {
         for (i = 0; i < siglength + 2 * J * (size + 1); ++i) {
             obj->params[i] = 0.0;
         }
-    } else if (!strcmp(method, "swt") || !strcmp(method, "SWT")) {
+    } else if ((strcmp(method, "swt") == 0) || (strcmp(method, "SWT") == 0)) {
         for (i = 0; i < siglength * (J + 1); ++i) {
             obj->params[i] = 0.0;
         }
-    } else if (!strcmp(method, "modwt") || !strcmp(method, "MODWT")) {
+    } else if ((strcmp(method, "modwt") == 0) || (strcmp(method, "MODWT") == 0)) {
         for (i = 0; i < siglength * 2 * (J + 1); ++i) {
             obj->params[i] = 0.0;
         }
@@ -131,7 +133,13 @@ wt_object wt_init(wave_object wave, const char* method, int siglength, int J)
 
 wtree_object wtree_init(wave_object wave, int siglength, int J)
 {
-    int size, i, MaxIter, temp, temp2, elength, nodes;
+    int size;
+    int i;
+    int MaxIter;
+    int temp;
+    int temp2;
+    int elength;
+    int nodes;
     wtree_object obj = NULL;
 
     size = wave->filtlength;
@@ -192,7 +200,15 @@ wtree_object wtree_init(wave_object wave, int siglength, int J)
 
 wpt_object wpt_init(wave_object wave, int siglength, int J)
 {
-    int size, i, MaxIter, temp, nodes, elength, p2, N, lp;
+    int size;
+    int i;
+    int MaxIter;
+    int temp;
+    int nodes;
+    int elength;
+    int p2;
+    int N;
+    int lp;
     wpt_object obj = NULL;
 
     size = wave->filtlength;
@@ -268,10 +284,16 @@ wpt_object wpt_init(wave_object wave, int siglength, int J)
 cwt_object cwt_init(const char* wave, double param, int siglength, double dt, int J)
 {
     cwt_object obj = NULL;
-    int N, i, nj2, ibase2, mother;
-    double s0, dj;
+    int N;
+    int i;
+    int nj2;
+    int ibase2;
+    int mother;
+    double s0;
+    double dj;
     double t1;
-    int m, odd;
+    int m;
+    int odd;
     const char* pdefault = "pow";
 
     m = (int)param;
@@ -284,7 +306,7 @@ cwt_object cwt_init(const char* wave, double param, int siglength, double dt, in
     nj2 = 2 * N * J;
     obj = (cwt_object)malloc(sizeof(struct cwt_set) + sizeof(double) * (nj2 + 2 * J + N));
 
-    if (!strcmp(wave, "morlet") || !strcmp(wave, "morl")) {
+    if ((strcmp(wave, "morlet") == 0) || (strcmp(wave, "morl") == 0)) {
         s0 = 2 * dt;
         dj = 0.4875;
         mother = 0;
@@ -297,7 +319,7 @@ cwt_object cwt_init(const char* wave, double param, int siglength, double dt, in
         }
         strcpy(obj->wave, "morlet");
 
-    } else if (!strcmp(wave, "paul")) {
+    } else if (strcmp(wave, "paul") == 0) {
         s0 = 2 * dt;
         dj = 0.4875;
         mother = 1;
@@ -310,7 +332,7 @@ cwt_object cwt_init(const char* wave, double param, int siglength, double dt, in
         }
         strcpy(obj->wave, "paul");
 
-    } else if (!strcmp(wave, "dgauss") || !strcmp(wave, "dog")) {
+    } else if ((strcmp(wave, "dgauss") == 0) || (strcmp(wave, "dog") == 0)) {
         s0 = 2 * dt;
         dj = 0.4875;
         mother = 2;
@@ -356,7 +378,12 @@ cwt_object cwt_init(const char* wave, double param, int siglength, double dt, in
 
 wt2_object wt2_init(wave_object wave, const char* method, int rows, int cols, int J)
 {
-    int size, i, MaxIter, MaxRows, MaxCols, sumacc;
+    int size;
+    int i;
+    int MaxIter;
+    int MaxRows;
+    int MaxCols;
+    int sumacc;
     wt2_object obj = NULL;
 
     size = wave->filtlength;
@@ -384,12 +411,12 @@ wt2_object wt2_init(wave_object wave, const char* method, int rows, int cols, in
         obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
         obj->outlength = 0; // Default
         strcpy(obj->ext, "per");
-    } else if (!strcmp(method, "dwt") || !strcmp(method, "DWT")) {
+    } else if ((strcmp(method, "dwt") == 0) || (strcmp(method, "DWT") == 0)) {
         obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
         obj->outlength = 0; // Default
         strcpy(obj->ext, "per");
-    } else if (!strcmp(method, "swt") || !strcmp(method, "SWT")) {
-        if (!testSWTlength(rows, J) || !testSWTlength(cols, J)) {
+    } else if ((strcmp(method, "swt") == 0) || (strcmp(method, "SWT") == 0)) {
+        if ((testSWTlength(rows, J) == 0) || (testSWTlength(cols, J) == 0)) {
             printf("\n For SWT data rows and columns must be a multiple of 2^J. \n");
             exit(-1);
         }
@@ -397,11 +424,11 @@ wt2_object wt2_init(wave_object wave, const char* method, int rows, int cols, in
         obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
         obj->outlength = 0; // Default
         strcpy(obj->ext, "per");
-    } else if (!strcmp(method, "modwt") || !strcmp(method, "MODWT")) {
-        if (!strstr(wave->wname, "haar")) {
-            if (!strstr(wave->wname, "db")) {
-                if (!strstr(wave->wname, "sym")) {
-                    if (!strstr(wave->wname, "coif")) {
+    } else if ((strcmp(method, "modwt") == 0) || (strcmp(method, "MODWT") == 0)) {
+        if (strstr(wave->wname, "haar") == nullptr) {
+            if (strstr(wave->wname, "db") == nullptr) {
+                if (strstr(wave->wname, "sym") == nullptr) {
+                    if (strstr(wave->wname, "coif") == nullptr) {
                         printf("\n MODWT is only implemented for orthogonal wavelet families - db, sym and coif \n");
                         exit(-1);
                     }
@@ -432,9 +459,9 @@ wt2_object wt2_init(wave_object wave, const char* method, int rows, int cols, in
 
 static void wconv(wt_object wt, double* sig, int N, double* filt, int L, double* oup)
 {
-    if (!strcmp(wt->cmethod, "direct")) {
+    if (strcmp(wt->cmethod, "direct") == 0) {
         conv_direct(sig, N, filt, L, oup);
-    } else if (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT")) {
+    } else if ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0)) {
         if (wt->cfftset == 0) {
             wt->cobj = conv_init(N, L);
             conv_fft(wt->cobj, sig, filt, oup);
@@ -454,9 +481,14 @@ static void dwt_per(wt_object wt, double* inp, int N, double* cA, int len_cA, do
     dwt_per_stride(inp, N, wt->wave->lpd, wt->wave->hpd, wt->wave->lpd_len, cA, len_cA, cD, 1, 1);
 }
 
-static void wtree_per(wtree_object wt, double* inp, int N, double* cA, int len_cA, double* cD)
+static void wtree_per(wtree_object wt, const double* inp, int N, double* cA, int len_cA, double* cD)
 {
-    int l, l2, isodd, i, t, len_avg;
+    int l;
+    int l2;
+    int isodd;
+    int i;
+    int t;
+    int len_avg;
 
     len_avg = wt->wave->lpd_len;
     l2 = len_avg / 2;
@@ -500,9 +532,14 @@ static void wtree_per(wtree_object wt, double* inp, int N, double* cA, int len_c
     }
 }
 
-static void dwpt_per(wpt_object wt, double* inp, int N, double* cA, int len_cA, double* cD)
+static void dwpt_per(wpt_object wt, const double* inp, int N, double* cA, int len_cA, double* cD)
 {
-    int l, l2, isodd, i, t, len_avg;
+    int l;
+    int l2;
+    int isodd;
+    int i;
+    int t;
+    int len_avg;
 
     len_avg = wt->wave->lpd_len;
     l2 = len_avg / 2;
@@ -552,9 +589,12 @@ static void dwt_sym(wt_object wt, double* inp, int N, double* cA, int len_cA, do
     dwt_sym_stride(inp, N, wt->wave->lpd, wt->wave->hpd, wt->wave->lpd_len, cA, len_cA, cD, 1, 1);
 }
 
-static void wtree_sym(wtree_object wt, double* inp, int N, double* cA, int len_cA, double* cD)
+static void wtree_sym(wtree_object wt, const double* inp, int N, double* cA, int len_cA, double* cD)
 {
-    int i, l, t, len_avg;
+    int i;
+    int l;
+    int t;
+    int len_avg;
 
     len_avg = wt->wave->lpd_len;
 
@@ -577,9 +617,12 @@ static void wtree_sym(wtree_object wt, double* inp, int N, double* cA, int len_c
     }
 }
 
-static void dwpt_sym(wpt_object wt, double* inp, int N, double* cA, int len_cA, double* cD)
+static void dwpt_sym(wpt_object wt, const double* inp, int N, double* cA, int len_cA, double* cD)
 {
-    int i, l, t, len_avg;
+    int i;
+    int l;
+    int t;
+    int len_avg;
 
     len_avg = wt->wave->lpd_len;
 
@@ -604,21 +647,24 @@ static void dwpt_sym(wpt_object wt, double* inp, int N, double* cA, int len_cA, 
 
 static void dwt1(wt_object wt, double* sig, int len_sig, double* cA, double* cD)
 {
-    int len_avg, D, lf;
-    double *signal, *cA_undec;
+    int len_avg;
+    int D;
+    int lf;
+    double* signal;
+    double* cA_undec;
     len_avg = (wt->wave->lpd_len + wt->wave->hpd_len) / 2;
     //len_sig = 2 * (int)ceil((double)len_sig / 2.0);
 
     D = 2;
 
-    if (!strcmp(wt->ext, "per")) {
+    if (strcmp(wt->ext, "per") == 0) {
         signal = (double*)malloc(sizeof(double) * (len_sig + len_avg + (len_sig % 2)));
 
         len_sig = per_ext(sig, len_sig, len_avg / 2, signal);
 
         cA_undec = (double*)malloc(sizeof(double) * (len_sig + len_avg + wt->wave->lpd_len - 1));
 
-        if (wt->wave->lpd_len == wt->wave->hpd_len && (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT"))) {
+        if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
             wt->cobj = conv_init(len_sig + len_avg, wt->wave->lpd_len);
             wt->cfftset = 1;
         } else if (!(wt->wave->lpd_len == wt->wave->hpd_len)) {
@@ -633,7 +679,7 @@ static void dwt1(wt_object wt, double* sig, int len_sig, double* cA, double* cD)
         wconv(wt, signal, len_sig + len_avg, wt->wave->hpd, wt->wave->hpd_len, cA_undec);
 
         downsamp(cA_undec + len_avg, len_sig, D, cD);
-    } else if (!strcmp(wt->ext, "sym")) {
+    } else if (strcmp(wt->ext, "sym") == 0) {
         //printf("\n YES %s \n", wt->ext);
         lf = wt->wave->lpd_len; // lpd and hpd have the same length
 
@@ -643,7 +689,7 @@ static void dwt1(wt_object wt, double* sig, int len_sig, double* cA, double* cD)
 
         cA_undec = (double*)malloc(sizeof(double) * (len_sig + 3 * (lf - 1)));
 
-        if (wt->wave->lpd_len == wt->wave->hpd_len && (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT"))) {
+        if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
             wt->cobj = conv_init(len_sig + 2 * (lf - 1), lf);
             wt->cfftset = 1;
         } else if (!(wt->wave->lpd_len == wt->wave->hpd_len)) {
@@ -663,7 +709,7 @@ static void dwt1(wt_object wt, double* sig, int len_sig, double* cA, double* cD)
         exit(-1);
     }
 
-    if (wt->wave->lpd_len == wt->wave->hpd_len && (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT"))) {
+    if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
         free_conv(wt->cobj);
         wt->cfftset = 0;
     }
@@ -674,9 +720,15 @@ static void dwt1(wt_object wt, double* sig, int len_sig, double* cA, double* cD)
 
 void dwt(wt_object wt, const double* inp)
 {
-    int i, J, temp_len, iter, N, lp;
+    int i;
+    int J;
+    int temp_len;
+    int iter;
+    int N;
+    int lp;
     int len_cA;
-    double *orig, *orig2;
+    double* orig;
+    double* orig2;
 
     temp_len = wt->siglength;
     J = wt->J;
@@ -710,7 +762,7 @@ void dwt(wt_object wt, const double* inp)
     N = temp_len;
     lp = wt->wave->lpd_len;
 
-    if (!strcmp(wt->ext, "per")) {
+    if (strcmp(wt->ext, "per") == 0) {
         i = J;
         while (i > 0) {
             N = (int)ceil((double)N / 2.0);
@@ -725,7 +777,7 @@ void dwt(wt_object wt, const double* inp)
         for (iter = 0; iter < J; ++iter) {
             len_cA = wt->length[J - iter];
             N -= len_cA;
-            if (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT")) {
+            if ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0)) {
                 dwt1(wt, orig, temp_len, orig2, wt->params + N);
             } else {
                 dwt_per(wt, orig, temp_len, orig2, len_cA, wt->params + N);
@@ -741,7 +793,7 @@ void dwt(wt_object wt, const double* inp)
                 }
             }
         }
-    } else if (!strcmp(wt->ext, "sym")) {
+    } else if (strcmp(wt->ext, "sym") == 0) {
         //printf("\n YES %s \n", wt->ext);
         i = J;
         while (i > 0) {
@@ -758,7 +810,7 @@ void dwt(wt_object wt, const double* inp)
         for (iter = 0; iter < J; ++iter) {
             len_cA = wt->length[J - iter];
             N -= len_cA;
-            if (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT")) {
+            if ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0)) {
                 dwt1(wt, orig, temp_len, orig2, wt->params + N);
             } else {
                 dwt_sym(wt, orig, temp_len, orig2, len_cA, wt->params + N);
@@ -784,18 +836,30 @@ void dwt(wt_object wt, const double* inp)
     free(orig2);
 }
 
-static void getDWTRecCoeff(double* coeff, int* length, const char* ctype, const char* ext, int level, int J, double* lpr,
+static void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, const char* ext, int level, int J, double* lpr,
     double* hpr, int lf, int siglength, double* reccoeff)
 {
 
-    int i, j, k, det_len, N, l, m, n, v, t, l2;
-    double *out, *X_lp, *filt;
+    int i;
+    int j;
+    int k;
+    int det_len;
+    int N;
+    int l;
+    int m;
+    int n;
+    int v;
+    int t;
+    int l2;
+    double* out;
+    double* X_lp;
+    double* filt;
     out = (double*)malloc(sizeof(double) * (siglength + 1));
     l2 = lf / 2;
     m = -2;
     n = -1;
-    if (!strcmp(ext, "per")) {
-        if (!strcmp((ctype), "appx")) {
+    if (strcmp(ext, "per") == 0) {
+        if (strcmp((ctype), "appx") == 0) {
             det_len = length[0];
         } else {
             det_len = length[J - level + 1];
@@ -811,7 +875,7 @@ static void getDWTRecCoeff(double* coeff, int* length, const char* ctype, const 
 
         for (j = level; j > 0; --j) {
 
-            if (!strcmp((ctype), "det") && j == level) {
+            if ((strcmp((ctype), "det") == 0) && j == level) {
                 filt = hpr;
             } else {
                 filt = lpr;
@@ -851,8 +915,8 @@ static void getDWTRecCoeff(double* coeff, int* length, const char* ctype, const 
 
         free(X_lp);
 
-    } else if (!strcmp(ext, "sym")) {
-        if (!strcmp((ctype), "appx")) {
+    } else if (strcmp(ext, "sym") == 0) {
+        if (strcmp((ctype), "appx") == 0) {
             det_len = length[0];
         } else {
             det_len = length[J - level + 1];
@@ -868,7 +932,7 @@ static void getDWTRecCoeff(double* coeff, int* length, const char* ctype, const 
 
         for (j = level; j > 0; --j) {
 
-            if (!strcmp((ctype), "det") && j == level) {
+            if ((strcmp((ctype), "det") == 0) && j == level) {
                 filt = hpr;
             } else {
                 filt = lpr;
@@ -917,7 +981,10 @@ static void getDWTRecCoeff(double* coeff, int* length, const char* ctype, const 
 
 double* getDWTmra(wt_object wt, double* wavecoeffs)
 {
-    int i, J, access, N;
+    int i;
+    int J;
+    int access;
+    int N;
     double* mra;
     J = wt->J;
     mra = (double*)malloc(sizeof(double) * wt->siglength * (J + 1));
@@ -939,8 +1006,20 @@ double* getDWTmra(wt_object wt, double* wavecoeffs)
 
 void wtree(wtree_object wt, const double* inp)
 {
-    int i, J, temp_len, iter, N, lp, p2, k, N2, Np;
-    int len_cA, t, t2, it1;
+    int i;
+    int J;
+    int temp_len;
+    int iter;
+    int N;
+    int lp;
+    int p2;
+    int k;
+    int N2;
+    int Np;
+    int len_cA;
+    int t;
+    int t2;
+    int it1;
     double* orig;
 
     temp_len = wt->siglength;
@@ -972,7 +1051,7 @@ void wtree(wtree_object wt, const double* inp)
     lp = wt->wave->lpd_len;
     p2 = 1;
 
-    if (!strcmp(wt->ext, "per")) {
+    if (strcmp(wt->ext, "per") == 0) {
         i = J;
         p2 = 2;
         while (i > 0) {
@@ -1003,7 +1082,7 @@ void wtree(wtree_object wt, const double* inp)
             p2 = 2 * p2;
             Np = N2;
         }
-    } else if (!strcmp(wt->ext, "sym")) {
+    } else if (strcmp(wt->ext, "sym") == 0) {
         //printf("\n YES %s \n", wt->ext);
         i = J;
         p2 = 2;
@@ -1069,7 +1148,8 @@ void wtree(wtree_object wt, const double* inp)
 
 static int ipow2(int n)
 {
-    int p, i;
+    int p;
+    int i;
     p = 1;
 
     for (i = 0; i < n; ++i) {
@@ -1081,11 +1161,34 @@ static int ipow2(int n)
 
 void dwpt(wpt_object wt, const double* inp)
 {
-    int i, J, temp_len, iter, N, lp, p2, k, N2, Np;
-    int temp, elength, temp2, size, nodes, llb, n1, j;
-    double eparam, v1, v2;
-    int len_cA, t, t2, it1, it2;
-    double *orig, *tree;
+    int i;
+    int J;
+    int temp_len;
+    int iter;
+    int N;
+    int lp;
+    int p2;
+    int k;
+    int N2;
+    int Np;
+    int temp;
+    int elength;
+    int temp2;
+    int size;
+    int nodes;
+    int llb;
+    int n1;
+    int j;
+    double eparam;
+    double v1;
+    double v2;
+    int len_cA;
+    int t;
+    int t2;
+    int it1;
+    int it2;
+    double* orig;
+    double* tree;
     int* nodelength;
 
     temp_len = wt->siglength;
@@ -1127,7 +1230,7 @@ void dwpt(wpt_object wt, const double* inp)
     //set eparam value here
     wt->costvalues[0] = costfunc(orig, wt->siglength, wt->entropy, eparam);
     it2 = 1;
-    if (!strcmp(wt->ext, "per")) {
+    if (strcmp(wt->ext, "per") == 0) {
         i = J;
         p2 = 2;
         while (i > 0) {
@@ -1162,7 +1265,7 @@ void dwpt(wpt_object wt, const double* inp)
             p2 = 2 * p2;
             Np = N2;
         }
-    } else if (!strcmp(wt->ext, "sym")) {
+    } else if (strcmp(wt->ext, "sym") == 0) {
         //printf("\n YES %s \n", wt->ext);
         i = J;
         p2 = 2;
@@ -1343,7 +1446,10 @@ int getDWPTNodelength(wpt_object wt, int X)
 
 void getWTREECoeffs(wtree_object wt, int X, int Y, double* coeffs, int N)
 {
-    int ymax, i, t, t2;
+    int ymax;
+    int i;
+    int t;
+    int t2;
 
     if (X <= 0 || X > wt->J) {
         printf("X co-ordinate must be >= 1 and <= %d", wt->J);
@@ -1381,8 +1487,10 @@ void getWTREECoeffs(wtree_object wt, int X, int Y, double* coeffs, int N)
 
 void getDWPTCoeffs(wpt_object wt, int X, int Y, double* coeffs, int N)
 {
-    int ymax, i;
-    int np, citer;
+    int ymax;
+    int i;
+    int np;
+    int citer;
     int flag;
 
     if (X <= 0 || X > wt->J) {
@@ -1433,7 +1541,8 @@ void getDWPTCoeffs(wpt_object wt, int X, int Y, double* coeffs, int N)
 int getCWTScaleLength(int N)
 {
     int J;
-    double temp, dj;
+    double temp;
+    double dj;
 
     dj = 0.4875;
 
@@ -1448,14 +1557,14 @@ void setCWTScales(cwt_object wt, double s0, double dj, const char* type, int pow
     int i;
     strcpy(wt->type, type);
     //s0*pow(2.0, (double)(j - 1)*dj);
-    if (!strcmp(wt->type, "pow") || !strcmp(wt->type, "power")) {
+    if ((strcmp(wt->type, "pow") == 0) || (strcmp(wt->type, "power") == 0)) {
         for (i = 0; i < wt->J; ++i) {
             wt->scale[i] = s0 * pow((double)power, (double)(i)*dj);
         }
         wt->sflag = 1;
         wt->pow = power;
 
-    } else if (!strcmp(wt->type, "lin") || !strcmp(wt->type, "linear")) {
+    } else if ((strcmp(wt->type, "lin") == 0) || (strcmp(wt->type, "linear") == 0)) {
         for (i = 0; i < wt->J; ++i) {
             wt->scale[i] = s0 + (double)i * dj;
         }
@@ -1496,7 +1605,12 @@ void setCWTPadding(cwt_object wt, int pad)
 
 void cwt(cwt_object wt, const double* inp)
 {
-    int i, N, npad, nj2, j, j2;
+    int i;
+    int N;
+    int npad;
+    int nj2;
+    int j;
+    int j2;
     N = wt->siglength;
     if (wt->sflag == 0) {
         for (i = 0; i < wt->J; ++i) {
@@ -1527,8 +1641,12 @@ void cwt(cwt_object wt, const double* inp)
 
 void icwt(cwt_object wt, double* cwtop)
 {
-    double psi, cdel;
-    int real, i, N, nj2;
+    double psi;
+    double cdel;
+    int real;
+    int i;
+    int N;
+    int nj2;
 
     N = wt->siglength;
     nj2 = N * 2 * wt->J;
@@ -1537,7 +1655,7 @@ void icwt(cwt_object wt, double* cwtop)
     cdel = cdelta(wt->mother, wt->m, psi);
 
     //printf("\n PSI %g CDEL %g param %g mother %d \n", psi, cdel,wt->m,wt->mother);
-    if ((!strcmp(wt->type, "pow") || !strcmp(wt->type, "power")) && wt->pow == 2) {
+    if (((strcmp(wt->type, "pow") == 0) || (strcmp(wt->type, "power") == 0)) && wt->pow == 2) {
         icwavelet(wt->params, N, wt->params + nj2, wt->J, wt->dt, wt->dj, cdel, psi, cwtop);
     } else {
         printf("Inverse CWT is only available for power of 2.0 scales \n");
@@ -1550,7 +1668,11 @@ void icwt(cwt_object wt, double* cwtop)
 
 static void idwt1(wt_object wt, double* temp, double* cA_up, double* cA, int len_cA, double* cD, int len_cD, double* X_lp, double* X_hp, double* X)
 {
-    int len_avg, N, U, N2, i;
+    int len_avg;
+    int N;
+    int U;
+    int N2;
+    int i;
 
     len_avg = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
     N = 2 * len_cD;
@@ -1562,7 +1684,7 @@ static void idwt1(wt_object wt, double* temp, double* cA_up, double* cA, int len
 
     N2 = 2 * len_cA + len_avg;
 
-    if (wt->wave->lpr_len == wt->wave->hpr_len && (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT"))) {
+    if (wt->wave->lpr_len == wt->wave->hpr_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
         wt->cobj = conv_init(N2, len_avg);
         wt->cfftset = 1;
     } else if (!(wt->wave->lpr_len == wt->wave->hpr_len)) {
@@ -1584,7 +1706,7 @@ static void idwt1(wt_object wt, double* temp, double* cA_up, double* cA, int len
         X[i - len_avg + 1] = X_lp[i] + X_hp[i];
     }
 
-    if (wt->wave->lpr_len == wt->wave->hpr_len && (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT"))) {
+    if (wt->wave->lpr_len == wt->wave->hpr_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
         free_conv(wt->cobj);
         wt->cfftset = 0;
     }
@@ -1602,15 +1724,27 @@ static void idwt_sym(wt_object wt, double* cA, int len_cA, double* cD, double* X
 
 void idwt(wt_object wt, double* dwtop)
 {
-    int J, U, i, lf, N, N2, iter, k;
-    int app_len, det_len;
-    double *cA_up, *X_lp, *X_hp, *out, *temp;
+    int J;
+    int U;
+    int i;
+    int lf;
+    int N;
+    int N2;
+    int iter;
+    int k;
+    int app_len;
+    int det_len;
+    double* cA_up;
+    double* X_lp;
+    double* X_hp;
+    double* out;
+    double* temp;
 
     J = wt->J;
     U = 2;
     app_len = wt->length[0];
     out = (double*)malloc(sizeof(double) * (wt->siglength + 1));
-    if (!strcmp(wt->ext, "per") && (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT"))) {
+    if ((strcmp(wt->ext, "per") == 0) && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J];
@@ -1643,7 +1777,7 @@ void idwt(wt_object wt, double* dwtop)
         free(X_hp);
         free(temp);
 
-    } else if (!strcmp(wt->ext, "per") && !strcmp(wt->cmethod, "direct")) {
+    } else if ((strcmp(wt->ext, "per") == 0) && (strcmp(wt->cmethod, "direct") == 0)) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J];
@@ -1671,7 +1805,7 @@ void idwt(wt_object wt, double* dwtop)
 
         free(X_lp);
 
-    } else if (!strcmp(wt->ext, "sym") && !strcmp(wt->cmethod, "direct")) {
+    } else if ((strcmp(wt->ext, "sym") == 0) && (strcmp(wt->cmethod, "direct") == 0)) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J] - 1;
@@ -1699,7 +1833,7 @@ void idwt(wt_object wt, double* dwtop)
 
         free(X_lp);
 
-    } else if (!strcmp(wt->ext, "sym") && (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT"))) {
+    } else if ((strcmp(wt->ext, "sym") == 0) && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
         lf = wt->wave->lpd_len; // lpd and hpd have the same length
 
         N = 2 * wt->length[J] - 1;
@@ -1718,7 +1852,7 @@ void idwt(wt_object wt, double* dwtop)
             upsamp(out, det_len, U, cA_up);
             N2 = 2 * wt->length[i + 1] - 1;
 
-            if (wt->wave->lpr_len == wt->wave->hpr_len && (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT"))) {
+            if (wt->wave->lpr_len == wt->wave->hpr_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
                 wt->cobj = conv_init(N2, lf);
                 wt->cfftset = 1;
             } else if (!(wt->wave->lpr_len == wt->wave->hpr_len)) {
@@ -1736,7 +1870,7 @@ void idwt(wt_object wt, double* dwtop)
                 out[k - lf + 2] = X_lp[k] + X_hp[k];
             }
             iter += det_len;
-            if (wt->wave->lpr_len == wt->wave->hpr_len && (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT"))) {
+            if (wt->wave->lpr_len == wt->wave->hpr_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
                 free_conv(wt->cobj);
                 wt->cfftset = 0;
             }
@@ -1757,9 +1891,15 @@ void idwt(wt_object wt, double* dwtop)
     free(out);
 }
 
-static void idwpt_per(wpt_object wt, double* cA, int len_cA, double* cD, double* X)
+static void idwpt_per(wpt_object wt, const double* cA, int len_cA, const double* cD, double* X)
 {
-    int len_avg, i, l, m, n, t, l2;
+    int len_avg;
+    int i;
+    int l;
+    int m;
+    int n;
+    int t;
+    int l2;
 
     len_avg = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
     l2 = len_avg / 2;
@@ -1787,9 +1927,15 @@ static void idwpt_per(wpt_object wt, double* cA, int len_cA, double* cD, double*
     }
 }
 
-static void idwpt_sym(wpt_object wt, double* cA, int len_cA, double* cD, double* X)
+static void idwpt_sym(wpt_object wt, const double* cA, int len_cA, const double* cD, double* X)
 {
-    int len_avg, i, l, m, n, t, v;
+    int len_avg;
+    int i;
+    int l;
+    int m;
+    int n;
+    int t;
+    int v;
 
     len_avg = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
     m = -2;
@@ -1813,10 +1959,28 @@ static void idwpt_sym(wpt_object wt, double* cA, int len_cA, double* cD, double*
 
 void idwpt(wpt_object wt, double* dwtop)
 {
-    int J, i, lf, k, p, l;
-    int app_len, det_len, index, n1, llb, index2, index3, index4, indexp, xlen;
-    double *X_lp, *X, *out, *out2;
-    int *prep, *ptemp;
+    int J;
+    int i;
+    int lf;
+    int k;
+    int p;
+    int l;
+    int app_len;
+    int det_len;
+    int index;
+    int n1;
+    int llb;
+    int index2;
+    int index3;
+    int index4;
+    int indexp;
+    int xlen;
+    double* X_lp;
+    double* X;
+    double* out;
+    double* out2;
+    int* prep;
+    int* ptemp;
 
     J = wt->J;
     app_len = wt->length[0];
@@ -1854,7 +2018,7 @@ void idwpt(wpt_object wt, double* dwtop)
             ptemp[i] = 0;
         }
 
-        if (!strcmp(wt->ext, "per")) {
+        if (strcmp(wt->ext, "per") == 0) {
             app_len = wt->length[0];
             det_len = wt->length[1];
             index = 0;
@@ -1950,7 +2114,7 @@ void idwpt(wpt_object wt, double* dwtop)
 
             //free(X_lp);
 
-        } else if (!strcmp(wt->ext, "sym")) {
+        } else if (strcmp(wt->ext, "sym") == 0) {
             app_len = wt->length[0];
             det_len = wt->length[1];
 
@@ -2076,9 +2240,19 @@ static void swt_per(wt_object wt, int M, double* inp, int N, double* cA, int len
 
 static void swt_fft(wt_object wt, const double* inp)
 {
-    int i, J, temp_len, iter, M, N, len_filt;
+    int i;
+    int J;
+    int temp_len;
+    int iter;
+    int M;
+    int N;
+    int len_filt;
     int lenacc;
-    double *low_pass, *high_pass, *sig, *cA, *cD;
+    double* low_pass;
+    double* high_pass;
+    double* sig;
+    double* cA;
+    double* cD;
 
     temp_len = wt->siglength;
     J = wt->J;
@@ -2125,7 +2299,7 @@ static void swt_fft(wt_object wt, const double* inp)
 
         per_ext(wt->params, temp_len, N / 2, sig);
 
-        if (wt->wave->lpd_len == wt->wave->hpd_len && (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT"))) {
+        if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
             wt->cobj = conv_init(N + temp_len + (temp_len % 2), N);
             wt->cfftset = 1;
         } else if (!(wt->wave->lpd_len == wt->wave->hpd_len)) {
@@ -2137,7 +2311,7 @@ static void swt_fft(wt_object wt, const double* inp)
 
         wconv(wt, sig, N + temp_len + (temp_len % 2), high_pass, N, cD);
 
-        if (wt->wave->lpd_len == wt->wave->hpd_len && (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT"))) {
+        if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
             free_conv(wt->cobj);
             wt->cfftset = 0;
         }
@@ -2157,9 +2331,14 @@ static void swt_fft(wt_object wt, const double* inp)
 
 static void swt_direct(wt_object wt, const double* inp)
 {
-    int i, J, temp_len, iter, M;
+    int i;
+    int J;
+    int temp_len;
+    int iter;
+    int M;
     int lenacc;
-    double *cA, *cD;
+    double* cA;
+    double* cD;
 
     temp_len = wt->siglength;
     J = wt->J;
@@ -2202,9 +2381,9 @@ static void swt_direct(wt_object wt, const double* inp)
 
 void swt(wt_object wt, const double* inp)
 {
-    if (!strcmp(wt->method, "swt") && !strcmp(wt->cmethod, "direct")) {
+    if ((strcmp(wt->method, "swt") == 0) && (strcmp(wt->cmethod, "direct") == 0)) {
         swt_direct(wt, inp);
-    } else if (!strcmp(wt->method, "swt") && (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT"))) {
+    } else if ((strcmp(wt->method, "swt") == 0) && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
         swt_fft(wt, inp);
     } else {
         printf("SWT Only accepts two methods - direct and fft");
@@ -2212,12 +2391,34 @@ void swt(wt_object wt, const double* inp)
     }
 }
 
-static void getSWTRecCoeff(double* coeff, int* length, const char* ctype, int level, int J, double* lpr,
+static void getSWTRecCoeff(const double* coeff, int* length, const char* ctype, int level, int J, double* lpr,
     double* hpr, int lf, int siglength, double* swtop)
 {
-    int N, iter, i, index, value, count, len;
-    int index_shift, len0, U, N1, index2;
-    double *appx1, *det1, *appx_sig, *det_sig, *cL0, *cH0, *tempx, *oup00L, *oup00H, *oup00, *oup01, *appx2, *det2;
+    int N;
+    int iter;
+    int i;
+    int index;
+    int value;
+    int count;
+    int len;
+    int index_shift;
+    int len0;
+    int U;
+    int N1;
+    int index2;
+    double* appx1;
+    double* det1;
+    double* appx_sig;
+    double* det_sig;
+    double* cL0;
+    double* cH0;
+    double* tempx;
+    double* oup00L;
+    double* oup00H;
+    double* oup00;
+    double* oup01;
+    double* appx2;
+    double* det2;
 
     N = siglength;
     U = 2;
@@ -2240,12 +2441,12 @@ static void getSWTRecCoeff(double* coeff, int* length, const char* ctype, int le
         for (i = 0; i < N; ++i) {
             swtop[i] = 0.0;
         }
-        if (!strcmp((ctype), "appx") && (iter == (J - level))) {
+        if ((strcmp((ctype), "appx") == 0) && (iter == (J - level))) {
             for (i = 0; i < N; ++i) {
                 appx_sig[i] = coeff[i];
                 det_sig[i] = 0.0;
             }
-        } else if (!strcmp((ctype), "det") && (iter == (J - level))) {
+        } else if ((strcmp((ctype), "det") == 0) && (iter == (J - level))) {
             for (i = 0; i < N; ++i) {
                 det_sig[i] = coeff[i];
                 appx_sig[i] = 0.0;
@@ -2347,7 +2548,10 @@ static void getSWTRecCoeff(double* coeff, int* length, const char* ctype, int le
 
 double* getSWTmra(wt_object wt, double* wavecoeffs)
 {
-    int i, J, access, N;
+    int i;
+    int J;
+    int access;
+    int N;
     double* mra;
     J = wt->J;
     mra = (double*)malloc(sizeof(double) * wt->siglength * (J + 1));
@@ -2369,9 +2573,33 @@ double* getSWTmra(wt_object wt, double* wavecoeffs)
 
 void iswt(wt_object wt, double* swtop)
 {
-    int N, lf, iter, i, J, index, value, count, len;
-    int index_shift, len0, U, N1, index2;
-    double *appx1, *det1, *appx_sig, *det_sig, *cL0, *cH0, *tempx, *oup00L, *oup00H, *oup00, *oup01, *appx2, *det2;
+    int N;
+    int lf;
+    int iter;
+    int i;
+    int J;
+    int index;
+    int value;
+    int count;
+    int len;
+    int index_shift;
+    int len0;
+    int U;
+    int N1;
+    int index2;
+    double* appx1;
+    double* det1;
+    double* appx_sig;
+    double* det_sig;
+    double* cL0;
+    double* cH0;
+    double* tempx;
+    double* oup00L;
+    double* oup00H;
+    double* oup00;
+    double* oup01;
+    double* appx2;
+    double* det2;
 
     N = wt->siglength;
     J = wt->J;
@@ -2433,7 +2661,7 @@ void iswt(wt_object wt, double* swtop)
 
             N1 = 2 * len0 + lf;
 
-            if (wt->wave->lpr_len == wt->wave->hpr_len && (!strcmp(wt->cmethod, "fft") || !strcmp(wt->cmethod, "FFT"))) {
+            if (wt->wave->lpr_len == wt->wave->hpr_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
                 wt->cobj = conv_init(N1, lf);
                 wt->cfftset = 1;
             } else if (!(wt->wave->lpd_len == wt->wave->hpd_len)) {
@@ -2504,9 +2732,12 @@ void iswt(wt_object wt, double* swtop)
     free(det2);
 }
 
-static void modwt_per(wt_object wt, int M, double* inp, double* cA, int len_cA, double* cD)
+static void modwt_per(wt_object wt, int M, const double* inp, double* cA, int len_cA, double* cD)
 {
-    int l, i, t, len_avg;
+    int l;
+    int i;
+    int t;
+    int len_avg;
     double s;
     double* filt;
     len_avg = wt->wave->lpd_len;
@@ -2540,11 +2771,16 @@ static void modwt_per(wt_object wt, int M, double* inp, double* cA, int len_cA, 
 
 static void modwt_direct(wt_object wt, const double* inp)
 {
-    int i, J, temp_len, iter, M;
+    int i;
+    int J;
+    int temp_len;
+    int iter;
+    int M;
     int lenacc;
-    double *cA, *cD;
+    double* cA;
+    double* cD;
 
-    if (strcmp(wt->ext, "per")) {
+    if (strcmp(wt->ext, "per") != 0) {
         printf("MODWT direct method only uses periodic extension per. \n");
         printf(" Use MODWT fft method for symmetric extension sym \n");
         exit(-1);
@@ -2591,19 +2827,31 @@ static void modwt_direct(wt_object wt, const double* inp)
 
 static void modwt_fft(wt_object wt, const double* inp)
 {
-    int i, J, temp_len, iter, M, N, len_avg;
+    int i;
+    int J;
+    int temp_len;
+    int iter;
+    int M;
+    int N;
+    int len_avg;
     int lenacc;
-    double s, tmp1, tmp2;
-    fft_data *cA, *cD, *low_pass, *high_pass, *sig;
+    double s;
+    double tmp1;
+    double tmp2;
+    fft_data* cA;
+    fft_data* cD;
+    fft_data* low_pass;
+    fft_data* high_pass;
+    fft_data* sig;
     int* index;
     fft_object fft_fd = NULL;
     fft_object fft_bd = NULL;
 
     temp_len = wt->siglength;
     len_avg = wt->wave->lpd_len;
-    if (!strcmp(wt->ext, "sym")) {
+    if (strcmp(wt->ext, "sym") == 0) {
         N = 2 * temp_len;
-    } else if (!strcmp(wt->ext, "per")) {
+    } else if (strcmp(wt->ext, "per") == 0) {
         N = temp_len;
     }
     J = wt->J;
@@ -2715,9 +2963,9 @@ static void modwt_fft(wt_object wt, const double* inp)
 
 void modwt(wt_object wt, const double* inp)
 {
-    if (!strcmp(wt->cmethod, "direct")) {
+    if (strcmp(wt->cmethod, "direct") == 0) {
         modwt_direct(wt, inp);
-    } else if (!strcmp(wt->cmethod, "fft")) {
+    } else if (strcmp(wt->cmethod, "fft") == 0) {
         modwt_fft(wt, inp);
     } else {
         printf("Error- Available Choices for this method are - direct and fft \n");
@@ -2738,12 +2986,14 @@ static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* app
     int J, fft_data* low_pass, fft_data* high_pass, int N)
 {
 
-    int iter, M, i;
+    int iter;
+    int M;
+    int i;
     fft_type tmp1, tmp2;
 
     M = (int)pow(2.0, (double)level - 1.0);
 
-    if (!strcmp((ctype), "appx")) {
+    if (strcmp((ctype), "appx") == 0) {
         for (iter = 0; iter < level; ++iter) {
             fft_exec(fft_fd, appx, cA);
             fft_exec(fft_fd, det, cD);
@@ -2768,7 +3018,7 @@ static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* app
 
             M /= 2;
         }
-    } else if (!strcmp(ctype, "det")) {
+    } else if (strcmp(ctype, "det") == 0) {
         for (iter = 0; iter < level; ++iter) {
             fft_exec(fft_fd, appx, cA);
             fft_exec(fft_fd, det, cD);
@@ -2804,19 +3054,31 @@ static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* app
 double* getMODWTmra(wt_object wt, double* wavecoeffs)
 {
     double* mra;
-    int i, J, temp_len, iter, M, N, len_avg, lmra;
+    int i;
+    int J;
+    int temp_len;
+    int iter;
+    int M;
+    int N;
+    int len_avg;
+    int lmra;
     int lenacc;
     double s;
-    fft_data *cA, *cD, *low_pass, *high_pass, *sig, *ninp;
+    fft_data* cA;
+    fft_data* cD;
+    fft_data* low_pass;
+    fft_data* high_pass;
+    fft_data* sig;
+    fft_data* ninp;
     int* index;
     fft_object fft_fd = NULL;
     fft_object fft_bd = NULL;
 
     N = wt->modwtsiglength;
     len_avg = wt->wave->lpd_len;
-    if (!strcmp(wt->ext, "sym")) {
+    if (strcmp(wt->ext, "sym") == 0) {
         temp_len = N / 2;
-    } else if (!strcmp(wt->ext, "per")) {
+    } else if (strcmp(wt->ext, "per") == 0) {
         temp_len = N;
     }
     J = wt->J;
@@ -2921,19 +3183,31 @@ double* getMODWTmra(wt_object wt, double* wavecoeffs)
 
 void imodwt_fft(wt_object wt, double* oup)
 {
-    int i, J, temp_len, iter, M, N, len_avg;
+    int i;
+    int J;
+    int temp_len;
+    int iter;
+    int M;
+    int N;
+    int len_avg;
     int lenacc;
-    double s, tmp1, tmp2;
-    fft_data *cA, *cD, *low_pass, *high_pass, *sig;
+    double s;
+    double tmp1;
+    double tmp2;
+    fft_data* cA;
+    fft_data* cD;
+    fft_data* low_pass;
+    fft_data* high_pass;
+    fft_data* sig;
     int* index;
     fft_object fft_fd = NULL;
     fft_object fft_bd = NULL;
 
     N = wt->modwtsiglength;
     len_avg = wt->wave->lpd_len;
-    if (!strcmp(wt->ext, "sym")) {
+    if (strcmp(wt->ext, "sym") == 0) {
         temp_len = N / 2;
-    } else if (!strcmp(wt->ext, "per")) {
+    } else if (strcmp(wt->ext, "per") == 0) {
         temp_len = N;
     }
     J = wt->J;
@@ -3033,9 +3307,12 @@ void imodwt_fft(wt_object wt, double* oup)
     free_fft(fft_bd);
 }
 
-static void imodwt_per(wt_object wt, int M, double* cA, int len_cA, double* cD, double* X)
+static void imodwt_per(wt_object wt, int M, const double* cA, int len_cA, const double* cD, double* X)
 {
-    int len_avg, i, l, t;
+    int len_avg;
+    int i;
+    int l;
+    int t;
     double s;
     double* filt;
     len_avg = wt->wave->lpd_len;
@@ -3067,8 +3344,13 @@ static void imodwt_per(wt_object wt, int M, double* cA, int len_cA, double* cD, 
 
 static void imodwt_direct(wt_object wt, double* dwtop)
 {
-    int N, iter, i, J, j;
-    int lenacc, M;
+    int N;
+    int iter;
+    int i;
+    int J;
+    int j;
+    int lenacc;
+    int M;
     double* X;
 
     N = wt->siglength;
@@ -3106,9 +3388,9 @@ static void imodwt_direct(wt_object wt, double* dwtop)
 
 void imodwt(wt_object wt, double* oup)
 {
-    if (!strcmp(wt->cmethod, "direct")) {
+    if (strcmp(wt->cmethod, "direct") == 0) {
         imodwt_direct(wt, oup);
-    } else if (!strcmp(wt->cmethod, "fft")) {
+    } else if (strcmp(wt->cmethod, "fft") == 0) {
         imodwt_fft(wt, oup);
     } else {
         printf("Error- Available Choices for this method are - direct and fft \n");
@@ -3118,9 +3400,9 @@ void imodwt(wt_object wt, double* oup)
 
 void setDWTExtension(wt_object wt, const char* extension)
 {
-    if (!strcmp(extension, "sym")) {
+    if (strcmp(extension, "sym") == 0) {
         strcpy(wt->ext, "sym");
-    } else if (!strcmp(extension, "per")) {
+    } else if (strcmp(extension, "per") == 0) {
         strcpy(wt->ext, "per");
     } else {
         printf("Signal extension can be either per or sym");
@@ -3130,9 +3412,9 @@ void setDWTExtension(wt_object wt, const char* extension)
 
 void setWTREEExtension(wtree_object wt, const char* extension)
 {
-    if (!strcmp(extension, "sym")) {
+    if (strcmp(extension, "sym") == 0) {
         strcpy(wt->ext, "sym");
-    } else if (!strcmp(extension, "per")) {
+    } else if (strcmp(extension, "per") == 0) {
         strcpy(wt->ext, "per");
     } else {
         printf("Signal extension can be either per or sym");
@@ -3142,9 +3424,9 @@ void setWTREEExtension(wtree_object wt, const char* extension)
 
 void setDWPTExtension(wpt_object wt, const char* extension)
 {
-    if (!strcmp(extension, "sym")) {
+    if (strcmp(extension, "sym") == 0) {
         strcpy(wt->ext, "sym");
-    } else if (!strcmp(extension, "per")) {
+    } else if (strcmp(extension, "per") == 0) {
         strcpy(wt->ext, "per");
     } else {
         printf("Signal extension can be either per or sym");
@@ -3154,17 +3436,17 @@ void setDWPTExtension(wpt_object wt, const char* extension)
 
 void setDWT2Extension(wt2_object wt, const char* extension)
 {
-    if (!strcmp(wt->method, "dwt")) {
-        if (!strcmp(extension, "sym")) {
+    if (strcmp(wt->method, "dwt") == 0) {
+        if (strcmp(extension, "sym") == 0) {
             strcpy(wt->ext, "sym");
-        } else if (!strcmp(extension, "per")) {
+        } else if (strcmp(extension, "per") == 0) {
             strcpy(wt->ext, "per");
         } else {
             printf("Signal extension can be either per or sym");
             exit(-1);
         }
-    } else if (!strcmp(wt->method, "swt") || !strcmp(wt->method, "modwt")) {
-        if (!strcmp(extension, "per")) {
+    } else if ((strcmp(wt->method, "swt") == 0) || (strcmp(wt->method, "modwt") == 0)) {
+        if (strcmp(extension, "per") == 0) {
             strcpy(wt->ext, "per");
         } else {
             printf("Signal extension can only be per");
@@ -3175,15 +3457,15 @@ void setDWT2Extension(wt2_object wt, const char* extension)
 
 void setDWPTEntropy(wpt_object wt, const char* entropy, double eparam)
 {
-    if (!strcmp(entropy, "shannon")) {
+    if (strcmp(entropy, "shannon") == 0) {
         strcpy(wt->entropy, "shannon");
-    } else if (!strcmp(entropy, "threshold")) {
+    } else if (strcmp(entropy, "threshold") == 0) {
         strcpy(wt->entropy, "threshold");
         wt->eparam = eparam;
-    } else if (!strcmp(entropy, "norm")) {
+    } else if (strcmp(entropy, "norm") == 0) {
         strcpy(wt->entropy, "norm");
         wt->eparam = eparam;
-    } else if (!strcmp(entropy, "logenergy") || !strcmp(entropy, "log energy") || !strcmp(entropy, "energy")) {
+    } else if ((strcmp(entropy, "logenergy") == 0) || (strcmp(entropy, "log energy") == 0) || (strcmp(entropy, "energy") == 0)) {
         strcpy(wt->entropy, "logenergy");
     } else {
         printf("Entropy should be one of shannon, threshold, norm or logenergy");
@@ -3193,9 +3475,9 @@ void setDWPTEntropy(wpt_object wt, const char* entropy, double eparam)
 
 void setWTConv(wt_object wt, const char* cmethod)
 {
-    if (!strcmp(cmethod, "fft") || !strcmp(cmethod, "FFT")) {
+    if ((strcmp(cmethod, "fft") == 0) || (strcmp(cmethod, "FFT") == 0)) {
         strcpy(wt->cmethod, "fft");
-    } else if (!strcmp(cmethod, "direct")) {
+    } else if (strcmp(cmethod, "direct") == 0) {
         strcpy(wt->cmethod, "direct");
     } else {
         printf("Convolution Only accepts two methods - direct and fft");
@@ -3206,10 +3488,28 @@ void setWTConv(wt_object wt, const char* cmethod)
 double* dwt2(wt2_object wt, double* inp)
 {
     double* wavecoeff = NULL;
-    int i, J, iter, N, lp, rows_n, cols_n, rows_i, cols_i;
-    int ir, ic, istride, ostride;
-    int aLL, aLH, aHL, aHH, cdim, clen;
-    double *orig, *lp_dn1, *hp_dn1;
+    int i;
+    int J;
+    int iter;
+    int N;
+    int lp;
+    int rows_n;
+    int cols_n;
+    int rows_i;
+    int cols_i;
+    int ir;
+    int ic;
+    int istride;
+    int ostride;
+    int aLL;
+    int aLH;
+    int aHL;
+    int aHH;
+    int cdim;
+    int clen;
+    double* orig;
+    double* lp_dn1;
+    double* hp_dn1;
     J = wt->J;
     wt->outlength = 0;
 
@@ -3217,7 +3517,7 @@ double* dwt2(wt2_object wt, double* inp)
     cols_n = wt->cols;
     lp = wt->wave->lpd_len;
     clen = J * 3;
-    if (!strcmp(wt->ext, "per")) {
+    if (strcmp(wt->ext, "per") == 0) {
         i = 2 * J;
         while (i > 0) {
             rows_n = (int)ceil((double)rows_n / 2.0);
@@ -3279,7 +3579,7 @@ double* dwt2(wt2_object wt, double* inp)
         wt->coeffaccess[0] = 0;
         free(lp_dn1);
         free(hp_dn1);
-    } else if (!strcmp(wt->ext, "sym")) {
+    } else if (strcmp(wt->ext, "sym") == 0) {
         i = 2 * J;
         while (i > 0) {
             rows_n += lp - 2;
@@ -3349,17 +3649,35 @@ double* dwt2(wt2_object wt, double* inp)
 
 void idwt2(wt2_object wt, double* wavecoeff, double* oup)
 {
-    int i, k, rows, cols, N, ir, ic, lf, dim1, dim2;
-    int istride, ostride, iter, J;
-    int aLL, aLH, aHL, aHH;
-    double *cL, *cH, *X_lp, *orig;
+    int i;
+    int k;
+    int rows;
+    int cols;
+    int N;
+    int ir;
+    int ic;
+    int lf;
+    int dim1;
+    int dim2;
+    int istride;
+    int ostride;
+    int iter;
+    int J;
+    int aLL;
+    int aLH;
+    int aHL;
+    int aHH;
+    double* cL;
+    double* cH;
+    double* X_lp;
+    double* orig;
     double* out = NULL;
 
     rows = wt->rows;
     cols = wt->cols;
     J = wt->J;
 
-    if (!strcmp(wt->ext, "per")) {
+    if (strcmp(wt->ext, "per") == 0) {
         N = rows > cols ? 2 * rows : 2 * cols;
         lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
@@ -3433,7 +3751,7 @@ void idwt2(wt2_object wt, double* wavecoeff, double* oup)
         free(X_lp);
         free(cL);
         free(cH);
-    } else if (!strcmp(wt->ext, "sym")) {
+    } else if (strcmp(wt->ext, "sym") == 0) {
         N = rows > cols ? 2 * rows - 1 : 2 * cols - 1;
         lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
@@ -3515,10 +3833,29 @@ void idwt2(wt2_object wt, double* wavecoeff, double* oup)
 double* swt2(wt2_object wt, double* inp)
 {
     double* wavecoeff;
-    int i, J, iter, M, N, lp, rows_n, cols_n, rows_i, cols_i;
-    int ir, ic, istride, ostride;
-    int aLL, aLH, aHL, aHH, cdim, clen;
-    double *orig, *lp_dn1, *hp_dn1;
+    int i;
+    int J;
+    int iter;
+    int M;
+    int N;
+    int lp;
+    int rows_n;
+    int cols_n;
+    int rows_i;
+    int cols_i;
+    int ir;
+    int ic;
+    int istride;
+    int ostride;
+    int aLL;
+    int aLH;
+    int aHL;
+    int aHH;
+    int cdim;
+    int clen;
+    double* orig;
+    double* lp_dn1;
+    double* hp_dn1;
 
     J = wt->J;
     M = 1;
@@ -3593,11 +3930,33 @@ double* swt2(wt2_object wt, double* inp)
     return wavecoeff;
 }
 
-void iswt2(wt2_object wt, double* wavecoeffs, double* oup)
+void iswt2(wt2_object wt, const double* wavecoeffs, double* oup)
 {
-    int i, k, iter, it2, it3, J, M, rows, cols, lf, ir, ic, k1, i1;
-    double *A, *H, *V, *D, *oup1, *oup2;
-    int aLL, aLH, aHL, aHH, shift;
+    int i;
+    int k;
+    int iter;
+    int it2;
+    int it3;
+    int J;
+    int M;
+    int rows;
+    int cols;
+    int lf;
+    int ir;
+    int ic;
+    int k1;
+    int i1;
+    double* A;
+    double* H;
+    double* V;
+    double* D;
+    double* oup1;
+    double* oup2;
+    int aLL;
+    int aLH;
+    int aHL;
+    int aHH;
+    int shift;
     J = wt->J;
     rows = wt->rows;
     cols = wt->cols;
@@ -3684,10 +4043,30 @@ void iswt2(wt2_object wt, double* wavecoeffs, double* oup)
 double* modwt2(wt2_object wt, double* inp)
 {
     double* wavecoeff;
-    int i, J, iter, M, N, lp, rows_n, cols_n, rows_i, cols_i;
-    int ir, ic, istride, ostride;
-    int aLL, aLH, aHL, aHH, cdim, clen;
-    double *orig, *lp_dn1, *hp_dn1, *filt;
+    int i;
+    int J;
+    int iter;
+    int M;
+    int N;
+    int lp;
+    int rows_n;
+    int cols_n;
+    int rows_i;
+    int cols_i;
+    int ir;
+    int ic;
+    int istride;
+    int ostride;
+    int aLL;
+    int aLH;
+    int aHL;
+    int aHH;
+    int cdim;
+    int clen;
+    double* orig;
+    double* lp_dn1;
+    double* hp_dn1;
+    double* filt;
     double s;
 
     J = wt->J;
@@ -3770,10 +4149,26 @@ double* modwt2(wt2_object wt, double* inp)
 
 void imodwt2(wt2_object wt, double* wavecoeff, double* oup)
 {
-    int i, rows, cols, M, N, ir, ic, lf;
-    int istride, ostride, iter, J;
-    int aLL, aLH, aHL, aHH;
-    double *cL, *cH, *orig, *filt;
+    int i;
+    int rows;
+    int cols;
+    int M;
+    int N;
+    int ir;
+    int ic;
+    int lf;
+    int istride;
+    int ostride;
+    int iter;
+    int J;
+    int aLL;
+    int aLH;
+    int aHL;
+    int aHH;
+    double* cL;
+    double* cH;
+    double* orig;
+    double* filt;
     double s;
 
     rows = wt->rows;
@@ -3829,7 +4224,9 @@ void imodwt2(wt2_object wt, double* wavecoeff, double* oup)
 
 double* getWT2Coeffs(wt2_object wt, double* wcoeffs, int level, char const* type, int* rows, int* cols)
 {
-    int J, iter, t;
+    int J;
+    int iter;
+    int t;
     double* ptr;
     J = wt->J;
     // Error Check
@@ -3839,21 +4236,21 @@ double* getWT2Coeffs(wt2_object wt, double* wcoeffs, int level, char const* type
         exit(-1);
     }
 
-    if (!strcmp(type, "A") && level != J) {
+    if ((strcmp(type, "A") == 0) && level != J) {
         printf("Approximation Coefficients are only available for level %d", J);
         exit(-1);
     }
 
-    if (!strcmp(type, "A")) {
+    if (strcmp(type, "A") == 0) {
         t = 0;
         iter = t;
-    } else if (!strcmp(type, "H")) {
+    } else if (strcmp(type, "H") == 0) {
         t = 1;
         iter = t;
-    } else if (!strcmp(type, "V")) {
+    } else if (strcmp(type, "V") == 0) {
         t = 2;
         iter = t;
-    } else if (!strcmp(type, "D")) {
+    } else if (strcmp(type, "D") == 0) {
         t = 3;
         iter = t;
     } else {
@@ -3872,7 +4269,8 @@ double* getWT2Coeffs(wt2_object wt, double* wcoeffs, int level, char const* type
 
 void dispWT2Coeffs(double* A, int row, int col)
 {
-    int i, j;
+    int i;
+    int j;
     printf("\n MATRIX Order : %d X %d \n \n", row, col);
 
     for (i = 0; i < row; i++) {
@@ -3886,7 +4284,8 @@ void dispWT2Coeffs(double* A, int row, int col)
 
 void wave_summary(wave_object obj)
 {
-    int i, N;
+    int i;
+    int N;
     N = obj->filtlength;
     printf("\n");
     printf("Wavelet Name : %s \n", obj->wname);
@@ -3921,7 +4320,8 @@ void wave_summary(wave_object obj)
 void wt_summary(wt_object wt)
 {
     int i;
-    int J, t;
+    int J;
+    int t;
     J = wt->J;
     wave_summary(wt->wave);
     printf("\n");
@@ -3953,8 +4353,11 @@ void wt_summary(wt_object wt)
 
 void wtree_summary(wtree_object wt)
 {
-    int i, k, p2;
-    int J, t;
+    int i;
+    int k;
+    int p2;
+    int J;
+    int t;
     J = wt->J;
     wave_summary(wt->wave);
     printf("\n");
@@ -3985,8 +4388,12 @@ void wtree_summary(wtree_object wt)
 
 void wpt_summary(wpt_object wt)
 {
-    int i, k, p2;
-    int J, it1, it2;
+    int i;
+    int k;
+    int p2;
+    int J;
+    int it1;
+    int it2;
     J = wt->J;
     wave_summary(wt->wave);
     printf("\n");
@@ -4051,7 +4458,11 @@ void cwt_summary(cwt_object wt)
 void wt2_summary(wt2_object wt)
 {
     int i;
-    int J, t, rows, cols, vsize;
+    int J;
+    int t;
+    int rows;
+    int cols;
+    int vsize;
     J = wt->J;
     wave_summary(wt->wave);
     printf("\n");
