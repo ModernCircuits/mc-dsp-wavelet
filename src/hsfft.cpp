@@ -7,9 +7,9 @@
 
 #include "hsfft.h"
 
-fft_object fft_init(int N, int sgn)
+auto fft_init(int N, int sgn) -> fft_object
 {
-    fft_object obj = NULL;
+    fft_object obj = nullptr;
     // Change N/2 to N-1 for longvector case
 
     int twi_len;
@@ -1329,14 +1329,14 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         int t;
         int tt;
         fft_type temp1r, temp1i, temp2r, temp2i;
-        fft_type* wlr = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
-        fft_type* wli = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
-        fft_type* taur = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
-        fft_type* taui = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
-        fft_type* c1 = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
-        fft_type* s1 = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
-        fft_type* yr = (fft_type*)malloc(sizeof(fft_type) * (radix));
-        fft_type* yi = (fft_type*)malloc(sizeof(fft_type) * (radix));
+        auto* wlr = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
+        auto* wli = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
+        auto* taur = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
+        auto* taui = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
+        auto* c1 = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
+        auto* s1 = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
+        auto* yr = (fft_type*)malloc(sizeof(fft_type) * (radix));
+        auto* yi = (fft_type*)malloc(sizeof(fft_type) * (radix));
 
         m = N / radix;
         ll = radix * l;
@@ -1603,7 +1603,7 @@ void fft_exec(fft_object obj, fft_data* inp, fft_data* oup)
     }
 }
 
-int divideby(int M, int d)
+auto divideby(int M, int d) -> int
 {
     while (M % d == 0) {
         M = M / d;
@@ -1614,7 +1614,7 @@ int divideby(int M, int d)
     return 0;
 }
 
-int dividebyN(int N)
+auto dividebyN(int N) -> int
 {
     while (N % 53 == 0) {
         N = N / 53;
@@ -1673,7 +1673,7 @@ int dividebyN(int N)
     return 0;
 }
 
-int factors(int M, int* arr)
+auto factors(int M, int* arr) -> int
 {
     int i;
     int N;

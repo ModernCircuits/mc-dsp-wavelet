@@ -15,7 +15,7 @@
 
 namespace patch {
 template <typename T>
-std::string to_string(const T& n)
+auto to_string(const T& n) -> std::string
 {
     std::ostringstream stm;
     stm << n;
@@ -23,7 +23,7 @@ std::string to_string(const T& n)
 }
 } // namespace patch
 
-double absmax(double* array, int N)
+auto absmax(double* array, int N) -> double
 {
     double max;
     int i;
@@ -38,7 +38,7 @@ double absmax(double* array, int N)
     return max;
 }
 
-double sum1(const double* array, int N)
+auto sum1(const double* array, int N) -> double
 {
     double sum;
     int i;
@@ -49,7 +49,7 @@ double sum1(const double* array, int N)
     }
     return sum;
 }
-double sum2(const double* array, int N)
+auto sum2(const double* array, int N) -> double
 {
     double sum;
     int i;
@@ -60,7 +60,7 @@ double sum2(const double* array, int N)
     }
     return sum;
 }
-double sum3(const double* array, int N)
+auto sum3(const double* array, int N) -> double
 {
     double sum;
     int i;
@@ -72,7 +72,7 @@ double sum3(const double* array, int N)
     return sum;
 }
 // np.sum(w[2*m:(2*N+2*m)]*w[0:2*N])
-double sum4(const double* array, int N)
+auto sum4(const double* array, int N) -> double
 {
     double sum;
     int i;
@@ -84,7 +84,7 @@ double sum4(const double* array, int N)
     return sum;
 }
 // np.sum(w[2 * m:(2 * N)] * w[0:2 * N - 2 * m])
-double sum5(const double* array, int N, int m)
+auto sum5(const double* array, int N, int m) -> double
 {
     double sum;
     int i;
@@ -96,7 +96,7 @@ double sum5(const double* array, int N, int m)
     return sum;
 }
 
-double RMS_Error(const double* data, const double* rec, int N)
+auto RMS_Error(const double* data, const double* rec, int N) -> double
 {
     int i;
     double sum = 0;
@@ -106,7 +106,7 @@ double RMS_Error(const double* data, const double* rec, int N)
     return sqrt(sum / ((double)N - 1));
 }
 
-double REL_Error(const double* data, const double* rec, int N)
+auto REL_Error(const double* data, const double* rec, int N) -> double
 {
     int i;
     double sum1 = 0;
@@ -118,7 +118,7 @@ double REL_Error(const double* data, const double* rec, int N)
     return sqrt(sum1) / sqrt(sum2);
 }
 
-double generate_rnd()
+auto generate_rnd() -> double
 {
     double rnd;
 
@@ -132,8 +132,8 @@ void DWTReconstructionTest()
 
     wave_object obj;
     wt_object wt;
-    double *inp;
-    double *out;
+    double* inp;
+    double* out;
     int N;
     int i;
     int J;
@@ -162,43 +162,43 @@ void DWTReconstructionTest()
         waveletNames.push_back(std::string("sym") + patch::to_string(j + 1));
     }
 
-    waveletNames.push_back("bior1.1");
-    waveletNames.push_back("bior1.3");
-    waveletNames.push_back("bior1.5");
-    waveletNames.push_back("bior2.2");
-    waveletNames.push_back("bior2.4");
-    waveletNames.push_back("bior2.6");
-    waveletNames.push_back("bior2.8");
-    waveletNames.push_back("bior3.1");
-    waveletNames.push_back("bior3.3");
-    waveletNames.push_back("bior3.5");
-    waveletNames.push_back("bior3.7");
-    waveletNames.push_back("bior3.9");
-    waveletNames.push_back("bior4.4");
-    waveletNames.push_back("bior5.5");
-    waveletNames.push_back("bior6.8");
+    waveletNames.emplace_back("bior1.1");
+    waveletNames.emplace_back("bior1.3");
+    waveletNames.emplace_back("bior1.5");
+    waveletNames.emplace_back("bior2.2");
+    waveletNames.emplace_back("bior2.4");
+    waveletNames.emplace_back("bior2.6");
+    waveletNames.emplace_back("bior2.8");
+    waveletNames.emplace_back("bior3.1");
+    waveletNames.emplace_back("bior3.3");
+    waveletNames.emplace_back("bior3.5");
+    waveletNames.emplace_back("bior3.7");
+    waveletNames.emplace_back("bior3.9");
+    waveletNames.emplace_back("bior4.4");
+    waveletNames.emplace_back("bior5.5");
+    waveletNames.emplace_back("bior6.8");
 
-    waveletNames.push_back("rbior1.1");
-    waveletNames.push_back("rbior1.3");
-    waveletNames.push_back("rbior1.5");
-    waveletNames.push_back("rbior2.2");
-    waveletNames.push_back("rbior2.4");
-    waveletNames.push_back("rbior2.6");
-    waveletNames.push_back("rbior2.8");
-    waveletNames.push_back("rbior3.1");
-    waveletNames.push_back("rbior3.3");
-    waveletNames.push_back("rbior3.5");
-    waveletNames.push_back("rbior3.7");
-    waveletNames.push_back("rbior3.9");
-    waveletNames.push_back("rbior4.4");
-    waveletNames.push_back("rbior5.5");
-    waveletNames.push_back("rbior6.8");
+    waveletNames.emplace_back("rbior1.1");
+    waveletNames.emplace_back("rbior1.3");
+    waveletNames.emplace_back("rbior1.5");
+    waveletNames.emplace_back("rbior2.2");
+    waveletNames.emplace_back("rbior2.4");
+    waveletNames.emplace_back("rbior2.6");
+    waveletNames.emplace_back("rbior2.8");
+    waveletNames.emplace_back("rbior3.1");
+    waveletNames.emplace_back("rbior3.3");
+    waveletNames.emplace_back("rbior3.5");
+    waveletNames.emplace_back("rbior3.7");
+    waveletNames.emplace_back("rbior3.9");
+    waveletNames.emplace_back("rbior4.4");
+    waveletNames.emplace_back("rbior5.5");
+    waveletNames.emplace_back("rbior6.8");
 
     for (unsigned int direct_fft = 0; direct_fft < 2; direct_fft++) {
         for (unsigned int sym_per = 0; sym_per < 2; sym_per++) {
-            for (unsigned int j = 0; j < waveletNames.size(); j++) {
-                char* name = new char[waveletNames[j].size() + 1];
-                memcpy(name, waveletNames[j].c_str(), waveletNames[j].size() + 1);
+            for (auto& waveletName : waveletNames) {
+                char* name = new char[waveletName.size() + 1];
+                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
                 obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
                     // J = 3;
@@ -208,15 +208,15 @@ void DWTReconstructionTest()
                     if (sym_per == 0) {
                         setDWTExtension(wt,
                             (char*)"sym"); // Options are "per" and "sym".
-                    // Symmetric is the default option
+                        // Symmetric is the default option
                     } else {
                         setDWTExtension(wt, (char*)"per");
-}
+                    }
                     if (direct_fft == 0) {
                         setWTConv(wt, (char*)"direct");
                     } else {
                         setWTConv(wt, (char*)"fft");
-}
+                    }
 
                     dwt(wt, inp); // Perform DWT
 
@@ -227,7 +227,7 @@ void DWTReconstructionTest()
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
-}
+                    }
                     // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
@@ -259,9 +259,9 @@ void DWT2ReconstructionTest()
     int N;
     int rows;
     int cols;
-    double *inp;
-    double *wavecoeffs;
-    double *out;
+    double* inp;
+    double* wavecoeffs;
+    double* out;
     double epsilon;
 
     rows = 1024;
@@ -284,37 +284,37 @@ void DWT2ReconstructionTest()
         waveletNames.push_back(std::string("sym") + patch::to_string(j + 1));
     }
 
-    waveletNames.push_back("bior1.1");
-    waveletNames.push_back("bior1.3");
-    waveletNames.push_back("bior1.5");
-    waveletNames.push_back("bior2.2");
-    waveletNames.push_back("bior2.4");
-    waveletNames.push_back("bior2.6");
-    waveletNames.push_back("bior2.8");
-    waveletNames.push_back("bior3.1");
-    waveletNames.push_back("bior3.3");
-    waveletNames.push_back("bior3.5");
-    waveletNames.push_back("bior3.7");
-    waveletNames.push_back("bior3.9");
-    waveletNames.push_back("bior4.4");
-    waveletNames.push_back("bior5.5");
-    waveletNames.push_back("bior6.8");
+    waveletNames.emplace_back("bior1.1");
+    waveletNames.emplace_back("bior1.3");
+    waveletNames.emplace_back("bior1.5");
+    waveletNames.emplace_back("bior2.2");
+    waveletNames.emplace_back("bior2.4");
+    waveletNames.emplace_back("bior2.6");
+    waveletNames.emplace_back("bior2.8");
+    waveletNames.emplace_back("bior3.1");
+    waveletNames.emplace_back("bior3.3");
+    waveletNames.emplace_back("bior3.5");
+    waveletNames.emplace_back("bior3.7");
+    waveletNames.emplace_back("bior3.9");
+    waveletNames.emplace_back("bior4.4");
+    waveletNames.emplace_back("bior5.5");
+    waveletNames.emplace_back("bior6.8");
 
-    waveletNames.push_back("rbior1.1");
-    waveletNames.push_back("rbior1.3");
-    waveletNames.push_back("rbior1.5");
-    waveletNames.push_back("rbior2.2");
-    waveletNames.push_back("rbior2.4");
-    waveletNames.push_back("rbior2.6");
-    waveletNames.push_back("rbior2.8");
-    waveletNames.push_back("rbior3.1");
-    waveletNames.push_back("rbior3.3");
-    waveletNames.push_back("rbior3.5");
-    waveletNames.push_back("rbior3.7");
-    waveletNames.push_back("rbior3.9");
-    waveletNames.push_back("rbior4.4");
-    waveletNames.push_back("rbior5.5");
-    waveletNames.push_back("rbior6.8");
+    waveletNames.emplace_back("rbior1.1");
+    waveletNames.emplace_back("rbior1.3");
+    waveletNames.emplace_back("rbior1.5");
+    waveletNames.emplace_back("rbior2.2");
+    waveletNames.emplace_back("rbior2.4");
+    waveletNames.emplace_back("rbior2.6");
+    waveletNames.emplace_back("rbior2.8");
+    waveletNames.emplace_back("rbior3.1");
+    waveletNames.emplace_back("rbior3.3");
+    waveletNames.emplace_back("rbior3.5");
+    waveletNames.emplace_back("rbior3.7");
+    waveletNames.emplace_back("rbior3.9");
+    waveletNames.emplace_back("rbior4.4");
+    waveletNames.emplace_back("rbior5.5");
+    waveletNames.emplace_back("rbior6.8");
 
     for (i = 0; i < rows; ++i) {
         for (k = 0; k < cols; ++k) {
@@ -326,9 +326,9 @@ void DWT2ReconstructionTest()
 
     for (unsigned int direct_fft = 0; direct_fft < 1; direct_fft++) {
         for (unsigned int sym_per = 0; sym_per < 2; sym_per++) {
-            for (unsigned int j = 0; j < waveletNames.size(); j++) {
-                char* name = new char[waveletNames[j].size() + 1];
-                memcpy(name, waveletNames[j].c_str(), waveletNames[j].size() + 1);
+            for (auto& waveletName : waveletNames) {
+                char* name = new char[waveletName.size() + 1];
+                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
                 obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
                     // J = 3;
@@ -338,10 +338,10 @@ void DWT2ReconstructionTest()
                     if (sym_per == 0) {
                         setDWT2Extension(wt,
                             (char*)"sym"); // Options are "per" and "sym".
-                    // Symmetric is the default option
+                        // Symmetric is the default option
                     } else {
                         setDWT2Extension(wt, (char*)"per");
-}
+                    }
 
                     wavecoeffs = dwt2(wt, inp); // Perform DWT
 
@@ -352,7 +352,7 @@ void DWT2ReconstructionTest()
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
-}
+                    }
                     // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
@@ -380,8 +380,8 @@ void MODWTReconstructionTest()
 
     wave_object obj;
     wt_object wt;
-    double *inp;
-    double *out;
+    double* inp;
+    double* out;
     int N;
     int i;
     int J;
@@ -413,9 +413,9 @@ void MODWTReconstructionTest()
 
     for (unsigned int direct_fft = 0; direct_fft < 1; direct_fft++) {
         for (unsigned int sym_per = 0; sym_per < 1; sym_per++) {
-            for (unsigned int j = 0; j < waveletNames.size(); j++) {
-                char* name = new char[waveletNames[j].size() + 1];
-                memcpy(name, waveletNames[j].c_str(), waveletNames[j].size() + 1);
+            for (auto& waveletName : waveletNames) {
+                char* name = new char[waveletName.size() + 1];
+                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
                 obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
                     // J = 3;
@@ -427,17 +427,17 @@ void MODWTReconstructionTest()
                         setWTConv(wt, (char*)"direct");
                     } else {
                         setWTConv(wt, (char*)"fft");
-}
+                    }
 
                     if (sym_per == 0) {
                         setDWTExtension(wt,
                             (char*)"per"); // Options are "per" and "sym".
-                    // Symmetric is the default option
+                        // Symmetric is the default option
                     } else if (sym_per == 1 && direct_fft == 1) {
                         setDWTExtension(wt, (char*)"sym");
                     } else {
                         break;
-}
+                    }
 
                     modwt(wt, inp); // Perform DWT
 
@@ -448,7 +448,7 @@ void MODWTReconstructionTest()
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
-}
+                    }
                     // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
@@ -482,9 +482,9 @@ void MODWT2ReconstructionTest()
     int N;
     int rows;
     int cols;
-    double *inp;
-    double *wavecoeffs;
-    double *out;
+    double* inp;
+    double* wavecoeffs;
+    double* out;
     double epsilon;
 
     rows = 1024;
@@ -517,9 +517,9 @@ void MODWT2ReconstructionTest()
 
     for (unsigned int direct_fft = 0; direct_fft < 1; direct_fft++) {
         for (unsigned int sym_per = 0; sym_per < 1; sym_per++) {
-            for (unsigned int j = 0; j < waveletNames.size(); j++) {
-                char* name = new char[waveletNames[j].size() + 1];
-                memcpy(name, waveletNames[j].c_str(), waveletNames[j].size() + 1);
+            for (auto& waveletName : waveletNames) {
+                char* name = new char[waveletName.size() + 1];
+                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
                 obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
                     // J = 3;
@@ -528,7 +528,7 @@ void MODWT2ReconstructionTest()
                         J); // Initialize the wavelet transform object
                     if (sym_per == 0) {
                         setDWT2Extension(wt, (char*)"per"); // Options are "per"
-}
+                    }
 
                     wavecoeffs = modwt2(wt, inp); // Perform DWT
 
@@ -539,7 +539,7 @@ void MODWT2ReconstructionTest()
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
-}
+                    }
                     // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
@@ -567,8 +567,8 @@ void SWTReconstructionTest()
 
     wave_object obj;
     wt_object wt;
-    double *inp;
-    double *out;
+    double* inp;
+    double* out;
     int N;
     int i;
     int J;
@@ -598,43 +598,43 @@ void SWTReconstructionTest()
         waveletNames.push_back(std::string("sym") + patch::to_string(j + 1));
     }
 
-    waveletNames.push_back("bior1.1");
-    waveletNames.push_back("bior1.3");
-    waveletNames.push_back("bior1.5");
-    waveletNames.push_back("bior2.2");
-    waveletNames.push_back("bior2.4");
-    waveletNames.push_back("bior2.6");
-    waveletNames.push_back("bior2.8");
-    waveletNames.push_back("bior3.1");
-    waveletNames.push_back("bior3.3");
-    waveletNames.push_back("bior3.5");
-    waveletNames.push_back("bior3.7");
-    waveletNames.push_back("bior3.9");
-    waveletNames.push_back("bior4.4");
-    waveletNames.push_back("bior5.5");
-    waveletNames.push_back("bior6.8");
+    waveletNames.emplace_back("bior1.1");
+    waveletNames.emplace_back("bior1.3");
+    waveletNames.emplace_back("bior1.5");
+    waveletNames.emplace_back("bior2.2");
+    waveletNames.emplace_back("bior2.4");
+    waveletNames.emplace_back("bior2.6");
+    waveletNames.emplace_back("bior2.8");
+    waveletNames.emplace_back("bior3.1");
+    waveletNames.emplace_back("bior3.3");
+    waveletNames.emplace_back("bior3.5");
+    waveletNames.emplace_back("bior3.7");
+    waveletNames.emplace_back("bior3.9");
+    waveletNames.emplace_back("bior4.4");
+    waveletNames.emplace_back("bior5.5");
+    waveletNames.emplace_back("bior6.8");
 
-    waveletNames.push_back("rbior1.1");
-    waveletNames.push_back("rbior1.3");
-    waveletNames.push_back("rbior1.5");
-    waveletNames.push_back("rbior2.2");
-    waveletNames.push_back("rbior2.4");
-    waveletNames.push_back("rbior2.6");
-    waveletNames.push_back("rbior2.8");
-    waveletNames.push_back("rbior3.1");
-    waveletNames.push_back("rbior3.3");
-    waveletNames.push_back("rbior3.5");
-    waveletNames.push_back("rbior3.7");
-    waveletNames.push_back("rbior3.9");
-    waveletNames.push_back("rbior4.4");
-    waveletNames.push_back("rbior5.5");
-    waveletNames.push_back("rbior6.8");
+    waveletNames.emplace_back("rbior1.1");
+    waveletNames.emplace_back("rbior1.3");
+    waveletNames.emplace_back("rbior1.5");
+    waveletNames.emplace_back("rbior2.2");
+    waveletNames.emplace_back("rbior2.4");
+    waveletNames.emplace_back("rbior2.6");
+    waveletNames.emplace_back("rbior2.8");
+    waveletNames.emplace_back("rbior3.1");
+    waveletNames.emplace_back("rbior3.3");
+    waveletNames.emplace_back("rbior3.5");
+    waveletNames.emplace_back("rbior3.7");
+    waveletNames.emplace_back("rbior3.9");
+    waveletNames.emplace_back("rbior4.4");
+    waveletNames.emplace_back("rbior5.5");
+    waveletNames.emplace_back("rbior6.8");
 
     for (unsigned int direct_fft = 0; direct_fft < 2; direct_fft++) {
         for (unsigned int sym_per = 0; sym_per < 1; sym_per++) {
-            for (unsigned int j = 0; j < waveletNames.size(); j++) {
-                char* name = new char[waveletNames[j].size() + 1];
-                memcpy(name, waveletNames[j].c_str(), waveletNames[j].size() + 1);
+            for (auto& waveletName : waveletNames) {
+                char* name = new char[waveletName.size() + 1];
+                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
                 obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
                     // J = 3;
@@ -646,17 +646,17 @@ void SWTReconstructionTest()
                         setWTConv(wt, (char*)"direct");
                     } else {
                         setWTConv(wt, (char*)"fft");
-}
+                    }
 
                     if (sym_per == 0) {
                         setDWTExtension(wt,
                             (char*)"per"); // Options are "per" and "sym".
-                    // Symmetric is the default option
+                        // Symmetric is the default option
                     } else if (sym_per == 1 && direct_fft == 1) {
                         setDWTExtension(wt, (char*)"sym");
                     } else {
                         break;
-}
+                    }
 
                     swt(wt, inp); // Perform DWT
 
@@ -667,7 +667,7 @@ void SWTReconstructionTest()
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
-}
+                    }
                     // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
@@ -701,9 +701,9 @@ void SWT2ReconstructionTest()
     int N;
     int rows;
     int cols;
-    double *inp;
-    double *wavecoeffs;
-    double *out;
+    double* inp;
+    double* wavecoeffs;
+    double* out;
     double epsilon;
 
     rows = 1024;
@@ -726,37 +726,37 @@ void SWT2ReconstructionTest()
         waveletNames.push_back(std::string("sym") + patch::to_string(j + 1));
     }
 
-    waveletNames.push_back("bior1.1");
-    waveletNames.push_back("bior1.3");
-    waveletNames.push_back("bior1.5");
-    waveletNames.push_back("bior2.2");
-    waveletNames.push_back("bior2.4");
-    waveletNames.push_back("bior2.6");
-    waveletNames.push_back("bior2.8");
-    waveletNames.push_back("bior3.1");
-    waveletNames.push_back("bior3.3");
-    waveletNames.push_back("bior3.5");
-    waveletNames.push_back("bior3.7");
-    waveletNames.push_back("bior3.9");
-    waveletNames.push_back("bior4.4");
-    waveletNames.push_back("bior5.5");
-    waveletNames.push_back("bior6.8");
+    waveletNames.emplace_back("bior1.1");
+    waveletNames.emplace_back("bior1.3");
+    waveletNames.emplace_back("bior1.5");
+    waveletNames.emplace_back("bior2.2");
+    waveletNames.emplace_back("bior2.4");
+    waveletNames.emplace_back("bior2.6");
+    waveletNames.emplace_back("bior2.8");
+    waveletNames.emplace_back("bior3.1");
+    waveletNames.emplace_back("bior3.3");
+    waveletNames.emplace_back("bior3.5");
+    waveletNames.emplace_back("bior3.7");
+    waveletNames.emplace_back("bior3.9");
+    waveletNames.emplace_back("bior4.4");
+    waveletNames.emplace_back("bior5.5");
+    waveletNames.emplace_back("bior6.8");
 
-    waveletNames.push_back("rbior1.1");
-    waveletNames.push_back("rbior1.3");
-    waveletNames.push_back("rbior1.5");
-    waveletNames.push_back("rbior2.2");
-    waveletNames.push_back("rbior2.4");
-    waveletNames.push_back("rbior2.6");
-    waveletNames.push_back("rbior2.8");
-    waveletNames.push_back("rbior3.1");
-    waveletNames.push_back("rbior3.3");
-    waveletNames.push_back("rbior3.5");
-    waveletNames.push_back("rbior3.7");
-    waveletNames.push_back("rbior3.9");
-    waveletNames.push_back("rbior4.4");
-    waveletNames.push_back("rbior5.5");
-    waveletNames.push_back("rbior6.8");
+    waveletNames.emplace_back("rbior1.1");
+    waveletNames.emplace_back("rbior1.3");
+    waveletNames.emplace_back("rbior1.5");
+    waveletNames.emplace_back("rbior2.2");
+    waveletNames.emplace_back("rbior2.4");
+    waveletNames.emplace_back("rbior2.6");
+    waveletNames.emplace_back("rbior2.8");
+    waveletNames.emplace_back("rbior3.1");
+    waveletNames.emplace_back("rbior3.3");
+    waveletNames.emplace_back("rbior3.5");
+    waveletNames.emplace_back("rbior3.7");
+    waveletNames.emplace_back("rbior3.9");
+    waveletNames.emplace_back("rbior4.4");
+    waveletNames.emplace_back("rbior5.5");
+    waveletNames.emplace_back("rbior6.8");
 
     for (i = 0; i < rows; ++i) {
         for (k = 0; k < cols; ++k) {
@@ -768,9 +768,9 @@ void SWT2ReconstructionTest()
 
     for (unsigned int direct_fft = 0; direct_fft < 1; direct_fft++) {
         for (unsigned int sym_per = 0; sym_per < 1; sym_per++) {
-            for (unsigned int j = 0; j < waveletNames.size(); j++) {
-                char* name = new char[waveletNames[j].size() + 1];
-                memcpy(name, waveletNames[j].c_str(), waveletNames[j].size() + 1);
+            for (auto& waveletName : waveletNames) {
+                char* name = new char[waveletName.size() + 1];
+                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
                 obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
                     // J = 3;
@@ -779,7 +779,7 @@ void SWT2ReconstructionTest()
                         J); // Initialize the wavelet transform object
                     if (sym_per == 0) {
                         setDWT2Extension(wt, (char*)"per"); // Options are "per"
-}
+                    }
 
                     wavecoeffs = swt2(wt, inp); // Perform DWT
 
@@ -790,7 +790,7 @@ void SWT2ReconstructionTest()
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
-}
+                    }
                     // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
@@ -818,8 +818,8 @@ void DWPTReconstructionTest()
 
     wave_object obj;
     wpt_object wt;
-    double *inp;
-    double *out;
+    double* inp;
+    double* out;
     int N;
     int i;
     int J;
@@ -848,43 +848,43 @@ void DWPTReconstructionTest()
         waveletNames.push_back(std::string("sym") + patch::to_string(j + 1));
     }
 
-    waveletNames.push_back("bior1.1");
-    waveletNames.push_back("bior1.3");
-    waveletNames.push_back("bior1.5");
-    waveletNames.push_back("bior2.2");
-    waveletNames.push_back("bior2.4");
-    waveletNames.push_back("bior2.6");
-    waveletNames.push_back("bior2.8");
-    waveletNames.push_back("bior3.1");
-    waveletNames.push_back("bior3.3");
-    waveletNames.push_back("bior3.5");
-    waveletNames.push_back("bior3.7");
-    waveletNames.push_back("bior3.9");
-    waveletNames.push_back("bior4.4");
-    waveletNames.push_back("bior5.5");
-    waveletNames.push_back("bior6.8");
+    waveletNames.emplace_back("bior1.1");
+    waveletNames.emplace_back("bior1.3");
+    waveletNames.emplace_back("bior1.5");
+    waveletNames.emplace_back("bior2.2");
+    waveletNames.emplace_back("bior2.4");
+    waveletNames.emplace_back("bior2.6");
+    waveletNames.emplace_back("bior2.8");
+    waveletNames.emplace_back("bior3.1");
+    waveletNames.emplace_back("bior3.3");
+    waveletNames.emplace_back("bior3.5");
+    waveletNames.emplace_back("bior3.7");
+    waveletNames.emplace_back("bior3.9");
+    waveletNames.emplace_back("bior4.4");
+    waveletNames.emplace_back("bior5.5");
+    waveletNames.emplace_back("bior6.8");
 
-    waveletNames.push_back("rbior1.1");
-    waveletNames.push_back("rbior1.3");
-    waveletNames.push_back("rbior1.5");
-    waveletNames.push_back("rbior2.2");
-    waveletNames.push_back("rbior2.4");
-    waveletNames.push_back("rbior2.6");
-    waveletNames.push_back("rbior2.8");
-    waveletNames.push_back("rbior3.1");
-    waveletNames.push_back("rbior3.3");
-    waveletNames.push_back("rbior3.5");
-    waveletNames.push_back("rbior3.7");
-    waveletNames.push_back("rbior3.9");
-    waveletNames.push_back("rbior4.4");
-    waveletNames.push_back("rbior5.5");
-    waveletNames.push_back("rbior6.8");
+    waveletNames.emplace_back("rbior1.1");
+    waveletNames.emplace_back("rbior1.3");
+    waveletNames.emplace_back("rbior1.5");
+    waveletNames.emplace_back("rbior2.2");
+    waveletNames.emplace_back("rbior2.4");
+    waveletNames.emplace_back("rbior2.6");
+    waveletNames.emplace_back("rbior2.8");
+    waveletNames.emplace_back("rbior3.1");
+    waveletNames.emplace_back("rbior3.3");
+    waveletNames.emplace_back("rbior3.5");
+    waveletNames.emplace_back("rbior3.7");
+    waveletNames.emplace_back("rbior3.9");
+    waveletNames.emplace_back("rbior4.4");
+    waveletNames.emplace_back("rbior5.5");
+    waveletNames.emplace_back("rbior6.8");
 
     for (unsigned int ent = 0; ent < 2; ent++) {
         for (unsigned int sym_per = 0; sym_per < 2; sym_per++) {
-            for (unsigned int j = 0; j < waveletNames.size(); j++) {
-                char* name = new char[waveletNames[j].size() + 1];
-                memcpy(name, waveletNames[j].c_str(), waveletNames[j].size() + 1);
+            for (auto& waveletName : waveletNames) {
+                char* name = new char[waveletName.size() + 1];
+                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
                 obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
                     // J = 3;
@@ -893,16 +893,16 @@ void DWPTReconstructionTest()
                     if (sym_per == 0) {
                         setDWPTExtension(wt,
                             (char*)"sym"); // Options are "per" and "sym".
-                    // Symmetric is the default option
+                        // Symmetric is the default option
                     } else {
                         setDWPTExtension(wt, (char*)"per");
-}
+                    }
 
                     if (ent == 0) {
                         setDWPTEntropy(wt, (char*)"shannon", 0);
                     } else {
                         setDWPTEntropy(wt, (char*)"logenergy", 0);
-}
+                    }
 
                     dwpt(wt, inp); // Perform DWT
 
@@ -938,8 +938,8 @@ void CWTReconstructionTest()
     int J;
     int subscale;
     int a0;
-    double *inp;
-    double *oup;
+    double* inp;
+    double* oup;
     double dt;
     double dj;
     double s0;
@@ -1022,9 +1022,9 @@ void DBCoefTests()
         waveletNames[i] = std::string("db") + patch::to_string(i + 1);
     }
 
-    for (unsigned int j = 0; j < waveletNames.size(); j++) {
-        char* name = new char[waveletNames[j].size() + 1];
-        memcpy(name, waveletNames[j].c_str(), waveletNames[j].size() + 1);
+    for (auto& waveletName : waveletNames) {
+        char* name = new char[waveletName.size() + 1];
+        memcpy(name, waveletName.c_str(), waveletName.size() + 1);
         obj = wave_init(name); // Initialize the wavelet
         t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
         t2 = sum2(obj->lpr, obj->lpr_len) - 1. / sqrt(2.0);
@@ -1063,9 +1063,9 @@ void CoifCoefTests()
         waveletNames[i] = std::string("coif") + patch::to_string(i + 1);
     }
 
-    for (unsigned int j = 0; j < waveletNames.size(); j++) {
-        char* name = new char[waveletNames[j].size() + 1];
-        memcpy(name, waveletNames[j].c_str(), waveletNames[j].size() + 1);
+    for (auto& waveletName : waveletNames) {
+        char* name = new char[waveletName.size() + 1];
+        memcpy(name, waveletName.c_str(), waveletName.size() + 1);
         obj = wave_init(name); // Initialize the wavelet
         t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
         t2 = sum2(obj->lpr, obj->lpr_len) - 1. / sqrt(2.0);
@@ -1103,9 +1103,9 @@ void SymCoefTests()
         waveletNames.push_back(std::string("sym") + patch::to_string(i + 1));
     }
 
-    for (unsigned int j = 0; j < waveletNames.size(); j++) {
-        char* name = new char[waveletNames[j].size() + 1];
-        memcpy(name, waveletNames[j].c_str(), waveletNames[j].size() + 1);
+    for (auto& waveletName : waveletNames) {
+        char* name = new char[waveletName.size() + 1];
+        memcpy(name, waveletName.c_str(), waveletName.size() + 1);
         obj = wave_init(name); // Initialize the wavelet
         t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
         t2 = sum2(obj->lpr, obj->lpr_len) - 1. / sqrt(2.0);
@@ -1140,25 +1140,25 @@ void BiorCoefTests()
     double t5;
     double t6;
     std::vector<std::string> waveletNames;
-    waveletNames.push_back("bior1.1");
-    waveletNames.push_back("bior1.3");
-    waveletNames.push_back("bior1.5");
-    waveletNames.push_back("bior2.2");
-    waveletNames.push_back("bior2.4");
-    waveletNames.push_back("bior2.6");
-    waveletNames.push_back("bior2.8");
-    waveletNames.push_back("bior3.1");
-    waveletNames.push_back("bior3.3");
-    waveletNames.push_back("bior3.5");
-    waveletNames.push_back("bior3.7");
-    waveletNames.push_back("bior3.9");
-    waveletNames.push_back("bior4.4");
-    waveletNames.push_back("bior5.5");
-    waveletNames.push_back("bior6.8");
+    waveletNames.emplace_back("bior1.1");
+    waveletNames.emplace_back("bior1.3");
+    waveletNames.emplace_back("bior1.5");
+    waveletNames.emplace_back("bior2.2");
+    waveletNames.emplace_back("bior2.4");
+    waveletNames.emplace_back("bior2.6");
+    waveletNames.emplace_back("bior2.8");
+    waveletNames.emplace_back("bior3.1");
+    waveletNames.emplace_back("bior3.3");
+    waveletNames.emplace_back("bior3.5");
+    waveletNames.emplace_back("bior3.7");
+    waveletNames.emplace_back("bior3.9");
+    waveletNames.emplace_back("bior4.4");
+    waveletNames.emplace_back("bior5.5");
+    waveletNames.emplace_back("bior6.8");
 
-    for (unsigned int j = 0; j < waveletNames.size(); j++) {
-        char* name = new char[waveletNames[j].size() + 1];
-        memcpy(name, waveletNames[j].c_str(), waveletNames[j].size() + 1);
+    for (auto& waveletName : waveletNames) {
+        char* name = new char[waveletName.size() + 1];
+        memcpy(name, waveletName.c_str(), waveletName.size() + 1);
         obj = wave_init(name); // Initialize the wavelet
 
         t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
@@ -1191,25 +1191,25 @@ void RBiorCoefTests()
     double t5;
     double t6;
     std::vector<std::string> waveletNames;
-    waveletNames.push_back("rbior1.1");
-    waveletNames.push_back("rbior1.3");
-    waveletNames.push_back("rbior1.5");
-    waveletNames.push_back("rbior2.2");
-    waveletNames.push_back("rbior2.4");
-    waveletNames.push_back("rbior2.6");
-    waveletNames.push_back("rbior2.8");
-    waveletNames.push_back("rbior3.1");
-    waveletNames.push_back("rbior3.3");
-    waveletNames.push_back("rbior3.5");
-    waveletNames.push_back("rbior3.7");
-    waveletNames.push_back("rbior3.9");
-    waveletNames.push_back("rbior4.4");
-    waveletNames.push_back("rbior5.5");
-    waveletNames.push_back("rbior6.8");
+    waveletNames.emplace_back("rbior1.1");
+    waveletNames.emplace_back("rbior1.3");
+    waveletNames.emplace_back("rbior1.5");
+    waveletNames.emplace_back("rbior2.2");
+    waveletNames.emplace_back("rbior2.4");
+    waveletNames.emplace_back("rbior2.6");
+    waveletNames.emplace_back("rbior2.8");
+    waveletNames.emplace_back("rbior3.1");
+    waveletNames.emplace_back("rbior3.3");
+    waveletNames.emplace_back("rbior3.5");
+    waveletNames.emplace_back("rbior3.7");
+    waveletNames.emplace_back("rbior3.9");
+    waveletNames.emplace_back("rbior4.4");
+    waveletNames.emplace_back("rbior5.5");
+    waveletNames.emplace_back("rbior6.8");
 
-    for (unsigned int j = 0; j < waveletNames.size(); j++) {
-        char* name = new char[waveletNames[j].size() + 1];
-        memcpy(name, waveletNames[j].c_str(), waveletNames[j].size() + 1);
+    for (auto& waveletName : waveletNames) {
+        char* name = new char[waveletName.size() + 1];
+        memcpy(name, waveletName.c_str(), waveletName.size() + 1);
         obj = wave_init(name); // Initialize the wavelet
 
         t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
@@ -1230,7 +1230,7 @@ void RBiorCoefTests()
     }
 }
 
-int main()
+auto main() -> int
 {
     printf("Running Unit Tests : \n \n");
     printf("Running DBCoefTests ... ");

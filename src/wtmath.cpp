@@ -377,7 +377,7 @@ void idwt2_shift(int shift, int rows, int cols, double* lpr, double* hpr, int lf
     free(cH);
 }
 
-int upsamp(const double* x, int lenx, int M, double* y)
+auto upsamp(const double* x, int lenx, int M, double* y) -> int
 {
     int N;
     int i;
@@ -412,7 +412,7 @@ int upsamp(const double* x, int lenx, int M, double* y)
     return N;
 }
 
-int upsamp2(const double* x, int lenx, int M, double* y)
+auto upsamp2(const double* x, int lenx, int M, double* y) -> int
 {
     int N;
     int i;
@@ -447,7 +447,7 @@ int upsamp2(const double* x, int lenx, int M, double* y)
     return N;
 }
 
-int downsamp(const double* x, int lenx, int M, double* y)
+auto downsamp(const double* x, int lenx, int M, double* y) -> int
 {
     int N;
     int i;
@@ -492,7 +492,7 @@ int per_ext(double *sig, int len, int a,double *oup) {
 }
 */
 
-int per_ext(const double* sig, int len, int a, double* oup)
+auto per_ext(const double* sig, int len, int a, double* oup) -> int
 {
     int i;
     int len2;
@@ -532,7 +532,7 @@ int symm_ext(double *sig, int len, int a, double *oup) {
 }
 */
 
-int symm_ext(const double* sig, int len, int a, double* oup)
+auto symm_ext(const double* sig, int len, int a, double* oup) -> int
 {
     int i;
     int len2;
@@ -553,7 +553,7 @@ int symm_ext(const double* sig, int len, int a, double* oup)
     return len2;
 }
 
-static int isign(int N)
+static auto isign(int N) -> int
 {
     int M;
     if (N >= 0) {
@@ -565,7 +565,7 @@ static int isign(int N)
     return M;
 }
 
-static int iabs(int N)
+static auto iabs(int N) -> int
 {
     if (N >= 0) {
         return N;
@@ -601,7 +601,7 @@ void circshift(double* array, int N, int L)
     free(temp);
 }
 
-int testSWTlength(int N, int J)
+auto testSWTlength(int N, int J) -> int
 {
     int ret;
     int div;
@@ -620,7 +620,7 @@ int testSWTlength(int N, int J)
     return ret;
 }
 
-int wmaxiter(int sig_len, int filt_len)
+auto wmaxiter(int sig_len, int filt_len) -> int
 {
     int lev;
     double temp;
@@ -631,7 +631,7 @@ int wmaxiter(int sig_len, int filt_len)
     return lev;
 }
 
-static double entropy_s(const double* x, int N)
+static auto entropy_s(const double* x, int N) -> double
 {
     int i;
     double val;
@@ -648,7 +648,7 @@ static double entropy_s(const double* x, int N)
     return val;
 }
 
-static double entropy_t(double* x, int N, double t)
+static auto entropy_t(double* x, int N, double t) -> double
 {
     int i;
     double val;
@@ -669,7 +669,7 @@ static double entropy_t(double* x, int N, double t)
     return val;
 }
 
-static double entropy_n(double* x, int N, double p)
+static auto entropy_n(double* x, int N, double p) -> double
 {
     int i;
     double val;
@@ -687,7 +687,7 @@ static double entropy_n(double* x, int N, double p)
     return val;
 }
 
-static double entropy_l(const double* x, int N)
+static auto entropy_l(const double* x, int N) -> double
 {
     int i;
     double val;
@@ -704,7 +704,7 @@ static double entropy_l(const double* x, int N)
     return val;
 }
 
-double costfunc(double* x, int N, char* entropy, double p)
+auto costfunc(double* x, int N, char* entropy, double p) -> double
 {
     double val;
 

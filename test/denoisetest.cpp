@@ -1,11 +1,11 @@
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "wauxlib.h"
 
-static double rmse(int N, const double* x, const double* y)
+static auto rmse(int N, const double* x, const double* y) -> double
 {
     double rms;
     int i;
@@ -21,7 +21,7 @@ static double rmse(int N, const double* x, const double* y)
     return rms;
 }
 
-static double corrcoef(int N, const double* x, const double* y)
+static auto corrcoef(int N, const double* x, const double* y) -> double
 {
     double cc;
     double xm;
@@ -55,12 +55,12 @@ static double corrcoef(int N, const double* x, const double* y)
     return cc;
 }
 
-int main()
+auto main() -> int
 {
     // gcc -Wall -I../header -L../Bin denoisetest.c -o denoise -lwauxlib -lwavelib -lm
-    double *sig;
-    double *inp;
-    double *oup;
+    double* sig;
+    double* inp;
+    double* oup;
     int i;
     int N;
     int J;

@@ -5,11 +5,11 @@
  *      Author: Rafat Hussain
  */
 #include "real.h"
-#include <stdio.h>
+#include <cstdio>
 
-fft_real_object fft_real_init(int N, int sgn)
+auto fft_real_init(int N, int sgn) -> fft_real_object
 {
-    fft_real_object obj = NULL;
+    fft_real_object obj = nullptr;
     fft_type theta;
     int k;
 

@@ -34,23 +34,23 @@ void imodwt_per_stride(int M, const double* cA, int len_cA, const double* cD, co
 void idwt2_shift(int shift, int rows, int cols, double* lpr, double* hpr, int lf,
     double* A, double* H, double* V, double* D, double* oup);
 
-int upsamp(const double* x, int lenx, int M, double* y);
+auto upsamp(const double* x, int lenx, int M, double* y) -> int;
 
-int upsamp2(const double* x, int lenx, int M, double* y);
+auto upsamp2(const double* x, int lenx, int M, double* y) -> int;
 
-int downsamp(const double* x, int lenx, int M, double* y);
+auto downsamp(const double* x, int lenx, int M, double* y) -> int;
 
-int per_ext(const double* sig, int len, int a, double* oup);
+auto per_ext(const double* sig, int len, int a, double* oup) -> int;
 
-int symm_ext(const double* sig, int len, int a, double* oup);
+auto symm_ext(const double* sig, int len, int a, double* oup) -> int;
 
 void circshift(double* array, int N, int L);
 
-int testSWTlength(int N, int J);
+auto testSWTlength(int N, int J) -> int;
 
-int wmaxiter(int sig_len, int filt_len);
+auto wmaxiter(int sig_len, int filt_len) -> int;
 
-double costfunc(double* x, int N, char* entropy, double p);
+auto costfunc(double* x, int N, char* entropy, double p) -> double;
 
 #ifdef __cplusplus
 }

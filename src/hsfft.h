@@ -8,9 +8,9 @@
 #ifndef HSFFT_H_
 #define HSFFT_H_
 
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cmath>
+#include <cstdlib>
+#include <cstring>
 
 #include "wavelib.h"
 
@@ -32,17 +32,17 @@ extern "C" {
 #define SMUL(a,b) ((a)*(b))
 */
 
-fft_object fft_init(int N, int sgn);
+auto fft_init(int N, int sgn) -> fft_object;
 
 void fft_exec(fft_object obj, fft_data* inp, fft_data* oup);
 
-int divideby(int M, int d);
+auto divideby(int M, int d) -> int;
 
-int dividebyN(int N);
+auto dividebyN(int N) -> int;
 
 //void arrrev(int M, int* arr);
 
-int factors(int M, int* arr);
+auto factors(int M, int* arr) -> int;
 
 void twiddle(fft_data* vec, int N, int radix);
 

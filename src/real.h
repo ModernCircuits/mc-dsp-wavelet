@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-fft_real_object fft_real_init(int N, int sgn);
+auto fft_real_init(int N, int sgn) -> fft_real_object;
 
 void fft_r2c_exec(fft_real_object obj, const fft_type* inp, fft_data* oup);
 

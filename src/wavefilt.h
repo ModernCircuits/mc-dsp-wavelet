@@ -6,17 +6,17 @@ Copyright (c) 2016, Holger Nahrstaedt
 #define WAVEFILT_H_
 
 #include "conv.h"
-#include <stdio.h>
+#include <cstdio>
 #define USE_MATH_DEFINES
-#include "math.h"
+#include <cmath>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int filtlength(const char* name);
+auto filtlength(const char* name) -> int;
 
-int filtcoef(const char* name, double* lp1, double* hp1, double* lp2, double* hp2);
+auto filtcoef(const char* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int;
 
 void copy_reverse(const double* in, int N, double* out);
 void qmf_even(const double* in, int N, double* out);

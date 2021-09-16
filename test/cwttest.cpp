@@ -1,10 +1,10 @@
 #include "wavelib.h"
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
-int main()
+auto main() -> int
 {
     int i;
     int N;
@@ -14,8 +14,8 @@ int main()
     int iter;
     int nd;
     int k;
-    double *inp;
-    double *oup;
+    double* inp;
+    double* oup;
     double dt;
     double dj;
     double s0;

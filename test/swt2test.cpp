@@ -1,11 +1,11 @@
 #include "wavelib.h"
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
 
-double absmax(double* array, int N)
+auto absmax(double* array, int N) -> double
 {
     double max;
     int i;
@@ -20,7 +20,7 @@ double absmax(double* array, int N)
     return max;
 }
 
-double generate_rnd()
+auto generate_rnd() -> double
 {
     double rnd;
 
@@ -29,7 +29,7 @@ double generate_rnd()
     return rnd;
 }
 
-int main()
+auto main() -> int
 {
     wave_object obj;
     wt2_object wt;
@@ -38,11 +38,11 @@ int main()
     int J;
     int rows;
     int cols;
-    double *inp;
-    double *wavecoeffs;
-    double *oup;
-    double *cLL;
-    double *diff;
+    double* inp;
+    double* wavecoeffs;
+    double* oup;
+    double* cLL;
+    double* diff;
     double amax;
     int ir;
     int ic;

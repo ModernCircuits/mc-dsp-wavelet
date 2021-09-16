@@ -18,10 +18,10 @@ extern "C" {
 #define cplx_type double
 #endif
 
-typedef struct cplx_t {
+using cplx_data = struct cplx_t {
     cplx_type re;
     cplx_type im;
-} cplx_data;
+};
 
 struct wave_set {
     char wname[50];
@@ -37,13 +37,13 @@ struct wave_set {
     double params[0];
 };
 
-typedef struct wave_set* wave_object;
-wave_object wave_init(const char* wname);
+using wave_object = struct wave_set*;
+auto wave_init(const char* wname) -> wave_object;
 
-typedef struct fft_t {
+using fft_data = struct fft_t {
     fft_type re;
     fft_type im;
-} fft_data;
+};
 
 struct fft_set {
     int N;
@@ -54,16 +54,16 @@ struct fft_set {
     fft_data twiddle[1];
 };
 
-typedef struct fft_set* fft_object;
-fft_object fft_init(int N, int sgn);
+using fft_object = struct fft_set*;
+auto fft_init(int N, int sgn) -> fft_object;
 
 struct fft_real_set {
     fft_object cobj;
     fft_data twiddle2[1];
 };
 
-typedef struct fft_real_set* fft_real_object;
-fft_real_object fft_real_init(int N, int sgn);
+using fft_real_object = struct fft_real_set*;
+auto fft_real_init(int N, int sgn) -> fft_real_object;
 
 struct conv_set {
     fft_real_object fobj;
@@ -73,8 +73,8 @@ struct conv_set {
     int clen;
 };
 
-typedef struct conv_set* conv_object;
-conv_object conv_init(int N, int L);
+using conv_object = struct conv_set*;
+auto conv_init(int N, int L) -> conv_object;
 
 struct wt_set {
     wave_object wave;
@@ -98,8 +98,8 @@ struct wt_set {
     double params[0];
 };
 
-typedef struct wt_set* wt_object;
-wt_object wt_init(wave_object wave, const char* method, int siglength, int J);
+using wt_object = struct wt_set*;
+auto wt_init(wave_object wave, const char* method, int siglength, int J) -> wt_object;
 
 struct wtree_set {
     wave_object wave;
@@ -124,8 +124,8 @@ struct wtree_set {
     double params[0];
 };
 
-typedef struct wtree_set* wtree_object;
-wtree_object wtree_init(wave_object wave, int siglength, int J);
+using wtree_object = struct wtree_set*;
+auto wtree_init(wave_object wave, int siglength, int J) -> wtree_object;
 
 struct wpt_set {
     wave_object wave;
@@ -152,8 +152,8 @@ struct wpt_set {
     double params[0];
 };
 
-typedef struct wpt_set* wpt_object;
-wpt_object wpt_init(wave_object wave, int siglength, int J);
+using wpt_object = struct wpt_set*;
+auto wpt_init(wave_object wave, int siglength, int J) -> wpt_object;
 
 struct cwt_set {
     char wave[10]; // Wavelet - morl/morlet,paul,dog/dgauss
@@ -178,8 +178,8 @@ struct cwt_set {
     double params[0];
 };
 
-typedef struct cwt_set* cwt_object;
-cwt_object cwt_init(const char* wave, double param, int siglength, double dt, int J);
+using cwt_object = struct cwt_set*;
+auto cwt_init(const char* wave, double param, int siglength, double dt, int J) -> cwt_object;
 
 struct wt2_set {
     wave_object wave;
@@ -198,14 +198,14 @@ struct wt2_set {
     int params[0];
 };
 
-typedef struct wt2_set* wt2_object;
-wt2_object wt2_init(wave_object wave, const char* method, int rows, int cols, int J);
+using wt2_object = struct wt2_set*;
+auto wt2_init(wave_object wave, const char* method, int rows, int cols, int J) -> wt2_object;
 
 void dwt(wt_object wt, const double* inp);
 
 void idwt(wt_object wt, double* dwtop);
 
-double* getDWTmra(wt_object wt, double* wavecoeffs);
+auto getDWTmra(wt_object wt, double* wavecoeffs) -> double*;
 
 void wtree(wtree_object wt, const double* inp);
 
@@ -217,13 +217,13 @@ void swt(wt_object wt, const double* inp);
 
 void iswt(wt_object wt, double* swtop);
 
-double* getSWTmra(wt_object wt, double* wavecoeffs);
+auto getSWTmra(wt_object wt, double* wavecoeffs) -> double*;
 
 void modwt(wt_object wt, const double* inp);
 
 void imodwt(wt_object wt, double* oup);
 
-double* getMODWTmra(wt_object wt, double* wavecoeffs);
+auto getMODWTmra(wt_object wt, double* wavecoeffs) -> double*;
 
 void setDWTExtension(wt_object wt, const char* extension);
 
@@ -237,11 +237,11 @@ void setDWPTEntropy(wpt_object wt, const char* entropy, double eparam);
 
 void setWTConv(wt_object wt, const char* cmethod);
 
-int getWTREENodelength(wtree_object wt, int X);
+auto getWTREENodelength(wtree_object wt, int X) -> int;
 
 void getWTREECoeffs(wtree_object wt, int X, int Y, double* coeffs, int N);
 
-int getDWPTNodelength(wpt_object wt, int X);
+auto getDWPTNodelength(wpt_object wt, int X) -> int;
 
 void getDWPTCoeffs(wpt_object wt, int X, int Y, double* coeffs, int N);
 
@@ -255,21 +255,21 @@ void cwt(cwt_object wt, const double* inp);
 
 void icwt(cwt_object wt, double* cwtop);
 
-int getCWTScaleLength(int N);
+auto getCWTScaleLength(int N) -> int;
 
-double* dwt2(wt2_object wt, double* inp);
+auto dwt2(wt2_object wt, double* inp) -> double*;
 
 void idwt2(wt2_object wt, double* wavecoeff, double* oup);
 
-double* swt2(wt2_object wt, double* inp);
+auto swt2(wt2_object wt, double* inp) -> double*;
 
 void iswt2(wt2_object wt, const double* wavecoeffs, double* oup);
 
-double* modwt2(wt2_object wt, double* inp);
+auto modwt2(wt2_object wt, double* inp) -> double*;
 
 void imodwt2(wt2_object wt, double* wavecoeff, double* oup);
 
-double* getWT2Coeffs(wt2_object wt, double* wcoeffs, int level, char const* type, int* rows, int* cols);
+auto getWT2Coeffs(wt2_object wt, double* wcoeffs, int level, char const* type, int* rows, int* cols) -> double*;
 
 void dispWT2Coeffs(double* A, int row, int col);
 

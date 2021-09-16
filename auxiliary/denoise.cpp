@@ -1,14 +1,14 @@
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "waux.h"
 #include "wauxlib.h"
 
-denoise_object denoise_init(int length, int J, const char* wname)
+auto denoise_init(int length, int J, const char* wname) -> denoise_object
 {
-    denoise_object obj = NULL;
+    denoise_object obj = nullptr;
 
     obj = (denoise_object)malloc(sizeof(struct denoise_set) + sizeof(double));
 
@@ -43,8 +43,8 @@ void visushrink(double* signal, int N, int J, const char* wname, const char* met
     double tmp;
     wave_object wave;
     wt_object wt;
-    double *dout;
-    double *lnoise;
+    double* dout;
+    double* lnoise;
 
     wave = wave_init(wname);
 
@@ -169,10 +169,10 @@ void sureshrink(double* signal, int N, int J, const char* wname, const char* met
     double x_sum;
     wave_object wave;
     wt_object wt;
-    double *dout;
-    double *risk;
-    double *dsum;
-    double *lnoise;
+    double* dout;
+    double* risk;
+    double* dsum;
+    double* lnoise;
 
     wave = wave_init(wname);
 
@@ -328,8 +328,8 @@ void modwtshrink(double* signal, int N, int J, const char* wname, const char* cm
     double llen;
     wave_object wave;
     wt_object wt;
-    double *dout;
-    double *lnoise;
+    double* dout;
+    double* lnoise;
 
     wave = wave_init(wname);
 
@@ -438,7 +438,7 @@ void denoise(denoise_object obj, double* signal, double* denoised)
         visushrink(signal, obj->N, obj->J, obj->wname, obj->wmethod, obj->ext, obj->thresh, obj->level, denoised);
         ;
     } else if (strcmp(obj->dmethod, "modwtshrink") == 0) {
-        if (strcmp(obj->wmethod, "modwt") != 0 != 0) {
+        if (static_cast<int>(strcmp(obj->wmethod, "modwt") != 0) != 0) {
             printf("modwtshrink method only works with modwt. Please use setDenoiseWTMethod to set the correct method\n");
             exit(-1);
         }

@@ -1,10 +1,10 @@
 #include "wavelib.h"
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
-int main()
+auto main() -> int
 {
     int i;
     int J;
@@ -14,8 +14,8 @@ int main()
     int Y;
     wave_object obj;
     wtree_object wt;
-    double *inp;
-    double *oup;
+    double* inp;
+    double* oup;
 
     char const* name = "db3";
     obj = wave_init(name); // Initialize the wavelet

@@ -157,7 +157,7 @@ void nsfft_exec(fft_object obj, fft_data* inp, fft_data* oup, double lb, double 
     }
 }
 
-static double fix(double x)
+static auto fix(double x) -> double
 {
     // Rounds to the integer nearest to zero
     if (x >= 0.) {
@@ -166,7 +166,7 @@ static double fix(double x)
     return ceil(x);
 }
 
-int nint(double N)
+auto nint(double N) -> int
 {
     int i;
 
@@ -175,7 +175,7 @@ int nint(double N)
     return i;
 }
 
-double cwt_gamma(double x)
+auto cwt_gamma(double x) -> double
 {
     /*
 	 * This C program code is based on  W J Cody's fortran code.

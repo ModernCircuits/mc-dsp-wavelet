@@ -1,10 +1,10 @@
 #include "wavelib.h"
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
-double absmax(double* array, int N)
+auto absmax(double* array, int N) -> double
 {
     double max;
     int i;
@@ -19,13 +19,13 @@ double absmax(double* array, int N)
     return max;
 }
 
-int main()
+auto main() -> int
 {
     wave_object obj;
     wt_object wt;
-    double *inp;
-    double *out;
-    double *diff;
+    double* inp;
+    double* out;
+    double* diff;
     int N;
     int i;
     int J;

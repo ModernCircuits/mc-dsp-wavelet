@@ -8,7 +8,7 @@ C. Torrence and G. Compo, and is available at URL: http://atoc.colorado.edu/rese
 
 #include "cwt.h"
 
-double factorial(int N)
+auto factorial(int N) -> double
 {
     static const double fact[41] = { 1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600, 6227020800, 87178291200, 1307674368000,
         20922789888000, 355687428096000, 6402373705728000, 121645100408832000, 2432902008176640000, 51090942171709440000.0, 1124000727777607680000.0,
@@ -277,7 +277,7 @@ void psi0(int mother, double param, double* val, int* real)
     }
 }
 
-static int maxabs(double* array, int N)
+static auto maxabs(double* array, int N) -> int
 {
     double maxval;
     double temp;
@@ -297,7 +297,7 @@ static int maxabs(double* array, int N)
     return index;
 }
 
-double cdelta(int mother, double param, double psi0)
+auto cdelta(int mother, double param, double psi0) -> double
 {
     int N;
     int i;

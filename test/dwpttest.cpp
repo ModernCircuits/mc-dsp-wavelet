@@ -1,10 +1,10 @@
 #include "wavelib.h"
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
-double absmax(double* array, int N)
+auto absmax(double* array, int N) -> double
 {
     double max;
     int i;
@@ -19,16 +19,16 @@ double absmax(double* array, int N)
     return max;
 }
 
-int main()
+auto main() -> int
 {
     int i;
     int J;
     int N;
     wave_object obj;
     wpt_object wt;
-    double *inp;
-    double *oup;
-    double *diff;
+    double* inp;
+    double* oup;
+    double* diff;
 
     char const* name = "db4";
     obj = wave_init(name); // Initialize the wavelet

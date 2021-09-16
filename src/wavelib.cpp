@@ -2,22 +2,22 @@
   Copyright (c) 2014, Rafat Hussain
 */
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "cwt.h"
 #include "wavelib.h"
 #include "wtmath.h"
 
-wave_object wave_init(const char* wname)
+auto wave_init(const char* wname) -> wave_object
 {
-    wave_object obj = NULL;
+    wave_object obj = nullptr;
     int retval;
     retval = 0;
 
-    if (wname != NULL) {
+    if (wname != nullptr) {
         retval = filtlength(wname);
         //obj->filtlength = retval;
         //strcopy(obj->wname, wname);
@@ -28,7 +28,7 @@ wave_object wave_init(const char* wname)
     obj->filtlength = retval;
     obj->lpd_len = obj->hpd_len = obj->lpr_len = obj->hpr_len = obj->filtlength;
     strcpy(obj->wname, wname);
-    if (wname != NULL) {
+    if (wname != nullptr) {
         filtcoef(wname, obj->params, obj->params + retval, obj->params + 2 * retval, obj->params + 3 * retval);
     }
     obj->lpd = &obj->params[0];
@@ -38,12 +38,12 @@ wave_object wave_init(const char* wname)
     return obj;
 }
 
-wt_object wt_init(wave_object wave, const char* method, int siglength, int J)
+auto wt_init(wave_object wave, const char* method, int siglength, int J) -> wt_object
 {
     int size;
     int i;
     int MaxIter;
-    wt_object obj = NULL;
+    wt_object obj = nullptr;
 
     size = wave->filtlength;
 
@@ -59,7 +59,7 @@ wt_object wt_init(wave_object wave, const char* method, int siglength, int J)
         exit(-1);
     }
 
-    if (method == NULL) {
+    if (method == nullptr) {
         obj = (wt_object)malloc(sizeof(struct wt_set) + sizeof(double) * (siglength + 2 * J * (size + 1)));
         obj->outlength = siglength + 2 * J * (size + 1); // Default
         strcpy(obj->ext, "sym"); // Default
@@ -107,7 +107,7 @@ wt_object wt_init(wave_object wave, const char* method, int siglength, int J)
         obj->even = 0;
     }
 
-    obj->cobj = NULL;
+    obj->cobj = nullptr;
 
     strcpy(obj->cmethod, "direct"); // Default
     obj->cfftset = 0;
@@ -131,7 +131,7 @@ wt_object wt_init(wave_object wave, const char* method, int siglength, int J)
     return obj;
 }
 
-wtree_object wtree_init(wave_object wave, int siglength, int J)
+auto wtree_init(wave_object wave, int siglength, int J) -> wtree_object
 {
     int size;
     int i;
@@ -140,7 +140,7 @@ wtree_object wtree_init(wave_object wave, int siglength, int J)
     int temp2;
     int elength;
     int nodes;
-    wtree_object obj = NULL;
+    wtree_object obj = nullptr;
 
     size = wave->filtlength;
 
@@ -180,7 +180,7 @@ wtree_object wtree_init(wave_object wave, int siglength, int J)
         obj->even = 0;
     }
 
-    obj->cobj = NULL;
+    obj->cobj = nullptr;
     obj->nodes = nodes;
 
     obj->cfftset = 0;
@@ -198,7 +198,7 @@ wtree_object wtree_init(wave_object wave, int siglength, int J)
     return obj;
 }
 
-wpt_object wpt_init(wave_object wave, int siglength, int J)
+auto wpt_init(wave_object wave, int siglength, int J) -> wpt_object
 {
     int size;
     int i;
@@ -209,7 +209,7 @@ wpt_object wpt_init(wave_object wave, int siglength, int J)
     int p2;
     int N;
     int lp;
-    wpt_object obj = NULL;
+    wpt_object obj = nullptr;
 
     size = wave->filtlength;
 
@@ -261,7 +261,7 @@ wpt_object wpt_init(wave_object wave, int siglength, int J)
         obj->even = 0;
     }
 
-    obj->cobj = NULL;
+    obj->cobj = nullptr;
     obj->nodes = nodes;
 
     obj->lenlength = J + 2;
@@ -281,9 +281,9 @@ wpt_object wpt_init(wave_object wave, int siglength, int J)
     return obj;
 }
 
-cwt_object cwt_init(const char* wave, double param, int siglength, double dt, int J)
+auto cwt_init(const char* wave, double param, int siglength, double dt, int J) -> cwt_object
 {
-    cwt_object obj = NULL;
+    cwt_object obj = nullptr;
     int N;
     int i;
     int nj2;
@@ -376,7 +376,7 @@ cwt_object cwt_init(const char* wave, double param, int siglength, double dt, in
     return obj;
 }
 
-wt2_object wt2_init(wave_object wave, const char* method, int rows, int cols, int J)
+auto wt2_init(wave_object wave, const char* method, int rows, int cols, int J) -> wt2_object
 {
     int size;
     int i;
@@ -384,7 +384,7 @@ wt2_object wt2_init(wave_object wave, const char* method, int rows, int cols, in
     int MaxRows;
     int MaxCols;
     int sumacc;
-    wt2_object obj = NULL;
+    wt2_object obj = nullptr;
 
     size = wave->filtlength;
 
@@ -407,7 +407,7 @@ wt2_object wt2_init(wave_object wave, const char* method, int rows, int cols, in
         exit(-1);
     }
 
-    if (method == NULL) {
+    if (method == nullptr) {
         obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
         obj->outlength = 0; // Default
         strcpy(obj->ext, "per");
@@ -979,7 +979,7 @@ static void getDWTRecCoeff(const double* coeff, const int* length, const char* c
     free(out);
 }
 
-double* getDWTmra(wt_object wt, double* wavecoeffs)
+auto getDWTmra(wt_object wt, double* wavecoeffs) -> double*
 {
     int i;
     int J;
@@ -1146,7 +1146,7 @@ void wtree(wtree_object wt, const double* inp)
     free(orig);
 }
 
-static int ipow2(int n)
+static auto ipow2(int n) -> int
 {
     int p;
     int i;
@@ -1410,7 +1410,7 @@ void dwpt(wpt_object wt, const double* inp)
     free(nodelength);
 }
 
-int getWTREENodelength(wtree_object wt, int X)
+auto getWTREENodelength(wtree_object wt, int X) -> int
 {
     int N;
     N = -1;
@@ -1427,7 +1427,7 @@ int getWTREENodelength(wtree_object wt, int X)
     return N;
 }
 
-int getDWPTNodelength(wpt_object wt, int X)
+auto getDWPTNodelength(wpt_object wt, int X) -> int
 {
     int N;
     N = -1;
@@ -1538,7 +1538,7 @@ void getDWPTCoeffs(wpt_object wt, int X, int Y, double* coeffs, int N)
     }
 }
 
-int getCWTScaleLength(int N)
+auto getCWTScaleLength(int N) -> int
 {
     int J;
     double temp;
@@ -2546,7 +2546,7 @@ static void getSWTRecCoeff(const double* coeff, int* length, const char* ctype, 
     free(det2);
 }
 
-double* getSWTmra(wt_object wt, double* wavecoeffs)
+auto getSWTmra(wt_object wt, double* wavecoeffs) -> double*
 {
     int i;
     int J;
@@ -2844,8 +2844,8 @@ static void modwt_fft(wt_object wt, const double* inp)
     fft_data* high_pass;
     fft_data* sig;
     int* index;
-    fft_object fft_fd = NULL;
-    fft_object fft_bd = NULL;
+    fft_object fft_fd = nullptr;
+    fft_object fft_bd = nullptr;
 
     temp_len = wt->siglength;
     len_avg = wt->wave->lpd_len;
@@ -3051,7 +3051,7 @@ static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* app
     }
 }
 
-double* getMODWTmra(wt_object wt, double* wavecoeffs)
+auto getMODWTmra(wt_object wt, double* wavecoeffs) -> double*
 {
     double* mra;
     int i;
@@ -3071,8 +3071,8 @@ double* getMODWTmra(wt_object wt, double* wavecoeffs)
     fft_data* sig;
     fft_data* ninp;
     int* index;
-    fft_object fft_fd = NULL;
-    fft_object fft_bd = NULL;
+    fft_object fft_fd = nullptr;
+    fft_object fft_bd = nullptr;
 
     N = wt->modwtsiglength;
     len_avg = wt->wave->lpd_len;
@@ -3200,8 +3200,8 @@ void imodwt_fft(wt_object wt, double* oup)
     fft_data* high_pass;
     fft_data* sig;
     int* index;
-    fft_object fft_fd = NULL;
-    fft_object fft_bd = NULL;
+    fft_object fft_fd = nullptr;
+    fft_object fft_bd = nullptr;
 
     N = wt->modwtsiglength;
     len_avg = wt->wave->lpd_len;
@@ -3485,9 +3485,9 @@ void setWTConv(wt_object wt, const char* cmethod)
     }
 }
 
-double* dwt2(wt2_object wt, double* inp)
+auto dwt2(wt2_object wt, double* inp) -> double*
 {
-    double* wavecoeff = NULL;
+    double* wavecoeff = nullptr;
     int i;
     int J;
     int iter;
@@ -3671,7 +3671,7 @@ void idwt2(wt2_object wt, double* wavecoeff, double* oup)
     double* cH;
     double* X_lp;
     double* orig;
-    double* out = NULL;
+    double* out = nullptr;
 
     rows = wt->rows;
     cols = wt->cols;
@@ -3830,7 +3830,7 @@ void idwt2(wt2_object wt, double* wavecoeff, double* oup)
     free(out);
 }
 
-double* swt2(wt2_object wt, double* inp)
+auto swt2(wt2_object wt, double* inp) -> double*
 {
     double* wavecoeff;
     int i;
@@ -4040,7 +4040,7 @@ void iswt2(wt2_object wt, const double* wavecoeffs, double* oup)
     free(oup2);
 }
 
-double* modwt2(wt2_object wt, double* inp)
+auto modwt2(wt2_object wt, double* inp) -> double*
 {
     double* wavecoeff;
     int i;
@@ -4222,7 +4222,7 @@ void imodwt2(wt2_object wt, double* wavecoeff, double* oup)
     free(filt);
 }
 
-double* getWT2Coeffs(wt2_object wt, double* wcoeffs, int level, char const* type, int* rows, int* cols)
+auto getWT2Coeffs(wt2_object wt, double* wcoeffs, int level, char const* type, int* rows, int* cols) -> double*
 {
     int J;
     int iter;

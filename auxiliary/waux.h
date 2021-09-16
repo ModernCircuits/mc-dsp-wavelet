@@ -9,25 +9,25 @@
 #define AUXILIARY_WAUX_H_
 
 #include "wavelib.h"
-#include <float.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cfloat>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int compare_double(const void* a, const void* b);
+auto compare_double(const void* a, const void* b) -> int;
 
-double mean(const double* vec, int N);
+auto mean(const double* vec, int N) -> double;
 
-double var(const double* vec, int N);
+auto var(const double* vec, int N) -> double;
 
-double median(double* x, int N);
+auto median(double* x, int N) -> double;
 
-int minindex(const double* arr, int N);
+auto minindex(const double* arr, int N) -> int;
 
 void getDWTAppx(wt_object wt, double* appx, int N);
 

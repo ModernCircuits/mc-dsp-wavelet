@@ -1,21 +1,21 @@
 #include "waux.h"
 #include "wauxlib.h"
 
-int compare_double(const void* a, const void* b)
+auto compare_double(const void* a, const void* b) -> int
 {
     double arg1 = *(const double*)a;
     double arg2 = *(const double*)b;
 
     if (arg1 < arg2) {
         return -1;
-}
+    }
     if (arg1 > arg2) {
         return 1;
-}
+    }
     return 0;
 }
 
-double mean(const double* vec, int N)
+auto mean(const double* vec, int N) -> double
 {
     int i;
     double m;
@@ -28,7 +28,7 @@ double mean(const double* vec, int N)
     return m;
 }
 
-double var(const double* vec, int N)
+auto var(const double* vec, int N) -> double
 {
     double v;
     double temp;
@@ -47,7 +47,7 @@ double var(const double* vec, int N)
     return v;
 }
 
-double median(double* x, int N)
+auto median(double* x, int N) -> double
 {
     double sigma;
 
@@ -62,7 +62,7 @@ double median(double* x, int N)
     return sigma;
 }
 
-double mad(double* x, int N)
+auto mad(double* x, int N) -> double
 {
     double sigma;
     int i;
@@ -78,7 +78,7 @@ double mad(double* x, int N)
     return sigma;
 }
 
-int minindex(const double* arr, int N)
+auto minindex(const double* arr, int N) -> int
 {
     double min;
     int index;
@@ -159,9 +159,9 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
     int v;
     int t;
     int l2;
-    double *out;
-    double *X_lp;
-    double *filt;
+    double* out;
+    double* X_lp;
+    double* filt;
     out = (double*)malloc(sizeof(double) * (siglength + 1));
     l2 = lf / 2;
     m = -2;

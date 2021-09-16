@@ -7,7 +7,7 @@
 
 #include "conv.h"
 
-int factorf(int M)
+auto factorf(int M) -> int
 {
     int N;
     N = M;
@@ -27,7 +27,7 @@ int factorf(int M)
     return N;
 }
 
-int findnext(int M)
+auto findnext(int M) -> int
 {
     int N;
     N = M;
@@ -39,7 +39,7 @@ int findnext(int M)
     return N;
 }
 
-int findnexte(int M)
+auto findnexte(int M) -> int
 {
     int N;
     N = M;
@@ -51,10 +51,10 @@ int findnexte(int M)
     return N;
 }
 
-conv_object conv_init(int N, int L)
+auto conv_init(int N, int L) -> conv_object
 {
 
-    conv_object obj = NULL;
+    conv_object obj = nullptr;
     int conv_len;
     conv_len = N + L - 1;
 

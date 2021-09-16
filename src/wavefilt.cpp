@@ -3157,20 +3157,20 @@ static const double meyer[102] = {
     0.0
 };
 
-int filtlength(const char* name)
+auto filtlength(const char* name) -> int
 {
     int len = strlen(name);
     int i = 0;
-    char* new_str = NULL;
+    char* new_str = nullptr;
     int N = 0;
     if ((strcmp(name, "haar") == 0) || (strcmp(name, "db1") == 0)) {
         return 2;
     }
-    if (len > 2 && strstr(name, "db") != NULL) {
+    if (len > 2 && strstr(name, "db") != nullptr) {
         new_str = (char*)malloc(sizeof(char) * (len - 2 + 1));
         for (i = 2; i < len + 1; i++) {
             new_str[i - 2] = name[i];
-}
+        }
 
         N = atoi(new_str);
         free(new_str);
@@ -3180,11 +3180,12 @@ int filtlength(const char* name)
         }
 
         return N * 2;
-    } if (!strcmp(name, "bior1.1")) {
+    }
+    if (strcmp(name, "bior1.1") == 0) {
         return 2;
     }
 
-    else if (!strcmp(name, "bior1.3")) {
+    if (!strcmp(name, "bior1.3")) {
         return 6;
     }
 
@@ -3339,7 +3340,7 @@ void copy(const double* in, int N, double* out)
     }
 }
 
-int filtcoef(const char* name, double* lp1, double* hp1, double* lp2, double* hp2)
+auto filtcoef(const char* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int
 {
     int i = 0;
     int N = filtlength(name);
@@ -3358,14 +3359,16 @@ int filtcoef(const char* name, double* lp1, double* hp1, double* lp2, double* hp
         qmf_even(db2, N, hp2);
 
         return N;
-    } if (!strcmp(name, "db3")) {
+    }
+    if (strcmp(name, "db3") == 0) {
         copy_reverse(db3, N, lp1);
         qmf_wrev(db3, N, hp1);
         copy(db3, N, lp2);
         qmf_even(db3, N, hp2);
 
         return N;
-    } else if (!strcmp(name, "db4")) {
+    }
+    if (!strcmp(name, "db4")) {
         copy_reverse(db4, N, lp1);
         qmf_wrev(db4, N, hp1);
         copy(db4, N, lp2);

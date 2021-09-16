@@ -17,13 +17,13 @@ extern "C" {
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
-conv_object conv_init(int N, int L);
+auto conv_init(int N, int L) -> conv_object;
 
-int factorf(int M);
+auto factorf(int M) -> int;
 
-int findnext(int M);
+auto findnext(int M) -> int;
 
-int findnexte(int M);
+auto findnexte(int M) -> int;
 
 void conv_direct(const fft_type* inp1, int N, const fft_type* inp2, int L, fft_type* oup);
 
