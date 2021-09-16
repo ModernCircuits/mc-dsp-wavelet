@@ -5,7 +5,6 @@
 #include <string.h>
 #include <time.h>
 
-
 double absmax(double* array, int N)
 {
     double max;

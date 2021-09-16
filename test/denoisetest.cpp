@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 #include "wauxlib.h"
 
 static double rmse(int N, double* x, double* y)

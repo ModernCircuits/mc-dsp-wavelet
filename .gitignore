@@ -5,16 +5,6 @@ Testing/
 /build
 /cmake-build-*
 
-#cmake ignore
-CMakeCache.txt
-CMakeFiles/
-CMakeScripts/
-Makefile/
-cmake_install.cmake
-install_manifest.txt
-CTestTestfile.cmake
-Makefile
-
 #yml
 *.yml
 
