@@ -1,7 +1,6 @@
-/*
-Copyright (c) 2014, Rafat Hussain
-Copyright (c) 2016, Holger Nahrstaedt
-*/
+/// \copyright Copyright (c) 2014, Rafat Hussain
+/// \copyright Copyright (c) 2016, Holger Nahrstaedt
+
 #ifndef WAVEFILT_H_
 #define WAVEFILT_H_
 

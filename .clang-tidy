@@ -1,4 +1,4 @@
-Checks:          '*-,bugprone-*,clang-analyzer-*,cert-*,-hicpp-*,modernize-*,readability-*,performance-*,-readability-magic-numbers,-readability-function-cognitive-complexity,-readability-function-size,-modernize-avoid-c-arrays,-hicpp-avoid-c-arrays,-bugprone-branch-clone,-clang-analyzer-unix.MallocSizeof,-clang-analyzer-deadcode.DeadStores,-clang-analyzer-core.UndefinedBinaryOperatorResult,-clang-analyzer-core.uninitialized.Assign'
+Checks:          '*-,bugprone-*,clang-analyzer-*,cert-*,-hicpp-*,modernize-*,readability-*,performance-*,-readability-magic-numbers,-readability-function-cognitive-complexity,-readability-function-size,-modernize-avoid-c-arrays,-hicpp-avoid-c-arrays,-bugprone-branch-clone,-bugprone-narrowing-conversions,-cert-err34-c,-clang-analyzer-unix.MallocSizeof,-clang-analyzer-deadcode.DeadStores,-clang-analyzer-core.UndefinedBinaryOperatorResult,-clang-analyzer-core.uninitialized.Assign,-clang-analyzer-security.insecureAPI.strcpy,-clang-analyzer-core.NonNullParamChecker'
 WarningsAsErrors: '*'
 FormatStyle:     none
 ...

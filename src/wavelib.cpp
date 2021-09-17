@@ -2809,7 +2809,6 @@ static void modwt_fft(wt_object wt, const double* inp)
     fft_data* low_pass;
     fft_data* high_pass;
     fft_data* sig;
-    int* index;
     fft_object fft_fd = nullptr;
     fft_object fft_bd = nullptr;
 
@@ -2838,7 +2837,7 @@ static void modwt_fft(wt_object wt, const double* inp)
     cD = (fft_data*)malloc(sizeof(fft_data) * N);
     low_pass = (fft_data*)malloc(sizeof(fft_data) * N);
     high_pass = (fft_data*)malloc(sizeof(fft_data) * N);
-    index = (int*)malloc(sizeof(int) * N);
+    auto index = std::make_unique<int[]>(N);
 
     // N-point FFT of low pass and high pass filters
 

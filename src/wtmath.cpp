@@ -1,6 +1,5 @@
-/*
-Copyright (c) 2018, Rafat Hussain
-*/
+/// \copyright Copyright (c) 2018, Rafat Hussain
+
 #include "wtmath.h"
 
 void dwt_per_stride(const double* inp, int N, const double* lpd, const double* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)

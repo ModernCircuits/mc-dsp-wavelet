@@ -81,7 +81,7 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
         if (param < 0.0) {
             param = 6.0;
         }
-        norm = sqrt(2.0 * pi * scale1 / dt) * pow(pi, -0.25);
+        norm = sqrt(2.0 * pi * scale1 / dt) * std::pow(pi, -0.25);
 
         for (k = 1; k <= nk / 2 + 1; ++k) {
             temp = (scale1 * kwave[k - 1] - param);
@@ -101,11 +101,11 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
             param = 4.0;
         }
         m = (int)param;
-        norm = sqrt(2.0 * pi * scale1 / dt) * (pow(2.0, (double)m) / sqrt((double)(m * factorial(2 * m - 1))));
+        norm = sqrt(2.0 * pi * scale1 / dt) * (std::pow(2.0, (double)m) / sqrt((double)(m * factorial(2 * m - 1))));
         for (k = 1; k <= nk / 2 + 1; ++k) {
             temp = scale1 * kwave[k - 1];
             expnt = -temp;
-            daughter[k - 1].re = norm * pow(temp, (double)m) * exp(expnt);
+            daughter[k - 1].re = norm * std::pow(temp, (double)m) * exp(expnt);
             daughter[k - 1].im = 0.0;
         }
         for (k = nk / 2 + 2; k <= nk; ++k) {
@@ -138,14 +138,14 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
         if (re == 1) {
             for (k = 1; k <= nk; ++k) {
                 temp = scale1 * kwave[k - 1];
-                daughter[k - 1].re = norm * pow(temp, (double)m) * exp(-0.50 * pow(temp, 2.0));
+                daughter[k - 1].re = norm * std::pow(temp, (double)m) * exp(-0.50 * std::pow(temp, 2.0));
                 daughter[k - 1].im = 0.0;
             }
         } else if (re == 0) {
             for (k = 1; k <= nk; ++k) {
                 temp = scale1 * kwave[k - 1];
                 daughter[k - 1].re = 0.0;
-                daughter[k - 1].im = norm * pow(temp, (double)m) * exp(-0.50 * pow(temp, 2.0));
+                daughter[k - 1].im = norm * std::pow(temp, (double)m) * exp(-0.50 * std::pow(temp, 2.0));
             }
         }
         fourier_factor = (2.0 * pi) * sqrt(2.0 / (2.0 * m + 1.0));
@@ -236,7 +236,7 @@ void cwavelet(const double* y, int N, double dt, int mother, double param, doubl
     // Main loop
 
     for (j = 1; j <= jtot; ++j) {
-        scale1 = scale[j - 1]; // = s0*pow(2.0, (double)(j - 1)*dj);
+        scale1 = scale[j - 1]; // = s0*std::pow(2.0, (double)(j - 1)*dj);
         wave_function(npad, dt, mother, param, scale1, kwave, pi, &period1, &coi1, daughter);
         period[j - 1] = period1;
         for (k = 0; k < npad; ++k) {
@@ -294,7 +294,7 @@ void psi0(int mother, double param, double* val, int* real)
         } else {
             sign = -1;
         }
-        *val = sign * pow(2.0, (double)m) * factorial(m) / (sqrt(pi * factorial(2 * m)));
+        *val = sign * std::pow(2.0, (double)m) * factorial(m) / (sqrt(pi * factorial(2 * m)));
 
     } else if (mother == 2) {
         // D.O.G
@@ -306,7 +306,7 @@ void psi0(int mother, double param, double* val, int* real)
             } else {
                 sign = 1;
             }
-            coeff = sign * pow(2.0, (double)m / 2) / cwt_gamma(0.5);
+            coeff = sign * std::pow(2.0, (double)m / 2) / cwt_gamma(0.5);
             *val = coeff * cwt_gamma(((double)m + 1.0) / 2.0) / sqrt(cwt_gamma(m + 0.50));
         } else {
             *val = 0;
@@ -336,21 +336,11 @@ static auto maxabs(double* array, int N) -> int
 
 auto cdelta(int mother, double param, double psi0) -> double
 {
-    int N { 0 };
+    auto s0 { 0.0 };
+    auto N { 1 };
+    auto subscale = 8.0;
+    auto dt = 0.25;
 
-    int j;
-    int iter;
-    double den;
-    double cdel;
-    double subscale;
-    double dt;
-    double dj;
-    double s0;
-    int jtot;
-    int maxarr;
-
-    subscale = 8.0;
-    dt = 0.25;
     if (mother == 0) {
         N = 16;
         s0 = dt / 4;
@@ -367,8 +357,8 @@ auto cdelta(int mother, double param, double psi0) -> double
         }
     }
 
-    dj = 1.0 / subscale;
-    jtot = 16 * (int)subscale;
+    auto const dj = 1.0 / subscale;
+    auto const jtot = 16 * (int)subscale;
 
     auto delta = std::make_unique<double[]>(N);
     auto wave = std::make_unique<double[]>(2 * N * jtot);
@@ -384,7 +374,7 @@ auto cdelta(int mother, double param, double psi0) -> double
     }
 
     for (auto i = 0; i < jtot; ++i) {
-        scale[i] = s0 * pow(2.0, (double)(i)*dj);
+        scale[i] = s0 * std::pow(2.0, (double)(i)*dj);
     }
 
     cwavelet(delta.get(), N, dt, mother, param, s0, dj, jtot, N, wave.get(), scale.get(), period.get(), coi.get());
@@ -393,18 +383,16 @@ auto cdelta(int mother, double param, double psi0) -> double
         mval[i] = 0;
     }
 
-    for (j = 0; j < jtot; ++j) {
-        iter = 2 * j * N;
-        den = sqrt(scale[j]);
+    for (auto j = 0; j < jtot; ++j) {
+        auto const iter = 2 * j * N;
+        auto const den = sqrt(scale[j]);
         for (auto i = 0; i < N; ++i) {
             mval[i] += wave[iter + 2 * i] / den;
         }
     }
 
-    maxarr = maxabs(mval.get(), N);
-
-    cdel = sqrt(dt) * dj * mval[maxarr] / psi0;
-
+    auto const maxarr = maxabs(mval.get(), N);
+    auto const cdel = sqrt(dt) * dj * mval[maxarr] / psi0;
     return cdel;
 }
 

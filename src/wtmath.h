@@ -1,6 +1,4 @@
-/*
-Copyright (c) 2014, Rafat Hussain
-*/
+/// \copyright Copyright (c) 2014, Rafat Hussain
 
 #ifndef WTMATH_H_
 #define WTMATH_H_

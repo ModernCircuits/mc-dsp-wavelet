@@ -1,6 +1,5 @@
-/*
-Copyright (c) 2017, Rafat Hussain
-*/
+/// \copyright Copyright (c) 2017, Rafat Hussain
+
 #ifndef WAUXLIB_H_
 #define WAUXLIB_H_
 
