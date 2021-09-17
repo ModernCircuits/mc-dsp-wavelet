@@ -23,6 +23,8 @@ wavelib_add_test(dwt2test)
 wavelib_add_test(swt2test)
 wavelib_add_test(modwt2test)
 wavelib_add_test(tst_dwt)
+wavelib_add_test(dwt_reconstruction)
+wavelib_add_test(swt_reconstruction)
 
 wavelib_add_test(denoisetest)
 target_link_libraries(denoisetest PRIVATE wauxlib)
