@@ -1,16 +1,18 @@
+add_library(wavelib_testdata helper.hpp helper.cpp)
+add_custom_command(
+    TARGET
+        wavelib_testdata
+    COMMAND
+        ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/testData
+        $<TARGET_FILE_DIR:wavelib_testdata>/testData
+    POST_BUILD
+)
+
 function(wavelib_add_test _target)
-  add_executable(${_target} "${_target}.cpp")
-  add_test(NAME ${_target} COMMAND ${_target})
-  target_link_libraries(${_target} PRIVATE wavelib lt::CodeCoverage)
-  add_custom_command(
-      TARGET
-          ${_target}
-      COMMAND
-          ${CMAKE_COMMAND} -E copy_directory
-          ${CMAKE_CURRENT_SOURCE_DIR}/testData
-          $<TARGET_FILE_DIR:${_target}>/testData
-      POST_BUILD
-  )
+    add_executable(${_target} "${_target}.cpp")
+    add_test(NAME ${_target} COMMAND ${_target})
+    target_link_libraries(${_target} PRIVATE wavelib wavelib_testdata lt::CodeCoverage)
 endfunction()
 
 wavelib_add_test(cwttest)
