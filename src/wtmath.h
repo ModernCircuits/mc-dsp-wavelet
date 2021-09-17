@@ -6,10 +6,6 @@ Copyright (c) 2014, Rafat Hussain
 
 #include "wavefilt.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void dwt_per_stride(const double* inp, int N, const double* lpd, const double* hpd, int lpd_len,
     double* cA, int len_cA, double* cD, int istride, int ostride);
 
@@ -51,9 +47,5 @@ auto testSWTlength(int N, int J) -> int;
 auto wmaxiter(int sig_len, int filt_len) -> int;
 
 auto costfunc(double* x, int N, char* entropy, double p) -> double;
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* WAVELIB_H_ */

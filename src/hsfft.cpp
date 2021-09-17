@@ -60,7 +60,6 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
     int ll;
     if (N > 1) {
         radix = obj->factors[inc];
-        //printf("%d \n",radix);
     }
 
     if (N == 1) {
@@ -523,7 +522,6 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         mixed_radix_dit_rec(op, ip, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
-        //printf("%d \n",inc);
         //mixed_radix3_dit_rec(op,ip,obj,sgn,ll,m);
 
         for (k = 0; k < m; ++k) {
@@ -693,7 +691,6 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         mixed_radix_dit_rec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + 3 * m, ip + 3 * l, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + 4 * m, ip + 4 * l, obj, sgn, m, ll, inc + 1);
-        //printf("%d \n",inc);
         //mixed_radix3_dit_rec(op,ip,obj,sgn,ll,m);
 
         c1 = 0.30901699437;
@@ -887,7 +884,6 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         mixed_radix_dit_rec(op + 4 * m, ip + 4 * l, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + 5 * m, ip + 5 * l, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + 6 * m, ip + 6 * l, obj, sgn, m, ll, inc + 1);
-        //printf("%d \n",inc);
         //mixed_radix3_dit_rec(op,ip,obj,sgn,ll,m);
 
         c1 = 0.62348980185;
@@ -1161,7 +1157,6 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         mixed_radix_dit_rec(op + 5 * m, ip + 5 * l, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + 6 * m, ip + 6 * l, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + 7 * m, ip + 7 * l, obj, sgn, m, ll, inc + 1);
-        //printf("%d \n",inc);
         //mixed_radix3_dit_rec(op,ip,obj,sgn,ll,m);
 
         c1 = 0.70710678118654752440084436210485;
@@ -1582,7 +1577,6 @@ void fft_exec(fft_object obj, fft_data* inp, fft_data* oup)
     if (obj->lt == 0) {
         //fftct_radix3_dit_rec(inp,oup,obj, obj->sgn, obj->N);
         //fftct_mixed_rec(inp,oup,obj, obj->sgn, obj->N);
-        //printf("%f \n", 1.785);
         int l;
         int inc;
         int nn;
@@ -1594,7 +1588,6 @@ void fft_exec(fft_object obj, fft_data* inp, fft_data* oup)
         //radix3_dit_rec(oup,inp,obj,sgn1,nn,l);
         mixed_radix_dit_rec(oup, inp, obj, sgn1, nn, l, inc);
     } else if (obj->lt == 1) {
-        //printf("%f \n", 1.785);
         int nn;
         int sgn1;
         nn = obj->N;

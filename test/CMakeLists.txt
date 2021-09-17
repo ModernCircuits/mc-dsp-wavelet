@@ -1,7 +1,7 @@
 function(wavelib_add_test _target)
   add_executable(${_target} "${_target}.cpp")
   add_test(NAME ${_target} COMMAND ${_target})
-  target_link_libraries(${_target} PRIVATE wavelib)
+  target_link_libraries(${_target} PRIVATE wavelib lt::CodeCoverage)
   add_custom_command(
       TARGET
           ${_target}
@@ -22,6 +22,7 @@ wavelib_add_test(wtreetest)
 wavelib_add_test(dwt2test)
 wavelib_add_test(swt2test)
 wavelib_add_test(modwt2test)
+wavelib_add_test(tst_dwt)
 
 wavelib_add_test(denoisetest)
 target_link_libraries(denoisetest PRIVATE wauxlib)

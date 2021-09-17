@@ -1,10 +1,6 @@
 #ifndef WAVELIB_H_
 #define WAVELIB_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #if defined(_MSC_VER)
 #pragma warning(disable : 4200)
 #pragma warning(disable : 4996)
@@ -296,9 +292,5 @@ void wpt_free(wpt_object object);
 void cwt_free(cwt_object object);
 
 void wt2_free(wt2_object wt);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* WAVELIB_H_ */

@@ -6,10 +6,6 @@ Copyright (c) 2017, Rafat Hussain
 
 #include "wavelib.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 struct denoise_set {
     int N; //signal length
     int J; // Levels of Wavelet decomposition
@@ -49,9 +45,5 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
     double* hpr, int lf, int siglength, double* reccoeff);
 
 auto mad(double* x, int N) -> double;
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* WAUXLIB_H_ */

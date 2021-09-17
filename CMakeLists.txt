@@ -27,37 +27,16 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     # misc
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+    include(CTest)
+    enable_testing()
+
+    list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+    include(ltCompilerOptions)
+    include(ltCompilerWarnings)
+    include(ltCodeCoverage)
 endif ()
 
-add_library(${PROJECT_NAME})
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(${PROJECT_NAME} PUBLIC m)
-target_sources(${PROJECT_NAME}
-    PRIVATE
-        src/conv.h
-        src/conv.cpp
-        src/cwt.h
-        src/cwt.cpp
-        src/cwtmath.h
-        src/cwtmath.cpp
-        src/hsfft.h
-        src/hsfft.cpp
-        src/real.h
-        src/real.cpp
-        src/wavefilt.h
-        src/wavefilt.cpp
-        src/wavefunc.h
-        src/wavefunc.cpp
-        src/wavelib.cpp
-        src/wtmath.h
-        src/wtmath.cpp
-)
-
+add_subdirectory(src)
 add_subdirectory(auxiliary)
-
-include(CTest)
-enable_testing()
-enable_language(CXX)
-# add_subdirectory(unitTests)
 add_subdirectory(test)
-

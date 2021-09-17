@@ -14,10 +14,6 @@
 
 #include "wavelib.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define PI2 6.28318530717958647692528676655900577
 
 #ifndef fft_type
@@ -49,9 +45,5 @@ void twiddle(fft_data* vec, int N, int radix);
 void longvectorN(fft_data* sig, const int* array, int tx);
 
 void free_fft(fft_object object);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* HSFFT_H_ */

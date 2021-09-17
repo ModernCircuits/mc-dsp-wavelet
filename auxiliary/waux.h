@@ -15,10 +15,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 auto compare_double(const void* a, const void* b) -> int;
 
 auto mean(const double* vec, int N) -> double;
@@ -36,9 +32,5 @@ void getDWTDetail(wt_object wt, double* detail, int N, int level);
 void autocovar(const double* vec, int N, double* acov, int M);
 
 void autocorr(const double* vec, int N, double* acorr, int M);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* AUXILIARY_WAUX_H_ */

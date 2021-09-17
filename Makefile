@@ -17,13 +17,11 @@ tidy-fix:
 coverage:
 	cmake -S . -G Ninja -B cmake-build-coverage -D CMAKE_BUILD_TYPE=Debug -D LT_BUILD_COVERAGE=TRUE
 	cmake --build cmake-build-coverage
-	./cmake-build-coverage/snippets/dwt/simple-dwt 64 64 4
-	# cd cmake-build-coverage && ctest
-	# ./scripts/linux-pluginval.sh cmake-build-coverage "BPM Detector"
+	cd cmake-build-coverage && ctest
 
 .PHONY: coverage-html
 coverage-html: coverage
-	cd cmake-build-coverage && gcovr --html --html-details --exclude-unreachable-branches -o coverage.html -r ../snippets -j ${shell nproc} -s .
+	cd cmake-build-coverage && gcovr --html --html-details --exclude-unreachable-branches -o coverage.html -r ../src -j ${shell nproc} -s .
 
 .PHONY: coverage-xml
 coverage-xml: coverage

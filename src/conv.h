@@ -10,10 +10,6 @@
 
 #include "real.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
@@ -38,9 +34,5 @@ void conv_fft(conv_object obj, const fft_type* inp1, const fft_type* inp2, fft_t
 //void free_conv(conv_object object);
 
 void free_conv(conv_object object);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* CONV_H_ */
