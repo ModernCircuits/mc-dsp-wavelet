@@ -2975,9 +2975,7 @@ void modwt(wt_object wt, const double* inp)
 
 static void conj_complex(fft_data* x, int N)
 {
-    int i;
-
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         x[i].im *= (-1.0);
     }
 }
@@ -2985,24 +2983,21 @@ static void conj_complex(fft_data* x, int N)
 static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* appx, fft_data* det, fft_data* cA, fft_data* cD, int* index, const char* ctype, int level,
     int J, fft_data* low_pass, fft_data* high_pass, int N)
 {
+    fft_type tmp1;
+    fft_type tmp2;
 
-    int iter;
-    int M;
-    int i;
-    fft_type tmp1, tmp2;
-
-    M = (int)pow(2.0, (double)level - 1.0);
+    auto M = (int)pow(2.0, (double)level - 1.0);
 
     if (strcmp((ctype), "appx") == 0) {
-        for (iter = 0; iter < level; ++iter) {
+        for (auto iter = 0; iter < level; ++iter) {
             fft_exec(fft_fd, appx, cA);
             fft_exec(fft_fd, det, cD);
 
-            for (i = 0; i < N; ++i) {
+            for (auto i = 0; i < N; ++i) {
                 index[i] = (M * i) % N;
             }
 
-            for (i = 0; i < N; ++i) {
+            for (auto i = 0; i < N; ++i) {
                 tmp1 = cA[i].re;
                 tmp2 = cA[i].im;
                 cA[i].re = low_pass[index[i]].re * tmp1 - low_pass[index[i]].im * tmp2 + high_pass[index[i]].re * cD[i].re - high_pass[index[i]].im * cD[i].im;
@@ -3011,7 +3006,7 @@ static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* app
 
             fft_exec(fft_bd, cA, appx);
 
-            for (i = 0; i < N; ++i) {
+            for (auto i = 0; i < N; ++i) {
                 appx[i].re /= N;
                 appx[i].im /= N;
             }
@@ -3019,15 +3014,15 @@ static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* app
             M /= 2;
         }
     } else if (strcmp(ctype, "det") == 0) {
-        for (iter = 0; iter < level; ++iter) {
+        for (auto iter = 0; iter < level; ++iter) {
             fft_exec(fft_fd, appx, cA);
             fft_exec(fft_fd, det, cD);
 
-            for (i = 0; i < N; ++i) {
+            for (auto i = 0; i < N; ++i) {
                 index[i] = (M * i) % N;
             }
 
-            for (i = 0; i < N; ++i) {
+            for (auto i = 0; i < N; ++i) {
                 tmp1 = cA[i].re;
                 tmp2 = cA[i].im;
                 cA[i].re = low_pass[index[i]].re * tmp1 - low_pass[index[i]].im * tmp2 + high_pass[index[i]].re * cD[i].re - high_pass[index[i]].im * cD[i].im;
@@ -3036,7 +3031,7 @@ static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* app
 
             fft_exec(fft_bd, cA, appx);
 
-            for (i = 0; i < N; ++i) {
+            for (auto i = 0; i < N; ++i) {
                 appx[i].re /= N;
                 appx[i].im /= N;
                 det[i].re = 0.0;

@@ -28,8 +28,6 @@
 #define SMUL(a,b) ((a)*(b))
 */
 
-auto fft_init(int N, int sgn) -> fft_object;
-
 void fft_exec(fft_object obj, fft_data* inp, fft_data* oup);
 
 auto divideby(int M, int d) -> int;

@@ -33,7 +33,8 @@ void fft_r2c_exec(fft_real_object obj, const fft_type* inp, fft_data* oup)
     int i;
     int N2;
     int N;
-    fft_type temp1, temp2;
+    fft_type temp1;
+    fft_type temp2;
     N2 = obj->cobj->N;
     N = N2 * 2;
 
@@ -76,7 +77,8 @@ void fft_c2r_exec(fft_real_object obj, fft_data* inp, fft_type* oup)
     fft_data* coup;
     int i;
     int N2;
-    fft_type temp1, temp2;
+    fft_type temp1;
+    fft_type temp2;
     N2 = obj->cobj->N;
 
     cinp = (fft_data*)malloc(sizeof(fft_data) * N2);

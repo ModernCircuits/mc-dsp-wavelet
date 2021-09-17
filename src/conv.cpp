@@ -97,7 +97,8 @@ void conv_direct(const fft_type* inp1, int N, const fft_type* inp2, int L, fft_t
     int k;
     int m;
     int i;
-    fft_type t1, tmin;
+    fft_type t1;
+    fft_type tmin;
 
     M = N + L - 1;
     i = 0;

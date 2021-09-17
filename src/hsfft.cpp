@@ -1793,7 +1793,8 @@ void twiddle(fft_data* vec, int N, int radix)
 {
     int K;
     int KL;
-    fft_type theta, theta2;
+    fft_type theta;
+    fft_type theta2;
     theta = PI2 / N;
     KL = N / radix;
     vec[0].re = 1.0;

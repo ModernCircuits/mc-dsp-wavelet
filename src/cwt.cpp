@@ -337,7 +337,7 @@ static auto maxabs(double* array, int N) -> int
 
 auto cdelta(int mother, double param, double psi0) -> double
 {
-    int N;
+    int N { 0 };
     int i;
     int j;
     int iter;

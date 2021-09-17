@@ -36,7 +36,6 @@ format:
 	@find auxiliary -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs clang-format-12 -i
 	@find src -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs clang-format-12 -i
 	@find test -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs clang-format-12 -i
-	@find unitTests -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs clang-format-12 -i
 
 .PHONY: format-check
 format-check:
