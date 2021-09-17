@@ -1,10 +1,11 @@
+#include "waux.h"
+#include "wauxlib.h"
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
-#include "waux.h"
-#include "wauxlib.h"
+#include <memory>
 
 auto denoise_init(int length, int J, const char* wname) -> denoise_object
 {
@@ -43,8 +44,6 @@ void visushrink(double* signal, int N, int J, const char* wname, const char* met
     double tmp;
     wave_object wave;
     wt_object wt;
-    double* dout;
-    double* lnoise;
 
     wave = wave_init(wname);
 
@@ -68,14 +67,14 @@ void visushrink(double* signal, int N, int J, const char* wname, const char* met
         exit(-1);
     }
 
-    lnoise = (double*)malloc(sizeof(double) * J);
+    auto lnoise = std::make_unique<double[]>(J);
 
     //Set sigma
 
     iter = wt->length[0];
     dlen = wt->length[J];
 
-    dout = (double*)malloc(sizeof(double) * dlen);
+    auto dout = std::make_unique<double[]>(dlen);
 
     if (strcmp(level, "first") == 0) {
         for (i = 1; i < J; ++i) {
@@ -86,7 +85,7 @@ void visushrink(double* signal, int N, int J, const char* wname, const char* met
             dout[i] = fabs(wt->output[iter + i]);
         }
 
-        sigma = median(dout, dlen) / 0.6745;
+        sigma = median(dout.get(), dlen) / 0.6745;
         for (it = 0; it < J; ++it) {
             lnoise[it] = sigma;
         }
@@ -96,7 +95,7 @@ void visushrink(double* signal, int N, int J, const char* wname, const char* met
             for (i = 0; i < dlen; ++i) {
                 dout[i] = fabs(wt->output[iter + i]);
             }
-            sigma = median(dout, dlen) / 0.6745;
+            sigma = median(dout.get(), dlen) / 0.6745;
             lnoise[it] = sigma;
             iter += dlen;
         }
@@ -140,8 +139,6 @@ void visushrink(double* signal, int N, int J, const char* wname, const char* met
         iswt(wt, denoised);
     }
 
-    free(dout);
-    free(lnoise);
     wave_free(wave);
     wt_free(wt);
 }
@@ -169,10 +166,6 @@ void sureshrink(double* signal, int N, int J, const char* wname, const char* met
     double x_sum;
     wave_object wave;
     wt_object wt;
-    double* dout;
-    double* risk;
-    double* dsum;
-    double* lnoise;
 
     wave = wave_init(wname);
 
@@ -200,10 +193,10 @@ void sureshrink(double* signal, int N, int J, const char* wname, const char* met
     len = wt->length[0];
     dlen = wt->length[J];
 
-    dout = (double*)malloc(sizeof(double) * dlen);
-    risk = (double*)malloc(sizeof(double) * dlen);
-    dsum = (double*)malloc(sizeof(double) * dlen);
-    lnoise = (double*)malloc(sizeof(double) * J);
+    auto dout = std::make_unique<double[]>(dlen);
+    auto risk = std::make_unique<double[]>(dlen);
+    auto dsum = std::make_unique<double[]>(dlen);
+    auto lnoise = std::make_unique<double[]>(J);
 
     iter = wt->length[0];
 
@@ -216,7 +209,7 @@ void sureshrink(double* signal, int N, int J, const char* wname, const char* met
             dout[i] = fabs(wt->output[iter + i]);
         }
 
-        sigma = median(dout, dlen) / 0.6745;
+        sigma = median(dout.get(), dlen) / 0.6745;
         for (it = 0; it < J; ++it) {
             lnoise[it] = sigma;
         }
@@ -226,7 +219,7 @@ void sureshrink(double* signal, int N, int J, const char* wname, const char* met
             for (i = 0; i < dlen; ++i) {
                 dout[i] = fabs(wt->output[iter + i]);
             }
-            sigma = median(dout, dlen) / 0.6745;
+            sigma = median(dout.get(), dlen) / 0.6745;
             lnoise[it] = sigma;
             iter += dlen;
         }
@@ -260,7 +253,7 @@ void sureshrink(double* signal, int N, int J, const char* wname, const char* met
                     dout[i] = fabs(wt->output[len + i] / sigma);
                 }
 
-                qsort(dout, dwt_len, sizeof(double), compare_double);
+                qsort(dout.get(), dwt_len, sizeof(double), compare_double);
                 for (i = 0; i < dwt_len; ++i) {
                     dout[i] = (dout[i] * dout[i]);
                     x_sum += dout[i];
@@ -270,7 +263,7 @@ void sureshrink(double* signal, int N, int J, const char* wname, const char* met
                 for (i = 0; i < dwt_len; ++i) {
                     risk[i] = ((double)dwt_len - 2 * ((double)i + 1) + dsum[i] + dout[i] * ((double)dwt_len - 1 - (double)i)) / (double)dwt_len;
                 }
-                min_index = minindex(risk, dwt_len);
+                min_index = minindex(risk.get(), dwt_len);
                 thr = sqrt(dout[min_index]);
                 td = thr < tv ? thr : tv;
             }
@@ -304,10 +297,7 @@ void sureshrink(double* signal, int N, int J, const char* wname, const char* met
     } else if (strcmp(method, "swt") == 0) {
         iswt(wt, denoised);
     }
-    free(dout);
-    free(dsum);
-    free(risk);
-    free(lnoise);
+
     wave_free(wave);
     wt_free(wt);
 }
@@ -328,8 +318,6 @@ void modwtshrink(double* signal, int N, int J, const char* wname, const char* cm
     double llen;
     wave_object wave;
     wt_object wt;
-    double* dout;
-    double* lnoise;
 
     wave = wave_init(wname);
 
@@ -363,13 +351,13 @@ void modwtshrink(double* signal, int N, int J, const char* wname, const char* cm
 
     modwt(wt, signal);
 
-    lnoise = (double*)malloc(sizeof(double) * J);
+    auto lnoise = std::make_unique<double[]>(J);
 
     //Set sigma
 
     iter = wt->length[0];
     dlen = wt->length[J];
-    dout = (double*)malloc(sizeof(double) * dlen);
+    auto dout = std::make_unique<double[]>(dlen);
 
     for (it = 0; it < J; ++it) {
         dlen = wt->length[it + 1];
@@ -377,7 +365,7 @@ void modwtshrink(double* signal, int N, int J, const char* wname, const char* cm
             dout[i] = fabs(wt->output[iter + i]);
         }
 
-        sigma = sqrt(2.0) * median(dout, dlen) / 0.6745;
+        sigma = sqrt(2.0) * median(dout.get(), dlen) / 0.6745;
         lnoise[it] = sigma;
         iter += dlen;
     }
@@ -416,8 +404,6 @@ void modwtshrink(double* signal, int N, int J, const char* wname, const char* cm
 
     imodwt(wt, denoised);
 
-    free(dout);
-    free(lnoise);
     wave_free(wave);
     wt_free(wt);
 }
