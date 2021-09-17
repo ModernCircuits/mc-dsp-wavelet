@@ -13,27 +13,27 @@ C. Torrence and G. Compo, and is available at URL: http://atoc.colorado.edu/rese
 auto factorial(int N) -> double
 {
     static const double fact[41] = {
-        1,
-        1,
-        2,
-        6,
-        24,
-        120,
-        720,
-        5040,
-        40320,
-        362880,
-        3628800,
-        39916800,
-        479001600,
-        6227020800,
-        87178291200,
-        1307674368000,
-        20922789888000,
-        355687428096000,
-        6402373705728000,
-        121645100408832000,
-        2432902008176640000,
+        1.0,
+        1.0,
+        2.0,
+        6.0,
+        24.0,
+        120.0,
+        720.0,
+        5040.0,
+        40320.0,
+        362880.0,
+        3628800.0,
+        39916800.0,
+        479001600.0,
+        6227020800.0,
+        87178291200.0,
+        1307674368000.0,
+        20922789888000.0,
+        355687428096000.0,
+        6402373705728000.0,
+        121645100408832000.0,
+        2432902008176640000.0,
         51090942171709440000.0,
         1124000727777607680000.0,
         25852016738884976640000.0,
@@ -158,7 +158,6 @@ void cwavelet(const double* y, int N, double dt, int mother, double param, doubl
     double* wave, const double* scale, double* period, double* coi)
 {
 
-    int i;
     int j;
     int k;
     int iter;
@@ -197,18 +196,18 @@ void cwavelet(const double* y, int N, double dt, int mother, double param, doubl
 
     ymean = 0.0;
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         ymean += y[i];
     }
 
     ymean /= N;
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         ypad[i].re = y[i] - ymean;
         ypad[i].im = 0.0;
     }
 
-    for (i = N; i < npad; ++i) {
+    for (auto i = N; i < npad; ++i) {
         ypad[i].re = ypad[i].im = 0.0;
     }
 
@@ -216,7 +215,7 @@ void cwavelet(const double* y, int N, double dt, int mother, double param, doubl
 
     fft_exec(obj, ypad, yfft);
 
-    for (i = 0; i < npad; ++i) {
+    for (auto i = 0; i < npad; ++i) {
         yfft[i].re /= (double)npad;
         yfft[i].im /= (double)npad;
     }
@@ -226,11 +225,11 @@ void cwavelet(const double* y, int N, double dt, int mother, double param, doubl
     freq1 = 2.0 * pi / ((double)npad * dt);
     kwave[0] = 0.0;
 
-    for (i = 1; i < npad / 2 + 1; ++i) {
+    for (auto i = 1; i < npad / 2 + 1; ++i) {
         kwave[i] = i * freq1;
     }
 
-    for (i = npad / 2 + 1; i < npad; ++i) {
+    for (auto i = npad / 2 + 1; i < npad; ++i) {
         kwave[i] = -kwave[npad - i];
     }
 
@@ -248,13 +247,13 @@ void cwavelet(const double* y, int N, double dt, int mother, double param, doubl
         }
         fft_exec(iobj, daughter, ypad);
         iter = 2 * (j - 1) * N;
-        for (i = 0; i < N; ++i) {
+        for (auto i = 0; i < N; ++i) {
             wave[iter + 2 * i] = ypad[i].re;
             wave[iter + 2 * i + 1] = ypad[i].im;
         }
     }
 
-    for (i = 1; i <= (N + 1) / 2; ++i) {
+    for (auto i = 1; i <= (N + 1) / 2; ++i) {
         coi[i - 1] = coi1 * dt * ((double)i - 1.0);
         coi[N - i] = coi[i - 1];
     }
@@ -319,12 +318,12 @@ static auto maxabs(double* array, int N) -> int
 {
     double maxval;
     double temp;
-    int i;
+
     int index;
     maxval = 0.0;
     index = -1;
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         temp = fabs(array[i]);
         if (temp >= maxval) {
             maxval = temp;
@@ -338,7 +337,7 @@ static auto maxabs(double* array, int N) -> int
 auto cdelta(int mother, double param, double psi0) -> double
 {
     int N { 0 };
-    int i;
+
     int j;
     int iter;
     double den;
@@ -380,24 +379,24 @@ auto cdelta(int mother, double param, double psi0) -> double
 
     delta[0] = 1;
 
-    for (i = 1; i < N; ++i) {
+    for (auto i = 1; i < N; ++i) {
         delta[i] = 0;
     }
 
-    for (i = 0; i < jtot; ++i) {
+    for (auto i = 0; i < jtot; ++i) {
         scale[i] = s0 * pow(2.0, (double)(i)*dj);
     }
 
     cwavelet(delta.get(), N, dt, mother, param, s0, dj, jtot, N, wave.get(), scale.get(), period.get(), coi.get());
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         mval[i] = 0;
     }
 
     for (j = 0; j < jtot; ++j) {
         iter = 2 * j * N;
         den = sqrt(scale[j]);
-        for (i = 0; i < N; ++i) {
+        for (auto i = 0; i < N; ++i) {
             mval[i] += wave[iter + 2 * i] / den;
         }
     }
@@ -411,7 +410,7 @@ auto cdelta(int mother, double param, double psi0) -> double
 
 void icwavelet(const double* wave, int N, double* scale, int jtot, double dt, double dj, double cdelta, double psi0, double* oup)
 {
-    int i;
+
     int j;
     int iter;
     double den;
@@ -419,19 +418,19 @@ void icwavelet(const double* wave, int N, double* scale, int jtot, double dt, do
 
     coeff = sqrt(dt) * dj / (cdelta * psi0);
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         oup[i] = 0.0;
     }
 
     for (j = 0; j < jtot; ++j) {
         iter = 2 * j * N;
         den = sqrt(scale[j]);
-        for (i = 0; i < N; ++i) {
+        for (auto i = 0; i < N; ++i) {
             oup[i] += wave[iter + 2 * i] / den;
         }
     }
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         oup[i] *= coeff;
     }
 }

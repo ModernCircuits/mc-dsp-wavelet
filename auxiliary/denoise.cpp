@@ -33,7 +33,6 @@ void visushrink(double* signal, int N, int J, const char* wname, const char* met
 {
     int filt_len;
     int iter;
-    int i;
     int dlen;
     int dwt_len;
     int sgn;
@@ -77,11 +76,11 @@ void visushrink(double* signal, int N, int J, const char* wname, const char* met
     auto dout = std::make_unique<double[]>(dlen);
 
     if (strcmp(level, "first") == 0) {
-        for (i = 1; i < J; ++i) {
+        for (auto i = 1; i < J; ++i) {
             iter += wt->length[i];
         }
 
-        for (i = 0; i < dlen; ++i) {
+        for (auto i = 0; i < dlen; ++i) {
             dout[i] = fabs(wt->output[iter + i]);
         }
 
@@ -92,7 +91,7 @@ void visushrink(double* signal, int N, int J, const char* wname, const char* met
     } else if (strcmp(level, "all") == 0) {
         for (it = 0; it < J; ++it) {
             dlen = wt->length[it + 1];
-            for (i = 0; i < dlen; ++i) {
+            for (auto i = 0; i < dlen; ++i) {
                 dout[i] = fabs(wt->output[iter + i]);
             }
             sigma = median(dout.get(), dlen) / 0.6745;
@@ -113,13 +112,13 @@ void visushrink(double* signal, int N, int J, const char* wname, const char* met
         td = sqrt(2.0 * log(dwt_len)) * sigma;
 
         if (strcmp(thresh, "hard") == 0) {
-            for (i = 0; i < dlen; ++i) {
+            for (auto i = 0; i < dlen; ++i) {
                 if (fabs(wt->output[iter + i]) < td) {
                     wt->output[iter + i] = 0;
                 }
             }
         } else if (strcmp(thresh, "soft") == 0) {
-            for (i = 0; i < dlen; ++i) {
+            for (auto i = 0; i < dlen; ++i) {
                 if (fabs(wt->output[iter + i]) < td) {
                     wt->output[iter + i] = 0;
                 } else {
@@ -146,7 +145,6 @@ void visushrink(double* signal, int N, int J, const char* wname, const char* met
 void sureshrink(double* signal, int N, int J, const char* wname, const char* method, const char* ext, const char* thresh, const char* level, double* denoised)
 {
     int filt_len;
-    int i;
     int it;
     int len;
     int dlen;
@@ -201,11 +199,11 @@ void sureshrink(double* signal, int N, int J, const char* wname, const char* met
     iter = wt->length[0];
 
     if (strcmp(level, "first") == 0) {
-        for (i = 1; i < J; ++i) {
+        for (auto i = 1; i < J; ++i) {
             iter += wt->length[i];
         }
 
-        for (i = 0; i < dlen; ++i) {
+        for (auto i = 0; i < dlen; ++i) {
             dout[i] = fabs(wt->output[iter + i]);
         }
 
@@ -216,7 +214,7 @@ void sureshrink(double* signal, int N, int J, const char* wname, const char* met
     } else if (strcmp(level, "all") == 0) {
         for (it = 0; it < J; ++it) {
             dlen = wt->length[it + 1];
-            for (i = 0; i < dlen; ++i) {
+            for (auto i = 0; i < dlen; ++i) {
                 dout[i] = fabs(wt->output[iter + i]);
             }
             sigma = median(dout.get(), dlen) / 0.6745;
@@ -238,7 +236,7 @@ void sureshrink(double* signal, int N, int J, const char* wname, const char* met
         } else {
             tv = sqrt(2.0 * log(dwt_len));
             norm = 0.0;
-            for (i = 0; i < dwt_len; ++i) {
+            for (auto i = 0; i < dwt_len; ++i) {
                 norm += (wt->output[len + i] * wt->output[len + i] / (sigma * sigma));
             }
             te = (norm - (double)dwt_len) / (double)dwt_len;
@@ -249,18 +247,18 @@ void sureshrink(double* signal, int N, int J, const char* wname, const char* met
             } else {
                 x_sum = 0.0;
 
-                for (i = 0; i < dwt_len; ++i) {
+                for (auto i = 0; i < dwt_len; ++i) {
                     dout[i] = fabs(wt->output[len + i] / sigma);
                 }
 
                 qsort(dout.get(), dwt_len, sizeof(double), compare_double);
-                for (i = 0; i < dwt_len; ++i) {
+                for (auto i = 0; i < dwt_len; ++i) {
                     dout[i] = (dout[i] * dout[i]);
                     x_sum += dout[i];
                     dsum[i] = x_sum;
                 }
 
-                for (i = 0; i < dwt_len; ++i) {
+                for (auto i = 0; i < dwt_len; ++i) {
                     risk[i] = ((double)dwt_len - 2 * ((double)i + 1) + dsum[i] + dout[i] * ((double)dwt_len - 1 - (double)i)) / (double)dwt_len;
                 }
                 min_index = minindex(risk.get(), dwt_len);
@@ -272,13 +270,13 @@ void sureshrink(double* signal, int N, int J, const char* wname, const char* met
         td = td * sigma;
 
         if (strcmp(thresh, "hard") == 0) {
-            for (i = 0; i < dwt_len; ++i) {
+            for (auto i = 0; i < dwt_len; ++i) {
                 if (fabs(wt->output[len + i]) < td) {
                     wt->output[len + i] = 0;
                 }
             }
         } else if (strcmp(thresh, "soft") == 0) {
-            for (i = 0; i < dwt_len; ++i) {
+            for (auto i = 0; i < dwt_len; ++i) {
                 if (fabs(wt->output[len + i]) < td) {
                     wt->output[len + i] = 0;
                 } else {
@@ -306,7 +304,6 @@ void modwtshrink(double* signal, int N, int J, const char* wname, const char* cm
 {
     int filt_len;
     int iter;
-    int i;
     int dlen;
     int sgn;
     int MaxIter;
@@ -361,7 +358,7 @@ void modwtshrink(double* signal, int N, int J, const char* wname, const char* cm
 
     for (it = 0; it < J; ++it) {
         dlen = wt->length[it + 1];
-        for (i = 0; i < dlen; ++i) {
+        for (auto i = 0; i < dlen; ++i) {
             dout[i] = fabs(wt->output[iter + i]);
         }
 
@@ -381,13 +378,13 @@ void modwtshrink(double* signal, int N, int J, const char* wname, const char* cm
         td = sqrt(2.0 * llen / M) * sigma;
 
         if (strcmp(thresh, "hard") == 0) {
-            for (i = 0; i < dlen; ++i) {
+            for (auto i = 0; i < dlen; ++i) {
                 if (fabs(wt->output[iter + i]) < td) {
                     wt->output[iter + i] = 0;
                 }
             }
         } else if (strcmp(thresh, "soft") == 0) {
-            for (i = 0; i < dlen; ++i) {
+            for (auto i = 0; i < dlen; ++i) {
                 if (fabs(wt->output[iter + i]) < td) {
                     wt->output[iter + i] = 0;
                 } else {

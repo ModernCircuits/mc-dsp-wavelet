@@ -10,9 +10,6 @@
 
 #include "real.h"
 
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-
 auto factorf(int M) -> int;
 auto findnext(int M) -> int;
 auto findnexte(int M) -> int;

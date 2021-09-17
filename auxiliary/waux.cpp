@@ -17,11 +17,8 @@ auto compare_double(const void* a, const void* b) -> int
 
 auto mean(const double* vec, int N) -> double
 {
-    int i;
-    double m;
-    m = 0.0;
-
-    for (i = 0; i < N; ++i) {
+    auto m = 0.0;
+    for (auto i = 0; i < N; ++i) {
         m += vec[i];
     }
     m = m / N;
@@ -33,11 +30,10 @@ auto var(const double* vec, int N) -> double
     double v;
     double temp;
     double m;
-    int i;
     v = 0.0;
     m = mean(vec, N);
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         temp = vec[i] - m;
         v += temp * temp;
     }
@@ -65,11 +61,10 @@ auto median(double* x, int N) -> double
 auto mad(double* x, int N) -> double
 {
     double sigma;
-    int i;
 
     sigma = median(x, N);
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         x[i] = (x[i] - sigma) > 0 ? (x[i] - sigma) : -(x[i] - sigma);
     }
 
@@ -82,11 +77,10 @@ auto minindex(const double* arr, int N) -> int
 {
     double min;
     int index;
-    int i;
 
     min = DBL_MAX;
     index = 0;
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         if (arr[i] < min) {
             min = arr[i];
             index = i;
@@ -104,9 +98,8 @@ void getDWTAppx(wt_object wt, double* appx, int N)
 
 	Length of A(J) , N = wt->length[0]
 	*/
-    int i;
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         appx[i] = wt->output[i];
     }
 }
@@ -123,7 +116,6 @@ void getDWTDetail(wt_object wt, double* detail, int N, int level)
 	....
 	Level J : Length of D(1), ie N, is stored in wt->length[J]
 	*/
-    int i;
     int iter;
     int J;
     J = wt->J;
@@ -135,11 +127,11 @@ void getDWTDetail(wt_object wt, double* detail, int N, int level)
 
     iter = wt->length[0];
 
-    for (i = 1; i < J - level; ++i) {
+    for (auto i = 1; i < J - level; ++i) {
         iter += wt->length[i];
     }
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         detail[i] = wt->output[i + iter];
     }
 }
@@ -148,7 +140,6 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
     double* hpr, int lf, int siglength, double* reccoeff)
 {
 
-    int i;
     int j;
     int k;
     int det_len;
@@ -177,7 +168,7 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
 
         X_lp = (double*)malloc(sizeof(double) * (N + 2 * lf - 1));
 
-        for (i = 0; i < det_len; ++i) {
+        for (auto i = 0; i < det_len; ++i) {
             out[i] = coeff[i];
         }
 
@@ -195,7 +186,7 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
             m = -2;
             n = -1;
 
-            for (i = 0; i < det_len + l2 - 1; ++i) {
+            for (auto i = 0; i < det_len + l2 - 1; ++i) {
                 m += 2;
                 n += 2;
                 X_lp[m] = 0.0;
@@ -237,7 +228,7 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
 
         X_lp = (double*)malloc(sizeof(double) * (N + 2 * lf - 1));
 
-        for (i = 0; i < det_len; ++i) {
+        for (auto i = 0; i < det_len; ++i) {
             out[i] = coeff[i];
         }
 
@@ -257,7 +248,7 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
             n = -1;
 
             for (v = 0; v < det_len; ++v) {
-                i = v;
+                auto i = v;
                 m += 2;
                 n += 2;
                 X_lp[m] = 0.0;
@@ -287,7 +278,7 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
         exit(-1);
     }
 
-    for (i = 0; i < siglength; ++i) {
+    for (auto i = 0; i < siglength; ++i) {
         reccoeff[i] = out[i];
     }
 
@@ -299,7 +290,6 @@ void autocovar(const double* vec, int N, double* acov, int M)
     double m;
     double temp1;
     double temp2;
-    int i;
     int t;
     m = mean(vec, N);
 
@@ -311,7 +301,7 @@ void autocovar(const double* vec, int N, double* acov, int M)
         M = 0;
     }
 
-    for (i = 0; i < M; i++) {
+    for (auto i = 0; i < M; i++) {
         acov[i] = 0.0;
         for (t = 0; t < N - i; t++) {
             temp1 = vec[t] - m;
@@ -325,7 +315,6 @@ void autocovar(const double* vec, int N, double* acov, int M)
 void autocorr(const double* vec, int N, double* acorr, int M)
 {
     double var;
-    int i;
     if (M > N) {
         M = N - 1;
         printf("\n Lag is greater than the length N of the input vector. It is automatically set to length N - 1.\n");
@@ -337,7 +326,7 @@ void autocorr(const double* vec, int N, double* acorr, int M)
     var = acorr[0];
     acorr[0] = 1.0;
 
-    for (i = 1; i < M; i++) {
+    for (auto i = 1; i < M; i++) {
         acorr[i] = acorr[i] / var;
     }
 }

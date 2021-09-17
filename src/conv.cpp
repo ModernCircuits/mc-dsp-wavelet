@@ -7,6 +7,8 @@
 
 #include "conv.h"
 
+#include <algorithm>
+
 auto factorf(int M) -> int
 {
     int N;
@@ -96,12 +98,11 @@ void conv_direct(const fft_type* inp1, int N, const fft_type* inp2, int L, fft_t
     int M;
     int k;
     int m;
-    int i;
     fft_type t1;
     fft_type tmin;
 
     M = N + L - 1;
-    i = 0;
+    auto i = 0;
 
     if (N >= L) {
 
@@ -116,7 +117,7 @@ void conv_direct(const fft_type* inp1, int N, const fft_type* inp2, int L, fft_t
             oup[k] = 0.0;
             i++;
             t1 = L + i;
-            tmin = MIN(t1, N);
+            tmin = std::min<double>(t1, N);
             for (m = i; m < tmin; m++) {
                 oup[k] += inp1[m] * inp2[k - m];
             }
@@ -134,7 +135,7 @@ void conv_direct(const fft_type* inp1, int N, const fft_type* inp2, int L, fft_t
             oup[k] = 0.0;
             i++;
             t1 = N + i;
-            tmin = MIN(t1, L);
+            tmin = std::min<double>(t1, L);
             for (m = i; m < tmin; m++) {
                 oup[k] += inp2[m] * inp1[k - m];
             }

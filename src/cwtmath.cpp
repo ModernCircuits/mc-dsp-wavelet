@@ -1,5 +1,7 @@
 #include "cwtmath.h"
 
+#include <memory>
+
 static void nsfft_fd(fft_object obj, fft_data* inp, fft_data* oup, double lb, double ub, double* w)
 {
     int M;
@@ -34,31 +36,31 @@ static void nsfft_fd(fft_object obj, fft_data* inp, fft_data* oup, double lb, do
     j = -N;
     den = 2 * (ub - lb);
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         w[i] = (double)j / den;
         j += 2;
     }
 
     fft_exec(obj, inp, oup);
 
-    for (i = 0; i < L; ++i) {
+    for (auto i = 0; i < L; ++i) {
         temp1[i] = oup[i].re;
         temp2[i] = oup[i].im;
     }
 
-    for (i = 0; i < N - L; ++i) {
+    for (auto i = 0; i < N - L; ++i) {
         oup[i].re = oup[i + L].re;
         oup[i].im = oup[i + L].im;
     }
 
-    for (i = 0; i < L; ++i) {
+    for (auto i = 0; i < L; ++i) {
         oup[N - L + i].re = temp1[i];
         oup[N - L + i].im = temp2[i];
     }
 
     plb = PI2 * lb;
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         tempr = oup[i].re;
         tempi = oup[i].im;
         theta = w[i] * plb;
@@ -74,78 +76,62 @@ static void nsfft_fd(fft_object obj, fft_data* inp, fft_data* oup, double lb, do
 
 static void nsfft_bk(fft_object obj, fft_data* inp, fft_data* oup, double lb, double ub, double* t)
 {
-    int M;
-    int N;
-    int i;
     int j;
-    int L;
-    double* w;
-    double delta;
     double den;
     double plb;
-    double theta;
-    double* temp1;
-    double* temp2;
-    fft_data* inpt;
 
-    N = obj->N;
-    L = N / 2;
+    auto N = obj->N;
+    auto L = N / 2;
 
-    M = divideby(N, 2);
+    auto M = divideby(N, 2);
 
     if (M == 0) {
         printf("The Non-Standard FFT Length must be a power of 2");
         exit(1);
     }
 
-    temp1 = (double*)malloc(sizeof(double) * L);
-    temp2 = (double*)malloc(sizeof(double) * L);
-    w = (double*)malloc(sizeof(double) * N);
-    inpt = (fft_data*)malloc(sizeof(fft_data) * N);
+    auto temp1 = std::make_unique<double[]>(L);
+    auto temp2 = std::make_unique<double[]>(L);
+    auto w = std::make_unique<double[]>(N);
+    auto inpt = std::make_unique<fft_data[]>(N);
 
-    delta = (ub - lb) / N;
+    auto delta = (ub - lb) / N;
     j = -N;
     den = 2 * (ub - lb);
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         w[i] = (double)j / den;
         j += 2;
     }
 
     plb = PI2 * lb;
 
-    for (i = 0; i < N; ++i) {
-        theta = w[i] * plb;
-
+    for (auto i = 0; i < N; ++i) {
+        auto const theta = w[i] * plb;
         inpt[i].re = (inp[i].re * cos(theta) - inp[i].im * sin(theta)) / delta;
         inpt[i].im = (inp[i].im * cos(theta) + inp[i].re * sin(theta)) / delta;
     }
 
-    for (i = 0; i < L; ++i) {
+    for (auto i = 0; i < L; ++i) {
         temp1[i] = inpt[i].re;
         temp2[i] = inpt[i].im;
     }
 
-    for (i = 0; i < N - L; ++i) {
+    for (auto i = 0; i < N - L; ++i) {
         inpt[i].re = inpt[i + L].re;
         inpt[i].im = inpt[i + L].im;
     }
 
-    for (i = 0; i < L; ++i) {
+    for (auto i = 0; i < L; ++i) {
         inpt[N - L + i].re = temp1[i];
         inpt[N - L + i].im = temp2[i];
     }
 
-    fft_exec(obj, inpt, oup);
+    fft_exec(obj, inpt.get(), oup);
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         t[i] = lb + i * delta;
     }
-
-    free(w);
-    free(temp1);
-    free(temp2);
-    free(inpt);
 }
 
 void nsfft_exec(fft_object obj, fft_data* inp, fft_data* oup, double lb, double ub, double* w)
@@ -180,7 +166,7 @@ auto cwt_gamma(double x) -> double
     /*
 	 * This C program code is based on  W J Cody's fortran code.
 	 * http://www.netlib.org/specfun/gamma
-	 * 
+	 *
 	 * References:
    "An Overview of Software Development for Special Functions",
 	W. J. Cody, Lecture Notes in Mathematics, 506,
@@ -203,14 +189,13 @@ auto cwt_gamma(double x) -> double
     double dsum;
     int swi;
     int n;
-    int i;
 
-    double spi = 0.9189385332046727417803297;
-    double pi = 3.1415926535897932384626434;
-    double xmax = 171.624e+0;
-    double xinf = 1.79e308;
-    double eps = 2.22e-16;
-    double xninf = 1.79e-308;
+    constexpr double spi = 0.9189385332046727417803297;
+    constexpr double pi = 3.1415926535897932384626434;
+    constexpr double xmax = 171.624e+0;
+    constexpr double xinf = 1.79e308;
+    constexpr double eps = 2.22e-16;
+    constexpr double xninf = 1.79e-308;
 
     double num[8] = { -1.71618513886549492533811e+0,
         2.47656508055759199108314e+1,
@@ -281,7 +266,7 @@ auto cwt_gamma(double x) -> double
         }
         nsum = 0.;
         dsum = 1.;
-        for (i = 0; i < 8; ++i) {
+        for (auto i = 0; i < 8; ++i) {
             nsum = (nsum + num[i]) * z;
             dsum = dsum * z + den[i];
         }
@@ -292,7 +277,7 @@ auto cwt_gamma(double x) -> double
             oup /= yi;
         } else if (yi > y) {
 
-            for (i = 0; i < n; ++i) {
+            for (auto i = 0; i < n; ++i) {
                 oup *= y;
                 y += 1.;
             }
@@ -302,7 +287,7 @@ auto cwt_gamma(double x) -> double
         if (y <= xmax) {
             y2 = y * y;
             sum = c[6];
-            for (i = 0; i < 6; ++i) {
+            for (auto i = 0; i < 6; ++i) {
                 sum = sum / y2 + c[i];
             }
             sum = sum / y - y + spi;
