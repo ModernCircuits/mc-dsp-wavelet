@@ -1,8 +1,10 @@
 #include "wavelib.h"
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 
 auto absmax(double* array, int N) -> double
 {
@@ -23,12 +25,6 @@ auto main() -> int
 {
     wave_object obj;
     wt_object wt;
-    double* inp;
-    double* out;
-    double* diff;
-    int N;
-    int i;
-    int J;
 
     FILE* ifp;
     double temp[1200];
@@ -37,7 +33,7 @@ auto main() -> int
     obj = wave_init(name); // Initialize the wavelet
 
     ifp = fopen("testData/signal.txt", "r");
-    i = 0;
+    auto i = 0;
     if (ifp == nullptr) {
         printf("Cannot Open File");
         exit(100);
@@ -46,46 +42,42 @@ auto main() -> int
         fscanf(ifp, "%lf \n", &temp[i]);
         i++;
     }
-    N = 256;
+    auto N = 256;
 
     fclose(ifp);
 
-    inp = (double*)malloc(sizeof(double) * N);
-    out = (double*)malloc(sizeof(double) * N);
-    diff = (double*)malloc(sizeof(double) * N);
-    //wmean = mean(temp, N);
+    auto inp = std::make_unique<double[]>(N);
+    auto out = std::make_unique<double[]>(N);
+    auto diff = std::make_unique<double[]>(N);
 
     for (i = 0; i < N; ++i) {
         inp[i] = temp[i];
-        //printf("%g \n",inp[i]);
     }
-    J = 3;
 
-    wt = wt_init(obj, "dwt", N, J); // Initialize the wavelet transform object
-    setDWTExtension(wt, "sym"); // Options are "per" and "sym". Symmetric is the default option
+    wt = wt_init(obj, "dwt", N, 3);
+    setDWTExtension(wt, "sym");
     setWTConv(wt, "direct");
 
-    dwt(wt, inp); // Perform DWT
-    //DWT output can be accessed using wt->output vector. Use wt_summary to find out how to extract appx and detail coefficients
+    // DWT output can be accessed using wt->output vector.
+    // Use wt_summary to find out how to extract appx and detail coefficients
+    dwt(wt, inp.get());
 
     for (i = 0; i < wt->outlength; ++i) {
         printf("%g ", wt->output[i]);
     }
 
-    idwt(wt, out); // Perform IDWT (if needed)
-    // Test Reconstruction
+    idwt(wt, out.get());
     for (i = 0; i < wt->siglength; ++i) {
         diff[i] = out[i] - inp[i];
     }
 
-    printf("\n MAX %g \n", absmax(diff, wt->siglength)); // If Reconstruction succeeded then the output should be a small value.
+    // If Reconstruction succeeded then the output should be a small value.
+    printf("\n MAX %g \n", absmax(diff.get(), wt->siglength));
 
-    wt_summary(wt); // Prints the full summary.
+    // Prints the full summary.
+    wt_summary(wt);
     wave_free(obj);
     wt_free(wt);
 
-    free(inp);
-    free(out);
-    free(diff);
     return 0;
 }

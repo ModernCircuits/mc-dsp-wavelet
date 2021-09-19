@@ -172,9 +172,6 @@ void cwavelet(double const* y, int N, double dt, int mother, double param, doubl
     double scale1;
     fft_object obj;
     fft_object iobj;
-    fft_data* ypad;
-    fft_data* yfft;
-    fft_data* daughter;
 
     (void)s0;
     (void)dj; /* yes, we need these parameters unused */
@@ -189,9 +186,9 @@ void cwavelet(double const* y, int N, double dt, int mother, double param, doubl
     obj = fft_init(npad, 1);
     iobj = fft_init(npad, -1);
 
-    ypad = (fft_data*)malloc(sizeof(fft_data) * npad);
-    yfft = (fft_data*)malloc(sizeof(fft_data) * npad);
-    daughter = (fft_data*)malloc(sizeof(fft_data) * npad);
+    auto ypad = std::make_unique<fft_data[]>(npad);
+    auto yfft = std::make_unique<fft_data[]>(npad);
+    auto daughter = std::make_unique<fft_data[]>(npad);
     auto kwave = std::make_unique<double[]>(npad);
     ymean = 0.0;
 
@@ -212,7 +209,7 @@ void cwavelet(double const* y, int N, double dt, int mother, double param, doubl
 
     // Find FFT of the input y (ypad)
 
-    fft_exec(obj, ypad, yfft);
+    fft_exec(obj, ypad.get(), yfft.get());
 
     for (auto i = 0; i < npad; ++i) {
         yfft[i].re /= (double)npad;
@@ -236,7 +233,7 @@ void cwavelet(double const* y, int N, double dt, int mother, double param, doubl
 
     for (j = 1; j <= jtot; ++j) {
         scale1 = scale[j - 1]; // = s0*std::pow(2.0, (double)(j - 1)*dj);
-        wave_function(npad, dt, mother, param, scale1, kwave.get(), pi, &period1, &coi1, daughter);
+        wave_function(npad, dt, mother, param, scale1, kwave.get(), pi, &period1, &coi1, daughter.get());
         period[j - 1] = period1;
         for (k = 0; k < npad; ++k) {
             tmp1 = daughter[k].re * yfft[k].re - daughter[k].im * yfft[k].im;
@@ -244,7 +241,7 @@ void cwavelet(double const* y, int N, double dt, int mother, double param, doubl
             daughter[k].re = tmp1;
             daughter[k].im = tmp2;
         }
-        fft_exec(iobj, daughter, ypad);
+        fft_exec(iobj, daughter.get(), ypad.get());
         iter = 2 * (j - 1) * N;
         for (auto i = 0; i < N; ++i) {
             wave[iter + 2 * i] = ypad[i].re;
@@ -256,10 +253,6 @@ void cwavelet(double const* y, int N, double dt, int mother, double param, doubl
         coi[i - 1] = coi1 * dt * ((double)i - 1.0);
         coi[N - i] = coi[i - 1];
     }
-
-    free(ypad);
-    free(yfft);
-    free(daughter);
 
     free_fft(obj);
     free_fft(iobj);

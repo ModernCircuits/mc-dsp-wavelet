@@ -1,9 +1,10 @@
+#include "wauxlib.h"
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
-#include "wauxlib.h"
+#include <memory>
 
 static auto rmse(int N, double const* x, double const* y) -> double
 {
@@ -61,9 +62,6 @@ auto main() -> int
     /*
     modwtshrink can also be called from the denoise object. See denoisetest.c for more information
     */
-    double* sig;
-    double* inp;
-    double* oup;
     int i;
     int N;
     int J;
@@ -93,9 +91,9 @@ auto main() -> int
     N = i;
     J = 4;
 
-    sig = (double*)malloc(sizeof(double) * N);
-    inp = (double*)malloc(sizeof(double) * N);
-    oup = (double*)malloc(sizeof(double) * N);
+    auto sig = std::make_unique<double[]>(N);
+    auto inp = std::make_unique<double[]>(N);
+    auto out = std::make_unique<double[]>(N);
 
     for (i = 0; i < N; ++i) {
         sig[i] = temp[i];
@@ -119,18 +117,15 @@ auto main() -> int
         inp[i] = temp[i];
     }
 
-    modwtshrink(sig, N, J, wname, cmethod, ext, thresh, oup);
+    modwtshrink(sig.get(), N, J, wname, cmethod, ext, thresh, out.get());
 
     printf("Signal - Noisy Signal Stats \n");
-    printf("RMSE %g\n", rmse(N, sig, inp));
-    printf("Corr Coeff %g\n", corrcoef(N, sig, inp));
+    printf("RMSE %g\n", rmse(N, sig.get(), inp.get()));
+    printf("Corr Coeff %g\n", corrcoef(N, sig.get(), inp.get()));
 
     printf("Signal - DeNoised Signal Stats \n");
-    printf("RMSE %g\n", rmse(N, sig, oup));
-    printf("Corr Coeff %g\n", corrcoef(N, sig, oup));
+    printf("RMSE %g\n", rmse(N, sig.get(), out.get()));
+    printf("Corr Coeff %g\n", corrcoef(N, sig.get(), out.get()));
 
-    free(sig);
-    free(inp);
-    free(oup);
     return 0;
 }

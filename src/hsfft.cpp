@@ -7,6 +7,8 @@
 
 #include "hsfft.h"
 
+#include <memory>
+
 auto fft_init(int N, int sgn) -> fft_object
 {
     fft_object obj = nullptr;
@@ -1704,11 +1706,7 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_object obj, int sgn
     int i;
     fft_type scale;
     fft_type temp;
-    fft_data* yn;
-    fft_data* hk;
-    fft_data* tempop;
-    fft_data* yno;
-    fft_data* hlt;
+
     obj->lt = 0;
     auto K = (int)pow(2.0, ceil((double)log10((double)N) / log10((double)2.0)));
     auto def_lt = 1;
@@ -1722,14 +1720,13 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_object obj, int sgn
     }
     obj->N = M;
 
-    yn = (fft_data*)malloc(sizeof(fft_data) * M);
-    hk = (fft_data*)malloc(sizeof(fft_data) * M);
-    tempop = (fft_data*)malloc(sizeof(fft_data) * M);
-    yno = (fft_data*)malloc(sizeof(fft_data) * M);
-    hlt = (fft_data*)malloc(sizeof(fft_data) * N);
-    //fft_data* twi = (fft_data*) malloc (sizeof(fft_data) * M);
+    auto yn = std::make_unique<fft_data[]>(M);
+    auto hk = std::make_unique<fft_data[]>(M);
+    auto tempop = std::make_unique<fft_data[]>(M);
+    auto yno = std::make_unique<fft_data[]>(M);
+    auto hlt = std::make_unique<fft_data[]>(N);
 
-    bluestein_exp(tempop, hlt, N, M);
+    bluestein_exp(tempop.get(), hlt.get(), N, M);
     scale = 1.0 / M;
 
     for (ii = 0; ii < M; ++ii) {
@@ -1738,7 +1735,7 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_object obj, int sgn
     }
 
     //fft_object obj = initialize_fft2(M,1);
-    fft_exec(obj, tempop, hk);
+    fft_exec(obj, tempop.get(), hk.get());
 
     if (sgn == 1) {
         for (i = 0; i < N; i++) {
@@ -1757,7 +1754,7 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_object obj, int sgn
         tempop[i].im = 0.0;
     }
 
-    fft_exec(obj, tempop, yn);
+    fft_exec(obj, tempop.get(), yn.get());
 
     if (sgn == 1) {
         for (i = 0; i < M; i++) {
@@ -1781,7 +1778,7 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_object obj, int sgn
 
     obj->sgn = -1 * sgn;
 
-    fft_exec(obj, yn, yno);
+    fft_exec(obj, yn.get(), yno.get());
 
     if (sgn == 1) {
         for (i = 0; i < N; i++) {
@@ -1801,12 +1798,6 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_object obj, int sgn
     for (ii = 0; ii < M; ++ii) {
         (obj->twiddle + ii)->im = -(obj->twiddle + ii)->im;
     }
-
-    free(yn);
-    free(yno);
-    free(tempop);
-    free(hk);
-    free(hlt);
 }
 
 void fft_exec(fft_object obj, fft_data* inp, fft_data* oup)

@@ -8,6 +8,7 @@
 #include <cstring>
 
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <vector>
 
@@ -16,8 +17,6 @@ void DWTReconstructionTest()
 
     wave_object obj;
     wt_object wt;
-    double* inp;
-    double* out;
     int N;
     int i;
     int J;
@@ -27,8 +26,8 @@ void DWTReconstructionTest()
 
     // N = 256;
 
-    inp = (double*)malloc(sizeof(double) * N);
-    out = (double*)malloc(sizeof(double) * N);
+    auto inp = std::make_unique<double[]>(N);
+    auto out = std::make_unique<double[]>(N);
     // wmean = mean(temp, N);
 
     for (i = 0; i < N; ++i) {
@@ -102,9 +101,9 @@ void DWTReconstructionTest()
                         setWTConv(wt, "fft");
                     }
 
-                    dwt(wt, inp); // Perform DWT
+                    dwt(wt, inp.get()); // Perform DWT
 
-                    idwt(wt, out); // Perform IDWT (if needed)
+                    idwt(wt, out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
                     if (direct_fft == 0) {
@@ -112,11 +111,11 @@ void DWTReconstructionTest()
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
+                    // BOOST_CHECK_SMALL(RMS_Error(out.get(), inp.get(), wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%g ",RMS_Error(out, inp, wt->siglength));
-                    if (RMS_Error(out, inp, wt->siglength) > epsilon) {
+                    // printf("%g ",RMS_Error(out.get(), inp.get(), wt->siglength));
+                    if (RMS_Error(out.get(), inp.get(), wt->siglength) > epsilon) {
                         printf(
                             "\n ERROR : DWT Reconstruction Unit Test Failed. Exiting. \n");
                         exit(-1);
@@ -128,9 +127,6 @@ void DWTReconstructionTest()
             }
         }
     }
-
-    free(out);
-    free(inp);
 }
 
 void DWT2ReconstructionTest()
@@ -143,9 +139,7 @@ void DWT2ReconstructionTest()
     int N;
     int rows;
     int cols;
-    double* inp;
     double* wavecoeffs;
-    double* out;
     double epsilon;
 
     rows = 1024;
@@ -153,8 +147,8 @@ void DWT2ReconstructionTest()
 
     N = rows * cols;
 
-    inp = (double*)malloc(sizeof(double) * N);
-    out = (double*)malloc(sizeof(double) * N);
+    auto inp = std::make_unique<double[]>(N);
+    auto out = std::make_unique<double[]>(N);
 
     std::vector<std::string> waveletNames;
 
@@ -227,9 +221,9 @@ void DWT2ReconstructionTest()
                         setDWT2Extension(wt, "per");
                     }
 
-                    wavecoeffs = dwt2(wt, inp); // Perform DWT
+                    wavecoeffs = dwt2(wt, inp.get()); // Perform DWT
 
-                    idwt2(wt, wavecoeffs, out); // Perform IDWT (if needed)
+                    idwt2(wt, wavecoeffs, out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
                     if (direct_fft == 0) {
@@ -237,13 +231,12 @@ void DWT2ReconstructionTest()
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
+                    // BOOST_CHECK_SMALL(RMS_Error(out.get(), inp.get(), wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%g ",RMS_Error(out, inp, wt->siglength));
-                    if (RMS_Error(out, inp, N) > epsilon) {
-                        printf(
-                            "\n ERROR : DWT2 Reconstruction Unit Test Failed. Exiting. \n");
+                    // printf("%g ",RMS_Error(out.get(), inp.get(), wt->siglength));
+                    if (RMS_Error(out.get(), inp.get(), N) > epsilon) {
+                        printf("\n ERROR : DWT2 Reconstruction Unit Test Failed. Exiting. \n");
                         exit(-1);
                     }
                     wt2_free(wt);
@@ -254,9 +247,6 @@ void DWT2ReconstructionTest()
             }
         }
     }
-
-    free(inp);
-    free(out);
 }
 
 auto main() -> int

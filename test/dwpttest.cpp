@@ -1,8 +1,10 @@
 #include "wavelib.h"
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 
 auto absmax(double* array, int N) -> double
 {
@@ -21,46 +23,36 @@ auto absmax(double* array, int N) -> double
 
 auto main() -> int
 {
-    int i;
-    int J;
-    int N;
-    wave_object obj;
-    wpt_object wt;
-    double* inp;
-    double* oup;
-    double* diff;
+    wave_object obj = wave_init("db4");
 
-    char const* name = "db4";
-    obj = wave_init(name); // Initialize the wavelet
-    N = 788 + 23;
-    inp = (double*)malloc(sizeof(double) * N);
-    oup = (double*)malloc(sizeof(double) * N);
-    diff = (double*)malloc(sizeof(double) * N);
-    for (i = 1; i < N + 1; ++i) {
-        //inp[i - 1] = -0.25*i*i*i + 25 * i *i + 10 * i;
+    auto const N = 788 + 23;
+    auto const J = 4;
+
+    auto inp = std::make_unique<double[]>(N);
+    auto oup = std::make_unique<double[]>(N);
+    auto diff = std::make_unique<double[]>(N);
+
+    for (auto i = 1; i < N + 1; ++i) {
         inp[i - 1] = i;
     }
-    J = 4;
 
-    wt = wpt_init(obj, N, J); // Initialize the wavelet transform Tree object
-    setDWPTExtension(wt, "per"); // Options are "per" and "sym". Symmetric is the default option
+    wpt_object wt = wpt_init(obj, N, J);
+    setDWPTExtension(wt, "per");
     setDWPTEntropy(wt, "logenergy", 0);
 
-    dwpt(wt, inp); // Discrete Wavelet Packet Transform
+    dwpt(wt, inp.get());
 
-    idwpt(wt, oup); // Inverse Discrete Wavelet Packet Transform
+    idwpt(wt, oup.get());
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         diff[i] = (inp[i] - oup[i]) / inp[i];
     }
 
-    wpt_summary(wt); // Tree Summary
+    wpt_summary(wt);
 
-    printf("\n MAX %g \n", absmax(diff, wt->siglength)); // If Reconstruction succeeded then the output should be a small value.
+    // If Reconstruction succeeded then the output should be a small value.
+    printf("\n MAX %g \n", absmax(diff.get(), wt->siglength));
 
-    free(inp);
-    free(oup);
-    free(diff);
     wave_free(obj);
     wpt_free(wt);
     return 0;

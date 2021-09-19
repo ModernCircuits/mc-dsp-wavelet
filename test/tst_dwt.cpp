@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <vector>
 
@@ -20,8 +21,7 @@ void MODWTReconstructionTest()
 
     wave_object obj;
     wt_object wt;
-    double* inp;
-    double* out;
+
     int N;
     int i;
     int J;
@@ -32,8 +32,8 @@ void MODWTReconstructionTest()
 
     // N = 256;
 
-    inp = (double*)malloc(sizeof(double) * N);
-    out = (double*)malloc(sizeof(double) * N);
+    auto inp = std::make_unique<double[]>(N);
+    auto out = std::make_unique<double[]>(N);
     // wmean = mean(temp, N);
 
     for (i = 0; i < N; ++i) {
@@ -79,9 +79,9 @@ void MODWTReconstructionTest()
                         break;
                     }
 
-                    modwt(wt, inp); // Perform DWT
+                    modwt(wt, inp.get()); // Perform DWT
 
-                    imodwt(wt, out); // Perform IDWT (if needed)
+                    imodwt(wt, out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
                     if (direct_fft == 0) {
@@ -89,11 +89,11 @@ void MODWTReconstructionTest()
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
+                    // BOOST_CHECK_SMALL(RMS_Error(out.get(), inp.get(), wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%g ",RMS_Error(out, inp, wt->siglength));
-                    err = RMS_Error(out, inp, wt->siglength);
+                    // printf("%g ",RMS_Error(out.get(), inp.get(), wt->siglength));
+                    err = RMS_Error(out.get(), inp.get(), wt->siglength);
                     // printf("%d %d %g \n",direct_fft,sym_per,err);
                     if (err > epsilon) {
                         printf(
@@ -107,9 +107,6 @@ void MODWTReconstructionTest()
             }
         }
     }
-
-    free(out);
-    free(inp);
 }
 
 void MODWT2ReconstructionTest()
@@ -122,9 +119,8 @@ void MODWT2ReconstructionTest()
     int N;
     int rows;
     int cols;
-    double* inp;
+
     double* wavecoeffs;
-    double* out;
     double epsilon;
 
     rows = 1024;
@@ -132,8 +128,8 @@ void MODWT2ReconstructionTest()
 
     N = rows * cols;
 
-    inp = (double*)malloc(sizeof(double) * N);
-    out = (double*)malloc(sizeof(double) * N);
+    auto inp = std::make_unique<double[]>(N);
+    auto out = std::make_unique<double[]>(N);
 
     std::vector<std::string> waveletNames;
 
@@ -170,9 +166,9 @@ void MODWT2ReconstructionTest()
                         setDWT2Extension(wt, "per"); // Options are "per"
                     }
 
-                    wavecoeffs = modwt2(wt, inp); // Perform DWT
+                    wavecoeffs = modwt2(wt, inp.get()); // Perform DWT
 
-                    imodwt2(wt, wavecoeffs, out); // Perform IDWT (if needed)
+                    imodwt2(wt, wavecoeffs, out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
                     if (direct_fft == 0) {
@@ -180,11 +176,11 @@ void MODWT2ReconstructionTest()
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
+                    // BOOST_CHECK_SMALL(RMS_Error(out.get(), inp.get(), wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%g ",RMS_Error(out, inp, wt->siglength));
-                    if (RMS_Error(out, inp, N) > epsilon) {
+                    // printf("%g ",RMS_Error(out.get(), inp.get(), wt->siglength));
+                    if (RMS_Error(out.get(), inp.get(), N) > epsilon) {
                         printf("\n ERROR : MODWT2 Reconstruction Unit Test Failed. "
                                "Exiting. \n");
                         exit(-1);
@@ -197,9 +193,6 @@ void MODWT2ReconstructionTest()
             }
         }
     }
-
-    free(inp);
-    free(out);
 }
 
 void DWPTReconstructionTest()
@@ -207,8 +200,7 @@ void DWPTReconstructionTest()
 
     wave_object obj;
     wpt_object wt;
-    double* inp;
-    double* out;
+
     int N;
     int i;
     int J;
@@ -218,8 +210,8 @@ void DWPTReconstructionTest()
 
     // N = 256;
 
-    inp = (double*)malloc(sizeof(double) * N);
-    out = (double*)malloc(sizeof(double) * N);
+    auto inp = std::make_unique<double[]>(N);
+    auto out = std::make_unique<double[]>(N);
     // wmean = mean(temp, N);
 
     for (i = 0; i < N; ++i) {
@@ -293,17 +285,17 @@ void DWPTReconstructionTest()
                         setDWPTEntropy(wt, "logenergy", 0);
                     }
 
-                    dwpt(wt, inp); // Perform DWT
+                    dwpt(wt, inp.get()); // Perform DWT
 
-                    idwpt(wt, out); // Perform IDWT (if needed)
+                    idwpt(wt, out.get()); // Perform IDWT (if needed)
                         // Test Reconstruction
 
-                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
+                    // BOOST_CHECK_SMALL(RMS_Error(out.get(), inp.get(), wt->siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%s %g \n",name,RMS_Error(out, inp, wt->siglength));
+                    // printf("%s %g \n",name,RMS_Error(out.get(), inp.get(), wt->siglength));
 
-                    if (RMS_Error(out, inp, wt->siglength) > epsilon) {
+                    if (RMS_Error(out.get(), inp.get(), wt->siglength) > epsilon) {
                         printf(
                             "\n ERROR : DWPT Reconstruction Unit Test Failed. Exiting. \n");
                         exit(-1);
@@ -315,9 +307,6 @@ void DWPTReconstructionTest()
             }
         }
     }
-
-    free(out);
-    free(inp);
 }
 
 void CWTReconstructionTest()
@@ -327,8 +316,6 @@ void CWTReconstructionTest()
     int J;
     int subscale;
     int a0;
-    double* inp;
-    double* oup;
     double dt;
     double dj;
     double s0;
@@ -387,8 +374,8 @@ void CWTReconstructionTest()
     J = 32 * subscale;
     a0 = 2; // power
 
-    inp = (double*)malloc(sizeof(double) * N);
-    oup = (double*)malloc(sizeof(double) * N);
+    auto inp = std::make_unique<double[]>(N);
+    auto oup = std::make_unique<double[]>(N);
 
     pi = 4.0 * atan(1.0);
 
@@ -407,13 +394,13 @@ void CWTReconstructionTest()
 
             setCWTScales(wt, s0, dj, type, a0);
 
-            cwt(wt, inp);
+            cwt(wt, inp.get());
 
-            icwt(wt, oup);
+            icwt(wt, oup.get());
 
             // printf("\nWavelet : %s Parameter %g Error %g \n",
-            // wave[it1],param[it1*10+it2],REL_Error(inp,oup, wt->siglength));
-            if (REL_Error(inp, oup, wt->siglength) > epsilon) {
+            // wave[it1],param[it1*10+it2],REL_Error(inp.get(),oup.get(), wt->siglength));
+            if (REL_Error(inp.get(), oup.get(), wt->siglength) > epsilon) {
                 printf("\n ERROR : DWPT Reconstruction Unit Test Failed. Exiting. \n");
                 exit(-1);
             }
@@ -421,9 +408,6 @@ void CWTReconstructionTest()
             cwt_free(wt);
         }
     }
-
-    free(inp);
-    free(oup);
 }
 
 void DBCoefTests()

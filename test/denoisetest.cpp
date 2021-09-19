@@ -1,9 +1,10 @@
+#include "wauxlib.h"
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
-#include "wauxlib.h"
+#include <memory>
 
 static auto rmse(int N, double const* x, double const* y) -> double
 {
@@ -57,10 +58,7 @@ static auto corrcoef(int N, double const* x, double const* y) -> double
 
 auto main() -> int
 {
-    // gcc -Wall -I../header -L../Bin denoisetest.c -o denoise -lwauxlib -lwavelib -lm
-    double* sig;
-    double* inp;
-    double* oup;
+
     int i;
     int N;
     int J;
@@ -94,9 +92,9 @@ auto main() -> int
     N = i;
     J = 4;
 
-    sig = (double*)malloc(sizeof(double) * N);
-    inp = (double*)malloc(sizeof(double) * N);
-    oup = (double*)malloc(sizeof(double) * N);
+    auto inp = std::make_unique<double[]>(N);
+    auto oup = std::make_unique<double[]>(N);
+    auto sig = std::make_unique<double[]>(N);
 
     for (i = 0; i < N; ++i) {
         sig[i] = temp[i];
@@ -127,26 +125,23 @@ auto main() -> int
     setDenoiseParameters(obj, thresh, level); // Default for thresh is soft. Other option is hard
     // Default for level is all. The other option is first
 
-    denoise(obj, inp, oup);
+    denoise(obj, inp.get(), oup.get());
 
     // Alternative to denoise_object
     // Just use visushrink, modwtshrink and sureshrink functions
-    //visushrink(inp,N,J,wname,method,ext,thresh,level,oup);
-    //sureshrink(inp,N,J,wname,method,ext,thresh,level,oup);
-    // modwtshrink(sig,N,J,wname,cmethod,ext,thresh,oup); See modwtdenoisetest.c
+    //visushrink(inp.get(),N,J,wname,method,ext,thresh,level,oup.get());
+    //sureshrink(inp.get(),N,J,wname,method,ext,thresh,level,oup.get());
+    // modwtshrink(sig.get(),N,J,wname,cmethod,ext,thresh,oup.get()); See modwtdenoisetest.c
     //ofp = fopen("testData/denoiseds.txt", "w");
 
     printf("Signal - Noisy Signal Stats \n");
-    printf("RMSE %g\n", rmse(N, sig, inp));
-    printf("Corr Coeff %g\n", corrcoef(N, sig, inp));
+    printf("RMSE %g\n", rmse(N, sig.get(), inp.get()));
+    printf("Corr Coeff %g\n", corrcoef(N, sig.get(), inp.get()));
 
     printf("Signal - DeNoised Signal Stats \n");
-    printf("RMSE %g\n", rmse(N, sig, oup));
-    printf("Corr Coeff %g\n", corrcoef(N, sig, oup));
+    printf("RMSE %g\n", rmse(N, sig.get(), oup.get()));
+    printf("Corr Coeff %g\n", corrcoef(N, sig.get(), oup.get()));
 
-    free(sig);
-    free(inp);
     denoise_free(obj);
-    free(oup);
     return 0;
 }

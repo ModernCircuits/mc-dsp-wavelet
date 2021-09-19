@@ -8,6 +8,7 @@
 #include "conv.h"
 
 #include <algorithm>
+#include <memory>
 
 auto factorf(int M) -> int
 {
@@ -134,9 +135,6 @@ void conv_fft(const conv_object obj, fft_type const* inp1, fft_type const* inp2,
     int ls;
     fft_type* a;
     fft_type* b;
-    fft_data* c;
-    fft_data* ao;
-    fft_data* bo;
     fft_type* co;
 
     N = obj->clen;
@@ -146,9 +144,9 @@ void conv_fft(const conv_object obj, fft_type const* inp1, fft_type const* inp2,
 
     a = (fft_type*)malloc(sizeof(fft_data) * N);
     b = (fft_type*)malloc(sizeof(fft_data) * N);
-    c = (fft_data*)malloc(sizeof(fft_data) * N);
-    ao = (fft_data*)malloc(sizeof(fft_data) * N);
-    bo = (fft_data*)malloc(sizeof(fft_data) * N);
+    auto c = std::make_unique<fft_data[]>(N);
+    auto ao = std::make_unique<fft_data[]>(N);
+    auto bo = std::make_unique<fft_data[]>(N);
     co = (fft_type*)malloc(sizeof(fft_data) * N);
 
     for (i = 0; i < N; i++) {
@@ -165,15 +163,15 @@ void conv_fft(const conv_object obj, fft_type const* inp1, fft_type const* inp2,
         }
     }
 
-    fft_r2c_exec(obj->fobj, a, ao);
-    fft_r2c_exec(obj->fobj, b, bo);
+    fft_r2c_exec(obj->fobj, a, ao.get());
+    fft_r2c_exec(obj->fobj, b, bo.get());
 
     for (i = 0; i < N; i++) {
         c[i].re = ao[i].re * bo[i].re - ao[i].im * bo[i].im;
         c[i].im = ao[i].im * bo[i].re + ao[i].re * bo[i].im;
     }
 
-    fft_c2r_exec(obj->iobj, c, co);
+    fft_c2r_exec(obj->iobj, c.get(), co);
 
     for (i = 0; i < ls; i++) {
         oup[i] = co[i] / N;
@@ -181,9 +179,6 @@ void conv_fft(const conv_object obj, fft_type const* inp1, fft_type const* inp2,
 
     free(a);
     free(b);
-    free(c);
-    free(ao);
-    free(bo);
     free(co);
 }
 

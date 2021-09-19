@@ -5,7 +5,9 @@
  *      Author: Rafat Hussain
  */
 #include "real.h"
+
 #include <cstdio>
+#include <memory>
 
 auto fft_real_init(int N, int sgn) -> fft_real_object
 {
@@ -28,8 +30,6 @@ auto fft_real_init(int N, int sgn) -> fft_real_object
 
 void fft_r2c_exec(fft_real_object obj, fft_type const* inp, fft_data* oup)
 {
-    fft_data* cinp;
-    fft_data* coup;
     int i;
     int N2;
     int N;
@@ -38,15 +38,15 @@ void fft_r2c_exec(fft_real_object obj, fft_type const* inp, fft_data* oup)
     N2 = obj->cobj->N;
     N = N2 * 2;
 
-    cinp = (fft_data*)malloc(sizeof(fft_data) * N2);
-    coup = (fft_data*)malloc(sizeof(fft_data) * N2);
+    auto cinp = std::make_unique<fft_data[]>(N2);
+    auto coup = std::make_unique<fft_data[]>(N2);
 
     for (i = 0; i < N2; ++i) {
         cinp[i].re = inp[2 * i];
         cinp[i].im = inp[2 * i + 1];
     }
 
-    fft_exec(obj->cobj, cinp, coup);
+    fft_exec(obj->cobj, cinp.get(), coup.get());
 
     oup[0].re = coup[0].re + coup[0].im;
     oup[0].im = 0.0;
@@ -65,24 +65,18 @@ void fft_r2c_exec(fft_real_object obj, fft_type const* inp, fft_data* oup)
         oup[N - i].re = oup[i].re;
         oup[N - i].im = -oup[i].im;
     }
-
-    free(cinp);
-    free(coup);
 }
 
 void fft_c2r_exec(fft_real_object obj, fft_data* inp, fft_type* oup)
 {
-
-    fft_data* cinp;
-    fft_data* coup;
     int i;
     int N2;
     fft_type temp1;
     fft_type temp2;
     N2 = obj->cobj->N;
 
-    cinp = (fft_data*)malloc(sizeof(fft_data) * N2);
-    coup = (fft_data*)malloc(sizeof(fft_data) * N2);
+    auto cinp = std::make_unique<fft_data[]>(N2);
+    auto coup = std::make_unique<fft_data[]>(N2);
 
     for (i = 0; i < N2; ++i) {
         temp1 = -inp[i].im - inp[N2 - i].im;
@@ -91,13 +85,11 @@ void fft_c2r_exec(fft_real_object obj, fft_data* inp, fft_type* oup)
         cinp[i].im = inp[i].im - inp[N2 - i].im + (temp2 * obj->twiddle2[i].re) + (temp1 * obj->twiddle2[i].im);
     }
 
-    fft_exec(obj->cobj, cinp, coup);
+    fft_exec(obj->cobj, cinp.get(), coup.get());
     for (i = 0; i < N2; ++i) {
         oup[2 * i] = coup[i].re;
         oup[2 * i + 1] = coup[i].im;
     }
-    free(cinp);
-    free(coup);
 }
 
 void free_real_fft(fft_real_object object)

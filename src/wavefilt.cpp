@@ -3480,13 +3480,12 @@ auto filtlength(char const* name) -> int
         return 2;
     }
     if (len > 2 && strstr(name, "db") != nullptr) {
-        new_str = (char*)malloc(sizeof(char) * (len - 2 + 1));
+        auto new_str = std::make_unique<char[]>((len - 2 + 1));
         for (i = 2; i < len + 1; i++) {
             new_str[i - 2] = name[i];
         }
 
-        N = atoi(new_str);
-        free(new_str);
+        N = atoi(new_str.get());
         if (N > 38) {
             printf("\n Filter Not in Database \n");
             return -1;
@@ -3599,13 +3598,12 @@ auto filtlength(char const* name) -> int
         return 18;
     }
     if (len > 4 && strstr(name, "coif") != nullptr) {
-        new_str = (char*)malloc(sizeof(char) * (len - 4 + 1));
+        auto new_str = std::make_unique<char[]>((len - 4 + 1));
         for (i = 4; i < len + 1; i++) {
             new_str[i - 4] = name[i];
         }
 
-        N = atoi(new_str);
-        free(new_str);
+        N = atoi(new_str.get());
         if (N > 17) {
             printf("\n Filter Not in Database \n");
             return -1;
@@ -3614,13 +3612,12 @@ auto filtlength(char const* name) -> int
         return N * 6;
     }
     if (len > 3 && strstr(name, "sym") != nullptr) {
-        new_str = (char*)malloc(sizeof(char) * (len - 3 + 1));
+        auto new_str = std::make_unique<char[]>((len - 3 + 1));
         for (i = 3; i < len + 1; i++) {
             new_str[i - 3] = name[i];
         }
 
-        N = atoi(new_str);
-        free(new_str);
+        N = atoi(new_str.get());
         if (N > 20 || N < 2) {
             printf("\n Filter Not in Database \n");
             return -1;
