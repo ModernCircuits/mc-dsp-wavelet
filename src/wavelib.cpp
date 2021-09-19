@@ -10,6 +10,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <memory>
+#include <string_view>
+
+using namespace std::string_view_literals;
 
 auto wave_init(char const* wname) -> wave_object
 {
@@ -1124,9 +1127,6 @@ void dwpt(wpt_object wt, double const* inp)
     int t2;
     int it1;
     int it2;
-    double* orig;
-    double* tree;
-    int* nodelength;
 
     temp_len = wt->siglength;
     J = wt->J;
@@ -1143,9 +1143,9 @@ void dwpt(wpt_object wt, double const* inp)
         elength += temp2;
     }
     eparam = wt->eparam;
-    orig = (double*)malloc(sizeof(double) * temp_len);
-    tree = (double*)malloc(sizeof(double) * (temp_len * (J + 1) + elength));
-    nodelength = (int*)malloc(sizeof(int) * nodes);
+    auto orig = std::make_unique<double[]>(temp_len);
+    auto tree = std::make_unique<double[]>((temp_len * (J + 1) + elength));
+    auto nodelength = std::make_unique<int[]>(nodes);
 
     for (auto i = 0; i < wt->siglength; ++i) {
         orig[i] = inp[i];
@@ -1165,7 +1165,7 @@ void dwpt(wpt_object wt, double const* inp)
     // p2 = 1;
 
     //set eparam value here
-    wt->costvalues[0] = costfunc(orig, wt->siglength, wt->entropy, eparam);
+    wt->costvalues[0] = costfunc(orig.get(), wt->siglength, wt->entropy, eparam);
     it2 = 1;
     if (strcmp(wt->ext, "per") == 0) {
         auto i = J;
@@ -1187,13 +1187,13 @@ void dwpt(wpt_object wt, double const* inp)
             N = N2;
             for (k = 0; k < p2; ++k) {
                 if (iter == 0) {
-                    dwpt_per(wt, orig, temp_len, tree + N, len_cA, tree + N + len_cA);
+                    dwpt_per(wt, orig.get(), temp_len, tree.get() + N, len_cA, tree.get() + N + len_cA);
                 } else {
-                    dwpt_per(wt, tree + Np + k * temp_len, temp_len, tree + N, len_cA, tree + N + len_cA);
+                    dwpt_per(wt, tree.get() + Np + k * temp_len, temp_len, tree.get() + N, len_cA, tree.get() + N + len_cA);
                 }
-                wt->costvalues[it2] = costfunc(tree + N, len_cA, wt->entropy, eparam);
+                wt->costvalues[it2] = costfunc(tree.get() + N, len_cA, wt->entropy, eparam);
                 it2++;
-                wt->costvalues[it2] = costfunc(tree + N + len_cA, len_cA, wt->entropy, eparam);
+                wt->costvalues[it2] = costfunc(tree.get() + N + len_cA, len_cA, wt->entropy, eparam);
                 it2++;
                 N += 2 * len_cA;
             }
@@ -1225,13 +1225,13 @@ void dwpt(wpt_object wt, double const* inp)
             N = N2;
             for (k = 0; k < p2; ++k) {
                 if (iter == 0) {
-                    dwpt_sym(wt, orig, temp_len, tree + N, len_cA, tree + N + len_cA);
+                    dwpt_sym(wt, orig.get(), temp_len, tree.get() + N, len_cA, tree.get() + N + len_cA);
                 } else {
-                    dwpt_sym(wt, tree + Np + k * temp_len, temp_len, tree + N, len_cA, tree + N + len_cA);
+                    dwpt_sym(wt, tree.get() + Np + k * temp_len, temp_len, tree.get() + N, len_cA, tree.get() + N + len_cA);
                 }
-                wt->costvalues[it2] = costfunc(tree + N, len_cA, wt->entropy, eparam);
+                wt->costvalues[it2] = costfunc(tree.get() + N, len_cA, wt->entropy, eparam);
                 it2++;
-                wt->costvalues[it2] = costfunc(tree + N + len_cA, len_cA, wt->entropy, eparam);
+                wt->costvalues[it2] = costfunc(tree.get() + N + len_cA, len_cA, wt->entropy, eparam);
                 it2++;
                 N += 2 * len_cA;
             }
@@ -1341,10 +1341,6 @@ void dwpt(wpt_object wt, double const* inp)
     for (auto i = 1; i < J + 1; ++i) {
         wt->coeflength[i] = wt->length[J - i + 1];
     }
-
-    free(orig);
-    free(tree);
-    free(nodelength);
 }
 
 /// X - Level. All Nodes at any level have the same length
@@ -2573,32 +2569,24 @@ static void modwt_per(wt_object wt, int M, double const* inp, double* cA, int le
 
 static void modwt_direct(wt_object wt, double const* inp)
 {
-    int J;
-    int temp_len;
-    int iter;
-    int M;
-    int lenacc;
-    double* cA;
-    double* cD;
-
-    if (strcmp(wt->ext, "per") != 0) {
+    if (wt->ext != "per"sv) {
         printf("MODWT direct method only uses periodic extension per. \n");
         printf(" Use MODWT fft method for symmetric extension sym \n");
         exit(-1);
     }
 
-    temp_len = wt->siglength;
-    J = wt->J;
+    auto temp_len = wt->siglength;
+    auto J = wt->J;
     wt->length[0] = wt->length[J] = temp_len;
     wt->outlength = wt->length[J + 1] = (J + 1) * temp_len;
-    M = 1;
-    for (iter = 1; iter < J; ++iter) {
+    auto M = 1;
+    for (auto iter = 1; iter < J; ++iter) {
         M = 2 * M;
         wt->length[iter] = temp_len;
     }
 
-    cA = (double*)malloc(sizeof(double) * temp_len);
-    cD = (double*)malloc(sizeof(double) * temp_len);
+    auto cA = std::make_unique<double[]>(temp_len);
+    auto cD = std::make_unique<double[]>(temp_len);
 
     M = 1;
 
@@ -2606,24 +2594,21 @@ static void modwt_direct(wt_object wt, double const* inp)
         wt->params[i] = inp[i];
     }
 
-    lenacc = wt->outlength;
+    auto lenacc = wt->outlength;
 
-    for (iter = 0; iter < J; ++iter) {
+    for (auto iter = 0; iter < J; ++iter) {
         lenacc -= temp_len;
         if (iter > 0) {
             M = 2 * M;
         }
 
-        modwt_per(wt, M, wt->params, cA, temp_len, cD);
+        modwt_per(wt, M, wt->params, cA.get(), temp_len, cD.get());
 
         for (auto i = 0; i < temp_len; ++i) {
             wt->params[i] = cA[i];
             wt->params[lenacc + i] = cD[i];
         }
     }
-
-    free(cA);
-    free(cD);
 }
 
 static void modwt_fft(wt_object wt, double const* inp)
@@ -2847,47 +2832,29 @@ static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* app
 
 auto getMODWTmra(wt_object wt, double* wavecoeffs) -> double*
 {
-    double* mra;
-    int J;
-    int temp_len;
-    int iter;
-    // int M;
-    int N;
-    int len_avg;
-    int lmra;
-    int lenacc;
-    double s;
-    fft_data* cA;
-    fft_data* cD;
-    fft_data* low_pass;
-    fft_data* high_pass;
-    fft_data* sig;
-    fft_data* ninp;
-    int* index;
-    fft_object fft_fd = nullptr;
-    fft_object fft_bd = nullptr;
-
-    N = wt->modwtsiglength;
-    len_avg = wt->wave->lpd_len;
+    auto const N = wt->modwtsiglength;
+    auto const len_avg = wt->wave->lpd_len;
+    int temp_len {};
     if (strcmp(wt->ext, "sym") == 0) {
         temp_len = N / 2;
     } else if (strcmp(wt->ext, "per") == 0) {
         temp_len = N;
     }
-    J = wt->J;
 
-    s = sqrt(2.0);
-    fft_fd = fft_init(N, 1);
-    fft_bd = fft_init(N, -1);
+    auto const J = wt->J;
 
-    sig = (fft_data*)malloc(sizeof(fft_data) * N);
-    cA = (fft_data*)malloc(sizeof(fft_data) * N);
-    cD = (fft_data*)malloc(sizeof(fft_data) * N);
-    ninp = (fft_data*)malloc(sizeof(fft_data) * N);
-    low_pass = (fft_data*)malloc(sizeof(fft_data) * N);
-    high_pass = (fft_data*)malloc(sizeof(fft_data) * N);
-    index = (int*)malloc(sizeof(int) * N);
-    mra = (double*)malloc(sizeof(double) * temp_len * (J + 1));
+    auto const s = sqrt(2.0);
+    fft_object fft_fd = fft_init(N, 1);
+    fft_object fft_bd = fft_init(N, -1);
+
+    auto sig = std::make_unique<fft_data[]>(N);
+    auto cA = std::make_unique<fft_data[]>(N);
+    auto cD = std::make_unique<fft_data[]>(N);
+    auto ninp = std::make_unique<fft_data[]>(N);
+    auto low_pass = std::make_unique<fft_data[]>(N);
+    auto high_pass = std::make_unique<fft_data[]>(N);
+    auto index = std::make_unique<int[]>(N);
+    auto mra = std::make_unique<double[]>(temp_len * (J + 1));
 
     // N-point FFT of low pass and high pass filters
 
@@ -2902,7 +2869,7 @@ auto getMODWTmra(wt_object wt, double* wavecoeffs) -> double*
         sig[i].im = 0.0;
     }
 
-    fft_exec(fft_fd, sig, low_pass);
+    fft_exec(fft_fd, sig.get(), low_pass.get());
 
     // High Pass Filter
 
@@ -2915,15 +2882,15 @@ auto getMODWTmra(wt_object wt, double* wavecoeffs) -> double*
         sig[i].im = 0.0;
     }
 
-    fft_exec(fft_fd, sig, high_pass);
+    fft_exec(fft_fd, sig.get(), high_pass.get());
 
     // Complex conjugate of the two filters
 
-    conj_complex(low_pass, N);
-    conj_complex(high_pass, N);
+    conj_complex(low_pass.get(), N);
+    conj_complex(high_pass.get(), N);
 
     // M = (int)pow(2.0, (double)J - 1.0);
-    lenacc = N;
+    auto lenacc = N;
 
     //
     for (auto i = 0; i < N; ++i) {
@@ -2935,15 +2902,15 @@ auto getMODWTmra(wt_object wt, double* wavecoeffs) -> double*
 
     // Find Approximation MRA
 
-    getMODWTRecCoeff(fft_fd, fft_bd, sig, ninp, cA, cD, index, "appx", J, J, low_pass, high_pass, N);
+    getMODWTRecCoeff(fft_fd, fft_bd, sig.get(), ninp.get(), cA.get(), cD.get(), index.get(), "appx", J, J, low_pass.get(), high_pass.get(), N);
 
     for (auto i = 0; i < wt->siglength; ++i) {
         mra[i] = sig[i].re;
     }
-    lmra = wt->siglength;
+    auto lmra = wt->siglength;
     // Find Details MRA
 
-    for (iter = 0; iter < J; ++iter) {
+    for (auto iter = 0; iter < J; ++iter) {
         for (auto i = 0; i < N; ++i) {
             sig[i].re = (fft_type)wt->output[lenacc + i];
             sig[i].im = 0.0;
@@ -2951,7 +2918,7 @@ auto getMODWTmra(wt_object wt, double* wavecoeffs) -> double*
             ninp[i].im = 0.0;
         }
 
-        getMODWTRecCoeff(fft_fd, fft_bd, sig, ninp, cA, cD, index, "det", J - iter, J, low_pass, high_pass, N);
+        getMODWTRecCoeff(fft_fd, fft_bd, sig.get(), ninp.get(), cA.get(), cD.get(), index.get(), "det", J - iter, J, low_pass.get(), high_pass.get(), N);
 
         for (auto i = 0; i < wt->siglength; ++i) {
             mra[lmra + i] = sig[i].re;
@@ -2961,17 +2928,10 @@ auto getMODWTmra(wt_object wt, double* wavecoeffs) -> double*
         lmra += wt->siglength;
     }
 
-    free(ninp);
-    free(index);
-    free(sig);
-    free(cA);
-    free(cD);
-    free(low_pass);
-    free(high_pass);
     free_fft(fft_fd);
     free_fft(fft_bd);
 
-    return mra;
+    return mra.release();
 }
 
 void imodwt_fft(wt_object wt, double* oup)

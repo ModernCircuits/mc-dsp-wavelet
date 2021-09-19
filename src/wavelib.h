@@ -14,7 +14,7 @@
 #define cplx_type double
 #endif
 
-using cplx_data = struct cplx_t {
+struct cplx_data {
     cplx_type re;
     cplx_type im;
 };
@@ -33,10 +33,10 @@ struct wave_set {
     double params[0];
 };
 
-using wave_object = struct wave_set*;
+using wave_object = wave_set*;
 auto wave_init(char const* wname) -> wave_object;
 
-using fft_data = struct fft_t {
+struct fft_data {
     fft_type re;
     fft_type im;
 };
@@ -50,7 +50,7 @@ struct fft_set {
     fft_data twiddle[1];
 };
 
-using fft_object = struct fft_set*;
+using fft_object = fft_set*;
 auto fft_init(int N, int sgn) -> fft_object;
 
 struct fft_real_set {
@@ -58,7 +58,7 @@ struct fft_real_set {
     fft_data twiddle2[1];
 };
 
-using fft_real_object = struct fft_real_set*;
+using fft_real_object = fft_real_set*;
 auto fft_real_init(int N, int sgn) -> fft_real_object;
 
 struct conv_set {
@@ -69,7 +69,7 @@ struct conv_set {
     int clen;
 };
 
-using conv_object = struct conv_set*;
+using conv_object = conv_set*;
 auto conv_init(int N, int L) -> conv_object;
 
 struct wt_set {
@@ -94,7 +94,7 @@ struct wt_set {
     double params[0];
 };
 
-using wt_object = struct wt_set*;
+using wt_object = wt_set*;
 auto wt_init(wave_object wave, char const* method, int siglength, int J) -> wt_object;
 
 struct wtree_set {
@@ -120,7 +120,7 @@ struct wtree_set {
     double params[0];
 };
 
-using wtree_object = struct wtree_set*;
+using wtree_object = wtree_set*;
 auto wtree_init(wave_object wave, int siglength, int J) -> wtree_object;
 
 struct wpt_set {
