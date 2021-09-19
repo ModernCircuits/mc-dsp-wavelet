@@ -24,18 +24,18 @@ auto main() -> int
     auto const X = 3;
     auto const Y = 5;
     auto const len = getWTREENodelength(wt, X);
-    printf("\n %d", len);
-    printf("\n");
+    std::printf("\n %d", len);
+    std::printf("\n");
     auto oup = std::make_unique<double[]>(len);
 
-    printf("Node [%d %d] Coefficients : \n", X, Y);
+    std::printf("Node [%d %d] Coefficients : \n", X, Y);
     getWTREECoeffs(wt, X, Y, oup.get(), len);
     for (auto i = 0; i < len; ++i) {
-        printf("%g ", oup[i]);
+        std::printf("%g ", oup[i]);
     }
-    printf("\n");
+    std::printf("\n");
 
     wave_free(obj);
     wtree_free(wt);
-    return 0;
+    return EXIT_SUCCESS;
 }

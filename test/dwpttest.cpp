@@ -1,25 +1,12 @@
 #include "wavelib.h"
 
+#include "helper.hpp"
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
-
-auto absmax(double* array, int N) -> double
-{
-    double max;
-    int i;
-
-    max = 0.0;
-    for (i = 0; i < N; ++i) {
-        if (fabs(array[i]) >= max) {
-            max = fabs(array[i]);
-        }
-    }
-
-    return max;
-}
 
 auto main() -> int
 {

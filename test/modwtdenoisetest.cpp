@@ -1,5 +1,7 @@
 #include "wauxlib.h"
 
+#include "readFileToVector.hpp"
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -56,76 +58,31 @@ static auto corrcoef(int N, double const* x, double const* y) -> double
     return cc;
 }
 
+// modwtshrink can also be called from the denoise object.
+// See denoisetest.cpp for more information.
 auto main() -> int
 {
-    // gcc -Wall -I../header -L../Bin modwtdenoisetest.c -o modwtdenoise -lwauxlib -lwavelib -lm
-    /*
-    modwtshrink can also be called from the denoise object. See denoisetest.c for more information
-    */
-    int i;
-    int N;
-    int J;
-    FILE* ifp;
-
-    double temp[2400];
-
     auto const* wname = "db5";
-    auto const* ext = "per"; // The other option sym is only available with "fft" cmethod
+    auto const* ext = "per";
     auto const* thresh = "soft";
-    auto const* cmethod = "direct"; // The other option is "fft"
+    auto const* cmethod = "direct";
 
-    ifp = fopen("testData/pieceregular1024.txt", "r");
-    i = 0;
-    if (ifp == nullptr) {
-        printf("Cannot Open File");
-        exit(100);
-    }
+    auto const inp = readFileToVector("testData/PieceRegular10.txt");
+    auto sig = readFileToVector("testData/pieceregular1024.txt");
 
-    while (feof(ifp) == 0) {
-        fscanf(ifp, "%lf \n", &temp[i]);
-        i++;
-    }
-
-    fclose(ifp);
-
-    N = i;
-    J = 4;
-
-    auto sig = std::make_unique<double[]>(N);
-    auto inp = std::make_unique<double[]>(N);
+    auto const N = sig.size();
+    auto const J = 4;
     auto out = std::make_unique<double[]>(N);
 
-    for (i = 0; i < N; ++i) {
-        sig[i] = temp[i];
-    }
-
-    ifp = fopen("testData/PieceRegular10.txt", "r");
-    i = 0;
-    if (ifp == nullptr) {
-        printf("Cannot Open File");
-        exit(100);
-    }
-
-    while (feof(ifp) == 0) {
-        fscanf(ifp, "%lf \n", &temp[i]);
-        i++;
-    }
-
-    fclose(ifp);
-
-    for (i = 0; i < N; ++i) {
-        inp[i] = temp[i];
-    }
-
-    modwtshrink(sig.get(), N, J, wname, cmethod, ext, thresh, out.get());
+    modwtshrink(sig.data(), N, J, wname, cmethod, ext, thresh, out.get());
 
     printf("Signal - Noisy Signal Stats \n");
-    printf("RMSE %g\n", rmse(N, sig.get(), inp.get()));
-    printf("Corr Coeff %g\n", corrcoef(N, sig.get(), inp.get()));
+    printf("RMSE %g\n", rmse(N, sig.data(), inp.data()));
+    printf("Corr Coeff %g\n", corrcoef(N, sig.data(), inp.data()));
 
     printf("Signal - DeNoised Signal Stats \n");
-    printf("RMSE %g\n", rmse(N, sig.get(), out.get()));
-    printf("Corr Coeff %g\n", corrcoef(N, sig.get(), out.get()));
+    printf("RMSE %g\n", rmse(N, sig.data(), out.get()));
+    printf("Corr Coeff %g\n", corrcoef(N, sig.data(), out.get()));
 
     return 0;
 }

@@ -1,9 +1,8 @@
 #include "wavelib.h"
 
+#include "readFileToVector.hpp"
+
 #include <cmath>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <memory>
 
 auto main() -> int
@@ -29,9 +28,6 @@ auto main() -> int
     double recon_var;
     cwt_object wt;
 
-    FILE* ifp;
-    double temp[1200];
-
     // Set Morlet wavelet. Other options "paul" and "dog"
     auto const* wave = "morlet";
     auto const* type = "pow";
@@ -45,28 +41,14 @@ auto main() -> int
     J = 11 * subscale; // Total Number of scales
     a0 = 2; //power
 
-    ifp = fopen("testData/sst_nino3.dat", "r");
-    i = 0;
-    if (ifp == nullptr) {
-        std::printf("Cannot Open File");
-        std::exit(100);
-    }
-    while (feof(ifp) == 0) {
-        std::fscanf(ifp, "%lf \n", &temp[i]);
-        i++;
-    }
-
-    std::fclose(ifp);
-
     wt = cwt_init(wave, param, N, dt, J);
 
-    auto inp = std::make_unique<double[]>(N);
+    auto const inp = readFileToVector("testData/sst_nino3.dat");
     auto oup = std::make_unique<double[]>(N);
-    std::copy(inp.get(), inp.get() + N, std::begin(temp));
 
     setCWTScales(wt, s0, dj, type, a0);
 
-    cwt(wt, inp.get());
+    cwt(wt, inp.data());
 
     std::printf("\n MEAN %g \n", wt->smean);
 

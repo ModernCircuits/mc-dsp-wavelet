@@ -1,33 +1,12 @@
 #include "wavelib.h"
+
+#include "helper.hpp"
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
-
-auto absmax(double* array, int N) -> double
-{
-    double max;
-    int i;
-
-    max = 0.0;
-    for (i = 0; i < N; ++i) {
-        if (fabs(array[i]) >= max) {
-            max = fabs(array[i]);
-        }
-    }
-
-    return max;
-}
-
-auto generate_rnd() -> double
-{
-    double rnd;
-
-    rnd = (double)(rand() % 100 + 1);
-
-    return rnd;
-}
 
 auto main() -> int
 {
