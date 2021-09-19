@@ -18,7 +18,7 @@ auto absmax(double* array, int N) -> double
     return max;
 }
 
-auto sum1(const double* array, int N) -> double
+auto sum1(double const* array, int N) -> double
 {
     double sum;
     int i;
@@ -29,7 +29,7 @@ auto sum1(const double* array, int N) -> double
     }
     return sum;
 }
-auto sum2(const double* array, int N) -> double
+auto sum2(double const* array, int N) -> double
 {
     double sum;
     int i;
@@ -40,7 +40,7 @@ auto sum2(const double* array, int N) -> double
     }
     return sum;
 }
-auto sum3(const double* array, int N) -> double
+auto sum3(double const* array, int N) -> double
 {
     double sum;
     int i;
@@ -52,7 +52,7 @@ auto sum3(const double* array, int N) -> double
     return sum;
 }
 // np.sum(w[2*m:(2*N+2*m)]*w[0:2*N])
-auto sum4(const double* array, int N) -> double
+auto sum4(double const* array, int N) -> double
 {
     double sum;
     int i;
@@ -64,7 +64,7 @@ auto sum4(const double* array, int N) -> double
     return sum;
 }
 // np.sum(w[2 * m:(2 * N)] * w[0:2 * N - 2 * m])
-auto sum5(const double* array, int N, int m) -> double
+auto sum5(double const* array, int N, int m) -> double
 {
     double sum;
     int i;
@@ -76,7 +76,7 @@ auto sum5(const double* array, int N, int m) -> double
     return sum;
 }
 
-auto RMS_Error(const double* data, const double* rec, int N) -> double
+auto RMS_Error(double const* data, double const* rec, int N) -> double
 {
     int i;
     double sum = 0;
@@ -86,7 +86,7 @@ auto RMS_Error(const double* data, const double* rec, int N) -> double
     return sqrt(sum / ((double)N - 1));
 }
 
-auto REL_Error(const double* data, const double* rec, int N) -> double
+auto REL_Error(double const* data, double const* rec, int N) -> double
 {
     int i;
     double sum1 = 0;

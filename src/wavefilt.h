@@ -9,12 +9,12 @@
 #define USE_MATH_DEFINES
 #include <cmath>
 
-auto filtlength(const char* name) -> int;
-auto filtcoef(const char* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int;
+auto filtlength(char const* name) -> int;
+auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int;
 
-void copy_reverse(const double* in, int N, double* out);
-void qmf_even(const double* in, int N, double* out);
-void qmf_wrev(const double* in, int N, double* out);
-void copy(const double* in, int N, double* out);
+void copy_reverse(double const* in, int N, double* out);
+void qmf_even(double const* in, int N, double* out);
+void qmf_wrev(double const* in, int N, double* out);
+void copy(double const* in, int N, double* out);
 
 #endif /* WAVEFILT_H_ */

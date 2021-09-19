@@ -2044,7 +2044,7 @@ void twiddle(fft_data* vec, int N, int radix)
     }
 }
 
-void longvectorN(fft_data* sig, const int* array, int tx)
+void longvectorN(fft_data* sig, int const* array, int tx)
 {
     int L;
     int i;

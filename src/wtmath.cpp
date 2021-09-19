@@ -2,7 +2,7 @@
 
 #include "wtmath.h"
 
-void dwt_per_stride(const double* inp, int N, const double* lpd, const double* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
+void dwt_per_stride(double const* inp, int N, double const* lpd, double const* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
 {
     int l;
     int l2;
@@ -64,7 +64,7 @@ void dwt_per_stride(const double* inp, int N, const double* lpd, const double* h
     }
 }
 
-void dwt_sym_stride(const double* inp, int N, const double* lpd, const double* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
+void dwt_sym_stride(double const* inp, int N, double const* lpd, double const* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
 {
     int i;
     int l;
@@ -97,7 +97,7 @@ void dwt_sym_stride(const double* inp, int N, const double* lpd, const double* h
     }
 }
 
-void modwt_per_stride(int M, const double* inp, int N, const double* filt, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
+void modwt_per_stride(int M, double const* inp, int N, double const* filt, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
 {
     int l;
     int i;
@@ -129,7 +129,7 @@ void modwt_per_stride(int M, const double* inp, int N, const double* filt, int l
     }
 }
 
-void swt_per_stride(int M, const double* inp, int N, const double* lpd, const double* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
+void swt_per_stride(int M, double const* inp, int N, double const* lpd, double const* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
 {
     int l;
     int l2;
@@ -186,7 +186,7 @@ void swt_per_stride(int M, const double* inp, int N, const double* lpd, const do
     }
 }
 
-void idwt_per_stride(const double* cA, int len_cA, const double* cD, const double* lpr, const double* hpr, int lpr_len, double* X, int istride, int ostride)
+void idwt_per_stride(double const* cA, int len_cA, double const* cD, double const* lpr, double const* hpr, int lpr_len, double* X, int istride, int ostride)
 {
     int len_avg;
     int i;
@@ -230,7 +230,7 @@ void idwt_per_stride(const double* cA, int len_cA, const double* cD, const doubl
     }
 }
 
-void idwt_sym_stride(const double* cA, int len_cA, const double* cD, const double* lpr, const double* hpr, int lpr_len, double* X, int istride, int ostride)
+void idwt_sym_stride(double const* cA, int len_cA, double const* cD, double const* lpr, double const* hpr, int lpr_len, double* X, int istride, int ostride)
 {
     int len_avg;
     int i;
@@ -265,7 +265,7 @@ void idwt_sym_stride(const double* cA, int len_cA, const double* cD, const doubl
     }
 }
 
-void imodwt_per_stride(int M, const double* cA, int len_cA, const double* cD, const double* filt, int lf, double* X, int istride, int ostride)
+void imodwt_per_stride(int M, double const* cA, int len_cA, double const* cD, double const* filt, int lf, double* X, int istride, int ostride)
 {
     int len_avg;
     int i;
@@ -376,7 +376,7 @@ void idwt2_shift(int shift, int rows, int cols, double* lpr, double* hpr, int lf
     free(cH);
 }
 
-auto upsamp(const double* x, int lenx, int M, double* y) -> int
+auto upsamp(double const* x, int lenx, int M, double* y) -> int
 {
     int N;
     int i;
@@ -411,7 +411,7 @@ auto upsamp(const double* x, int lenx, int M, double* y) -> int
     return N;
 }
 
-auto upsamp2(const double* x, int lenx, int M, double* y) -> int
+auto upsamp2(double const* x, int lenx, int M, double* y) -> int
 {
     int N;
     int i;
@@ -446,7 +446,7 @@ auto upsamp2(const double* x, int lenx, int M, double* y) -> int
     return N;
 }
 
-auto downsamp(const double* x, int lenx, int M, double* y) -> int
+auto downsamp(double const* x, int lenx, int M, double* y) -> int
 {
     int N;
     int i;
@@ -491,7 +491,7 @@ int per_ext(double *sig, int len, int a,double *oup) {
 }
 */
 
-auto per_ext(const double* sig, int len, int a, double* oup) -> int
+auto per_ext(double const* sig, int len, int a, double* oup) -> int
 {
     int i;
     int len2;
@@ -531,7 +531,7 @@ int symm_ext(double *sig, int len, int a, double *oup) {
 }
 */
 
-auto symm_ext(const double* sig, int len, int a, double* oup) -> int
+auto symm_ext(double const* sig, int len, int a, double* oup) -> int
 {
     int i;
     int len2;
@@ -630,7 +630,7 @@ auto wmaxiter(int sig_len, int filt_len) -> int
     return lev;
 }
 
-static auto entropy_s(const double* x, int N) -> double
+static auto entropy_s(double const* x, int N) -> double
 {
     int i;
     double val;
@@ -686,7 +686,7 @@ static auto entropy_n(double* x, int N, double p) -> double
     return val;
 }
 
-static auto entropy_l(const double* x, int N) -> double
+static auto entropy_l(double const* x, int N) -> double
 {
     int i;
     double val;

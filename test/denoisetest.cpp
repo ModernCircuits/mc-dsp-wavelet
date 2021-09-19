@@ -5,7 +5,7 @@
 
 #include "wauxlib.h"
 
-static auto rmse(int N, const double* x, const double* y) -> double
+static auto rmse(int N, double const* x, double const* y) -> double
 {
     double rms;
     int i;
@@ -21,7 +21,7 @@ static auto rmse(int N, const double* x, const double* y) -> double
     return rms;
 }
 
-static auto corrcoef(int N, const double* x, const double* y) -> double
+static auto corrcoef(int N, double const* x, double const* y) -> double
 {
     double cc;
     double xm;

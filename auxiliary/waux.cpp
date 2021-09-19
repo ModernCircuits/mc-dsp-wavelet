@@ -5,8 +5,8 @@
 
 auto compare_double(const void* a, const void* b) -> int
 {
-    double arg1 = *(const double*)a;
-    double arg2 = *(const double*)b;
+    double arg1 = *(double const*)a;
+    double arg2 = *(double const*)b;
 
     if (arg1 < arg2) {
         return -1;
@@ -17,7 +17,7 @@ auto compare_double(const void* a, const void* b) -> int
     return 0;
 }
 
-auto mean(const double* vec, int N) -> double
+auto mean(double const* vec, int N) -> double
 {
     auto m = 0.0;
     for (auto i = 0; i < N; ++i) {
@@ -27,7 +27,7 @@ auto mean(const double* vec, int N) -> double
     return m;
 }
 
-auto var(const double* vec, int N) -> double
+auto var(double const* vec, int N) -> double
 {
     double v;
     double temp;
@@ -75,7 +75,7 @@ auto mad(double* x, int N) -> double
     return sigma;
 }
 
-auto minindex(const double* arr, int N) -> int
+auto minindex(double const* arr, int N) -> int
 {
     double min;
     int index;
@@ -138,7 +138,7 @@ void getDWTDetail(wt_object wt, double* detail, int N, int level)
     }
 }
 
-void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, const char* ext, int level, int J, double* lpr,
+void getDWTRecCoeff(double const* coeff, int const* length, char const* ctype, char const* ext, int level, int J, double* lpr,
     double* hpr, int lf, int siglength, double* reccoeff)
 {
 
@@ -279,7 +279,7 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
     }
 }
 
-void autocovar(const double* vec, int N, double* acov, int M)
+void autocovar(double const* vec, int N, double* acov, int M)
 {
     double m;
     double temp1;
@@ -306,7 +306,7 @@ void autocovar(const double* vec, int N, double* acov, int M)
     }
 }
 
-void autocorr(const double* vec, int N, double* acorr, int M)
+void autocorr(double const* vec, int N, double* acorr, int M)
 {
     double var;
     if (M > N) {

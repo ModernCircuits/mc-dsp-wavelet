@@ -3467,7 +3467,7 @@ static const double meyer[102] = {
     0.0,
 };
 
-auto filtlength(const char* name) -> int
+auto filtlength(char const* name) -> int
 {
     int len = strlen(name);
     int i = 0;
@@ -3632,7 +3632,7 @@ auto filtlength(const char* name) -> int
     return -1;
 }
 
-void copy_reverse(const double* in, int N, double* out)
+void copy_reverse(double const* in, int N, double* out)
 {
     int count = 0;
     for (count = 0; count < N; count++) {
@@ -3640,7 +3640,7 @@ void copy_reverse(const double* in, int N, double* out)
     }
 }
 
-void qmf_wrev(const double* in, int N, double* out)
+void qmf_wrev(double const* in, int N, double* out)
 {
     auto sigOutTemp = std::make_unique<double[]>(N);
 
@@ -3648,7 +3648,7 @@ void qmf_wrev(const double* in, int N, double* out)
     copy_reverse(sigOutTemp.get(), N, out);
 }
 
-void qmf_even(const double* in, int N, double* out)
+void qmf_even(double const* in, int N, double* out)
 {
     int count = 0;
     for (count = 0; count < N; count++) {
@@ -3658,7 +3658,7 @@ void qmf_even(const double* in, int N, double* out)
         }
     }
 }
-void copy(const double* in, int N, double* out)
+void copy(double const* in, int N, double* out)
 {
     int count = 0;
     for (count = 0; count < N; count++) {
@@ -3666,7 +3666,7 @@ void copy(const double* in, int N, double* out)
     }
 }
 
-auto filtcoef(const char* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int
+auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int
 {
     int i = 0;
     int N = filtlength(name);

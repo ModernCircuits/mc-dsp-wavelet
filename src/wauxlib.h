@@ -20,27 +20,27 @@ struct denoise_set {
 };
 
 using denoise_object = struct denoise_set*;
-auto denoise_init(int length, int J, const char* wname) -> denoise_object;
+auto denoise_init(int length, int J, char const* wname) -> denoise_object;
 
-void visushrink(double* signal, int N, int J, const char* wname, const char* method, const char* ext, const char* thresh, const char* level, double* denoised);
+void visushrink(double* signal, int N, int J, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised);
 
-void sureshrink(double* signal, int N, int J, const char* wname, const char* method, const char* ext, const char* thresh, const char* level, double* denoised);
+void sureshrink(double* signal, int N, int J, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised);
 
-void modwtshrink(double* signal, int N, int J, const char* wname, const char* cmethod, const char* ext, const char* thresh, double* denoised);
+void modwtshrink(double* signal, int N, int J, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised);
 
 void denoise(denoise_object obj, double* signal, double* denoised);
 
-void setDenoiseMethod(denoise_object obj, const char* dmethod);
+void setDenoiseMethod(denoise_object obj, char const* dmethod);
 
-void setDenoiseWTMethod(denoise_object obj, const char* wmethod);
+void setDenoiseWTMethod(denoise_object obj, char const* wmethod);
 
-void setDenoiseWTExtension(denoise_object obj, const char* extension);
+void setDenoiseWTExtension(denoise_object obj, char const* extension);
 
-void setDenoiseParameters(denoise_object obj, const char* thresh, const char* level);
+void setDenoiseParameters(denoise_object obj, char const* thresh, char const* level);
 
 void denoise_free(denoise_object object);
 
-void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, const char* ext, int level, int J, double* lpr,
+void getDWTRecCoeff(double const* coeff, int const* length, char const* ctype, char const* ext, int level, int J, double* lpr,
     double* hpr, int lf, int siglength, double* reccoeff);
 
 auto mad(double* x, int N) -> double;
