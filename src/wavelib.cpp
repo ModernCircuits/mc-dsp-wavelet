@@ -5,6 +5,7 @@
 #include "cwt.h"
 #include "wtmath.h"
 
+#include <cassert>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -790,18 +791,15 @@ static void getDWTRecCoeff(double const* coeff, int const* length, char const* c
     double* hpr, int lf, int siglength, double* reccoeff)
 {
 
-    int j;
     int k;
     int det_len;
-    int N;
     int l;
     int m;
     int n;
     int v;
     int t;
-    double* X_lp;
     double* filt;
-    auto* out = (double*)malloc(sizeof(double) * (siglength + 1));
+    auto out = makeZeros<double>(siglength + 1);
     auto l2 = lf / 2;
 
     if (ext == "per"sv) {
@@ -811,15 +809,15 @@ static void getDWTRecCoeff(double const* coeff, int const* length, char const* c
             det_len = length[J - level + 1];
         }
 
-        N = 2 * length[J];
+        auto const N = 2 * length[J];
 
-        X_lp = (double*)malloc(sizeof(double) * (N + 2 * lf - 1));
+        auto X_lp = makeZeros<double>(N + 2 * lf - 1);
 
         for (auto i = 0; i < det_len; ++i) {
             out[i] = coeff[i];
         }
 
-        for (j = level; j > 0; --j) {
+        for (auto j = level; j > 0; --j) {
 
             if ((ctype == "det"sv) && j == level) {
                 filt = hpr;
@@ -859,8 +857,6 @@ static void getDWTRecCoeff(double const* coeff, int const* length, char const* c
             }
         }
 
-        free(X_lp);
-
     } else if (ext == "sym"sv) {
         if (ctype == "appx"sv) {
             det_len = length[0];
@@ -868,15 +864,15 @@ static void getDWTRecCoeff(double const* coeff, int const* length, char const* c
             det_len = length[J - level + 1];
         }
 
-        N = 2 * length[J] - 1;
+        auto const N = 2 * length[J] - 1;
 
-        X_lp = (double*)malloc(sizeof(double) * (N + 2 * lf - 1));
+        auto X_lp = makeZeros<double>(N + 2 * lf - 1);
 
         for (auto i = 0; i < det_len; ++i) {
             out[i] = coeff[i];
         }
 
-        for (j = level; j > 0; --j) {
+        for (auto j = level; j > 0; --j) {
 
             if ((ctype == "det"sv) && j == level) {
                 filt = hpr;
@@ -911,8 +907,6 @@ static void getDWTRecCoeff(double const* coeff, int const* length, char const* c
             }
         }
 
-        free(X_lp);
-
     } else {
         printf("Signal extension can be either per or sym");
         exit(-1);
@@ -921,8 +915,6 @@ static void getDWTRecCoeff(double const* coeff, int const* length, char const* c
     for (auto i = 0; i < siglength; ++i) {
         reccoeff[i] = out[i];
     }
-
-    free(out);
 }
 
 auto getDWTmra(wt_object wt, double* wavecoeffs) -> double*
@@ -1271,7 +1263,7 @@ void dwpt(wpt_object wt, double const* inp)
         wt->basisvector[i] = 1;
     }
 
-    for (j = J - 1; j >= 0; --j) {
+    for (auto j = J - 1; j >= 0; --j) {
         for (k = ipow2(j) - 1; k < ipow2(j + 1) - 1; ++k) {
             v1 = wt->costvalues[k];
             v2 = wt->costvalues[2 * k + 1] + wt->costvalues[2 * k + 2];
@@ -1319,7 +1311,7 @@ void dwpt(wpt_object wt, double const* inp)
             llb = ipow2(i);
             it1 -= llb;
             wt->numnodeslevel[i] = 0;
-            for (j = 0; j < llb; ++j) {
+            for (auto j = 0; j < llb; ++j) {
                 if (wt->basisvector[it1 + j] == 1) {
                     //printf("NODE %d %d %d \n", i, j, wt->length[J - i + 1]);
                     wt->nodeindex[2 * wt->nodes] = i;
@@ -1693,9 +1685,6 @@ void idwt(wt_object wt, double* dwtop)
         }
 
         for (auto i = 0; i < J; ++i) {
-
-            //idwt1(wt, temp, cA_up, out.get(), det_len, wt->output + iter, det_len, X_lp, X_hp, out);
-
             idwt_per(wt, out.get(), det_len, wt->output + iter, X_lp.get());
             for (k = lf / 2 - 1; k < 2 * det_len + lf / 2 - 1; ++k) {
                 out[k - lf / 2 + 1] = X_lp[k];
@@ -1910,7 +1899,7 @@ void idwpt(wpt_object wt, double* dwtop)
                 index2 *= 2;
                 index3 = 0;
                 index4 = 0;
-                //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp, X_hp, out);
+                //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp.get(), X_hp, out);
                 n1 -= llb;
                 for (l = 0; l < llb; ++l) {
                     if (ptemp[l] != 2) {
@@ -2008,7 +1997,7 @@ void idwpt(wpt_object wt, double* dwtop)
                 index2 *= 2;
                 index3 = 0;
                 index4 = 0;
-                //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp, X_hp, out);
+                //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp.get(), X_hp, out);
                 n1 -= llb;
                 for (l = 0; l < llb; ++l) {
                     if (ptemp[l] != 2) {
@@ -2078,7 +2067,7 @@ void idwpt(wpt_object wt, double* dwtop)
                     }
                 }
 
-                //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp, X_hp, out);
+                //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp.get(), X_hp, out);
                 /*
 				idwpt_sym(wt, out, det_len, wt->output + iter, det_len, X_lp);
 				for (k = lf - 2; k < 2 * det_len; ++k) {
@@ -3119,14 +3108,14 @@ static void imodwt_direct(wt_object wt, double* dwtop)
         }
         imodwt_per(wt, M, dwtop, N, wt->params + lenacc, X);
         /*
-		for (j = lf - 1; j < N; ++j) {
+		for (auto j = lf - 1; j < N; ++j) {
 			dwtop[j - lf + 1] = X[j];
 		}
-		for (j = 0; j < lf - 1; ++j) {
+		for (auto j = 0; j < lf - 1; ++j) {
 			dwtop[N - lf + 1 + j] = X[j];
 		}
 		*/
-        for (j = 0; j < N; ++j) {
+        for (auto j = 0; j < N; ++j) {
             dwtop[j] = X[j];
         }
 
@@ -3236,13 +3225,8 @@ void setWTConv(wt_object wt, char const* cmethod)
 
 auto dwt2(wt2_object wt, double* inp) -> double*
 {
-    double* wavecoeff = nullptr;
-    int J;
     int iter;
     int N;
-    int lp;
-    int rows_n;
-    int cols_n;
     int rows_i;
     int cols_i;
     int ir;
@@ -3254,17 +3238,16 @@ auto dwt2(wt2_object wt, double* inp) -> double*
     int aHL;
     int aHH;
     int cdim;
-    int clen;
     double* orig;
-    double* lp_dn1;
-    double* hp_dn1;
-    J = wt->J;
+
+    auto J = wt->J;
     wt->outlength = 0;
 
-    rows_n = wt->rows;
-    cols_n = wt->cols;
-    lp = wt->wave->lpd_len;
-    clen = J * 3;
+    auto rows_n = wt->rows;
+    auto cols_n = wt->cols;
+    auto lp = wt->wave->lpd_len;
+    auto clen = J * 3;
+
     if (wt->ext == "per"sv) {
         auto i = 2 * J;
         while (i > 0) {
@@ -3277,15 +3260,15 @@ auto dwt2(wt2_object wt, double* inp) -> double*
         }
         wt->outlength += (rows_n * cols_n);
         N = wt->outlength;
-        wavecoeff = (double*)calloc(wt->outlength, sizeof(double));
+        auto wavecoeff = makeZeros<double>(wt->outlength);
 
         orig = inp;
         ir = wt->rows;
         ic = wt->cols;
         cols_i = wt->dimensions[2 * J - 1];
 
-        lp_dn1 = (double*)malloc(sizeof(double) * ir * cols_i);
-        hp_dn1 = (double*)malloc(sizeof(double) * ir * cols_i);
+        auto lp_dn1 = makeZeros<double>(ir * cols_i);
+        auto hp_dn1 = makeZeros<double>(ir * cols_i);
 
         for (iter = 0; iter < J; ++iter) {
             rows_i = wt->dimensions[2 * J - 2 * iter - 2];
@@ -3295,7 +3278,7 @@ auto dwt2(wt2_object wt, double* inp) -> double*
             cdim = rows_i * cols_i;
             // Row filtering and column subsampling
             for (auto i = 0; i < ir; ++i) {
-                dwt_per_stride(orig + i * ic, ic, wt->wave->lpd, wt->wave->hpd, lp, lp_dn1 + i * cols_i, cols_i, hp_dn1 + i * cols_i, istride, ostride);
+                dwt_per_stride(orig + i * ic, ic, wt->wave->lpd, wt->wave->hpd, lp, lp_dn1.get() + i * cols_i, cols_i, hp_dn1.get() + i * cols_i, istride, ostride);
             }
 
             // Column Filtering and Row subsampling
@@ -3313,125 +3296,116 @@ auto dwt2(wt2_object wt, double* inp) -> double*
             ostride = ic;
 
             for (auto i = 0; i < ic; ++i) {
-                dwt_per_stride(lp_dn1 + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff + aLL + i, rows_i, wavecoeff + aLH + i, istride, ostride);
+                dwt_per_stride(lp_dn1.get() + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff.get() + aLL + i, rows_i, wavecoeff.get() + aLH + i, istride, ostride);
             }
 
             for (auto i = 0; i < ic; ++i) {
-                dwt_per_stride(hp_dn1 + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff + aHL + i, rows_i, wavecoeff + aHH + i, istride, ostride);
+                dwt_per_stride(hp_dn1.get() + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff.get() + aHL + i, rows_i, wavecoeff.get() + aHH + i, istride, ostride);
             }
 
             ir = rows_i;
-            orig = wavecoeff + aLL;
+            orig = wavecoeff.get() + aLL;
             clen -= 3;
         }
         wt->coeffaccess[0] = 0;
-        free(lp_dn1);
-        free(hp_dn1);
-    } else if (wt->ext == "sym"sv) {
-        auto i = 2 * J;
-        while (i > 0) {
-            rows_n += lp - 2;
-            cols_n += lp - 2;
-            rows_n = (int)ceil((double)rows_n / 2.0);
-            cols_n = (int)ceil((double)cols_n / 2.0);
-            wt->dimensions[i - 1] = cols_n;
-            wt->dimensions[i - 2] = rows_n;
-            wt->outlength += (rows_n * cols_n) * 3;
-            i = i - 2;
-        }
-        wt->outlength += (rows_n * cols_n);
-        N = wt->outlength;
-        wavecoeff = (double*)calloc(wt->outlength, sizeof(double));
 
-        orig = inp;
-        ir = wt->rows;
-        ic = wt->cols;
-        cols_i = wt->dimensions[2 * J - 1];
-
-        lp_dn1 = (double*)malloc(sizeof(double) * ir * cols_i);
-        hp_dn1 = (double*)malloc(sizeof(double) * ir * cols_i);
-
-        for (iter = 0; iter < J; ++iter) {
-            rows_i = wt->dimensions[2 * J - 2 * iter - 2];
-            cols_i = wt->dimensions[2 * J - 2 * iter - 1];
-            istride = 1;
-            ostride = 1;
-            cdim = rows_i * cols_i;
-            // Row filtering and column subsampling
-            for (auto i = 0; i < ir; ++i) {
-                dwt_sym_stride(orig + i * ic, ic, wt->wave->lpd, wt->wave->hpd, lp, lp_dn1 + i * cols_i, cols_i, hp_dn1 + i * cols_i, istride, ostride);
-            }
-
-            // Column Filtering and Row subsampling
-            aHH = N - cdim;
-            wt->coeffaccess[clen] = aHH;
-            aHL = aHH - cdim;
-            wt->coeffaccess[clen - 1] = aHL;
-            aLH = aHL - cdim;
-            wt->coeffaccess[clen - 2] = aLH;
-            aLL = aLH - cdim;
-            N -= 3 * cdim;
-            ic = cols_i;
-            istride = ic;
-            ostride = ic;
-
-            for (auto i = 0; i < ic; ++i) {
-                dwt_sym_stride(lp_dn1 + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff + aLL + i, rows_i, wavecoeff + aLH + i, istride, ostride);
-            }
-
-            for (auto i = 0; i < ic; ++i) {
-                dwt_sym_stride(hp_dn1 + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff + aHL + i, rows_i, wavecoeff + aHH + i, istride, ostride);
-            }
-
-            ir = rows_i;
-            orig = wavecoeff + aLL;
-            clen -= 3;
-        }
-        wt->coeffaccess[0] = 0;
-        free(lp_dn1);
-        free(hp_dn1);
+        return wavecoeff.release();
     }
 
-    return wavecoeff;
+    assert(wt->ext == "sym"sv);
+
+    auto i = 2 * J;
+    while (i > 0) {
+        rows_n += lp - 2;
+        cols_n += lp - 2;
+        rows_n = (int)ceil((double)rows_n / 2.0);
+        cols_n = (int)ceil((double)cols_n / 2.0);
+        wt->dimensions[i - 1] = cols_n;
+        wt->dimensions[i - 2] = rows_n;
+        wt->outlength += (rows_n * cols_n) * 3;
+        i = i - 2;
+    }
+    wt->outlength += (rows_n * cols_n);
+    N = wt->outlength;
+    auto wavecoeff = makeZeros<double>(wt->outlength);
+
+    orig = inp;
+    ir = wt->rows;
+    ic = wt->cols;
+    cols_i = wt->dimensions[2 * J - 1];
+
+    auto lp_dn1 = makeZeros<double>(ir * cols_i);
+    auto hp_dn1 = makeZeros<double>(ir * cols_i);
+
+    for (iter = 0; iter < J; ++iter) {
+        rows_i = wt->dimensions[2 * J - 2 * iter - 2];
+        cols_i = wt->dimensions[2 * J - 2 * iter - 1];
+        istride = 1;
+        ostride = 1;
+        cdim = rows_i * cols_i;
+        // Row filtering and column subsampling
+        for (auto i = 0; i < ir; ++i) {
+            dwt_sym_stride(orig + i * ic, ic, wt->wave->lpd, wt->wave->hpd, lp, lp_dn1.get() + i * cols_i, cols_i, hp_dn1.get() + i * cols_i, istride, ostride);
+        }
+
+        // Column Filtering and Row subsampling
+        aHH = N - cdim;
+        wt->coeffaccess[clen] = aHH;
+        aHL = aHH - cdim;
+        wt->coeffaccess[clen - 1] = aHL;
+        aLH = aHL - cdim;
+        wt->coeffaccess[clen - 2] = aLH;
+        aLL = aLH - cdim;
+        N -= 3 * cdim;
+        ic = cols_i;
+        istride = ic;
+        ostride = ic;
+
+        for (auto i = 0; i < ic; ++i) {
+            dwt_sym_stride(lp_dn1.get() + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff.get() + aLL + i, rows_i, wavecoeff.get() + aLH + i, istride, ostride);
+        }
+
+        for (auto i = 0; i < ic; ++i) {
+            dwt_sym_stride(hp_dn1.get() + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff.get() + aHL + i, rows_i, wavecoeff.get() + aHH + i, istride, ostride);
+        }
+
+        ir = rows_i;
+        orig = wavecoeff.get() + aLL;
+        clen -= 3;
+    }
+
+    wt->coeffaccess[0] = 0;
+
+    return wavecoeff.release();
 }
 
 void idwt2(wt2_object wt, double* wavecoeff, double* oup)
 {
-    int k;
-    int rows;
-    int cols;
-    int N;
+
     int ir;
     int ic;
-    int lf;
-    int dim1;
-    int dim2;
+
     int istride;
     int ostride;
     int iter;
-    int J;
     int aLL;
     int aLH;
     int aHL;
     int aHH;
-    double* cL;
-    double* cH;
-    double* X_lp;
     double* orig;
-    double* out = nullptr;
 
-    rows = wt->rows;
-    cols = wt->cols;
-    J = wt->J;
+    auto const rows = wt->rows;
+    auto const cols = wt->cols;
+    auto const J = wt->J;
 
     if (wt->ext == "per"sv) {
-        N = rows > cols ? 2 * rows : 2 * cols;
-        lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
+        auto const N = rows > cols ? 2 * rows : 2 * cols;
+        auto const lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
         auto i = J;
-        dim1 = wt->dimensions[0];
-        dim2 = wt->dimensions[1];
-        k = 0;
+        auto dim1 = wt->dimensions[0];
+        auto dim2 = wt->dimensions[1];
+        auto k = 0;
         while (i > 0) {
             k += 1;
             dim1 *= 2;
@@ -3439,10 +3413,11 @@ void idwt2(wt2_object wt, double* wavecoeff, double* oup)
             i--;
         }
 
-        X_lp = (double*)malloc(sizeof(double) * (N + 2 * lf - 1));
-        cL = (double*)calloc(dim1 * dim2, sizeof(double));
-        cH = (double*)calloc(dim1 * dim2, sizeof(double));
-        out = (double*)calloc(dim1 * dim2, sizeof(double));
+        auto X_lp = makeZeros<double>(N + 2 * lf - 1);
+        auto cL = makeZeros<double>(dim1 * dim2);
+        auto cH = makeZeros<double>(dim1 * dim2);
+        auto out = makeZeros<double>(dim1 * dim2);
+
         aLL = wt->coeffaccess[0];
         orig = wavecoeff + aLL;
         for (iter = 0; iter < J; ++iter) {
@@ -3454,13 +3429,13 @@ void idwt2(wt2_object wt, double* wavecoeff, double* oup)
             aHL = wt->coeffaccess[iter * 3 + 2];
             aHH = wt->coeffaccess[iter * 3 + 3];
             for (auto i = 0; i < ic; ++i) {
-                idwt_per_stride(orig + i, ir, wavecoeff + aLH + i, wt->wave->lpr, wt->wave->hpr, lf, X_lp, istride, ostride);
+                idwt_per_stride(orig + i, ir, wavecoeff + aLH + i, wt->wave->lpr, wt->wave->hpr, lf, X_lp.get(), istride, ostride);
 
                 for (k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
                     cL[(k - lf / 2 + 1) * ic + i] = X_lp[k];
                 }
 
-                idwt_per_stride(wavecoeff + aHL + i, ir, wavecoeff + aHH + i, wt->wave->lpr, wt->wave->hpr, lf, X_lp, istride, ostride);
+                idwt_per_stride(wavecoeff + aHL + i, ir, wavecoeff + aHH + i, wt->wave->lpr, wt->wave->hpr, lf, X_lp.get(), istride, ostride);
 
                 for (k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
                     cH[(k - lf / 2 + 1) * ic + i] = X_lp[k];
@@ -3472,7 +3447,7 @@ void idwt2(wt2_object wt, double* wavecoeff, double* oup)
             ostride = 1;
 
             for (auto i = 0; i < ir; ++i) {
-                idwt_per_stride(cL + i * ic, ic, cH + i * ic, wt->wave->lpr, wt->wave->hpr, lf, X_lp, istride, ostride);
+                idwt_per_stride(cL.get() + i * ic, ic, cH.get() + i * ic, wt->wave->lpr, wt->wave->hpr, lf, X_lp.get(), istride, ostride);
 
                 for (k = lf / 2 - 1; k < 2 * ic + lf / 2 - 1; ++k) {
                     out[(k - lf / 2 + 1) + i * ic * 2] = X_lp[k];
@@ -3495,91 +3470,86 @@ void idwt2(wt2_object wt, double* wavecoeff, double* oup)
 
             orig = oup;
         }
-        free(X_lp);
-        free(cL);
-        free(cH);
-    } else if (wt->ext == "sym"sv) {
-        N = rows > cols ? 2 * rows - 1 : 2 * cols - 1;
-        lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
-        auto i = J;
-        dim1 = wt->dimensions[0];
-        dim2 = wt->dimensions[1];
-        k = 0;
-        while (i > 0) {
-            k += 1;
-            dim1 *= 2;
-            dim2 *= 2;
-            i--;
-        }
+        return;
+    }
+    assert(wt->ext == "sym"sv);
 
-        X_lp = (double*)malloc(sizeof(double) * (N + 2 * lf - 1));
-        cL = (double*)calloc(dim1 * dim2, sizeof(double));
-        cH = (double*)calloc(dim1 * dim2, sizeof(double));
-        out = (double*)calloc(dim1 * dim2, sizeof(double));
-        aLL = wt->coeffaccess[0];
-        orig = wavecoeff + aLL;
-        for (iter = 0; iter < J; ++iter) {
-            ir = wt->dimensions[2 * iter];
-            ic = wt->dimensions[2 * iter + 1];
-            istride = ic;
-            ostride = 1;
-            aLH = wt->coeffaccess[iter * 3 + 1];
-            aHL = wt->coeffaccess[iter * 3 + 2];
-            aHH = wt->coeffaccess[iter * 3 + 3];
-            for (auto i = 0; i < ic; ++i) {
-                idwt_sym_stride(orig + i, ir, wavecoeff + aLH + i, wt->wave->lpr, wt->wave->hpr, lf, X_lp, istride, ostride);
+    auto const N = rows > cols ? 2 * rows - 1 : 2 * cols - 1;
+    auto const lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
-                for (k = lf - 2; k < 2 * ir; ++k) {
-                    cL[(k - lf + 2) * ic + i] = X_lp[k];
-                }
-
-                idwt_sym_stride(wavecoeff + aHL + i, ir, wavecoeff + aHH + i, wt->wave->lpr, wt->wave->hpr, lf, X_lp, istride, ostride);
-
-                for (k = lf - 2; k < 2 * ir; ++k) {
-                    cH[(k - lf + 2) * ic + i] = X_lp[k];
-                }
-            }
-
-            ir *= 2;
-            istride = 1;
-            ostride = 1;
-
-            for (auto i = 0; i < ir; ++i) {
-                idwt_sym_stride(cL + i * ic, ic, cH + i * ic, wt->wave->lpr, wt->wave->hpr, lf, X_lp, istride, ostride);
-
-                for (k = lf - 2; k < 2 * ic; ++k) {
-                    out[(k - lf + 2) + i * ic * 2] = X_lp[k];
-                }
-            }
-            ic *= 2;
-            if (iter == J - 1) {
-                for (auto i = 0; i < wt->rows; ++i) {
-                    for (k = 0; k < wt->cols; ++k) {
-                        oup[k + i * wt->cols] = out[k + i * ic];
-                    }
-                }
-            } else {
-                for (auto i = 0; i < wt->dimensions[2 * (iter + 1)]; ++i) {
-                    for (k = 0; k < wt->dimensions[2 * (iter + 1) + 1]; ++k) {
-                        oup[k + i * wt->dimensions[2 * (iter + 1) + 1]] = out[k + i * ic];
-                    }
-                }
-            }
-
-            orig = oup;
-        }
-        free(X_lp);
-        free(cL);
-        free(cH);
+    auto i = J;
+    auto dim1 = wt->dimensions[0];
+    auto dim2 = wt->dimensions[1];
+    auto k = 0;
+    while (i > 0) {
+        k += 1;
+        dim1 *= 2;
+        dim2 *= 2;
+        i--;
     }
 
-    free(out);
+    auto X_lp = makeZeros<double>(N + 2 * lf - 1);
+    auto cL = makeZeros<double>(dim1 * dim2);
+    auto cH = makeZeros<double>(dim1 * dim2);
+    auto out = makeZeros<double>(dim1 * dim2);
+
+    aLL = wt->coeffaccess[0];
+    orig = wavecoeff + aLL;
+    for (iter = 0; iter < J; ++iter) {
+        ir = wt->dimensions[2 * iter];
+        ic = wt->dimensions[2 * iter + 1];
+        istride = ic;
+        ostride = 1;
+        aLH = wt->coeffaccess[iter * 3 + 1];
+        aHL = wt->coeffaccess[iter * 3 + 2];
+        aHH = wt->coeffaccess[iter * 3 + 3];
+        for (auto i = 0; i < ic; ++i) {
+            idwt_sym_stride(orig + i, ir, wavecoeff + aLH + i, wt->wave->lpr, wt->wave->hpr, lf, X_lp.get(), istride, ostride);
+
+            for (k = lf - 2; k < 2 * ir; ++k) {
+                cL[(k - lf + 2) * ic + i] = X_lp[k];
+            }
+
+            idwt_sym_stride(wavecoeff + aHL + i, ir, wavecoeff + aHH + i, wt->wave->lpr, wt->wave->hpr, lf, X_lp.get(), istride, ostride);
+
+            for (k = lf - 2; k < 2 * ir; ++k) {
+                cH[(k - lf + 2) * ic + i] = X_lp[k];
+            }
+        }
+
+        ir *= 2;
+        istride = 1;
+        ostride = 1;
+
+        for (auto i = 0; i < ir; ++i) {
+            idwt_sym_stride(cL.get() + i * ic, ic, cH.get() + i * ic, wt->wave->lpr, wt->wave->hpr, lf, X_lp.get(), istride, ostride);
+
+            for (k = lf - 2; k < 2 * ic; ++k) {
+                out[(k - lf + 2) + i * ic * 2] = X_lp[k];
+            }
+        }
+        ic *= 2;
+        if (iter == J - 1) {
+            for (auto i = 0; i < wt->rows; ++i) {
+                for (k = 0; k < wt->cols; ++k) {
+                    oup[k + i * wt->cols] = out[k + i * ic];
+                }
+            }
+        } else {
+            for (auto i = 0; i < wt->dimensions[2 * (iter + 1)]; ++i) {
+                for (k = 0; k < wt->dimensions[2 * (iter + 1) + 1]; ++k) {
+                    oup[k + i * wt->dimensions[2 * (iter + 1) + 1]] = out[k + i * ic];
+                }
+            }
+        }
+
+        orig = oup;
+    }
 }
 
 auto swt2(wt2_object wt, double* inp) -> double*
 {
-    double* wavecoeff;
     int J;
     int iter;
     int M;
@@ -3621,7 +3591,7 @@ auto swt2(wt2_object wt, double* inp) -> double*
     }
     wt->outlength += (rows_n * cols_n);
     N = wt->outlength;
-    wavecoeff = (double*)calloc(wt->outlength, sizeof(double));
+    auto wavecoeff = makeZeros<double>(wt->outlength);
 
     orig = inp;
     ir = wt->rows;
@@ -3658,22 +3628,22 @@ auto swt2(wt2_object wt, double* inp) -> double*
         istride = ic;
         ostride = ic;
         for (auto i = 0; i < ic; ++i) {
-            swt_per_stride(M, lp_dn1 + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff + aLL + i, rows_i, wavecoeff + aLH + i, istride, ostride);
+            swt_per_stride(M, lp_dn1 + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff.get() + aLL + i, rows_i, wavecoeff.get() + aLH + i, istride, ostride);
         }
 
         for (auto i = 0; i < ic; ++i) {
-            swt_per_stride(M, hp_dn1 + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff + aHL + i, rows_i, wavecoeff + aHH + i, istride, ostride);
+            swt_per_stride(M, hp_dn1 + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff.get() + aHL + i, rows_i, wavecoeff.get() + aHH + i, istride, ostride);
         }
 
         ir = rows_i;
-        orig = wavecoeff + aLL;
+        orig = wavecoeff.get() + aLL;
         clen -= 3;
     }
     wt->coeffaccess[0] = 0;
     free(lp_dn1);
     free(hp_dn1);
 
-    return wavecoeff;
+    return wavecoeff.release();
 }
 
 void iswt2(wt2_object wt, double const* wavecoeffs, double* oup)
@@ -3691,12 +3661,7 @@ void iswt2(wt2_object wt, double const* wavecoeffs, double* oup)
     int ic;
     int k1;
     int i1;
-    double* A;
-    double* H;
-    double* V;
-    double* D;
-    double* oup1;
-    double* oup2;
+
     int aLL;
     int aLH;
     int aHL;
@@ -3706,12 +3671,13 @@ void iswt2(wt2_object wt, double const* wavecoeffs, double* oup)
     rows = wt->rows;
     cols = wt->cols;
     lf = wt->wave->lpd_len;
-    A = (double*)calloc((rows + lf) * (cols + lf), sizeof(double));
-    H = (double*)calloc((rows + lf) * (cols + lf), sizeof(double));
-    V = (double*)calloc((rows + lf) * (cols + lf), sizeof(double));
-    D = (double*)calloc((rows + lf) * (cols + lf), sizeof(double));
-    oup1 = (double*)calloc((rows + lf) * (cols + lf), sizeof(double));
-    oup2 = (double*)calloc((rows + lf) * (cols + lf), sizeof(double));
+
+    auto A = makeZeros<double>((rows + lf) * (cols + lf));
+    auto H = makeZeros<double>((rows + lf) * (cols + lf));
+    auto V = makeZeros<double>((rows + lf) * (cols + lf));
+    auto D = makeZeros<double>((rows + lf) * (cols + lf));
+    auto oup1 = makeZeros<double>((rows + lf) * (cols + lf));
+    auto oup2 = makeZeros<double>((rows + lf) * (cols + lf));
 
     aLL = wt->coeffaccess[0];
 
@@ -3745,7 +3711,7 @@ void iswt2(wt2_object wt, double const* wavecoeffs, double* oup)
                 ir++;
             }
             shift = 0;
-            idwt2_shift(shift, ir, ic, wt->wave->lpr, wt->wave->hpr, wt->wave->lpd_len, A, H, V, D, oup1);
+            idwt2_shift(shift, ir, ic, wt->wave->lpr, wt->wave->hpr, wt->wave->lpd_len, A.get(), H.get(), V.get(), D.get(), oup1.get());
             //oup2
             ir = 0;
             ic = 0;
@@ -3763,7 +3729,7 @@ void iswt2(wt2_object wt, double const* wavecoeffs, double* oup)
                 ir++;
             }
             shift = -1;
-            idwt2_shift(shift, ir, ic, wt->wave->lpr, wt->wave->hpr, wt->wave->lpd_len, A, H, V, D, oup2);
+            idwt2_shift(shift, ir, ic, wt->wave->lpr, wt->wave->hpr, wt->wave->lpd_len, A.get(), H.get(), V.get(), D.get(), oup2.get());
             // Shift oup1 and oup2. Then add them to get A.
             i1 = 0;
             for (auto i = it2; i < rows; i += M) {
@@ -3776,18 +3742,10 @@ void iswt2(wt2_object wt, double const* wavecoeffs, double* oup)
             }
         }
     }
-
-    free(A);
-    free(H);
-    free(V);
-    free(D);
-    free(oup1);
-    free(oup2);
 }
 
 auto modwt2(wt2_object wt, double* inp) -> double*
 {
-    double* wavecoeff;
     int J;
     int iter;
     int M;
@@ -3831,7 +3789,7 @@ auto modwt2(wt2_object wt, double* inp) -> double*
     }
     wt->outlength += (rows_n * cols_n);
     N = wt->outlength;
-    wavecoeff = (double*)calloc(wt->outlength, sizeof(double));
+    auto wavecoeff = makeZeros<double>(wt->outlength);
     filt = (double*)malloc(sizeof(double) * 2 * lp);
     s = sqrt(2.0);
     for (auto i = 0; i < lp; ++i) {
@@ -3873,22 +3831,22 @@ auto modwt2(wt2_object wt, double* inp) -> double*
         istride = ic;
         ostride = ic;
         for (auto i = 0; i < ic; ++i) {
-            modwt_per_stride(M, lp_dn1 + i, ir, filt, lp, wavecoeff + aLL + i, rows_i, wavecoeff + aLH + i, istride, ostride);
+            modwt_per_stride(M, lp_dn1 + i, ir, filt, lp, wavecoeff.get() + aLL + i, rows_i, wavecoeff.get() + aLH + i, istride, ostride);
         }
 
         for (auto i = 0; i < ic; ++i) {
-            modwt_per_stride(M, hp_dn1 + i, ir, filt, lp, wavecoeff + aHL + i, rows_i, wavecoeff + aHH + i, istride, ostride);
+            modwt_per_stride(M, hp_dn1 + i, ir, filt, lp, wavecoeff.get() + aHL + i, rows_i, wavecoeff.get() + aHH + i, istride, ostride);
         }
 
         ir = rows_i;
-        orig = wavecoeff + aLL;
+        orig = wavecoeff.get() + aLL;
         clen -= 3;
     }
     wt->coeffaccess[0] = 0;
     free(lp_dn1);
     free(hp_dn1);
     free(filt);
-    return wavecoeff;
+    return wavecoeff.release();
 }
 
 void imodwt2(wt2_object wt, double* wavecoeff, double* oup)
@@ -3908,10 +3866,7 @@ void imodwt2(wt2_object wt, double* wavecoeff, double* oup)
     int aLH;
     int aHL;
     int aHH;
-    double* cL;
-    double* cH;
     double* orig;
-    double* filt;
     double s;
 
     rows = wt->rows;
@@ -3922,15 +3877,15 @@ void imodwt2(wt2_object wt, double* wavecoeff, double* oup)
     // N = rows > cols ? rows : cols;
     lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
-    filt = (double*)malloc(sizeof(double) * 2 * lf);
+    auto filt = makeZeros<double>(2 * lf);
     s = sqrt(2.0);
     for (auto i = 0; i < lf; ++i) {
         filt[i] = wt->wave->lpd[i] / s;
         filt[lf + i] = wt->wave->hpd[i] / s;
     }
 
-    cL = (double*)calloc(rows * cols, sizeof(double));
-    cH = (double*)calloc(rows * cols, sizeof(double));
+    auto cL = makeZeros<double>(rows * cols);
+    auto cH = makeZeros<double>(rows * cols);
     aLL = wt->coeffaccess[0];
     orig = wavecoeff + aLL;
     for (iter = 0; iter < J; ++iter) {
@@ -3945,24 +3900,19 @@ void imodwt2(wt2_object wt, double* wavecoeff, double* oup)
         aHL = wt->coeffaccess[iter * 3 + 2];
         aHH = wt->coeffaccess[iter * 3 + 3];
         for (auto i = 0; i < ic; ++i) {
-            imodwt_per_stride(M, orig + i, ir, wavecoeff + aLH + i, filt, lf, cL + i, istride, ostride);
-
-            imodwt_per_stride(M, wavecoeff + aHL + i, ir, wavecoeff + aHH + i, filt, lf, cH + i, istride, ostride);
+            imodwt_per_stride(M, orig + i, ir, wavecoeff + aLH + i, filt.get(), lf, cL.get() + i, istride, ostride);
+            imodwt_per_stride(M, wavecoeff + aHL + i, ir, wavecoeff + aHH + i, filt.get(), lf, cH.get() + i, istride, ostride);
         }
 
         istride = 1;
         ostride = 1;
 
         for (auto i = 0; i < ir; ++i) {
-            imodwt_per_stride(M, cL + i * ic, ic, cH + i * ic, filt, lf, oup + i * ic, istride, ostride);
+            imodwt_per_stride(M, cL.get() + i * ic, ic, cH.get() + i * ic, filt.get(), lf, oup + i * ic, istride, ostride);
         }
 
         orig = oup;
     }
-
-    free(cL);
-    free(cH);
-    free(filt);
 }
 
 auto getWT2Coeffs(wt2_object wt, double* wcoeffs, int level, char const* type, int* rows, int* cols) -> double*
@@ -4017,7 +3967,7 @@ void dispWT2Coeffs(double* A, int row, int col)
 
     for (auto i = 0; i < row; i++) {
         printf("R%d: ", i);
-        for (j = 0; j < col; j++) {
+        for (auto j = 0; j < col; j++) {
             printf("%g ", A[i * col + j]);
         }
         printf(":R%d \n", i);

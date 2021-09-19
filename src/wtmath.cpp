@@ -297,81 +297,66 @@ void imodwt_per_stride(int M, double const* cA, int len_cA, double const* cD, do
 
 void idwt2_shift(int shift, int rows, int cols, double* lpr, double* hpr, int lf, double* A, double* H, double* V, double* D, double* oup)
 {
-    int i;
-    int k;
-    int N;
-    int ir;
-    int ic;
-    int dim1;
-    int dim2;
-    int istride;
-    int ostride;
-    double* cL;
-    double* cH;
-    double* X_lp;
+    auto const N = rows > cols ? 2 * rows : 2 * cols;
+    auto const dim1 = 2 * rows;
+    auto const dim2 = 2 * cols;
 
-    N = rows > cols ? 2 * rows : 2 * cols;
+    auto X_lp = makeZeros<double>(N + 2 * lf - 1);
+    auto cL = makeZeros<double>(dim1 * dim2);
+    auto cH = makeZeros<double>(dim1 * dim2);
 
-    dim1 = 2 * rows;
-    dim2 = 2 * cols;
+    auto ir = rows;
+    auto ic = cols;
+    auto istride = ic;
+    auto ostride = 1;
 
-    X_lp = (double*)malloc(sizeof(double) * (N + 2 * lf - 1));
-    cL = (double*)calloc(dim1 * dim2, sizeof(double));
-    cH = (double*)calloc(dim1 * dim2, sizeof(double));
+    for (auto i = 0; i < ic; ++i) {
+        idwt_per_stride(A + i, ir, H + i, lpr, hpr, lf, X_lp.get(), istride, ostride);
 
-    ir = rows;
-    ic = cols;
-    istride = ic;
-    ostride = 1;
-    for (i = 0; i < ic; ++i) {
-        idwt_per_stride(A + i, ir, H + i, lpr, hpr, lf, X_lp, istride, ostride);
-
-        for (k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
+        for (auto k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
             cL[(k - lf / 2 + 1) * ic + i] = X_lp[k];
         }
 
-        idwt_per_stride(V + i, ir, D + i, lpr, hpr, lf, X_lp, istride, ostride);
+        idwt_per_stride(V + i, ir, D + i, lpr, hpr, lf, X_lp.get(), istride, ostride);
 
-        for (k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
+        for (auto k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
             cH[(k - lf / 2 + 1) * ic + i] = X_lp[k];
         }
     }
+
     ir *= 2;
     istride = 1;
     ostride = 1;
 
-    for (i = 0; i < ir; ++i) {
-        idwt_per_stride(cL + i * ic, ic, cH + i * ic, lpr, hpr, lf, X_lp, istride, ostride);
+    for (auto i = 0; i < ir; ++i) {
+        idwt_per_stride(cL.get() + i * ic, ic, cH.get() + i * ic, lpr, hpr, lf, X_lp.get(), istride, ostride);
 
-        for (k = lf / 2 - 1; k < 2 * ic + lf / 2 - 1; ++k) {
+        for (auto k = lf / 2 - 1; k < 2 * ic + lf / 2 - 1; ++k) {
             oup[(k - lf / 2 + 1) + i * ic * 2] = X_lp[k];
         }
     }
+
     ic *= 2;
 
     if (shift == -1) {
         //Save the last column
-        for (i = 0; i < ir; ++i) {
+        for (auto i = 0; i < ir; ++i) {
             cL[i] = oup[(i + 1) * ic - 1];
         }
         // Save the last row
-        memcpy(cH, oup + (ir - 1) * ic, sizeof(double) * ic);
-        for (i = ir - 1; i > 0; --i) {
+        memcpy(cH.get(), oup + (ir - 1) * ic, sizeof(double) * ic);
+        for (auto i = ir - 1; i > 0; --i) {
             memcpy(oup + i * ic + 1, oup + (i - 1) * ic, sizeof(double) * (ic - 1));
         }
         oup[0] = cL[ir - 1];
-        for (i = 1; i < ir; ++i) {
+        for (auto i = 1; i < ir; ++i) {
             oup[i * ic] = cL[i - 1];
         }
 
-        for (i = 1; i < ic; ++i) {
+        for (auto i = 1; i < ic; ++i) {
             oup[i] = cH[i - 1];
         }
     }
-
-    free(X_lp);
-    free(cL);
-    free(cH);
 }
 
 auto upsamp(double const* x, int lenx, int M, double* y) -> int
@@ -572,8 +557,6 @@ static auto iabs(int N) -> int
 
 void circshift(double* array, int N, int L)
 {
-    int i;
-    double* temp;
     if (iabs(L) > N) {
         L = isign(L) * (iabs(L) % N);
     }
@@ -581,21 +564,16 @@ void circshift(double* array, int N, int L)
         L = (N + L) % N;
     }
 
-    temp = (double*)malloc(sizeof(double) * L);
-
-    for (i = 0; i < L; ++i) {
+    auto temp = makeZeros<double>(L);
+    for (auto i = 0; i < L; ++i) {
         temp[i] = array[i];
     }
-
-    for (i = 0; i < N - L; ++i) {
+    for (auto i = 0; i < N - L; ++i) {
         array[i] = array[i + L];
     }
-
-    for (i = 0; i < L; ++i) {
+    for (auto i = 0; i < L; ++i) {
         array[N - L + i] = temp[i];
     }
-
-    free(temp);
 }
 
 auto testSWTlength(int N, int J) -> int

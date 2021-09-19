@@ -10,66 +10,44 @@
 
 auto main() -> int
 {
-    wave_object obj;
-    wt2_object wt;
-    int i;
-    int k;
-    int J;
-    int rows;
-    int cols;
-    int N;
-    int ir;
-    int ic;
-    double* inp;
-    double* wavecoeffs;
-    double* oup;
-    double* cLL;
-    double* diff;
-    double amax;
-    rows = 51;
-    cols = 40;
-    N = rows * cols;
-    char const* name = "db2";
-    obj = wave_init(name); // Initialize the wavelet
+    wave_object obj = wave_init("db2"); // Initialize the wavelet
 
-    inp = (double*)calloc(N, sizeof(double));
-    oup = (double*)calloc(N, sizeof(double));
-    diff = (double*)calloc(N, sizeof(double));
-    J = 2;
+    auto rows = 51;
+    auto cols = 40;
+    auto N = rows * cols;
 
-    wt = wt2_init(obj, "modwt", rows, cols, J);
+    auto inp = makeZeros<double>(N);
+    auto oup = makeZeros<double>(N);
+    auto diff = makeZeros<double>(N);
 
-    for (i = 0; i < rows; ++i) {
-        for (k = 0; k < cols; ++k) {
+    auto J = 2;
+    wt2_object wt = wt2_init(obj, "modwt", rows, cols, J);
+
+    for (auto i = 0; i < rows; ++i) {
+        for (auto k = 0; k < cols; ++k) {
             //inp[i*cols + k] = i*cols + k;
             inp[i * cols + k] = generate_rnd();
             oup[i * cols + k] = 0.0;
         }
     }
 
-    wavecoeffs = modwt2(wt, inp);
+    auto* wavecoeffs = modwt2(wt, inp.get());
 
-    cLL = getWT2Coeffs(wt, wavecoeffs, J, "A", &ir, &ic);
+    int ir { 0 };
+    int ic { 0 };
+    auto* cLL = getWT2Coeffs(wt, wavecoeffs, J, "A", &ir, &ic);
 
-    //dispWT2Coeffs(cLL, ir, ic);
+    imodwt2(wt, wavecoeffs, oup.get());
 
-    imodwt2(wt, wavecoeffs, oup);
-
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         diff[i] = oup[i] - inp[i];
     }
 
-    amax = absmax(diff, N);
-
     wt2_summary(wt);
-
-    printf("Abs Max %g \n", amax);
+    printf("Abs Max %g \n", absmax(diff.get(), N));
 
     wave_free(obj);
     wt2_free(wt);
-    free(inp);
     free(wavecoeffs);
-    free(oup);
-    free(diff);
     return 0;
 }

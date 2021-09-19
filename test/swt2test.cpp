@@ -7,69 +7,50 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <memory>
 
 auto main() -> int
 {
-    wave_object obj;
-    wt2_object wt;
-    int i;
-    int k;
-    int J;
-    int rows;
-    int cols;
-    double* inp;
-    double* wavecoeffs;
-    double* oup;
-    double* cLL;
-    double* diff;
-    double amax;
-    int ir;
-    int ic;
-    int N;
-    rows = 64;
-    cols = 48;
+    wave_object obj = wave_init("bior3.1");
 
-    char const* name = "bior3.1";
-    obj = wave_init(name); // Initialize the wavelet
-    N = rows * cols;
-    inp = (double*)calloc(N, sizeof(double));
-    oup = (double*)calloc(N, sizeof(double));
-    diff = (double*)calloc(N, sizeof(double));
-    J = 2;
+    auto const rows = 64;
+    auto const cols = 48;
+    auto const N = rows * cols;
 
-    wt = wt2_init(obj, "swt", rows, cols, J);
+    auto inp = makeZeros<double>(N);
+    auto oup = makeZeros<double>(N);
+    auto diff = makeZeros<double>(N);
+    auto const J = 2;
 
-    for (i = 0; i < rows; ++i) {
-        for (k = 0; k < cols; ++k) {
-            //inp[i*cols + k] = i*cols + k;
+    wt2_object wt = wt2_init(obj, "swt", rows, cols, J);
+
+    for (auto i = 0; i < rows; ++i) {
+        for (auto k = 0; k < cols; ++k) {
             inp[i * cols + k] = generate_rnd();
             oup[i * cols + k] = 0.0;
         }
     }
 
-    wavecoeffs = swt2(wt, inp);
+    auto* wavecoeffs = swt2(wt, inp.get());
 
-    cLL = getWT2Coeffs(wt, wavecoeffs, J, "A", &ir, &ic);
+    int ir { 0 };
+    int ic { 0 };
+    auto* cLL = getWT2Coeffs(wt, wavecoeffs, J, "A", &ir, &ic);
 
     dispWT2Coeffs(cLL, ir, ic);
 
-    iswt2(wt, wavecoeffs, oup);
+    iswt2(wt, wavecoeffs, oup.get());
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         diff[i] = oup[i] - inp[i];
     }
 
-    amax = absmax(diff, N);
-
     wt2_summary(wt);
-
-    printf("Abs Max %g \n", amax);
+    std::printf("Abs Max %g \n", absmax(diff.get(), N));
 
     wave_free(obj);
     wt2_free(wt);
-    free(inp);
-    free(wavecoeffs);
-    free(oup);
-    free(diff);
+    std::free(wavecoeffs);
+
     return 0;
 }

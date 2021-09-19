@@ -1,6 +1,9 @@
 #ifndef WAVELIB_H_
 #define WAVELIB_H_
 
+#include <algorithm>
+#include <memory>
+
 #if defined(_MSC_VER)
 #pragma warning(disable : 4200)
 #pragma warning(disable : 4996)
@@ -13,6 +16,14 @@
 #ifndef cplx_type
 #define cplx_type double
 #endif
+
+template <typename T>
+auto makeZeros(std::size_t length) -> std::unique_ptr<T[]>
+{
+    auto ptr = std::make_unique<T[]>(length);
+    std::fill(ptr.get(), ptr.get() + length, T {});
+    return ptr;
+}
 
 struct cplx_data {
     cplx_type re;

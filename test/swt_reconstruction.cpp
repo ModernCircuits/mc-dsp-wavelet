@@ -15,8 +15,7 @@ void SWTReconstructionTest()
 
     wave_object obj;
     wt_object wt;
-    double* inp;
-    double* out;
+
     int N;
     int i;
     int J;
@@ -27,8 +26,8 @@ void SWTReconstructionTest()
 
     // N = 256;
 
-    inp = (double*)malloc(sizeof(double) * N);
-    out = (double*)malloc(sizeof(double) * N);
+    auto inp = makeZeros<double>(N);
+    auto out = makeZeros<double>(N);
     // wmean = mean(temp, N);
 
     for (i = 0; i < N; ++i) {
@@ -106,9 +105,9 @@ void SWTReconstructionTest()
                         break;
                     }
 
-                    swt(wt, inp); // Perform DWT
+                    swt(wt, inp.get()); // Perform DWT
 
-                    iswt(wt, out); // Perform IDWT (if needed)
+                    iswt(wt, out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
                     if (direct_fft == 0) {
@@ -120,7 +119,7 @@ void SWTReconstructionTest()
                     // If Reconstruction succeeded then the output should be a small value.
 
                     // printf("%g ",RMS_Error(out, inp, wt->siglength));
-                    err = RMS_Error(out, inp, wt->siglength);
+                    err = RMS_Error(out.get(), inp.get(), wt->siglength);
                     // printf("%d %d %g \n",direct_fft,sym_per,err);
                     if (err > epsilon) {
                         printf(
@@ -134,9 +133,6 @@ void SWTReconstructionTest()
             }
         }
     }
-
-    free(out);
-    free(inp);
 }
 
 void SWT2ReconstructionTest()
@@ -146,21 +142,18 @@ void SWT2ReconstructionTest()
     int i;
     int k;
     int J;
-    int N;
-    int rows;
-    int cols;
-    double* inp;
+
     double* wavecoeffs;
-    double* out;
+
     double epsilon;
 
-    rows = 1024;
-    cols = 1000;
+    auto const rows = 1024;
+    auto const cols = 1000;
 
-    N = rows * cols;
+    auto const N = rows * cols;
 
-    inp = (double*)malloc(sizeof(double) * N);
-    out = (double*)malloc(sizeof(double) * N);
+    auto inp = makeZeros<double>(N);
+    auto out = makeZeros<double>(N);
 
     std::vector<std::string> waveletNames;
 
@@ -206,8 +199,8 @@ void SWT2ReconstructionTest()
     waveletNames.emplace_back("rbior5.5");
     waveletNames.emplace_back("rbior6.8");
 
-    for (i = 0; i < rows; ++i) {
-        for (k = 0; k < cols; ++k) {
+    for (auto i = 0; i < rows; ++i) {
+        for (auto k = 0; k < cols; ++k) {
             // inp[i*cols + k] = i*cols + k;
             inp[i * cols + k] = generate_rnd();
             out[i * cols + k] = 0.0;
@@ -229,9 +222,9 @@ void SWT2ReconstructionTest()
                         setDWT2Extension(wt, (char*)"per"); // Options are "per"
                     }
 
-                    wavecoeffs = swt2(wt, inp); // Perform DWT
+                    wavecoeffs = swt2(wt, inp.get()); // Perform DWT
 
-                    iswt2(wt, wavecoeffs, out); // Perform IDWT (if needed)
+                    iswt2(wt, wavecoeffs, out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
                     if (direct_fft == 0) {
@@ -243,7 +236,7 @@ void SWT2ReconstructionTest()
                     // If Reconstruction succeeded then the output should be a small value.
 
                     // printf("%g ",RMS_Error(out, inp, wt->siglength));
-                    if (RMS_Error(out, inp, N) > epsilon) {
+                    if (RMS_Error(out.get(), inp.get(), N) > epsilon) {
                         printf(
                             "\n ERROR : SWT2 Reconstruction Unit Test Failed. Exiting. \n");
                         exit(-1);
@@ -256,9 +249,6 @@ void SWT2ReconstructionTest()
             }
         }
     }
-
-    free(inp);
-    free(out);
 }
 
 auto main() -> int
