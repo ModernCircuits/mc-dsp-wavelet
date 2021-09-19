@@ -65,11 +65,11 @@ auto wt_init(wave_object wave, char const* method, int siglength, int J) -> wt_o
         obj = (wt_object)malloc(sizeof(struct wt_set) + sizeof(double) * (siglength + 2 * J * (size + 1)));
         obj->outlength = siglength + 2 * J * (size + 1); // Default
         strcpy(obj->ext, "sym"); // Default
-    } else if ((strcmp(method, "dwt") == 0) || (strcmp(method, "DWT") == 0)) {
+    } else if ((method == "dwt"sv) || (method == "DWT"sv)) {
         obj = (wt_object)malloc(sizeof(struct wt_set) + sizeof(double) * (siglength + 2 * J * (size + 1)));
         obj->outlength = siglength + 2 * J * (size + 1); // Default
         strcpy(obj->ext, "sym"); // Default
-    } else if ((strcmp(method, "swt") == 0) || (strcmp(method, "SWT") == 0)) {
+    } else if ((method == "swt"sv) || (method == "SWT"sv)) {
         if (testSWTlength(siglength, J) == 0) {
             printf("\n For SWT the signal length must be a multiple of 2^J. \n");
             exit(-1);
@@ -78,7 +78,7 @@ auto wt_init(wave_object wave, char const* method, int siglength, int J) -> wt_o
         obj = (wt_object)malloc(sizeof(struct wt_set) + sizeof(double) * (siglength * (J + 1)));
         obj->outlength = siglength * (J + 1); // Default
         strcpy(obj->ext, "per"); // Default
-    } else if ((strcmp(method, "modwt") == 0) || (strcmp(method, "MODWT") == 0)) {
+    } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
 
         if (strstr(wave->wname, "haar") == nullptr) {
             if (strstr(wave->wname, "db") == nullptr) {
@@ -115,15 +115,15 @@ auto wt_init(wave_object wave, char const* method, int siglength, int J) -> wt_o
     obj->cfftset = 0;
     obj->lenlength = J + 2;
     obj->output = &obj->params[0];
-    if ((strcmp(method, "dwt") == 0) || (strcmp(method, "DWT") == 0)) {
+    if ((method == "dwt"sv) || (method == "DWT"sv)) {
         for (auto i = 0; i < siglength + 2 * J * (size + 1); ++i) {
             obj->params[i] = 0.0;
         }
-    } else if ((strcmp(method, "swt") == 0) || (strcmp(method, "SWT") == 0)) {
+    } else if ((method == "swt"sv) || (method == "SWT"sv)) {
         for (auto i = 0; i < siglength * (J + 1); ++i) {
             obj->params[i] = 0.0;
         }
-    } else if ((strcmp(method, "modwt") == 0) || (strcmp(method, "MODWT") == 0)) {
+    } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
         for (auto i = 0; i < siglength * 2 * (J + 1); ++i) {
             obj->params[i] = 0.0;
         }
@@ -305,7 +305,7 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
     nj2 = 2 * N * J;
     obj = (cwt_object)malloc(sizeof(struct cwt_set) + sizeof(double) * (nj2 + 2 * J + N));
 
-    if ((strcmp(wave, "morlet") == 0) || (strcmp(wave, "morl") == 0)) {
+    if ((wave == "morlet"sv) || (wave == "morl"sv)) {
         s0 = 2 * dt;
         dj = 0.4875;
         mother = 0;
@@ -318,7 +318,7 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
         }
         strcpy(obj->wave, "morlet");
 
-    } else if (strcmp(wave, "paul") == 0) {
+    } else if (wave == "paul"sv) {
         s0 = 2 * dt;
         dj = 0.4875;
         mother = 1;
@@ -331,7 +331,7 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
         }
         strcpy(obj->wave, "paul");
 
-    } else if ((strcmp(wave, "dgauss") == 0) || (strcmp(wave, "dog") == 0)) {
+    } else if ((wave == "dgauss"sv) || (wave == "dog"sv)) {
         s0 = 2 * dt;
         dj = 0.4875;
         mother = 2;
@@ -409,11 +409,11 @@ auto wt2_init(wave_object wave, char const* method, int rows, int cols, int J) -
         obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
         obj->outlength = 0; // Default
         strcpy(obj->ext, "per");
-    } else if ((strcmp(method, "dwt") == 0) || (strcmp(method, "DWT") == 0)) {
+    } else if ((method == "dwt"sv) || (method == "DWT"sv)) {
         obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
         obj->outlength = 0; // Default
         strcpy(obj->ext, "per");
-    } else if ((strcmp(method, "swt") == 0) || (strcmp(method, "SWT") == 0)) {
+    } else if ((method == "swt"sv) || (method == "SWT"sv)) {
         if ((testSWTlength(rows, J) == 0) || (testSWTlength(cols, J) == 0)) {
             printf("\n For SWT data rows and columns must be a multiple of 2^J. \n");
             exit(-1);
@@ -422,7 +422,7 @@ auto wt2_init(wave_object wave, char const* method, int rows, int cols, int J) -
         obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
         obj->outlength = 0; // Default
         strcpy(obj->ext, "per");
-    } else if ((strcmp(method, "modwt") == 0) || (strcmp(method, "MODWT") == 0)) {
+    } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
         if (strstr(wave->wname, "haar") == nullptr) {
             if (strstr(wave->wname, "db") == nullptr) {
                 if (strstr(wave->wname, "sym") == nullptr) {
@@ -457,9 +457,9 @@ auto wt2_init(wave_object wave, char const* method, int rows, int cols, int J) -
 
 static void wconv(wt_object wt, double* sig, int N, double* filt, int L, double* oup)
 {
-    if (strcmp(wt->cmethod, "direct") == 0) {
+    if (wt->cmethod == "direct"sv) {
         conv_direct(sig, N, filt, L, oup);
-    } else if ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0)) {
+    } else if ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv)) {
         if (wt->cfftset == 0) {
             wt->cobj = conv_init(N, L);
             conv_fft(wt->cobj, sig, filt, oup);
@@ -643,13 +643,13 @@ static void dwt1(wt_object wt, double* sig, int len_sig, double* cA, double* cD)
 {
     constexpr auto D = 2;
 
-    if (strcmp(wt->ext, "per") == 0) {
+    if (wt->ext == "per"sv) {
         auto len_avg = (wt->wave->lpd_len + wt->wave->hpd_len) / 2;
         auto signal = std::make_unique<double[]>(len_sig + len_avg + (len_sig % 2));
         len_sig = per_ext(sig, len_sig, len_avg / 2, signal.get());
         auto cA_undec = std::make_unique<double[]>(len_sig + len_avg + wt->wave->lpd_len - 1);
 
-        if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
+        if (wt->wave->lpd_len == wt->wave->hpd_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
             wt->cobj = conv_init(len_sig + len_avg, wt->wave->lpd_len);
             wt->cfftset = 1;
         } else if (!(wt->wave->lpd_len == wt->wave->hpd_len)) {
@@ -662,13 +662,13 @@ static void dwt1(wt_object wt, double* sig, int len_sig, double* cA, double* cD)
         wconv(wt, signal.get(), len_sig + len_avg, wt->wave->hpd, wt->wave->hpd_len, cA_undec.get());
         downsamp(cA_undec.get() + len_avg, len_sig, D, cD);
 
-    } else if (strcmp(wt->ext, "sym") == 0) {
+    } else if (wt->ext == "sym"sv) {
         auto lf = wt->wave->lpd_len; // lpd and hpd have the same length
         auto signal = std::make_unique<double[]>(len_sig + 2 * (lf - 1));
         len_sig = symm_ext(sig, len_sig, lf - 1, signal.get());
         auto cA_undec = std::make_unique<double[]>(len_sig + 3 * (lf - 1));
 
-        if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
+        if (wt->wave->lpd_len == wt->wave->hpd_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
             wt->cobj = conv_init(len_sig + 2 * (lf - 1), lf);
             wt->cfftset = 1;
         } else if (!(wt->wave->lpd_len == wt->wave->hpd_len)) {
@@ -685,7 +685,7 @@ static void dwt1(wt_object wt, double* sig, int len_sig, double* cA, double* cD)
         exit(-1);
     }
 
-    if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
+    if (wt->wave->lpd_len == wt->wave->hpd_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
         free_conv(wt->cobj);
         wt->cfftset = 0;
     }
@@ -715,7 +715,7 @@ void dwt(wt_object wt, double const* inp)
     auto N = temp_len;
     auto lp = wt->wave->lpd_len;
 
-    if (strcmp(wt->ext, "per") == 0) {
+    if (wt->ext == "per"sv) {
         auto i = J;
         while (i > 0) {
             N = (int)ceil((double)N / 2.0);
@@ -730,7 +730,7 @@ void dwt(wt_object wt, double const* inp)
         for (auto iter = 0; iter < J; ++iter) {
             auto const len_cA = wt->length[J - iter];
             N -= len_cA;
-            if ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0)) {
+            if ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv)) {
                 dwt1(wt, orig.get(), temp_len, orig2.get(), wt->params + N);
             } else {
                 dwt_per(wt, orig.get(), temp_len, orig2.get(), len_cA, wt->params + N);
@@ -746,7 +746,7 @@ void dwt(wt_object wt, double const* inp)
                 }
             }
         }
-    } else if (strcmp(wt->ext, "sym") == 0) {
+    } else if (wt->ext == "sym"sv) {
         //printf("\n YES %s \n", wt->ext);
         auto i = J;
         while (i > 0) {
@@ -763,7 +763,7 @@ void dwt(wt_object wt, double const* inp)
         for (auto iter = 0; iter < J; ++iter) {
             auto const len_cA = wt->length[J - iter];
             N -= len_cA;
-            if ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0)) {
+            if ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv)) {
                 dwt1(wt, orig.get(), temp_len, orig2.get(), wt->params + N);
             } else {
                 dwt_sym(wt, orig.get(), temp_len, orig2.get(), len_cA, wt->params + N);
@@ -804,8 +804,8 @@ static void getDWTRecCoeff(double const* coeff, int const* length, char const* c
     auto* out = (double*)malloc(sizeof(double) * (siglength + 1));
     auto l2 = lf / 2;
 
-    if (strcmp(ext, "per") == 0) {
-        if (strcmp((ctype), "appx") == 0) {
+    if (ext == "per"sv) {
+        if (ctype == "appx"sv) {
             det_len = length[0];
         } else {
             det_len = length[J - level + 1];
@@ -821,7 +821,7 @@ static void getDWTRecCoeff(double const* coeff, int const* length, char const* c
 
         for (j = level; j > 0; --j) {
 
-            if ((strcmp((ctype), "det") == 0) && j == level) {
+            if ((ctype == "det"sv) && j == level) {
                 filt = hpr;
             } else {
                 filt = lpr;
@@ -861,8 +861,8 @@ static void getDWTRecCoeff(double const* coeff, int const* length, char const* c
 
         free(X_lp);
 
-    } else if (strcmp(ext, "sym") == 0) {
-        if (strcmp((ctype), "appx") == 0) {
+    } else if (ext == "sym"sv) {
+        if (ctype == "appx"sv) {
             det_len = length[0];
         } else {
             det_len = length[J - level + 1];
@@ -878,7 +878,7 @@ static void getDWTRecCoeff(double const* coeff, int const* length, char const* c
 
         for (j = level; j > 0; --j) {
 
-            if ((strcmp((ctype), "det") == 0) && j == level) {
+            if ((ctype == "det"sv) && j == level) {
                 filt = hpr;
             } else {
                 filt = lpr;
@@ -993,7 +993,7 @@ void wtree(wtree_object wt, double const* inp)
     lp = wt->wave->lpd_len;
     p2 = 1;
 
-    if (strcmp(wt->ext, "per") == 0) {
+    if (wt->ext == "per"sv) {
         auto i = J;
         p2 = 2;
         while (i > 0) {
@@ -1024,7 +1024,7 @@ void wtree(wtree_object wt, double const* inp)
             p2 = 2 * p2;
             Np = N2;
         }
-    } else if (strcmp(wt->ext, "sym") == 0) {
+    } else if (wt->ext == "sym"sv) {
         //printf("\n YES %s \n", wt->ext);
         auto i = J;
         p2 = 2;
@@ -1167,7 +1167,7 @@ void dwpt(wpt_object wt, double const* inp)
     //set eparam value here
     wt->costvalues[0] = costfunc(orig.get(), wt->siglength, wt->entropy, eparam);
     it2 = 1;
-    if (strcmp(wt->ext, "per") == 0) {
+    if (wt->ext == "per"sv) {
         auto i = J;
         p2 = 2;
         while (i > 0) {
@@ -1202,7 +1202,7 @@ void dwpt(wpt_object wt, double const* inp)
             p2 = 2 * p2;
             Np = N2;
         }
-    } else if (strcmp(wt->ext, "sym") == 0) {
+    } else if (wt->ext == "sym"sv) {
         //printf("\n YES %s \n", wt->ext);
         auto i = J;
         p2 = 2;
@@ -1475,14 +1475,14 @@ void setCWTScales(cwt_object wt, double s0, double dj, char const* type, int pow
 {
     strcpy(wt->type, type);
     //s0*pow(2.0, (double)(j - 1)*dj);
-    if ((strcmp(wt->type, "pow") == 0) || (strcmp(wt->type, "power") == 0)) {
+    if ((wt->type == "pow"sv) || (wt->type == "power"sv)) {
         for (auto i = 0; i < wt->J; ++i) {
             wt->scale[i] = s0 * pow((double)power, (double)(i)*dj);
         }
         wt->sflag = 1;
         wt->pow = power;
 
-    } else if ((strcmp(wt->type, "lin") == 0) || (strcmp(wt->type, "linear") == 0)) {
+    } else if ((wt->type == "lin"sv) || (wt->type == "linear"sv)) {
         for (auto i = 0; i < wt->J; ++i) {
             wt->scale[i] = s0 + (double)i * dj;
         }
@@ -1570,7 +1570,7 @@ void icwt(cwt_object wt, double* cwtop)
     cdel = cdelta(wt->mother, wt->m, psi);
 
     //printf("\n PSI %g CDEL %g param %g mother %d \n", psi, cdel,wt->m,wt->mother);
-    if (((strcmp(wt->type, "pow") == 0) || (strcmp(wt->type, "power") == 0)) && wt->pow == 2) {
+    if (((wt->type == "pow"sv) || (wt->type == "power"sv)) && wt->pow == 2) {
         icwavelet(wt->params, N, wt->params + nj2, wt->J, wt->dt, wt->dj, cdel, psi, cwtop);
     } else {
         printf("Inverse CWT is only available for power of 2.0 scales \n");
@@ -1598,7 +1598,7 @@ static void idwt1(wt_object wt, double* temp, double* cA_up, double* cA, int len
 
     N2 = 2 * len_cA + len_avg;
 
-    if (wt->wave->lpr_len == wt->wave->hpr_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
+    if (wt->wave->lpr_len == wt->wave->hpr_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
         wt->cobj = conv_init(N2, len_avg);
         wt->cfftset = 1;
     } else if (!(wt->wave->lpr_len == wt->wave->hpr_len)) {
@@ -1620,7 +1620,7 @@ static void idwt1(wt_object wt, double* temp, double* cA_up, double* cA, int len
         X[i - len_avg + 1] = X_lp[i] + X_hp[i];
     }
 
-    if (wt->wave->lpr_len == wt->wave->hpr_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
+    if (wt->wave->lpr_len == wt->wave->hpr_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
         free_conv(wt->cobj);
         wt->cfftset = 0;
     }
@@ -1650,7 +1650,7 @@ void idwt(wt_object wt, double* dwtop)
     auto U = 2;
     auto app_len = wt->length[0];
     auto out = std::make_unique<double[]>(wt->siglength + 1);
-    if ((strcmp(wt->ext, "per") == 0) && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
+    if ((wt->ext == "per"sv) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J];
@@ -1679,7 +1679,7 @@ void idwt(wt_object wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-    } else if ((strcmp(wt->ext, "per") == 0) && (strcmp(wt->cmethod, "direct") == 0)) {
+    } else if ((wt->ext == "per"sv) && (wt->cmethod == "direct"sv)) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J];
@@ -1705,7 +1705,7 @@ void idwt(wt_object wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-    } else if ((strcmp(wt->ext, "sym") == 0) && (strcmp(wt->cmethod, "direct") == 0)) {
+    } else if ((wt->ext == "sym"sv) && (wt->cmethod == "direct"sv)) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J] - 1;
@@ -1728,7 +1728,7 @@ void idwt(wt_object wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-    } else if ((strcmp(wt->ext, "sym") == 0) && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
+    } else if ((wt->ext == "sym"sv) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
         lf = wt->wave->lpd_len; // lpd and hpd have the same length
 
         N = 2 * wt->length[J] - 1;
@@ -1747,7 +1747,7 @@ void idwt(wt_object wt, double* dwtop)
             upsamp(out.get(), det_len, U, cA_up.get());
             N2 = 2 * wt->length[i + 1] - 1;
 
-            if (wt->wave->lpr_len == wt->wave->hpr_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
+            if (wt->wave->lpr_len == wt->wave->hpr_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
                 wt->cobj = conv_init(N2, lf);
                 wt->cfftset = 1;
             } else if (!(wt->wave->lpr_len == wt->wave->hpr_len)) {
@@ -1763,7 +1763,7 @@ void idwt(wt_object wt, double* dwtop)
                 out[k - lf + 2] = X_lp[k] + X_hp[k];
             }
             iter += det_len;
-            if (wt->wave->lpr_len == wt->wave->hpr_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
+            if (wt->wave->lpr_len == wt->wave->hpr_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
                 free_conv(wt->cobj);
                 wt->cfftset = 0;
             }
@@ -1899,7 +1899,7 @@ void idwpt(wpt_object wt, double* dwtop)
             ptemp[i] = 0;
         }
 
-        if (strcmp(wt->ext, "per") == 0) {
+        if (wt->ext == "per"sv) {
             // app_len = wt->length[0];
             // det_len = wt->length[1];
             index = 0;
@@ -1995,7 +1995,7 @@ void idwpt(wpt_object wt, double* dwtop)
 
             //free(X_lp);
 
-        } else if (strcmp(wt->ext, "sym") == 0) {
+        } else if (wt->ext == "sym"sv) {
             // app_len = wt->length[0];
             // det_len = wt->length[1];
 
@@ -2163,7 +2163,7 @@ static void swt_fft(wt_object wt, double const* inp)
 
         per_ext(wt->params, temp_len, N / 2, sig.get());
 
-        if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
+        if (wt->wave->lpd_len == wt->wave->hpd_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
             wt->cobj = conv_init(N + temp_len + (temp_len % 2), N);
             wt->cfftset = 1;
         } else if (!(wt->wave->lpd_len == wt->wave->hpd_len)) {
@@ -2175,7 +2175,7 @@ static void swt_fft(wt_object wt, double const* inp)
 
         wconv(wt, sig.get(), N + temp_len + (temp_len % 2), high_pass.get(), N, cD.get());
 
-        if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
+        if (wt->wave->lpd_len == wt->wave->hpd_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
             free_conv(wt->cobj);
             wt->cfftset = 0;
         }
@@ -2238,9 +2238,9 @@ static void swt_direct(wt_object wt, double const* inp)
 
 void swt(wt_object wt, double const* inp)
 {
-    if ((strcmp(wt->method, "swt") == 0) && (strcmp(wt->cmethod, "direct") == 0)) {
+    if ((wt->method == "swt"sv) && (wt->cmethod == "direct"sv)) {
         swt_direct(wt, inp);
-    } else if ((strcmp(wt->method, "swt") == 0) && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
+    } else if ((wt->method == "swt"sv) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
         swt_fft(wt, inp);
     } else {
         printf("SWT Only accepts two methods - direct and fft");
@@ -2284,12 +2284,12 @@ static void getSWTRecCoeff(double const* coeff, int* length, char const* ctype, 
         for (auto i = 0; i < N; ++i) {
             swtop[i] = 0.0;
         }
-        if ((strcmp((ctype), "appx") == 0) && (iter == (J - level))) {
+        if ((ctype == "appx"sv) && (iter == (J - level))) {
             for (auto i = 0; i < N; ++i) {
                 appx_sig[i] = coeff[i];
                 det_sig[i] = 0.0;
             }
-        } else if ((strcmp((ctype), "det") == 0) && (iter == (J - level))) {
+        } else if ((ctype == "det"sv) && (iter == (J - level))) {
             for (auto i = 0; i < N; ++i) {
                 det_sig[i] = coeff[i];
                 appx_sig[i] = 0.0;
@@ -2475,7 +2475,7 @@ void iswt(wt_object wt, double* swtop)
 
             N1 = 2 * len0 + lf;
 
-            if (wt->wave->lpr_len == wt->wave->hpr_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
+            if (wt->wave->lpr_len == wt->wave->hpr_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
                 wt->cobj = conv_init(N1, lf);
                 wt->cfftset = 1;
             } else if (!(wt->wave->lpd_len == wt->wave->hpd_len)) {
@@ -2633,9 +2633,9 @@ static void modwt_fft(wt_object wt, double const* inp)
 
     temp_len = wt->siglength;
     len_avg = wt->wave->lpd_len;
-    if (strcmp(wt->ext, "sym") == 0) {
+    if (wt->ext == "sym"sv) {
         N = 2 * temp_len;
-    } else if (strcmp(wt->ext, "per") == 0) {
+    } else if (wt->ext == "per"sv) {
         N = temp_len;
     }
     J = wt->J;
@@ -2747,9 +2747,9 @@ static void modwt_fft(wt_object wt, double const* inp)
 
 void modwt(wt_object wt, double const* inp)
 {
-    if (strcmp(wt->cmethod, "direct") == 0) {
+    if (wt->cmethod == "direct"sv) {
         modwt_direct(wt, inp);
-    } else if (strcmp(wt->cmethod, "fft") == 0) {
+    } else if (wt->cmethod == "fft"sv) {
         modwt_fft(wt, inp);
     } else {
         printf("Error- Available Choices for this method are - direct and fft \n");
@@ -2772,7 +2772,7 @@ static void getMODWTRecCoeff(fft_object fft_fd, fft_object fft_bd, fft_data* app
 
     auto M = (int)pow(2.0, (double)level - 1.0);
 
-    if (strcmp((ctype), "appx") == 0) {
+    if (ctype == "appx"sv) {
         for (auto iter = 0; iter < level; ++iter) {
             fft_exec(fft_fd, appx, cA);
             fft_exec(fft_fd, det, cD);
@@ -2835,9 +2835,9 @@ auto getMODWTmra(wt_object wt, double* wavecoeffs) -> double*
     auto const N = wt->modwtsiglength;
     auto const len_avg = wt->wave->lpd_len;
     int temp_len {};
-    if (strcmp(wt->ext, "sym") == 0) {
+    if (wt->ext == "sym"sv) {
         temp_len = N / 2;
-    } else if (strcmp(wt->ext, "per") == 0) {
+    } else if (wt->ext == "per"sv) {
         temp_len = N;
     }
 
@@ -2956,9 +2956,9 @@ void imodwt_fft(wt_object wt, double* oup)
 
     N = wt->modwtsiglength;
     len_avg = wt->wave->lpd_len;
-    // if (strcmp(wt->ext, "sym") == 0) {
+    // if (wt->ext == "sym"sv) {
     //     temp_len = N / 2;
-    // } else if (strcmp(wt->ext, "per") == 0) {
+    // } else if (wt->ext== "per"sv) {
     //     temp_len = N;
     // }
     J = wt->J;
@@ -3137,9 +3137,9 @@ static void imodwt_direct(wt_object wt, double* dwtop)
 
 void imodwt(wt_object wt, double* oup)
 {
-    if (strcmp(wt->cmethod, "direct") == 0) {
+    if (wt->cmethod == "direct"sv) {
         imodwt_direct(wt, oup);
-    } else if (strcmp(wt->cmethod, "fft") == 0) {
+    } else if (wt->cmethod == "fft"sv) {
         imodwt_fft(wt, oup);
     } else {
         printf("Error- Available Choices for this method are - direct and fft \n");
@@ -3149,9 +3149,9 @@ void imodwt(wt_object wt, double* oup)
 
 void setDWTExtension(wt_object wt, char const* extension)
 {
-    if (strcmp(extension, "sym") == 0) {
+    if (extension == "sym"sv) {
         strcpy(wt->ext, "sym");
-    } else if (strcmp(extension, "per") == 0) {
+    } else if (extension == "per"sv) {
         strcpy(wt->ext, "per");
     } else {
         printf("Signal extension can be either per or sym");
@@ -3161,9 +3161,9 @@ void setDWTExtension(wt_object wt, char const* extension)
 
 void setWTREEExtension(wtree_object wt, char const* extension)
 {
-    if (strcmp(extension, "sym") == 0) {
+    if (extension == "sym"sv) {
         strcpy(wt->ext, "sym");
-    } else if (strcmp(extension, "per") == 0) {
+    } else if (extension == "per"sv) {
         strcpy(wt->ext, "per");
     } else {
         printf("Signal extension can be either per or sym");
@@ -3173,9 +3173,9 @@ void setWTREEExtension(wtree_object wt, char const* extension)
 
 void setDWPTExtension(wpt_object wt, char const* extension)
 {
-    if (strcmp(extension, "sym") == 0) {
+    if (extension == "sym"sv) {
         strcpy(wt->ext, "sym");
-    } else if (strcmp(extension, "per") == 0) {
+    } else if (extension == "per"sv) {
         strcpy(wt->ext, "per");
     } else {
         printf("Signal extension can be either per or sym");
@@ -3186,16 +3186,16 @@ void setDWPTExtension(wpt_object wt, char const* extension)
 void setDWT2Extension(wt2_object wt, char const* extension)
 {
     if (strcmp(wt->method, "dwt") == 0) {
-        if (strcmp(extension, "sym") == 0) {
+        if (extension == "sym"sv) {
             strcpy(wt->ext, "sym");
-        } else if (strcmp(extension, "per") == 0) {
+        } else if (extension == "per"sv) {
             strcpy(wt->ext, "per");
         } else {
             printf("Signal extension can be either per or sym");
             exit(-1);
         }
-    } else if ((strcmp(wt->method, "swt") == 0) || (strcmp(wt->method, "modwt") == 0)) {
-        if (strcmp(extension, "per") == 0) {
+    } else if ((wt->method == "swt"sv) || (strcmp(wt->method, "modwt") == 0)) {
+        if (extension == "per"sv) {
             strcpy(wt->ext, "per");
         } else {
             printf("Signal extension can only be per");
@@ -3224,9 +3224,9 @@ void setDWPTEntropy(wpt_object wt, char const* entropy, double eparam)
 
 void setWTConv(wt_object wt, char const* cmethod)
 {
-    if ((strcmp(cmethod, "fft") == 0) || (strcmp(cmethod, "FFT") == 0)) {
+    if ((cmethod == "fft"sv) || (cmethod == "FFT"sv)) {
         strcpy(wt->cmethod, "fft");
-    } else if (strcmp(cmethod, "direct") == 0) {
+    } else if (cmethod == "direct"sv) {
         strcpy(wt->cmethod, "direct");
     } else {
         printf("Convolution Only accepts two methods - direct and fft");
@@ -3265,7 +3265,7 @@ auto dwt2(wt2_object wt, double* inp) -> double*
     cols_n = wt->cols;
     lp = wt->wave->lpd_len;
     clen = J * 3;
-    if (strcmp(wt->ext, "per") == 0) {
+    if (wt->ext == "per"sv) {
         auto i = 2 * J;
         while (i > 0) {
             rows_n = (int)ceil((double)rows_n / 2.0);
@@ -3327,7 +3327,7 @@ auto dwt2(wt2_object wt, double* inp) -> double*
         wt->coeffaccess[0] = 0;
         free(lp_dn1);
         free(hp_dn1);
-    } else if (strcmp(wt->ext, "sym") == 0) {
+    } else if (wt->ext == "sym"sv) {
         auto i = 2 * J;
         while (i > 0) {
             rows_n += lp - 2;
@@ -3424,7 +3424,7 @@ void idwt2(wt2_object wt, double* wavecoeff, double* oup)
     cols = wt->cols;
     J = wt->J;
 
-    if (strcmp(wt->ext, "per") == 0) {
+    if (wt->ext == "per"sv) {
         N = rows > cols ? 2 * rows : 2 * cols;
         lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
@@ -3498,7 +3498,7 @@ void idwt2(wt2_object wt, double* wavecoeff, double* oup)
         free(X_lp);
         free(cL);
         free(cH);
-    } else if (strcmp(wt->ext, "sym") == 0) {
+    } else if (wt->ext == "sym"sv) {
         N = rows > cols ? 2 * rows - 1 : 2 * cols - 1;
         lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 

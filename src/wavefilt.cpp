@@ -6,6 +6,9 @@
 #include "wavefilt.h"
 
 #include <memory>
+#include <string_view>
+
+using namespace std::string_view_literals;
 
 static const double db1[2] = {
     7.071067811865475244008443621048490392848359376884740365883398e-01,
@@ -3473,7 +3476,7 @@ auto filtlength(char const* name) -> int
     int i = 0;
     char* new_str = nullptr;
     int N = 0;
-    if ((strcmp(name, "haar") == 0) || (strcmp(name, "db1") == 0)) {
+    if (name == "haar"sv || name == "db1"sv) {
         return 2;
     }
     if (len > 2 && strstr(name, "db") != nullptr) {
@@ -3491,108 +3494,108 @@ auto filtlength(char const* name) -> int
 
         return N * 2;
     }
-    if (strcmp(name, "bior1.1") == 0) {
+    if (name == "bior1.1"sv) {
         return 2;
     }
 
-    if (strcmp(name, "bior1.3") == 0) {
+    if (name == "bior1.3"sv) {
         return 6;
     }
 
-    if (strcmp(name, "bior1.5") == 0) {
+    if (name == "bior1.5"sv) {
         return 10;
     }
 
-    if (strcmp(name, "bior2.2") == 0) {
+    if (name == "bior2.2"sv) {
         return 6;
     }
 
-    if (strcmp(name, "bior2.4") == 0) {
+    if (name == "bior2.4"sv) {
         return 10;
     }
 
-    if (strcmp(name, "bior2.6") == 0) {
+    if (name == "bior2.6"sv) {
         return 14;
     }
-    if (strcmp(name, "bior2.8") == 0) {
+    if (name == "bior2.8"sv) {
         return 18;
     }
 
-    if (strcmp(name, "bior3.1") == 0) {
+    if (name == "bior3.1"sv) {
         return 4;
     }
-    if (strcmp(name, "bior3.3") == 0) {
+    if (name == "bior3.3"sv) {
         return 8;
     }
-    if (strcmp(name, "bior3.5") == 0) {
+    if (name == "bior3.5"sv) {
         return 12;
     }
 
-    if (strcmp(name, "bior3.7") == 0) {
+    if (name == "bior3.7"sv) {
         return 16;
     }
-    if (strcmp(name, "bior3.9") == 0) {
+    if (name == "bior3.9"sv) {
         return 20;
     }
-    if (strcmp(name, "bior4.4") == 0) {
+    if (name == "bior4.4"sv) {
         return 10;
     }
-    if (strcmp(name, "bior5.5") == 0) {
+    if (name == "bior5.5"sv) {
         return 12;
     }
-    if (strcmp(name, "bior6.8") == 0) {
+    if (name == "bior6.8"sv) {
         return 18;
     }
-    if (strcmp(name, "rbior1.1") == 0) {
+    if (name == "rbior1.1"sv) {
         return 2;
     }
 
-    if (strcmp(name, "rbior1.3") == 0) {
+    if (name == "rbior1.3"sv) {
         return 6;
     }
 
-    if (strcmp(name, "rbior1.5") == 0) {
+    if (name == "rbior1.5"sv) {
         return 10;
     }
 
-    if (strcmp(name, "rbior2.2") == 0) {
+    if (name == "rbior2.2"sv) {
         return 6;
     }
 
-    if (strcmp(name, "rbior2.4") == 0) {
+    if (name == "rbior2.4"sv) {
         return 10;
     }
 
-    if (strcmp(name, "rbior2.6") == 0) {
+    if (name == "rbior2.6"sv) {
         return 14;
     }
-    if (strcmp(name, "rbior2.8") == 0) {
+    if (name == "rbior2.8"sv) {
         return 18;
     }
 
-    if (strcmp(name, "rbior3.1") == 0) {
+    if (name == "rbior3.1"sv) {
         return 4;
     }
-    if (strcmp(name, "rbior3.3") == 0) {
+    if (name == "rbior3.3"sv) {
         return 8;
     }
-    if (strcmp(name, "rbior3.5") == 0) {
+    if (name == "rbior3.5"sv) {
         return 12;
     }
 
-    if (strcmp(name, "rbior3.7") == 0) {
+    if (name == "rbior3.7"sv) {
         return 16;
     }
-    if (strcmp(name, "rbior3.9") == 0) {
+    if (name == "rbior3.9"sv) {
         return 20;
     }
-    if (strcmp(name, "rbior4.4") == 0) {
+    if (name == "rbior4.4"sv) {
         return 10;
     }
-    if (strcmp(name, "rbior5.5") == 0) {
+    if (name == "rbior5.5"sv) {
         return 12;
     }
-    if (strcmp(name, "rbior6.8") == 0) {
+    if (name == "rbior6.8"sv) {
         return 18;
     }
     if (len > 4 && strstr(name, "coif") != nullptr) {
@@ -3678,7 +3681,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "db2") == 0) {
+    if (name == "db2"sv) {
         copy_reverse(db2, N, lp1);
         qmf_wrev(db2, N, hp1);
         copy(db2, N, lp2);
@@ -3686,7 +3689,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "db3") == 0) {
+    if (name == "db3"sv) {
         copy_reverse(db3, N, lp1);
         qmf_wrev(db3, N, hp1);
         copy(db3, N, lp2);
@@ -3694,7 +3697,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "db4") == 0) {
+    if (name == "db4"sv) {
         copy_reverse(db4, N, lp1);
         qmf_wrev(db4, N, hp1);
         copy(db4, N, lp2);
@@ -3702,7 +3705,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "db5") == 0) {
+    if (name == "db5"sv) {
         copy_reverse(db5, N, lp1);
         qmf_wrev(db5, N, hp1);
         copy(db5, N, lp2);
@@ -3710,7 +3713,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "db6") == 0) {
+    if (name == "db6"sv) {
         copy_reverse(db6, N, lp1);
         qmf_wrev(db6, N, hp1);
         copy(db6, N, lp2);
@@ -3718,7 +3721,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "db7") == 0) {
+    if (name == "db7"sv) {
         copy_reverse(db7, N, lp1);
         qmf_wrev(db7, N, hp1);
         copy(db7, N, lp2);
@@ -3726,7 +3729,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "db8") == 0) {
+    if (name == "db8"sv) {
         copy_reverse(db8, N, lp1);
         qmf_wrev(db8, N, hp1);
         copy(db8, N, lp2);
@@ -3734,7 +3737,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "db9") == 0) {
+    if (name == "db9"sv) {
         copy_reverse(db9, N, lp1);
         qmf_wrev(db9, N, hp1);
         copy(db9, N, lp2);
@@ -3743,7 +3746,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db10") == 0) {
+    if (name == "db10"sv) {
         copy_reverse(db10, N, lp1);
         qmf_wrev(db10, N, hp1);
         copy(db10, N, lp2);
@@ -3752,7 +3755,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db11") == 0) {
+    if (name == "db11"sv) {
         copy_reverse(db11, N, lp1);
         qmf_wrev(db11, N, hp1);
         copy(db11, N, lp2);
@@ -3760,7 +3763,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "db12") == 0) {
+    if (name == "db12"sv) {
         copy_reverse(db12, N, lp1);
         qmf_wrev(db12, N, hp1);
         copy(db12, N, lp2);
@@ -3769,7 +3772,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db13") == 0) {
+    if (name == "db13"sv) {
         copy_reverse(db13, N, lp1);
         qmf_wrev(db13, N, hp1);
         copy(db13, N, lp2);
@@ -3778,7 +3781,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db14") == 0) {
+    if (name == "db14"sv) {
         copy_reverse(db14, N, lp1);
         qmf_wrev(db14, N, hp1);
         copy(db14, N, lp2);
@@ -3787,7 +3790,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db15") == 0) {
+    if (name == "db15"sv) {
         copy_reverse(db15, N, lp1);
         qmf_wrev(db15, N, hp1);
         copy(db15, N, lp2);
@@ -3796,7 +3799,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db16") == 0) {
+    if (name == "db16"sv) {
         copy_reverse(db16, N, lp1);
         qmf_wrev(db16, N, hp1);
         copy(db16, N, lp2);
@@ -3805,7 +3808,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db17") == 0) {
+    if (name == "db17"sv) {
         copy_reverse(db17, N, lp1);
         qmf_wrev(db17, N, hp1);
         copy(db17, N, lp2);
@@ -3814,7 +3817,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db18") == 0) {
+    if (name == "db18"sv) {
         copy_reverse(db18, N, lp1);
         qmf_wrev(db18, N, hp1);
         copy(db18, N, lp2);
@@ -3823,7 +3826,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db19") == 0) {
+    if (name == "db19"sv) {
         copy_reverse(db19, N, lp1);
         qmf_wrev(db19, N, hp1);
         copy(db19, N, lp2);
@@ -3832,7 +3835,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db20") == 0) {
+    if (name == "db20"sv) {
         copy_reverse(db20, N, lp1);
         qmf_wrev(db20, N, hp1);
         copy(db20, N, lp2);
@@ -3841,7 +3844,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db21") == 0) {
+    if (name == "db21"sv) {
         copy_reverse(db21, N, lp1);
         qmf_wrev(db21, N, hp1);
         copy(db21, N, lp2);
@@ -3850,7 +3853,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db22") == 0) {
+    if (name == "db22"sv) {
         copy_reverse(db22, N, lp1);
         qmf_wrev(db22, N, hp1);
         copy(db22, N, lp2);
@@ -3859,7 +3862,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db23") == 0) {
+    if (name == "db23"sv) {
         copy_reverse(db23, N, lp1);
         qmf_wrev(db23, N, hp1);
         copy(db23, N, lp2);
@@ -3868,7 +3871,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db24") == 0) {
+    if (name == "db24"sv) {
         copy_reverse(db24, N, lp1);
         qmf_wrev(db24, N, hp1);
         copy(db24, N, lp2);
@@ -3877,7 +3880,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db25") == 0) {
+    if (name == "db25"sv) {
         copy_reverse(db25, N, lp1);
         qmf_wrev(db25, N, hp1);
         copy(db25, N, lp2);
@@ -3886,7 +3889,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db26") == 0) {
+    if (name == "db26"sv) {
         copy_reverse(db26, N, lp1);
         qmf_wrev(db26, N, hp1);
         copy(db26, N, lp2);
@@ -3894,7 +3897,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db27") == 0) {
+    if (name == "db27"sv) {
         copy_reverse(db27, N, lp1);
         qmf_wrev(db27, N, hp1);
         copy(db27, N, lp2);
@@ -3903,7 +3906,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db28") == 0) {
+    if (name == "db28"sv) {
         copy_reverse(db28, N, lp1);
         qmf_wrev(db28, N, hp1);
         copy(db28, N, lp2);
@@ -3912,7 +3915,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db29") == 0) {
+    if (name == "db29"sv) {
         copy_reverse(db29, N, lp1);
         qmf_wrev(db29, N, hp1);
         copy(db29, N, lp2);
@@ -3921,7 +3924,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db30") == 0) {
+    if (name == "db30"sv) {
         copy_reverse(db30, N, lp1);
         qmf_wrev(db30, N, hp1);
         copy(db30, N, lp2);
@@ -3930,7 +3933,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db31") == 0) {
+    if (name == "db31"sv) {
         copy_reverse(db31, N, lp1);
         qmf_wrev(db31, N, hp1);
         copy(db31, N, lp2);
@@ -3939,7 +3942,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db32") == 0) {
+    if (name == "db32"sv) {
         copy_reverse(db32, N, lp1);
         qmf_wrev(db32, N, hp1);
         copy(db32, N, lp2);
@@ -3948,7 +3951,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db33") == 0) {
+    if (name == "db33"sv) {
         copy_reverse(db33, N, lp1);
         qmf_wrev(db33, N, hp1);
         copy(db33, N, lp2);
@@ -3957,7 +3960,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db34") == 0) {
+    if (name == "db34"sv) {
         copy_reverse(db34, N, lp1);
         qmf_wrev(db34, N, hp1);
         copy(db34, N, lp2);
@@ -3966,7 +3969,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db35") == 0) {
+    if (name == "db35"sv) {
         copy_reverse(db35, N, lp1);
         qmf_wrev(db35, N, hp1);
         copy(db35, N, lp2);
@@ -3975,7 +3978,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db36") == 0) {
+    if (name == "db36"sv) {
         copy_reverse(db36, N, lp1);
         qmf_wrev(db36, N, hp1);
         copy(db36, N, lp2);
@@ -3984,7 +3987,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db37") == 0) {
+    if (name == "db37"sv) {
         copy_reverse(db37, N, lp1);
         qmf_wrev(db37, N, hp1);
         copy(db37, N, lp2);
@@ -3993,7 +3996,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "db38") == 0) {
+    if (name == "db38"sv) {
         copy_reverse(db38, N, lp1);
         qmf_wrev(db38, N, hp1);
         copy(db38, N, lp2);
@@ -4002,7 +4005,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior1.1") == 0) {
+    if (name == "bior1.1"sv) {
         copy_reverse(hm1_11, N, lp1);
         qmf_wrev(h1 + 4, N, hp1);
         copy(h1 + 4, N, lp2);
@@ -4010,7 +4013,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior1.3") == 0) {
+    if (name == "bior1.3"sv) {
         copy_reverse(hm1_13, N, lp1);
         qmf_wrev(h1 + 2, N, hp1);
         copy(h1 + 2, N, lp2);
@@ -4018,7 +4021,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior1.5") == 0) {
+    if (name == "bior1.5"sv) {
         copy_reverse(hm1_15, N, lp1);
         qmf_wrev(h1, N, hp1);
         copy(h1, N, lp2);
@@ -4026,7 +4029,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior2.2") == 0) {
+    if (name == "bior2.2"sv) {
         copy_reverse(hm2_22, N, lp1);
         qmf_wrev(h2 + 6, N, hp1);
         copy(h2 + 6, N, lp2);
@@ -4034,7 +4037,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior2.4") == 0) {
+    if (name == "bior2.4"sv) {
         copy_reverse(hm2_24, N, lp1);
         qmf_wrev(h2 + 4, N, hp1);
         copy(h2 + 4, N, lp2);
@@ -4042,7 +4045,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior2.6") == 0) {
+    if (name == "bior2.6"sv) {
         copy_reverse(hm2_26, N, lp1);
         qmf_wrev(h2 + 2, N, hp1);
         copy(h2 + 2, N, lp2);
@@ -4050,7 +4053,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior2.8") == 0) {
+    if (name == "bior2.8"sv) {
         copy_reverse(hm2_28, N, lp1);
         qmf_wrev(h2, N, hp1);
         copy(h2, N, lp2);
@@ -4058,7 +4061,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior3.1") == 0) {
+    if (name == "bior3.1"sv) {
         copy_reverse(hm3_31, N, lp1);
         qmf_wrev(h3 + 8, N, hp1);
         copy(h3 + 8, N, lp2);
@@ -4066,7 +4069,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior3.3") == 0) {
+    if (name == "bior3.3"sv) {
         copy_reverse(hm3_33, N, lp1);
         qmf_wrev(h3 + 6, N, hp1);
         copy(h3 + 6, N, lp2);
@@ -4074,7 +4077,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior3.5") == 0) {
+    if (name == "bior3.5"sv) {
         copy_reverse(hm3_35, N, lp1);
         qmf_wrev(h3 + 4, N, hp1);
         copy(h3 + 4, N, lp2);
@@ -4082,7 +4085,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior3.7") == 0) {
+    if (name == "bior3.7"sv) {
         copy_reverse(hm3_37, N, lp1);
         qmf_wrev(h3 + 2, N, hp1);
         copy(h3 + 2, N, lp2);
@@ -4090,7 +4093,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior3.9") == 0) {
+    if (name == "bior3.9"sv) {
         copy_reverse(hm3_39, N, lp1);
         qmf_wrev(h3, N, hp1);
         copy(h3, N, lp2);
@@ -4098,7 +4101,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior4.4") == 0) {
+    if (name == "bior4.4"sv) {
         copy_reverse(hm4_44, N, lp1);
         qmf_wrev(h4, N, hp1);
         copy(h4, N, lp2);
@@ -4106,7 +4109,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior5.5") == 0) {
+    if (name == "bior5.5"sv) {
         copy_reverse(hm5_55, N, lp1);
         qmf_wrev(h5, N, hp1);
         copy(h5, N, lp2);
@@ -4114,7 +4117,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "bior6.8") == 0) {
+    if (name == "bior6.8"sv) {
         copy_reverse(hm6_68, N, lp1);
         qmf_wrev(h6, N, hp1);
         copy(h6, N, lp2);
@@ -4122,7 +4125,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior1.1") == 0) {
+    if (name == "rbior1.1"sv) {
         copy_reverse(h1 + 4, N, lp1);
         qmf_wrev(hm1_11, N, hp1);
         copy(hm1_11, N, lp2);
@@ -4130,7 +4133,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior1.3") == 0) {
+    if (name == "rbior1.3"sv) {
         copy_reverse(h1 + 2, N, lp1);
         qmf_wrev(hm1_13, N, hp1);
         copy(hm1_13, N, lp2);
@@ -4138,7 +4141,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior1.5") == 0) {
+    if (name == "rbior1.5"sv) {
         copy_reverse(h1, N, lp1);
         qmf_wrev(hm1_15, N, hp1);
         copy(hm1_15, N, lp2);
@@ -4146,7 +4149,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior2.2") == 0) {
+    if (name == "rbior2.2"sv) {
         copy_reverse(h2 + 6, N, lp1);
         qmf_wrev(hm2_22, N, hp1);
         copy(hm2_22, N, lp2);
@@ -4154,7 +4157,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior2.4") == 0) {
+    if (name == "rbior2.4"sv) {
         copy_reverse(h2 + 4, N, lp1);
         qmf_wrev(hm2_24, N, hp1);
         copy(hm2_24, N, lp2);
@@ -4162,7 +4165,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior2.6") == 0) {
+    if (name == "rbior2.6"sv) {
         copy_reverse(h2 + 2, N, lp1);
         qmf_wrev(hm2_26, N, hp1);
         copy(hm2_26, N, lp2);
@@ -4170,7 +4173,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior2.8") == 0) {
+    if (name == "rbior2.8"sv) {
         copy_reverse(h2, N, lp1);
         qmf_wrev(hm2_28, N, hp1);
         copy(hm2_28, N, lp2);
@@ -4178,7 +4181,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior3.1") == 0) {
+    if (name == "rbior3.1"sv) {
         copy_reverse(h3 + 8, N, lp1);
         qmf_wrev(hm3_31, N, hp1);
         copy(hm3_31, N, lp2);
@@ -4186,7 +4189,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior3.3") == 0) {
+    if (name == "rbior3.3"sv) {
         copy_reverse(h3 + 6, N, lp1);
         qmf_wrev(hm3_33, N, hp1);
         copy(hm3_33, N, lp2);
@@ -4194,7 +4197,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior3.5") == 0) {
+    if (name == "rbior3.5"sv) {
         copy_reverse(h3 + 4, N, lp1);
         qmf_wrev(hm3_35, N, hp1);
         copy(hm3_35, N, lp2);
@@ -4202,7 +4205,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior3.7") == 0) {
+    if (name == "rbior3.7"sv) {
         copy_reverse(h3 + 2, N, lp1);
         qmf_wrev(hm3_37, N, hp1);
         copy(hm3_37, N, lp2);
@@ -4210,7 +4213,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior3.9") == 0) {
+    if (name == "rbior3.9"sv) {
         copy_reverse(h3, N, lp1);
         qmf_wrev(hm3_39, N, hp1);
         copy(hm3_39, N, lp2);
@@ -4218,7 +4221,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior4.4") == 0) {
+    if (name == "rbior4.4"sv) {
         copy_reverse(h4, N, lp1);
         qmf_wrev(hm4_44, N, hp1);
         copy(hm4_44, N, lp2);
@@ -4226,7 +4229,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior5.5") == 0) {
+    if (name == "rbior5.5"sv) {
         copy_reverse(h5, N, lp1);
         qmf_wrev(hm5_55, N, hp1);
         copy(hm5_55, N, lp2);
@@ -4234,7 +4237,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "rbior6.8") == 0) {
+    if (name == "rbior6.8"sv) {
         copy_reverse(h6, N, lp1);
         qmf_wrev(hm6_68, N, hp1);
         copy(hm6_68, N, lp2);
@@ -4242,7 +4245,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "coif1") == 0) {
+    if (name == "coif1"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif1, N, coeffTemp.get());
@@ -4258,7 +4261,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "coif2") == 0) {
+    if (name == "coif2"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif2, N, coeffTemp.get());
@@ -4274,7 +4277,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "coif3") == 0) {
+    if (name == "coif3"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif3, N, coeffTemp.get());
@@ -4290,7 +4293,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "coif4") == 0) {
+    if (name == "coif4"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif4, N, coeffTemp.get());
@@ -4306,7 +4309,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "coif5") == 0) {
+    if (name == "coif5"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif5, N, coeffTemp.get());
@@ -4322,7 +4325,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "coif6") == 0) {
+    if (name == "coif6"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif6, N, coeffTemp.get());
@@ -4338,7 +4341,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "coif7") == 0) {
+    if (name == "coif7"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif7, N, coeffTemp.get());
@@ -4354,7 +4357,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "coif8") == 0) {
+    if (name == "coif8"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif8, N, coeffTemp.get());
@@ -4370,7 +4373,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "coif9") == 0) {
+    if (name == "coif9"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif9, N, coeffTemp.get());
@@ -4386,7 +4389,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "coif10") == 0) {
+    if (name == "coif10"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif10, N, coeffTemp.get());
@@ -4401,7 +4404,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "coif11") == 0) {
+    if (name == "coif11"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif11, N, coeffTemp.get());
@@ -4416,7 +4419,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "coif12") == 0) {
+    if (name == "coif12"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif12, N, coeffTemp.get());
@@ -4431,7 +4434,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "coif13") == 0) {
+    if (name == "coif13"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif13, N, coeffTemp.get());
@@ -4446,7 +4449,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "coif14") == 0) {
+    if (name == "coif14"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif14, N, coeffTemp.get());
@@ -4461,7 +4464,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "coif15") == 0) {
+    if (name == "coif15"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif15, N, coeffTemp.get());
@@ -4476,7 +4479,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "coif16") == 0) {
+    if (name == "coif16"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif16, N, coeffTemp.get());
@@ -4491,7 +4494,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "coif17") == 0) {
+    if (name == "coif17"sv) {
         auto coeffTemp = std::make_unique<double[]>(N);
 
         copy(coif17, N, coeffTemp.get());
@@ -4506,7 +4509,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
 
         return N;
     }
-    if (strcmp(name, "sym2") == 0) {
+    if (name == "sym2"sv) {
         copy_reverse(sym2, N, lp1);
         qmf_wrev(sym2, N, hp1);
         copy(sym2, N, lp2);
@@ -4514,7 +4517,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "sym3") == 0) {
+    if (name == "sym3"sv) {
         copy_reverse(sym3, N, lp1);
         qmf_wrev(sym3, N, hp1);
         copy(sym3, N, lp2);
@@ -4522,7 +4525,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "sym4") == 0) {
+    if (name == "sym4"sv) {
         copy_reverse(sym4, N, lp1);
         qmf_wrev(sym4, N, hp1);
         copy(sym4, N, lp2);
@@ -4530,7 +4533,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "sym5") == 0) {
+    if (name == "sym5"sv) {
         copy_reverse(sym5, N, lp1);
         qmf_wrev(sym5, N, hp1);
         copy(sym5, N, lp2);
@@ -4538,7 +4541,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "sym6") == 0) {
+    if (name == "sym6"sv) {
         copy_reverse(sym6, N, lp1);
         qmf_wrev(sym6, N, hp1);
         copy(sym6, N, lp2);
@@ -4546,7 +4549,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "sym7") == 0) {
+    if (name == "sym7"sv) {
         copy_reverse(sym7, N, lp1);
         qmf_wrev(sym7, N, hp1);
         copy(sym7, N, lp2);
@@ -4554,7 +4557,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "sym8") == 0) {
+    if (name == "sym8"sv) {
         copy_reverse(sym8, N, lp1);
         qmf_wrev(sym8, N, hp1);
         copy(sym8, N, lp2);
@@ -4562,7 +4565,7 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "sym9") == 0) {
+    if (name == "sym9"sv) {
         copy_reverse(sym9, N, lp1);
         qmf_wrev(sym9, N, hp1);
         copy(sym9, N, lp2);
@@ -4570,84 +4573,84 @@ auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* h
         return N;
     }
 
-    if (strcmp(name, "sym10") == 0) {
+    if (name == "sym10"sv) {
         copy_reverse(sym10, N, lp1);
         qmf_wrev(sym10, N, hp1);
         copy(sym10, N, lp2);
         qmf_even(sym10, N, hp2);
         return N;
     }
-    if (strcmp(name, "sym11") == 0) {
+    if (name == "sym11"sv) {
         copy_reverse(sym11, N, lp1);
         qmf_wrev(sym11, N, hp1);
         copy(sym11, N, lp2);
         qmf_even(sym11, N, hp2);
         return N;
     }
-    if (strcmp(name, "sym12") == 0) {
+    if (name == "sym12"sv) {
         copy_reverse(sym12, N, lp1);
         qmf_wrev(sym12, N, hp1);
         copy(sym12, N, lp2);
         qmf_even(sym12, N, hp2);
         return N;
     }
-    if (strcmp(name, "sym13") == 0) {
+    if (name == "sym13"sv) {
         copy_reverse(sym13, N, lp1);
         qmf_wrev(sym13, N, hp1);
         copy(sym13, N, lp2);
         qmf_even(sym13, N, hp2);
         return N;
     }
-    if (strcmp(name, "sym14") == 0) {
+    if (name == "sym14"sv) {
         copy_reverse(sym14, N, lp1);
         qmf_wrev(sym14, N, hp1);
         copy(sym14, N, lp2);
         qmf_even(sym14, N, hp2);
         return N;
     }
-    if (strcmp(name, "sym15") == 0) {
+    if (name == "sym15"sv) {
         copy_reverse(sym15, N, lp1);
         qmf_wrev(sym15, N, hp1);
         copy(sym15, N, lp2);
         qmf_even(sym15, N, hp2);
         return N;
     }
-    if (strcmp(name, "sym16") == 0) {
+    if (name == "sym16"sv) {
         copy_reverse(sym16, N, lp1);
         qmf_wrev(sym16, N, hp1);
         copy(sym16, N, lp2);
         qmf_even(sym16, N, hp2);
         return N;
     }
-    if (strcmp(name, "sym17") == 0) {
+    if (name == "sym17"sv) {
         copy_reverse(sym17, N, lp1);
         qmf_wrev(sym17, N, hp1);
         copy(sym17, N, lp2);
         qmf_even(sym17, N, hp2);
         return N;
     }
-    if (strcmp(name, "sym18") == 0) {
+    if (name == "sym18"sv) {
         copy_reverse(sym18, N, lp1);
         qmf_wrev(sym18, N, hp1);
         copy(sym18, N, lp2);
         qmf_even(sym18, N, hp2);
         return N;
     }
-    if (strcmp(name, "sym19") == 0) {
+    if (name == "sym19"sv) {
         copy_reverse(sym19, N, lp1);
         qmf_wrev(sym19, N, hp1);
         copy(sym19, N, lp2);
         qmf_even(sym19, N, hp2);
         return N;
     }
-    if (strcmp(name, "sym20") == 0) {
+    if (name == "sym20"sv) {
         copy_reverse(sym20, N, lp1);
         qmf_wrev(sym20, N, hp1);
         copy(sym20, N, lp2);
         qmf_even(sym20, N, hp2);
         return N;
     }
-    if (strcmp(name, "meyer") == 0) {
+    if (name == "meyer"sv) {
         copy_reverse(meyer, N, lp1);
         qmf_wrev(meyer, N, hp1);
         copy(meyer, N, lp2);

@@ -7,7 +7,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <memory>
+#include <string_view>
 
+using namespace std::string_view_literals;
 
 auto denoise_init(int length, int J, char const* wname) -> denoise_object
 {
@@ -58,10 +60,10 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
     }
 
     wt = wt_init(wave, method, N, J);
-    if (strcmp(method, "dwt") == 0) {
+    if (method == "dwt"sv) {
         setDWTExtension(wt, ext);
         dwt(wt, signal);
-    } else if (strcmp(method, "swt") == 0) {
+    } else if (method == "swt"sv) {
         swt(wt, signal);
     } else {
         printf("Acceptable WT methods are - dwt,swt and modwt\n");
@@ -77,7 +79,7 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
 
     auto dout = std::make_unique<double[]>(dlen);
 
-    if (strcmp(level, "first") == 0) {
+    if (level == "first"sv) {
         for (auto i = 1; i < J; ++i) {
             iter += wt->length[i];
         }
@@ -90,7 +92,7 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         for (it = 0; it < J; ++it) {
             lnoise[it] = sigma;
         }
-    } else if (strcmp(level, "all") == 0) {
+    } else if (level == "all"sv) {
         for (it = 0; it < J; ++it) {
             dlen = wt->length[it + 1];
             for (auto i = 0; i < dlen; ++i) {
@@ -113,13 +115,13 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         dlen = wt->length[it + 1];
         td = sqrt(2.0 * log(dwt_len)) * sigma;
 
-        if (strcmp(thresh, "hard") == 0) {
+        if (thresh == "hard"sv) {
             for (auto i = 0; i < dlen; ++i) {
                 if (fabs(wt->output[iter + i]) < td) {
                     wt->output[iter + i] = 0;
                 }
             }
-        } else if (strcmp(thresh, "soft") == 0) {
+        } else if (thresh == "soft"sv) {
             for (auto i = 0; i < dlen; ++i) {
                 if (fabs(wt->output[iter + i]) < td) {
                     wt->output[iter + i] = 0;
@@ -134,9 +136,9 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         iter += wt->length[it + 1];
     }
 
-    if (strcmp(method, "dwt") == 0) {
+    if (method == "dwt"sv) {
         idwt(wt, denoised);
-    } else if (strcmp(method, "swt") == 0) {
+    } else if (method == "swt"sv) {
         iswt(wt, denoised);
     }
 
@@ -180,10 +182,10 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
 
     wt = wt_init(wave, method, N, J);
 
-    if (strcmp(method, "dwt") == 0) {
+    if (method == "dwt"sv) {
         setDWTExtension(wt, ext);
         dwt(wt, signal);
-    } else if (strcmp(method, "swt") == 0) {
+    } else if (method == "swt"sv) {
         swt(wt, signal);
     } else {
         printf("Acceptable WT methods are - dwt and swt\n");
@@ -200,7 +202,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
 
     iter = wt->length[0];
 
-    if (strcmp(level, "first") == 0) {
+    if (level == "first"sv) {
         for (auto i = 1; i < J; ++i) {
             iter += wt->length[i];
         }
@@ -213,7 +215,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
         for (it = 0; it < J; ++it) {
             lnoise[it] = sigma;
         }
-    } else if (strcmp(level, "all") == 0) {
+    } else if (level == "all"sv) {
         for (it = 0; it < J; ++it) {
             dlen = wt->length[it + 1];
             for (auto i = 0; i < dlen; ++i) {
@@ -271,13 +273,13 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
 
         td = td * sigma;
 
-        if (strcmp(thresh, "hard") == 0) {
+        if (thresh == "hard"sv) {
             for (auto i = 0; i < dwt_len; ++i) {
                 if (fabs(wt->output[len + i]) < td) {
                     wt->output[len + i] = 0;
                 }
             }
-        } else if (strcmp(thresh, "soft") == 0) {
+        } else if (thresh == "soft"sv) {
             for (auto i = 0; i < dwt_len; ++i) {
                 if (fabs(wt->output[len + i]) < td) {
                     wt->output[len + i] = 0;
@@ -292,9 +294,9 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
         len += wt->length[it + 1];
     }
 
-    if (strcmp(method, "dwt") == 0) {
+    if (method == "dwt"sv) {
         idwt(wt, denoised);
-    } else if (strcmp(method, "swt") == 0) {
+    } else if (method == "swt"sv) {
         iswt(wt, denoised);
     }
 
@@ -331,16 +333,16 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
 
     wt = wt_init(wave, "modwt", N, J);
 
-    if ((strcmp(ext, "sym") == 0) && (strcmp(cmethod, "fft") == 0)) {
+    if ((ext == "sym"sv) && (cmethod == "fft"sv)) {
         setWTConv(wt, "fft");
         setDWTExtension(wt, "sym");
-    } else if ((strcmp(ext, "sym") == 0) && (strcmp(cmethod, "direct") == 0)) {
+    } else if ((ext == "sym"sv) && (cmethod == "direct"sv)) {
         printf("Symmetric Extension is not available for direct method");
         exit(-1);
-    } else if ((strcmp(ext, "per") == 0) && (strcmp(cmethod, "direct") == 0)) {
+    } else if ((ext == "per"sv) && (cmethod == "direct"sv)) {
         setWTConv(wt, "direct");
         setDWTExtension(wt, "per");
-    } else if ((strcmp(ext, "per") == 0) && (strcmp(cmethod, "fft") == 0)) {
+    } else if ((ext == "per"sv) && (cmethod == "fft"sv)) {
         setWTConv(wt, "fft");
         setDWTExtension(wt, "per");
     } else {
@@ -379,13 +381,13 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
         dlen = wt->length[it + 1];
         td = sqrt(2.0 * llen / M) * sigma;
 
-        if (strcmp(thresh, "hard") == 0) {
+        if (thresh == "hard"sv) {
             for (auto i = 0; i < dlen; ++i) {
                 if (fabs(wt->output[iter + i]) < td) {
                     wt->output[iter + i] = 0;
                 }
             }
-        } else if (strcmp(thresh, "soft") == 0) {
+        } else if (thresh == "soft"sv) {
             for (auto i = 0; i < dlen; ++i) {
                 if (fabs(wt->output[iter + i]) < td) {
                     wt->output[iter + i] = 0;
@@ -409,26 +411,24 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
 
 void denoise(denoise_object obj, double* signal, double* denoised)
 {
-    if (strcmp(obj->dmethod, "sureshrink") == 0) {
-        if (strcmp(obj->wmethod, "modwt") == 0) {
+    if (obj->dmethod == "sureshrink"sv) {
+        if (obj->wmethod == "modwt"sv) {
             printf("sureshrink method only works with swt and dwt. Please use setDenoiseWTMethod to set the correct method\n");
             exit(-1);
         }
         sureshrink(signal, obj->N, obj->J, obj->wname, obj->wmethod, obj->ext, obj->thresh, obj->level, denoised);
-    } else if (strcmp(obj->dmethod, "visushrink") == 0) {
-        if (strcmp(obj->wmethod, "modwt") == 0) {
+    } else if (obj->dmethod == "visushrink"sv) {
+        if (obj->wmethod == "modwt"sv) {
             printf("visushrink method only works with swt and dwt. Please use setDenoiseWTMethod to set the correct method\n");
             exit(-1);
         }
         visushrink(signal, obj->N, obj->J, obj->wname, obj->wmethod, obj->ext, obj->thresh, obj->level, denoised);
-        ;
-    } else if (strcmp(obj->dmethod, "modwtshrink") == 0) {
-        if (static_cast<int>(strcmp(obj->wmethod, "modwt") != 0) != 0) {
+    } else if (obj->dmethod == "modwtshrink"sv) {
+        if (obj->wmethod != "modwt"sv) {
             printf("modwtshrink method only works with modwt. Please use setDenoiseWTMethod to set the correct method\n");
             exit(-1);
         }
         modwtshrink(signal, obj->N, obj->J, obj->wname, obj->cmethod, obj->ext, obj->thresh, denoised);
-        ;
     } else {
         printf("Acceptable Denoising methods are - sureshrink and visushrink\n");
         exit(-1);
@@ -479,9 +479,9 @@ void setDenoiseParameters(denoise_object obj, char const* thresh, char const* le
 {
 
     //Set thresholding
-    if (strcmp(thresh, "soft") == 0) {
+    if (thresh == "soft"sv) {
         strcpy(obj->thresh, "soft");
-    } else if (strcmp(thresh, "hard") == 0) {
+    } else if (thresh == "hard"sv) {
         strcpy(obj->thresh, "hard");
     } else {
         printf("Thresholding Method - soft or hard");
@@ -490,9 +490,9 @@ void setDenoiseParameters(denoise_object obj, char const* thresh, char const* le
 
     // Set Noise estimation at the first level or at all levels
 
-    if (strcmp(level, "first") == 0) {
+    if (level == "first"sv) {
         strcpy(obj->level, "first");
-    } else if (strcmp(level, "all") == 0) {
+    } else if (level == "all"sv) {
         strcpy(obj->level, "all");
     } else {
         printf("Noise Estimation at level - first or all");
