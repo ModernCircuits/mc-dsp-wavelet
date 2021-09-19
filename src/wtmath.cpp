@@ -302,7 +302,6 @@ void idwt2_shift(int shift, int rows, int cols, double* lpr, double* hpr, int lf
     int N;
     int ir;
     int ic;
-    int J;
     int dim1;
     int dim2;
     int istride;
@@ -313,7 +312,6 @@ void idwt2_shift(int shift, int rows, int cols, double* lpr, double* hpr, int lf
 
     N = rows > cols ? 2 * rows : 2 * cols;
 
-    J = 1;
     dim1 = 2 * rows;
     dim2 = 2 * cols;
 

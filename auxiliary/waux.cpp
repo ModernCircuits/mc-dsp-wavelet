@@ -1,30 +1,13 @@
 #include "waux.h"
 #include "wauxlib.h"
 
+#include <algorithm>
 #include <memory>
-
-auto compare_double(const void* a, const void* b) -> int
-{
-    double arg1 = *(double const*)a;
-    double arg2 = *(double const*)b;
-
-    if (arg1 < arg2) {
-        return -1;
-    }
-    if (arg1 > arg2) {
-        return 1;
-    }
-    return 0;
-}
+#include <numeric>
 
 auto mean(double const* vec, int N) -> double
 {
-    auto m = 0.0;
-    for (auto i = 0; i < N; ++i) {
-        m += vec[i];
-    }
-    m = m / N;
-    return m;
+    return std::accumulate(vec, vec + N, 0.0) / static_cast<double>(N);
 }
 
 auto var(double const* vec, int N) -> double
@@ -45,12 +28,11 @@ auto var(double const* vec, int N) -> double
     return v;
 }
 
-auto median(double* x, int N) -> double
+auto median(double* const x, int N) -> double
 {
+    std::sort(x, x + N, std::less<double> {});
+
     double sigma;
-
-    qsort(x, N, sizeof(double), compare_double);
-
     if ((N % 2) == 0) {
         sigma = (x[N / 2 - 1] + x[N / 2]) / 2.0;
     } else {

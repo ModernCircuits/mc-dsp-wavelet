@@ -1,11 +1,13 @@
 #include "waux.h"
 #include "wauxlib.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
+
 
 auto denoise_init(int length, int J, char const* wname) -> denoise_object
 {
@@ -251,7 +253,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
                     dout[i] = fabs(wt->output[len + i] / sigma);
                 }
 
-                qsort(dout.get(), dwt_len, sizeof(double), compare_double);
+                std::sort(dout.get(), dout.get() + dwt_len, std::less<double> {});
                 for (auto i = 0; i < dwt_len; ++i) {
                     dout[i] = (dout[i] * dout[i]);
                     x_sum += dout[i];

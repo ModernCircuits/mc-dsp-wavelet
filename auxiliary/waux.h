@@ -15,8 +15,6 @@
 #include <cstdlib>
 #include <cstring>
 
-auto compare_double(const void* a, const void* b) -> int;
-
 auto mean(double const* vec, int N) -> double;
 
 auto var(double const* vec, int N) -> double;
