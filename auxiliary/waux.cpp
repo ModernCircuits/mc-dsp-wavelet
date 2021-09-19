@@ -1,6 +1,8 @@
 #include "waux.h"
 #include "wauxlib.h"
 
+#include <memory>
+
 auto compare_double(const void* a, const void* b) -> int
 {
     double arg1 = *(const double*)a;
@@ -150,10 +152,9 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
     int v;
     int t;
     int l2;
-    double* out;
-    double* X_lp;
+
     double* filt;
-    out = (double*)malloc(sizeof(double) * (siglength + 1));
+    auto out = std::make_unique<double[]>(siglength + 1);
     l2 = lf / 2;
     m = -2;
     n = -1;
@@ -166,7 +167,7 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
 
         N = 2 * length[J];
 
-        X_lp = (double*)malloc(sizeof(double) * (N + 2 * lf - 1));
+        auto X_lp = std::make_unique<double[]>(N + 2 * lf - 1);
 
         for (auto i = 0; i < det_len; ++i) {
             out[i] = coeff[i];
@@ -215,8 +216,6 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
             }
         }
 
-        free(X_lp);
-
     } else if (strcmp(ext, "sym") == 0) {
         if (strcmp((ctype), "appx") == 0) {
             det_len = length[0];
@@ -226,8 +225,7 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
 
         N = 2 * length[J] - 1;
 
-        X_lp = (double*)malloc(sizeof(double) * (N + 2 * lf - 1));
-
+        auto X_lp = std::make_unique<double[]>(N + 2 * lf - 1);
         for (auto i = 0; i < det_len; ++i) {
             out[i] = coeff[i];
         }
@@ -271,8 +269,6 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
             }
         }
 
-        free(X_lp);
-
     } else {
         printf("Signal extension can be either per or sym");
         exit(-1);
@@ -281,8 +277,6 @@ void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, c
     for (auto i = 0; i < siglength; ++i) {
         reccoeff[i] = out[i];
     }
-
-    free(out);
 }
 
 void autocovar(const double* vec, int N, double* acov, int M)

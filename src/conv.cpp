@@ -74,25 +74,7 @@ auto conv_init(int N, int L) -> conv_object
     return obj;
 }
 
-void conv_directx(const fft_type* inp1, int N, const fft_type* inp2, int L, fft_type* oup)
-{
-    int M;
-    int k;
-    int n;
-
-    M = N + L - 1;
-
-    for (k = 0; k < M; ++k) {
-        oup[k] = 0.0;
-        for (n = 0; n < N; ++n) {
-            if ((k - n) >= 0 && (k - n) < L) {
-                oup[k] += inp1[n] * inp2[k - n];
-            }
-        }
-    }
-}
-
-void conv_direct(const fft_type* inp1, int N, const fft_type* inp2, int L, fft_type* oup)
+void conv_direct(fft_type const* inp1, int N, fft_type const* inp2, int L, fft_type* oup)
 {
 
     int M;
@@ -143,7 +125,7 @@ void conv_direct(const fft_type* inp1, int N, const fft_type* inp2, int L, fft_t
     }
 }
 
-void conv_fft(const conv_object obj, const fft_type* inp1, const fft_type* inp2, fft_type* oup)
+void conv_fft(const conv_object obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup)
 {
     int i;
     int N;

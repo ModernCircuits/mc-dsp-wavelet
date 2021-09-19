@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -40,18 +41,18 @@ void MODWTReconstructionTest()
     }
     std::vector<std::string> waveletNames;
 
-    for (unsigned int j = 0; j < 15; j++) {
-        waveletNames.push_back(std::string("db") + patch::to_string(j + 1));
+    for (std::size_t j = 0; j < 15; j++) {
+        waveletNames.push_back(std::string("db") + std::to_string(j + 1));
     }
-    for (unsigned int j = 0; j < 5; j++) {
-        waveletNames.push_back(std::string("coif") + patch::to_string(j + 1));
+    for (std::size_t j = 0; j < 5; j++) {
+        waveletNames.push_back(std::string("coif") + std::to_string(j + 1));
     }
-    for (unsigned int j = 1; j < 10; j++) {
-        waveletNames.push_back(std::string("sym") + patch::to_string(j + 1));
+    for (std::size_t j = 1; j < 10; j++) {
+        waveletNames.push_back(std::string("sym") + std::to_string(j + 1));
     }
 
-    for (unsigned int direct_fft = 0; direct_fft < 1; direct_fft++) {
-        for (unsigned int sym_per = 0; sym_per < 1; sym_per++) {
+    for (std::size_t direct_fft = 0; direct_fft < 1; direct_fft++) {
+        for (std::size_t sym_per = 0; sym_per < 1; sym_per++) {
             for (auto& waveletName : waveletNames) {
                 char* name = new char[waveletName.size() + 1];
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
@@ -59,21 +60,21 @@ void MODWTReconstructionTest()
                 for (J = 1; J < 3; J++) {
                     // J = 3;
 
-                    wt = wt_init(obj, (char*)"modwt", N,
+                    wt = wt_init(obj, "modwt", N,
                         J); // Initialize the wavelet transform object
 
                     if (direct_fft == 0) {
-                        setWTConv(wt, (char*)"direct");
+                        setWTConv(wt, "direct");
                     } else {
-                        setWTConv(wt, (char*)"fft");
+                        setWTConv(wt, "fft");
                     }
 
                     if (sym_per == 0) {
                         setDWTExtension(wt,
-                            (char*)"per"); // Options are "per" and "sym".
+                            "per"); // Options are "per" and "sym".
                         // Symmetric is the default option
                     } else if (sym_per == 1 && direct_fft == 1) {
-                        setDWTExtension(wt, (char*)"sym");
+                        setDWTExtension(wt, "sym");
                     } else {
                         break;
                     }
@@ -136,14 +137,14 @@ void MODWT2ReconstructionTest()
 
     std::vector<std::string> waveletNames;
 
-    for (unsigned int j = 0; j < 15; j++) {
-        waveletNames.push_back(std::string("db") + patch::to_string(j + 1));
+    for (std::size_t j = 0; j < 15; j++) {
+        waveletNames.push_back(std::string("db") + std::to_string(j + 1));
     }
-    for (unsigned int j = 0; j < 5; j++) {
-        waveletNames.push_back(std::string("coif") + patch::to_string(j + 1));
+    for (std::size_t j = 0; j < 5; j++) {
+        waveletNames.push_back(std::string("coif") + std::to_string(j + 1));
     }
-    for (unsigned int j = 1; j < 10; j++) {
-        waveletNames.push_back(std::string("sym") + patch::to_string(j + 1));
+    for (std::size_t j = 1; j < 10; j++) {
+        waveletNames.push_back(std::string("sym") + std::to_string(j + 1));
     }
 
     for (i = 0; i < rows; ++i) {
@@ -154,8 +155,8 @@ void MODWT2ReconstructionTest()
         }
     }
 
-    for (unsigned int direct_fft = 0; direct_fft < 1; direct_fft++) {
-        for (unsigned int sym_per = 0; sym_per < 1; sym_per++) {
+    for (std::size_t direct_fft = 0; direct_fft < 1; direct_fft++) {
+        for (std::size_t sym_per = 0; sym_per < 1; sym_per++) {
             for (auto& waveletName : waveletNames) {
                 char* name = new char[waveletName.size() + 1];
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
@@ -163,10 +164,10 @@ void MODWT2ReconstructionTest()
                 for (J = 1; J < 3; J++) {
                     // J = 3;
 
-                    wt = wt2_init(obj, (char*)"modwt", rows, cols,
+                    wt = wt2_init(obj, "modwt", rows, cols,
                         J); // Initialize the wavelet transform object
                     if (sym_per == 0) {
-                        setDWT2Extension(wt, (char*)"per"); // Options are "per"
+                        setDWT2Extension(wt, "per"); // Options are "per"
                     }
 
                     wavecoeffs = modwt2(wt, inp); // Perform DWT
@@ -226,14 +227,14 @@ void DWPTReconstructionTest()
     }
     std::vector<std::string> waveletNames;
 
-    for (unsigned int j = 0; j < 36; j++) {
-        waveletNames.push_back(std::string("db") + patch::to_string(j + 1));
+    for (std::size_t j = 0; j < 36; j++) {
+        waveletNames.push_back(std::string("db") + std::to_string(j + 1));
     }
-    for (unsigned int j = 0; j < 17; j++) {
-        waveletNames.push_back(std::string("coif") + patch::to_string(j + 1));
+    for (std::size_t j = 0; j < 17; j++) {
+        waveletNames.push_back(std::string("coif") + std::to_string(j + 1));
     }
-    for (unsigned int j = 1; j < 20; j++) {
-        waveletNames.push_back(std::string("sym") + patch::to_string(j + 1));
+    for (std::size_t j = 1; j < 20; j++) {
+        waveletNames.push_back(std::string("sym") + std::to_string(j + 1));
     }
 
     waveletNames.emplace_back("bior1.1");
@@ -268,8 +269,8 @@ void DWPTReconstructionTest()
     waveletNames.emplace_back("rbior5.5");
     waveletNames.emplace_back("rbior6.8");
 
-    for (unsigned int ent = 0; ent < 2; ent++) {
-        for (unsigned int sym_per = 0; sym_per < 2; sym_per++) {
+    for (std::size_t ent = 0; ent < 2; ent++) {
+        for (std::size_t sym_per = 0; sym_per < 2; sym_per++) {
             for (auto& waveletName : waveletNames) {
                 char* name = new char[waveletName.size() + 1];
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
@@ -280,16 +281,16 @@ void DWPTReconstructionTest()
                     wt = wpt_init(obj, N, J); // Initialize the wavelet transform object
                     if (sym_per == 0) {
                         setDWPTExtension(wt,
-                            (char*)"sym"); // Options are "per" and "sym".
+                            "sym"); // Options are "per" and "sym".
                         // Symmetric is the default option
                     } else {
-                        setDWPTExtension(wt, (char*)"per");
+                        setDWPTExtension(wt, "per");
                     }
 
                     if (ent == 0) {
-                        setDWPTEntropy(wt, (char*)"shannon", 0);
+                        setDWPTEntropy(wt, "shannon", 0);
                     } else {
-                        setDWPTEntropy(wt, (char*)"logenergy", 0);
+                        setDWPTEntropy(wt, "logenergy", 0);
                     }
 
                     dwpt(wt, inp); // Perform DWT
@@ -338,14 +339,44 @@ void CWTReconstructionTest()
     int it2;
     cwt_object wt;
 
-    char* wave[3];
-    wave[0] = (char*)"morl";
-    wave[1] = (char*)"paul";
-    wave[2] = (char*)"dog";
-    double param[30] = { 4.5, 5, 5.5, 6, 6.5, 8, 10, 13, 17, 20,
-        4, 5, 7, 8, 10, 12, 13, 14, 17, 20,
-        2, 4, 6, 8, 10, 12, 14, 16, 18, 20 };
-    char* type = (char*)"pow";
+    char const* wave[3] {
+        "morl",
+        "paul",
+        "dog",
+    };
+    double param[30] = {
+        4.5,
+        5,
+        5.5,
+        6,
+        6.5,
+        8,
+        10,
+        13,
+        17,
+        20,
+        4,
+        5,
+        7,
+        8,
+        10,
+        12,
+        13,
+        14,
+        17,
+        20,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18,
+        20,
+    };
+    char const* type = "pow";
 
     epsilon = 0.01;
     N = 2048;
@@ -397,27 +428,19 @@ void CWTReconstructionTest()
 
 void DBCoefTests()
 {
-    wave_object obj;
-    double epsilon = 1e-15;
-    double t1;
-    double t2;
-    double t3;
-    double t4;
-    double t5;
-    std::vector<std::string> waveletNames;
-    waveletNames.resize(38);
-    for (unsigned int i = 0; i < waveletNames.size(); i++) {
-        waveletNames[i] = std::string("db") + patch::to_string(i + 1);
-    }
+    constexpr auto epsilon = 1e-15;
+    auto waveletNames = std::vector<std::string>(38);
+    std::generate(begin(waveletNames), end(waveletNames), [i = 1]() mutable {
+        return std::string("db") + std::to_string(i);
+        ++i;
+    });
 
-    for (auto& waveletName : waveletNames) {
-        char* name = new char[waveletName.size() + 1];
-        memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-        obj = wave_init(name); // Initialize the wavelet
-        t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
-        t2 = sum2(obj->lpr, obj->lpr_len) - 1. / sqrt(2.0);
-        t3 = sum3(obj->lpr, obj->lpr_len) - 1. / sqrt(2.0);
-        t4 = sum4(obj->lpr, obj->lpr_len) - 1.;
+    for (auto const& name : waveletNames) {
+        auto obj = wave_init(name.c_str());
+        auto t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
+        auto t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
+        auto t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
+        auto t4 = sum4(obj->lpr, obj->lpr_len) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
             printf("\n ERROR : DB Coefficients Unit Test Failed. Exiting. \n");
@@ -425,14 +448,14 @@ void DBCoefTests()
         }
 
         for (int m = 1; m < (obj->lpr_len / 2) - 1; m++) {
-            t5 = sum5(obj->lpr, obj->lpr_len, m);
+            auto t5 = sum5(obj->lpr, obj->lpr_len, m);
             if (fabs(t5) > epsilon) {
                 printf("\n ERROR : DB Coefficients Unit Test Failed. Exiting. \n");
                 exit(-1);
             }
         }
+
         wave_free(obj);
-        delete[] name;
     }
 }
 
@@ -447,8 +470,8 @@ void CoifCoefTests()
     double t5;
     std::vector<std::string> waveletNames;
     waveletNames.resize(17);
-    for (unsigned int i = 0; i < waveletNames.size(); i++) {
-        waveletNames[i] = std::string("coif") + patch::to_string(i + 1);
+    for (std::size_t i = 0; i < waveletNames.size(); i++) {
+        waveletNames[i] = std::string("coif") + std::to_string(i + 1);
     }
 
     for (auto& waveletName : waveletNames) {
@@ -456,9 +479,9 @@ void CoifCoefTests()
         memcpy(name, waveletName.c_str(), waveletName.size() + 1);
         obj = wave_init(name); // Initialize the wavelet
         t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
-        t2 = sum2(obj->lpr, obj->lpr_len) - 1. / sqrt(2.0);
-        t3 = sum3(obj->lpr, obj->lpr_len) - 1. / sqrt(2.0);
-        t4 = sum4(obj->lpr, obj->lpr_len) - 1.;
+        t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
+        t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
+        t4 = sum4(obj->lpr, obj->lpr_len) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
             printf("\n ERROR : Coif Coefficients Unit Test Failed. Exiting. \n");
@@ -487,8 +510,8 @@ void SymCoefTests()
     double t4;
     double t5;
     std::vector<std::string> waveletNames;
-    for (unsigned int i = 1; i < 20; i++) {
-        waveletNames.push_back(std::string("sym") + patch::to_string(i + 1));
+    for (std::size_t i = 1; i < 20; i++) {
+        waveletNames.push_back(std::string("sym") + std::to_string(i + 1));
     }
 
     for (auto& waveletName : waveletNames) {
@@ -496,9 +519,9 @@ void SymCoefTests()
         memcpy(name, waveletName.c_str(), waveletName.size() + 1);
         obj = wave_init(name); // Initialize the wavelet
         t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
-        t2 = sum2(obj->lpr, obj->lpr_len) - 1. / sqrt(2.0);
-        t3 = sum3(obj->lpr, obj->lpr_len) - 1. / sqrt(2.0);
-        t4 = sum4(obj->lpr, obj->lpr_len) - 1.;
+        t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
+        t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
+        t4 = sum4(obj->lpr, obj->lpr_len) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
             printf("\n ERROR : Sym Coefficients Unit Test Failed. Exiting. \n");
@@ -552,11 +575,11 @@ void BiorCoefTests()
         t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
         t2 = sum1(obj->lpd, obj->lpd_len) - sqrt(2.0);
 
-        t3 = sum2(obj->lpr, obj->lpr_len) - 1. / sqrt(2.0);
-        t4 = sum2(obj->lpd, obj->lpd_len) - 1. / sqrt(2.0);
+        t3 = sum2(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
+        t4 = sum2(obj->lpd, obj->lpd_len) - 1.0 / sqrt(2.0);
 
-        t5 = sum3(obj->lpr, obj->lpr_len) - 1. / sqrt(2.0);
-        t6 = sum3(obj->lpd, obj->lpd_len) - 1. / sqrt(2.0);
+        t5 = sum3(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
+        t6 = sum3(obj->lpd, obj->lpd_len) - 1.0 / sqrt(2.0);
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon || fabs(t5) > epsilon || fabs(t6) > epsilon) {
             printf("\n ERROR : Bior Coefficients Unit Test Failed. Exiting. \n");
@@ -603,11 +626,11 @@ void RBiorCoefTests()
         t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
         t2 = sum1(obj->lpd, obj->lpd_len) - sqrt(2.0);
 
-        t3 = sum2(obj->lpr, obj->lpr_len) - 1. / sqrt(2.0);
-        t4 = sum2(obj->lpd, obj->lpd_len) - 1. / sqrt(2.0);
+        t3 = sum2(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
+        t4 = sum2(obj->lpd, obj->lpd_len) - 1.0 / sqrt(2.0);
 
-        t5 = sum3(obj->lpr, obj->lpr_len) - 1. / sqrt(2.0);
-        t6 = sum3(obj->lpd, obj->lpd_len) - 1. / sqrt(2.0);
+        t5 = sum3(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
+        t6 = sum3(obj->lpd, obj->lpd_len) - 1.0 / sqrt(2.0);
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon || fabs(t5) > epsilon || fabs(t6) > epsilon) {
             printf("\n ERROR : RBior Coefficients Unit Test Failed. Exiting. \n");

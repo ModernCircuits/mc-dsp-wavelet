@@ -37,13 +37,13 @@ void SWTReconstructionTest()
     std::vector<std::string> waveletNames;
 
     for (unsigned int j = 0; j < 15; j++) {
-        waveletNames.push_back(std::string("db") + patch::to_string(j + 1));
+        waveletNames.push_back(std::string("db") + std::to_string(j + 1));
     }
     for (unsigned int j = 0; j < 5; j++) {
-        waveletNames.push_back(std::string("coif") + patch::to_string(j + 1));
+        waveletNames.push_back(std::string("coif") + std::to_string(j + 1));
     }
     for (unsigned int j = 1; j < 10; j++) {
-        waveletNames.push_back(std::string("sym") + patch::to_string(j + 1));
+        waveletNames.push_back(std::string("sym") + std::to_string(j + 1));
     }
 
     waveletNames.emplace_back("bior1.1");
@@ -165,13 +165,13 @@ void SWT2ReconstructionTest()
     std::vector<std::string> waveletNames;
 
     for (unsigned int j = 0; j < 15; j++) {
-        waveletNames.push_back(std::string("db") + patch::to_string(j + 1));
+        waveletNames.push_back(std::string("db") + std::to_string(j + 1));
     }
     for (unsigned int j = 0; j < 5; j++) {
-        waveletNames.push_back(std::string("coif") + patch::to_string(j + 1));
+        waveletNames.push_back(std::string("coif") + std::to_string(j + 1));
     }
     for (unsigned int j = 1; j < 10; j++) {
-        waveletNames.push_back(std::string("sym") + patch::to_string(j + 1));
+        waveletNames.push_back(std::string("sym") + std::to_string(j + 1));
     }
 
     waveletNames.emplace_back("bior1.1");

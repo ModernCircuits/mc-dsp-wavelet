@@ -37,13 +37,13 @@ void DWTReconstructionTest()
     std::vector<std::string> waveletNames;
 
     for (unsigned int j = 0; j < 36; j++) {
-        waveletNames.push_back(std::string("db") + patch::to_string(j + 1));
+        waveletNames.push_back(std::string("db") + std::to_string(j + 1));
     }
     for (unsigned int j = 0; j < 17; j++) {
-        waveletNames.push_back(std::string("coif") + patch::to_string(j + 1));
+        waveletNames.push_back(std::string("coif") + std::to_string(j + 1));
     }
     for (unsigned int j = 1; j < 20; j++) {
-        waveletNames.push_back(std::string("sym") + patch::to_string(j + 1));
+        waveletNames.push_back(std::string("sym") + std::to_string(j + 1));
     }
 
     waveletNames.emplace_back("bior1.1");
@@ -87,19 +87,19 @@ void DWTReconstructionTest()
                 for (J = 1; J < 3; J++) {
                     // J = 3;
 
-                    wt = wt_init(obj, (char*)"dwt", N,
+                    wt = wt_init(obj, "dwt", N,
                         J); // Initialize the wavelet transform object
                     if (sym_per == 0) {
                         setDWTExtension(wt,
-                            (char*)"sym"); // Options are "per" and "sym".
+                            "sym"); // Options are "per" and "sym".
                         // Symmetric is the default option
                     } else {
-                        setDWTExtension(wt, (char*)"per");
+                        setDWTExtension(wt, "per");
                     }
                     if (direct_fft == 0) {
-                        setWTConv(wt, (char*)"direct");
+                        setWTConv(wt, "direct");
                     } else {
-                        setWTConv(wt, (char*)"fft");
+                        setWTConv(wt, "fft");
                     }
 
                     dwt(wt, inp); // Perform DWT
@@ -159,13 +159,13 @@ void DWT2ReconstructionTest()
     std::vector<std::string> waveletNames;
 
     for (unsigned int j = 0; j < 15; j++) {
-        waveletNames.push_back(std::string("db") + patch::to_string(j + 1));
+        waveletNames.push_back(std::string("db") + std::to_string(j + 1));
     }
     for (unsigned int j = 0; j < 5; j++) {
-        waveletNames.push_back(std::string("coif") + patch::to_string(j + 1));
+        waveletNames.push_back(std::string("coif") + std::to_string(j + 1));
     }
     for (unsigned int j = 1; j < 10; j++) {
-        waveletNames.push_back(std::string("sym") + patch::to_string(j + 1));
+        waveletNames.push_back(std::string("sym") + std::to_string(j + 1));
     }
 
     waveletNames.emplace_back("bior1.1");
@@ -217,14 +217,14 @@ void DWT2ReconstructionTest()
                 for (J = 1; J < 3; J++) {
                     // J = 3;
 
-                    wt = wt2_init(obj, (char*)"dwt", rows, cols,
+                    wt = wt2_init(obj, "dwt", rows, cols,
                         J); // Initialize the wavelet transform object
                     if (sym_per == 0) {
                         setDWT2Extension(wt,
-                            (char*)"sym"); // Options are "per" and "sym".
+                            "sym"); // Options are "per" and "sym".
                         // Symmetric is the default option
                     } else {
-                        setDWT2Extension(wt, (char*)"per");
+                        setDWT2Extension(wt, "per");
                     }
 
                     wavecoeffs = dwt2(wt, inp); // Perform DWT

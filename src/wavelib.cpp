@@ -638,22 +638,13 @@ static void dwpt_sym(wpt_object wt, const double* inp, int N, double* cA, int le
 
 static void dwt1(wt_object wt, double* sig, int len_sig, double* cA, double* cD)
 {
-    int len_avg;
-    int D;
-    int lf;
-    double* signal;
-    double* cA_undec;
-    len_avg = (wt->wave->lpd_len + wt->wave->hpd_len) / 2;
-    //len_sig = 2 * (int)ceil((double)len_sig / 2.0);
-
-    D = 2;
+    constexpr auto D = 2;
 
     if (strcmp(wt->ext, "per") == 0) {
-        signal = (double*)malloc(sizeof(double) * (len_sig + len_avg + (len_sig % 2)));
-
-        len_sig = per_ext(sig, len_sig, len_avg / 2, signal);
-
-        cA_undec = (double*)malloc(sizeof(double) * (len_sig + len_avg + wt->wave->lpd_len - 1));
+        auto len_avg = (wt->wave->lpd_len + wt->wave->hpd_len) / 2;
+        auto signal = std::make_unique<double[]>(len_sig + len_avg + (len_sig % 2));
+        len_sig = per_ext(sig, len_sig, len_avg / 2, signal.get());
+        auto cA_undec = std::make_unique<double[]>(len_sig + len_avg + wt->wave->lpd_len - 1);
 
         if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
             wt->cobj = conv_init(len_sig + len_avg, wt->wave->lpd_len);
@@ -663,22 +654,16 @@ static void dwt1(wt_object wt, double* sig, int len_sig, double* cA, double* cD)
             exit(-1);
         }
 
-        wconv(wt, signal, len_sig + len_avg, wt->wave->lpd, wt->wave->lpd_len, cA_undec);
+        wconv(wt, signal.get(), len_sig + len_avg, wt->wave->lpd, wt->wave->lpd_len, cA_undec.get());
+        downsamp(cA_undec.get() + len_avg, len_sig, D, cA);
+        wconv(wt, signal.get(), len_sig + len_avg, wt->wave->hpd, wt->wave->hpd_len, cA_undec.get());
+        downsamp(cA_undec.get() + len_avg, len_sig, D, cD);
 
-        downsamp(cA_undec + len_avg, len_sig, D, cA);
-
-        wconv(wt, signal, len_sig + len_avg, wt->wave->hpd, wt->wave->hpd_len, cA_undec);
-
-        downsamp(cA_undec + len_avg, len_sig, D, cD);
     } else if (strcmp(wt->ext, "sym") == 0) {
-        //printf("\n YES %s \n", wt->ext);
-        lf = wt->wave->lpd_len; // lpd and hpd have the same length
-
-        signal = (double*)malloc(sizeof(double) * (len_sig + 2 * (lf - 1)));
-
-        len_sig = symm_ext(sig, len_sig, lf - 1, signal);
-
-        cA_undec = (double*)malloc(sizeof(double) * (len_sig + 3 * (lf - 1)));
+        auto lf = wt->wave->lpd_len; // lpd and hpd have the same length
+        auto signal = std::make_unique<double[]>(len_sig + 2 * (lf - 1));
+        len_sig = symm_ext(sig, len_sig, lf - 1, signal.get());
+        auto cA_undec = std::make_unique<double[]>(len_sig + 3 * (lf - 1));
 
         if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
             wt->cobj = conv_init(len_sig + 2 * (lf - 1), lf);
@@ -688,13 +673,10 @@ static void dwt1(wt_object wt, double* sig, int len_sig, double* cA, double* cD)
             exit(-1);
         }
 
-        wconv(wt, signal, len_sig + 2 * (lf - 1), wt->wave->lpd, wt->wave->lpd_len, cA_undec);
-
-        downsamp(cA_undec + lf, len_sig + lf - 2, D, cA);
-
-        wconv(wt, signal, len_sig + 2 * (lf - 1), wt->wave->hpd, wt->wave->hpd_len, cA_undec);
-
-        downsamp(cA_undec + lf, len_sig + lf - 2, D, cD);
+        wconv(wt, signal.get(), len_sig + 2 * (lf - 1), wt->wave->lpd, wt->wave->lpd_len, cA_undec.get());
+        downsamp(cA_undec.get() + lf, len_sig + lf - 2, D, cA);
+        wconv(wt, signal.get(), len_sig + 2 * (lf - 1), wt->wave->hpd, wt->wave->hpd_len, cA_undec.get());
+        downsamp(cA_undec.get() + lf, len_sig + lf - 2, D, cD);
     } else {
         printf("Signal extension can be either per or sym");
         exit(-1);
@@ -704,42 +686,20 @@ static void dwt1(wt_object wt, double* sig, int len_sig, double* cA, double* cD)
         free_conv(wt->cobj);
         wt->cfftset = 0;
     }
-
-    free(signal);
-    free(cA_undec);
 }
 
 void dwt(wt_object wt, const double* inp)
 {
-    int J;
-    int temp_len;
-    int iter;
-    int N;
-    int lp;
-    int len_cA;
-    double* orig;
-    double* orig2;
 
-    temp_len = wt->siglength;
-    J = wt->J;
+    auto temp_len = wt->siglength;
+    auto const J = wt->J;
+
     wt->length[J + 1] = temp_len;
     wt->outlength = 0;
     wt->zpad = 0;
-    orig = (double*)malloc(sizeof(double) * temp_len);
-    orig2 = (double*)malloc(sizeof(double) * temp_len);
-    /*
-	if ((temp_len % 2) == 0) {
-	wt->zpad = 0;
-	orig = (double*)malloc(sizeof(double)* temp_len);
-	orig2 = (double*)malloc(sizeof(double)* temp_len);
-	}
-	else {
-	wt->zpad = 1;
-	temp_len++;
-	orig = (double*)malloc(sizeof(double)* temp_len);
-	orig2 = (double*)malloc(sizeof(double)* temp_len);
-	}
-	*/
+
+    auto orig2 = std::make_unique<double[]>(temp_len);
+    auto orig = std::make_unique<double[]>(temp_len);
 
     for (auto i = 0; i < wt->siglength; ++i) {
         orig[i] = inp[i];
@@ -749,8 +709,8 @@ void dwt(wt_object wt, const double* inp)
         orig[temp_len - 1] = orig[temp_len - 2];
     }
 
-    N = temp_len;
-    lp = wt->wave->lpd_len;
+    auto N = temp_len;
+    auto lp = wt->wave->lpd_len;
 
     if (strcmp(wt->ext, "per") == 0) {
         auto i = J;
@@ -764,13 +724,13 @@ void dwt(wt_object wt, const double* inp)
         wt->outlength += wt->length[0];
         N = wt->outlength;
 
-        for (iter = 0; iter < J; ++iter) {
-            len_cA = wt->length[J - iter];
+        for (auto iter = 0; iter < J; ++iter) {
+            auto const len_cA = wt->length[J - iter];
             N -= len_cA;
             if ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0)) {
-                dwt1(wt, orig, temp_len, orig2, wt->params + N);
+                dwt1(wt, orig.get(), temp_len, orig2.get(), wt->params + N);
             } else {
-                dwt_per(wt, orig, temp_len, orig2, len_cA, wt->params + N);
+                dwt_per(wt, orig.get(), temp_len, orig2.get(), len_cA, wt->params + N);
             }
             temp_len = wt->length[J - iter];
             if (iter == J - 1) {
@@ -797,13 +757,13 @@ void dwt(wt_object wt, const double* inp)
         wt->outlength += wt->length[0];
         N = wt->outlength;
 
-        for (iter = 0; iter < J; ++iter) {
-            len_cA = wt->length[J - iter];
+        for (auto iter = 0; iter < J; ++iter) {
+            auto const len_cA = wt->length[J - iter];
             N -= len_cA;
             if ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0)) {
-                dwt1(wt, orig, temp_len, orig2, wt->params + N);
+                dwt1(wt, orig.get(), temp_len, orig2.get(), wt->params + N);
             } else {
-                dwt_sym(wt, orig, temp_len, orig2, len_cA, wt->params + N);
+                dwt_sym(wt, orig.get(), temp_len, orig2.get(), len_cA, wt->params + N);
             }
             temp_len = wt->length[J - iter];
 
@@ -821,9 +781,6 @@ void dwt(wt_object wt, const double* inp)
         printf("Signal extension can be either per or sym");
         exit(-1);
     }
-
-    free(orig);
-    free(orig2);
 }
 
 static void getDWTRecCoeff(const double* coeff, const int* length, const char* ctype, const char* ext, int level, int J, double* lpr,
@@ -839,14 +796,11 @@ static void getDWTRecCoeff(const double* coeff, const int* length, const char* c
     int n;
     int v;
     int t;
-    int l2;
-    double* out;
     double* X_lp;
     double* filt;
-    out = (double*)malloc(sizeof(double) * (siglength + 1));
-    l2 = lf / 2;
-    m = -2;
-    n = -1;
+    auto* out = (double*)malloc(sizeof(double) * (siglength + 1));
+    auto l2 = lf / 2;
+
     if (strcmp(ext, "per") == 0) {
         if (strcmp((ctype), "appx") == 0) {
             det_len = length[0];
@@ -994,8 +948,6 @@ auto getDWTmra(wt_object wt, double* wavecoeffs) -> double*
 
 void wtree(wtree_object wt, const double* inp)
 {
-    int J;
-    int temp_len;
     int iter;
     int N;
     int lp;
@@ -1007,14 +959,14 @@ void wtree(wtree_object wt, const double* inp)
     int t;
     int t2;
     int it1;
-    double* orig;
 
-    temp_len = wt->siglength;
-    J = wt->J;
+    auto temp_len = wt->siglength;
+    auto J = wt->J;
     wt->length[J + 1] = temp_len;
     wt->outlength = 0;
     wt->zpad = 0;
-    orig = (double*)malloc(sizeof(double) * temp_len);
+
+    auto* orig = (double*)malloc(sizeof(double) * temp_len);
     /*
 	if ((temp_len % 2) == 0) {
 		wt->zpad = 0;
@@ -1210,7 +1162,7 @@ void dwpt(wpt_object wt, const double* inp)
 
     N = temp_len;
     lp = wt->wave->lpd_len;
-    p2 = 1;
+    // p2 = 1;
 
     //set eparam value here
     wt->costvalues[0] = costfunc(orig, wt->siglength, wt->entropy, eparam);
@@ -1346,7 +1298,7 @@ void dwpt(wpt_object wt, const double* inp)
         }
     }
 
-    N2 = 0;
+    // N2 = 0;
     it1 = n1;
     it2 = 0;
     wt->nodes = 0;
@@ -1395,38 +1347,26 @@ void dwpt(wpt_object wt, const double* inp)
     free(nodelength);
 }
 
+/// X - Level. All Nodes at any level have the same length
 auto getWTREENodelength(wtree_object wt, int X) -> int
 {
-    int N;
-    N = -1;
-    /*
-	X - Level. All Nodes at any level have the same length
-	*/
     if (X <= 0 || X > wt->J) {
         printf("X co-ordinate must be >= 1 and <= %d", wt->J);
         exit(-1);
     }
 
-    N = wt->length[wt->J - X + 1];
-
-    return N;
+    return wt->length[wt->J - X + 1];
 }
 
+/// X - Level. All Nodes at any level have the same length
 auto getDWPTNodelength(wpt_object wt, int X) -> int
 {
-    int N;
-    N = -1;
-    /*
-	X - Level. All Nodes at any level have the same length
-	*/
     if (X <= 0 || X > wt->J) {
         printf("X co-ordinate must be >= 1 and <= %d", wt->J);
         exit(-1);
     }
 
-    N = wt->length[wt->J - X + 1];
-
-    return N;
+    return wt->length[wt->J - X + 1];
 }
 
 void getWTREECoeffs(wtree_object wt, int X, int Y, double* coeffs, int N)
@@ -1702,35 +1642,28 @@ static void idwt_sym(wt_object wt, double* cA, int len_cA, double* cD, double* X
 
 void idwt(wt_object wt, double* dwtop)
 {
-    int J;
-    int U;
+
     int lf;
     int N;
     int N2;
     int iter;
     int k;
-    int app_len;
     int det_len;
-    double* cA_up;
-    double* X_lp;
-    double* X_hp;
-    double* out;
-    double* temp;
 
-    J = wt->J;
-    U = 2;
-    app_len = wt->length[0];
-    out = (double*)malloc(sizeof(double) * (wt->siglength + 1));
+    auto J = wt->J;
+    auto U = 2;
+    auto app_len = wt->length[0];
+    auto out = std::make_unique<double[]>(wt->siglength + 1);
     if ((strcmp(wt->ext, "per") == 0) && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J];
         lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
-        cA_up = (double*)malloc(sizeof(double) * N);
-        temp = (double*)malloc(sizeof(double) * (N + lf));
-        X_lp = (double*)malloc(sizeof(double) * (N + 2 * lf - 1));
-        X_hp = (double*)malloc(sizeof(double) * (N + 2 * lf - 1));
+        auto cA_up = std::make_unique<double[]>(N);
+        auto temp = std::make_unique<double[]>((N + lf));
+        auto X_lp = std::make_unique<double[]>((N + 2 * lf - 1));
+        auto X_hp = std::make_unique<double[]>((N + 2 * lf - 1));
         iter = app_len;
 
         for (auto i = 0; i < app_len; ++i) {
@@ -1739,9 +1672,9 @@ void idwt(wt_object wt, double* dwtop)
 
         for (auto i = 0; i < J; ++i) {
 
-            idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp, X_hp, out);
+            idwt1(wt, temp.get(), cA_up.get(), out.get(), det_len, wt->output + iter, det_len, X_lp.get(), X_hp.get(), out.get());
             /*
-			idwt_per(wt,out, det_len, wt->output + iter, det_len, X_lp);
+			idwt_per(wt,out.get(), det_len, wt->output + iter, det_len, X_lp);
 			for (k = lf/2 - 1; k < 2 * det_len + lf/2 - 1; ++k) {
 				out[k - lf/2 + 1] = X_lp[k];
 			}
@@ -1749,10 +1682,6 @@ void idwt(wt_object wt, double* dwtop)
             iter += det_len;
             det_len = wt->length[i + 2];
         }
-        free(cA_up);
-        free(X_lp);
-        free(X_hp);
-        free(temp);
 
     } else if ((strcmp(wt->ext, "per") == 0) && (strcmp(wt->cmethod, "direct") == 0)) {
         app_len = wt->length[0];
@@ -1760,7 +1689,7 @@ void idwt(wt_object wt, double* dwtop)
         N = 2 * wt->length[J];
         lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
-        X_lp = (double*)malloc(sizeof(double) * (N + 2 * lf - 1));
+        auto X_lp = std::make_unique<double[]>((N + 2 * lf - 1));
         iter = app_len;
 
         for (auto i = 0; i < app_len; ++i) {
@@ -1769,9 +1698,9 @@ void idwt(wt_object wt, double* dwtop)
 
         for (auto i = 0; i < J; ++i) {
 
-            //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp, X_hp, out);
+            //idwt1(wt, temp, cA_up, out.get(), det_len, wt->output + iter, det_len, X_lp, X_hp, out);
 
-            idwt_per(wt, out, det_len, wt->output + iter, X_lp);
+            idwt_per(wt, out.get(), det_len, wt->output + iter, X_lp.get());
             for (k = lf / 2 - 1; k < 2 * det_len + lf / 2 - 1; ++k) {
                 out[k - lf / 2 + 1] = X_lp[k];
             }
@@ -1780,15 +1709,13 @@ void idwt(wt_object wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-        free(X_lp);
-
     } else if ((strcmp(wt->ext, "sym") == 0) && (strcmp(wt->cmethod, "direct") == 0)) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J] - 1;
         lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
-        X_lp = (double*)malloc(sizeof(double) * (N + 2 * lf - 1));
+        auto X_lp = std::make_unique<double[]>((N + 2 * lf - 1));
         iter = app_len;
 
         for (auto i = 0; i < app_len; ++i) {
@@ -1796,10 +1723,7 @@ void idwt(wt_object wt, double* dwtop)
         }
 
         for (auto i = 0; i < J; ++i) {
-
-            //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp, X_hp, out);
-
-            idwt_sym(wt, out, det_len, wt->output + iter, X_lp);
+            idwt_sym(wt, out.get(), det_len, wt->output + iter, X_lp.get());
             for (k = lf - 2; k < 2 * det_len; ++k) {
                 out[k - lf + 2] = X_lp[k];
             }
@@ -1808,15 +1732,13 @@ void idwt(wt_object wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-        free(X_lp);
-
     } else if ((strcmp(wt->ext, "sym") == 0) && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
         lf = wt->wave->lpd_len; // lpd and hpd have the same length
 
         N = 2 * wt->length[J] - 1;
-        cA_up = (double*)malloc(sizeof(double) * N);
-        X_lp = (double*)malloc(sizeof(double) * (N + lf - 1));
-        X_hp = (double*)malloc(sizeof(double) * (N + lf - 1));
+        auto cA_up = std::make_unique<double[]>(N);
+        auto X_lp = std::make_unique<double[]>((N + lf - 1));
+        auto X_hp = std::make_unique<double[]>((N + lf - 1));
 
         for (auto i = 0; i < app_len; ++i) {
             out[i] = wt->output[i];
@@ -1826,7 +1748,7 @@ void idwt(wt_object wt, double* dwtop)
 
         for (auto i = 0; i < J; ++i) {
             det_len = wt->length[i + 1];
-            upsamp(out, det_len, U, cA_up);
+            upsamp(out.get(), det_len, U, cA_up.get());
             N2 = 2 * wt->length[i + 1] - 1;
 
             if (wt->wave->lpr_len == wt->wave->hpr_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
@@ -1837,11 +1759,9 @@ void idwt(wt_object wt, double* dwtop)
                 exit(-1);
             }
 
-            wconv(wt, cA_up, N2, wt->wave->lpr, lf, X_lp);
-
-            upsamp(wt->output + iter, det_len, U, cA_up);
-
-            wconv(wt, cA_up, N2, wt->wave->hpr, lf, X_hp);
+            wconv(wt, cA_up.get(), N2, wt->wave->lpr, lf, X_lp.get());
+            upsamp(wt->output + iter, det_len, U, cA_up.get());
+            wconv(wt, cA_up.get(), N2, wt->wave->hpr, lf, X_hp.get());
 
             for (k = lf - 2; k < N2 + 1; ++k) {
                 out[k - lf + 2] = X_lp[k] + X_hp[k];
@@ -1853,9 +1773,6 @@ void idwt(wt_object wt, double* dwtop)
             }
         }
 
-        free(cA_up);
-        free(X_lp);
-        free(X_hp);
     } else {
         printf("Signal extension can be either per or sym");
         exit(-1);
@@ -1864,8 +1781,6 @@ void idwt(wt_object wt, double* dwtop)
     for (auto i = 0; i < wt->siglength; ++i) {
         dwtop[i] = out[i];
     }
-
-    free(out);
 }
 
 static void idwpt_per(wpt_object wt, const double* cA, int len_cA, const double* cD, double* X)
@@ -1949,10 +1864,6 @@ void idwpt(wpt_object wt, double* dwtop)
     int index4;
     int indexp;
     int xlen;
-    double* X_lp;
-    double* X;
-    double* out;
-    double* out2;
     int* prep;
     int* ptemp;
 
@@ -1962,10 +1873,10 @@ void idwpt(wpt_object wt, double* dwtop)
     lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
     xlen = p * (app_len + 2 * lf);
 
-    X_lp = (double*)malloc(sizeof(double) * 2 * (wt->length[J] + lf));
-    X = (double*)malloc(sizeof(double) * xlen);
-    out = (double*)malloc(sizeof(double) * wt->length[J]);
-    out2 = (double*)malloc(sizeof(double) * wt->length[J]);
+    auto X_lp = std::make_unique<double[]>(2 * (wt->length[J] + lf));
+    auto X = std::make_unique<double[]>(xlen);
+    auto out = std::make_unique<double[]>(wt->length[J]);
+    auto out2 = std::make_unique<double[]>(wt->length[J]);
     prep = (int*)malloc(sizeof(int) * p);
     ptemp = (int*)malloc(sizeof(int) * p);
     n1 = 1;
@@ -1993,8 +1904,8 @@ void idwpt(wpt_object wt, double* dwtop)
         }
 
         if (strcmp(wt->ext, "per") == 0) {
-            app_len = wt->length[0];
-            det_len = wt->length[1];
+            // app_len = wt->length[0];
+            // det_len = wt->length[1];
             index = 0;
 
             for (auto i = 0; i < J; ++i) {
@@ -2020,7 +1931,7 @@ void idwpt(wpt_object wt, double* dwtop)
                             out[k] = wt->output[index + k];
                             out2[k] = wt->output[index + det_len + k];
                         }
-                        idwpt_per(wt, out, det_len, out2, X_lp);
+                        idwpt_per(wt, out.get(), det_len, out2.get(), X_lp.get());
                         for (k = lf / 2 - 1; k < 2 * det_len + lf / 2 - 1; ++k) {
                             X[index3 + k - lf / 2 + 1] = X_lp[k];
                         }
@@ -2034,7 +1945,7 @@ void idwpt(wpt_object wt, double* dwtop)
                             out[k] = wt->output[index + k];
                             out2[k] = X[index4 + k];
                         }
-                        idwpt_per(wt, out, det_len, out2, X_lp);
+                        idwpt_per(wt, out.get(), det_len, out2.get(), X_lp.get());
                         for (k = lf / 2 - 1; k < 2 * det_len + lf / 2 - 1; ++k) {
                             X[index3 + k - lf / 2 + 1] = X_lp[k];
                         }
@@ -2047,7 +1958,7 @@ void idwpt(wpt_object wt, double* dwtop)
                             out[k] = X[index4 + k];
                             out2[k] = wt->output[index + k];
                         }
-                        idwpt_per(wt, out, det_len, out2, X_lp);
+                        idwpt_per(wt, out.get(), det_len, out2.get(), X_lp.get());
                         for (k = lf / 2 - 1; k < 2 * det_len + lf / 2 - 1; ++k) {
                             X[index3 + k - lf / 2 + 1] = X_lp[k];
                         }
@@ -2060,7 +1971,7 @@ void idwpt(wpt_object wt, double* dwtop)
                             out[k] = X[index4 + k];
                             out2[k] = X[index4 + indexp + k];
                         }
-                        idwpt_per(wt, out, det_len, out2, X_lp);
+                        idwpt_per(wt, out.get(), det_len, out2.get(), X_lp.get());
                         for (k = lf / 2 - 1; k < 2 * det_len + lf / 2 - 1; ++k) {
                             X[index3 + k - lf / 2 + 1] = X_lp[k];
                         }
@@ -2089,8 +2000,8 @@ void idwpt(wpt_object wt, double* dwtop)
             //free(X_lp);
 
         } else if (strcmp(wt->ext, "sym") == 0) {
-            app_len = wt->length[0];
-            det_len = wt->length[1];
+            // app_len = wt->length[0];
+            // det_len = wt->length[1];
 
             //X_lp = (double*)malloc(sizeof(double)* (N + 2 * lf - 1));
             index = 0;
@@ -2118,7 +2029,7 @@ void idwpt(wpt_object wt, double* dwtop)
                             out[k] = wt->output[index + k];
                             out2[k] = wt->output[index + det_len + k];
                         }
-                        idwpt_sym(wt, out, det_len, out2, X_lp);
+                        idwpt_sym(wt, out.get(), det_len, out2.get(), X_lp.get());
                         for (k = lf - 2; k < 2 * det_len; ++k) {
                             X[index3 + k - lf + 2] = X_lp[k];
                         }
@@ -2132,7 +2043,7 @@ void idwpt(wpt_object wt, double* dwtop)
                             out[k] = wt->output[index + k];
                             out2[k] = X[index4 + k];
                         }
-                        idwpt_sym(wt, out, det_len, out2, X_lp);
+                        idwpt_sym(wt, out.get(), det_len, out2.get(), X_lp.get());
                         for (k = lf - 2; k < 2 * det_len; ++k) {
                             X[index3 + k - lf + 2] = X_lp[k];
                         }
@@ -2145,7 +2056,7 @@ void idwpt(wpt_object wt, double* dwtop)
                             out[k] = X[index4 + k];
                             out2[k] = wt->output[index + k];
                         }
-                        idwpt_sym(wt, out, det_len, out2, X_lp);
+                        idwpt_sym(wt, out.get(), det_len, out2.get(), X_lp.get());
                         for (k = lf - 2; k < 2 * det_len; ++k) {
                             X[index3 + k - lf + 2] = X_lp[k];
                         }
@@ -2158,7 +2069,7 @@ void idwpt(wpt_object wt, double* dwtop)
                             out[k] = X[index4 + k];
                             out2[k] = X[index4 + indexp + k];
                         }
-                        idwpt_sym(wt, out, det_len, out2, X_lp);
+                        idwpt_sym(wt, out.get(), det_len, out2.get(), X_lp.get());
                         for (k = lf - 2; k < 2 * det_len; ++k) {
                             X[index3 + k - lf + 2] = X_lp[k];
                         }
@@ -2193,15 +2104,10 @@ void idwpt(wpt_object wt, double* dwtop)
         }
 
         for (auto i = 0; i < wt->siglength; ++i) {
-            //printf("%g ", X[i]);
             dwtop[i] = X[i];
         }
     }
 
-    free(out);
-    free(X_lp);
-    free(X);
-    free(out2);
     free(prep);
     free(ptemp);
 }
@@ -2214,36 +2120,25 @@ static void swt_per(wt_object wt, int M, double* inp, int N, double* cA, int len
 
 static void swt_fft(wt_object wt, const double* inp)
 {
-    int J;
-    int temp_len;
-    int iter;
-    int M;
-    int N;
-    int len_filt;
-    int lenacc;
-    double* low_pass;
-    double* high_pass;
-    double* sig;
-    double* cA;
-    double* cD;
+    int N { 0 };
 
-    temp_len = wt->siglength;
-    J = wt->J;
+    auto temp_len = wt->siglength;
+    auto J = wt->J;
     wt->length[0] = wt->length[J] = temp_len;
     wt->outlength = wt->length[J + 1] = (J + 1) * temp_len;
-    M = 1;
-    for (iter = 1; iter < J; ++iter) {
+    auto M = 1;
+    for (auto iter = 1; iter < J; ++iter) {
         M = 2 * M;
         wt->length[iter] = temp_len;
     }
 
-    len_filt = wt->wave->filtlength;
+    auto const len_filt = wt->wave->filtlength;
 
-    low_pass = (double*)malloc(sizeof(double) * M * len_filt);
-    high_pass = (double*)malloc(sizeof(double) * M * len_filt);
-    sig = (double*)malloc(sizeof(double) * (M * len_filt + temp_len + (temp_len % 2)));
-    cA = (double*)malloc(sizeof(double) * (2 * M * len_filt + temp_len + (temp_len % 2)) - 1);
-    cD = (double*)malloc(sizeof(double) * (2 * M * len_filt + temp_len + (temp_len % 2)) - 1);
+    auto low_pass = std::make_unique<double[]>(M * len_filt);
+    auto high_pass = std::make_unique<double[]>(M * len_filt);
+    auto sig = std::make_unique<double[]>((M * len_filt + temp_len + (temp_len % 2)));
+    auto cA = std::make_unique<double[]>((2 * M * len_filt + temp_len + (temp_len % 2)) - 1);
+    auto cD = std::make_unique<double[]>((2 * M * len_filt + temp_len + (temp_len % 2)) - 1);
 
     M = 1;
 
@@ -2251,15 +2146,15 @@ static void swt_fft(wt_object wt, const double* inp)
         wt->params[i] = inp[i];
     }
 
-    lenacc = wt->outlength;
+    auto lenacc = wt->outlength;
 
-    for (iter = 0; iter < J; ++iter) {
+    for (auto iter = 0; iter < J; ++iter) {
         lenacc -= temp_len;
         if (iter > 0) {
             M = 2 * M;
             N = M * len_filt;
-            upsamp2(wt->wave->lpd, wt->wave->lpd_len, M, low_pass);
-            upsamp2(wt->wave->hpd, wt->wave->hpd_len, M, high_pass);
+            upsamp2(wt->wave->lpd, wt->wave->lpd_len, M, low_pass.get());
+            upsamp2(wt->wave->hpd, wt->wave->hpd_len, M, high_pass.get());
         } else {
             N = len_filt;
             for (auto i = 0; i < N; ++i) {
@@ -2270,7 +2165,7 @@ static void swt_fft(wt_object wt, const double* inp)
 
         //swt_per(wt,M, wt->params, temp_len, cA, temp_len, cD,temp_len);
 
-        per_ext(wt->params, temp_len, N / 2, sig);
+        per_ext(wt->params, temp_len, N / 2, sig.get());
 
         if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
             wt->cobj = conv_init(N + temp_len + (temp_len % 2), N);
@@ -2280,9 +2175,9 @@ static void swt_fft(wt_object wt, const double* inp)
             exit(-1);
         }
 
-        wconv(wt, sig, N + temp_len + (temp_len % 2), low_pass, N, cA);
+        wconv(wt, sig.get(), N + temp_len + (temp_len % 2), low_pass.get(), N, cA.get());
 
-        wconv(wt, sig, N + temp_len + (temp_len % 2), high_pass, N, cD);
+        wconv(wt, sig.get(), N + temp_len + (temp_len % 2), high_pass.get(), N, cD.get());
 
         if (wt->wave->lpd_len == wt->wave->hpd_len && ((strcmp(wt->cmethod, "fft") == 0) || (strcmp(wt->cmethod, "FFT") == 0))) {
             free_conv(wt->cobj);
@@ -2294,12 +2189,6 @@ static void swt_fft(wt_object wt, const double* inp)
             wt->params[lenacc + i] = cD[N + i];
         }
     }
-
-    free(low_pass);
-    free(high_pass);
-    free(sig);
-    free(cA);
-    free(cD);
 }
 
 static void swt_direct(wt_object wt, const double* inp)
@@ -2377,36 +2266,23 @@ static void getSWTRecCoeff(const double* coeff, int* length, const char* ctype, 
     int U;
     int N1;
     int index2;
-    double* appx1;
-    double* det1;
-    double* appx_sig;
-    double* det_sig;
-    double* cL0;
-    double* cH0;
-    double* tempx;
-    double* oup00L;
-    double* oup00H;
-    double* oup00;
-    double* oup01;
-    double* appx2;
-    double* det2;
 
     N = siglength;
     U = 2;
 
-    appx_sig = (double*)malloc(sizeof(double) * N);
-    det_sig = (double*)malloc(sizeof(double) * N);
-    appx1 = (double*)malloc(sizeof(double) * N);
-    det1 = (double*)malloc(sizeof(double) * N);
-    appx2 = (double*)malloc(sizeof(double) * N);
-    det2 = (double*)malloc(sizeof(double) * N);
-    tempx = (double*)malloc(sizeof(double) * N);
-    cL0 = (double*)malloc(sizeof(double) * (N + (N % 2) + lf));
-    cH0 = (double*)malloc(sizeof(double) * (N + (N % 2) + lf));
-    oup00L = (double*)malloc(sizeof(double) * (N + 2 * lf));
-    oup00H = (double*)malloc(sizeof(double) * (N + 2 * lf));
-    oup00 = (double*)malloc(sizeof(double) * N);
-    oup01 = (double*)malloc(sizeof(double) * N);
+    auto appx_sig = std::make_unique<double[]>(N);
+    auto det_sig = std::make_unique<double[]>(N);
+    auto appx1 = std::make_unique<double[]>(N);
+    auto det1 = std::make_unique<double[]>(N);
+    auto appx2 = std::make_unique<double[]>(N);
+    auto det2 = std::make_unique<double[]>(N);
+    auto tempx = std::make_unique<double[]>(N);
+    auto cL0 = std::make_unique<double[]>((N + (N % 2) + lf));
+    auto cH0 = std::make_unique<double[]>((N + (N % 2) + lf));
+    auto oup00L = std::make_unique<double[]>((N + 2 * lf));
+    auto oup00H = std::make_unique<double[]>((N + 2 * lf));
+    auto oup00 = std::make_unique<double[]>(N);
+    auto oup01 = std::make_unique<double[]>(N);
 
     for (iter = J - level; iter < J; ++iter) {
         for (auto i = 0; i < N; ++i) {
@@ -2446,17 +2322,17 @@ static void getSWTRecCoeff(const double* coeff, int* length, const char* ctype, 
                 det2[len0] = det1[index_shift];
                 len0++;
             }
-            upsamp2(appx2, len0, U, tempx);
-            per_ext(tempx, 2 * len0, lf / 2, cL0);
+            upsamp2(appx2.get(), len0, U, tempx.get());
+            per_ext(tempx.get(), 2 * len0, lf / 2, cL0.get());
 
-            upsamp2(det2, len0, U, tempx);
-            per_ext(tempx, 2 * len0, lf / 2, cH0);
+            upsamp2(det2.get(), len0, U, tempx.get());
+            per_ext(tempx.get(), 2 * len0, lf / 2, cH0.get());
 
             N1 = 2 * len0 + lf;
 
-            conv_direct(cL0, N1, lpr, lf, oup00L);
+            conv_direct(cL0.get(), N1, lpr, lf, oup00L.get());
 
-            conv_direct(cH0, N1, hpr, lf, oup00H);
+            conv_direct(cH0.get(), N1, hpr, lf, oup00H.get());
 
             for (auto i = lf - 1; i < 2 * len0 + lf - 1; ++i) {
                 oup00[i - lf + 1] = oup00L[i] + oup00H[i];
@@ -2472,23 +2348,23 @@ static void getSWTRecCoeff(const double* coeff, int* length, const char* ctype, 
                 len0++;
             }
 
-            upsamp2(appx2, len0, U, tempx);
-            per_ext(tempx, 2 * len0, lf / 2, cL0);
+            upsamp2(appx2.get(), len0, U, tempx.get());
+            per_ext(tempx.get(), 2 * len0, lf / 2, cL0.get());
 
-            upsamp2(det2, len0, U, tempx);
-            per_ext(tempx, 2 * len0, lf / 2, cH0);
+            upsamp2(det2.get(), len0, U, tempx.get());
+            per_ext(tempx.get(), 2 * len0, lf / 2, cH0.get());
 
             N1 = 2 * len0 + lf;
 
-            conv_direct(cL0, N1, lpr, lf, oup00L);
+            conv_direct(cL0.get(), N1, lpr, lf, oup00L.get());
 
-            conv_direct(cH0, N1, hpr, lf, oup00H);
+            conv_direct(cH0.get(), N1, hpr, lf, oup00H.get());
 
             for (auto i = lf - 1; i < 2 * len0 + lf - 1; ++i) {
                 oup01[i - lf + 1] = oup00L[i] + oup00H[i];
             }
 
-            circshift(oup01, 2 * len0, -1);
+            circshift(oup01.get(), 2 * len0, -1);
 
             index2 = 0;
 
@@ -2501,20 +2377,6 @@ static void getSWTRecCoeff(const double* coeff, int* length, const char* ctype, 
             appx_sig[i] = swtop[i];
         }
     }
-
-    free(appx_sig);
-    free(det_sig);
-    free(appx1);
-    free(det1);
-    free(tempx);
-    free(cL0);
-    free(cH0);
-    free(oup00L);
-    free(oup00H);
-    free(oup00);
-    free(oup01);
-    free(appx2);
-    free(det2);
 }
 
 auto getSWTmra(wt_object wt, double* wavecoeffs) -> double*
@@ -2556,38 +2418,25 @@ void iswt(wt_object wt, double* swtop)
     int U;
     int N1;
     int index2;
-    double* appx1;
-    double* det1;
-    double* appx_sig;
-    double* det_sig;
-    double* cL0;
-    double* cH0;
-    double* tempx;
-    double* oup00L;
-    double* oup00H;
-    double* oup00;
-    double* oup01;
-    double* appx2;
-    double* det2;
 
     N = wt->siglength;
     J = wt->J;
     U = 2;
     lf = wt->wave->lpr_len;
 
-    appx_sig = (double*)malloc(sizeof(double) * N);
-    det_sig = (double*)malloc(sizeof(double) * N);
-    appx1 = (double*)malloc(sizeof(double) * N);
-    det1 = (double*)malloc(sizeof(double) * N);
-    appx2 = (double*)malloc(sizeof(double) * N);
-    det2 = (double*)malloc(sizeof(double) * N);
-    tempx = (double*)malloc(sizeof(double) * N);
-    cL0 = (double*)malloc(sizeof(double) * (N + (N % 2) + lf));
-    cH0 = (double*)malloc(sizeof(double) * (N + (N % 2) + lf));
-    oup00L = (double*)malloc(sizeof(double) * (N + 2 * lf));
-    oup00H = (double*)malloc(sizeof(double) * (N + 2 * lf));
-    oup00 = (double*)malloc(sizeof(double) * N);
-    oup01 = (double*)malloc(sizeof(double) * N);
+    auto appx_sig = std::make_unique<double[]>(N);
+    auto det_sig = std::make_unique<double[]>(N);
+    auto appx1 = std::make_unique<double[]>(N);
+    auto det1 = std::make_unique<double[]>(N);
+    auto appx2 = std::make_unique<double[]>(N);
+    auto det2 = std::make_unique<double[]>(N);
+    auto tempx = std::make_unique<double[]>(N);
+    auto cL0 = std::make_unique<double[]>((N + (N % 2) + lf));
+    auto cH0 = std::make_unique<double[]>((N + (N % 2) + lf));
+    auto oup00L = std::make_unique<double[]>((N + 2 * lf));
+    auto oup00H = std::make_unique<double[]>((N + 2 * lf));
+    auto oup00 = std::make_unique<double[]>(N);
+    auto oup01 = std::make_unique<double[]>(N);
 
     for (iter = 0; iter < J; ++iter) {
         for (auto i = 0; i < N; ++i) {
@@ -2622,11 +2471,11 @@ void iswt(wt_object wt, double* swtop)
                 det2[len0] = det1[index_shift];
                 len0++;
             }
-            upsamp2(appx2, len0, U, tempx);
-            per_ext(tempx, 2 * len0, lf / 2, cL0);
+            upsamp2(appx2.get(), len0, U, tempx.get());
+            per_ext(tempx.get(), 2 * len0, lf / 2, cL0.get());
 
-            upsamp2(det2, len0, U, tempx);
-            per_ext(tempx, 2 * len0, lf / 2, cH0);
+            upsamp2(det2.get(), len0, U, tempx.get());
+            per_ext(tempx.get(), 2 * len0, lf / 2, cH0.get());
 
             N1 = 2 * len0 + lf;
 
@@ -2638,9 +2487,9 @@ void iswt(wt_object wt, double* swtop)
                 exit(-1);
             }
 
-            wconv(wt, cL0, N1, wt->wave->lpr, lf, oup00L);
+            wconv(wt, cL0.get(), N1, wt->wave->lpr, lf, oup00L.get());
 
-            wconv(wt, cH0, N1, wt->wave->hpr, lf, oup00H);
+            wconv(wt, cH0.get(), N1, wt->wave->hpr, lf, oup00H.get());
 
             for (auto i = lf - 1; i < 2 * len0 + lf - 1; ++i) {
                 oup00[i - lf + 1] = oup00L[i] + oup00H[i];
@@ -2656,23 +2505,22 @@ void iswt(wt_object wt, double* swtop)
                 len0++;
             }
 
-            upsamp2(appx2, len0, U, tempx);
-            per_ext(tempx, 2 * len0, lf / 2, cL0);
+            upsamp2(appx2.get(), len0, U, tempx.get());
+            per_ext(tempx.get(), 2 * len0, lf / 2, cL0.get());
 
-            upsamp2(det2, len0, U, tempx);
-            per_ext(tempx, 2 * len0, lf / 2, cH0);
+            upsamp2(det2.get(), len0, U, tempx.get());
+            per_ext(tempx.get(), 2 * len0, lf / 2, cH0.get());
 
             N1 = 2 * len0 + lf;
 
-            wconv(wt, cL0, N1, wt->wave->lpr, lf, oup00L);
-
-            wconv(wt, cH0, N1, wt->wave->hpr, lf, oup00H);
+            wconv(wt, cL0.get(), N1, wt->wave->lpr, lf, oup00L.get());
+            wconv(wt, cH0.get(), N1, wt->wave->hpr, lf, oup00H.get());
 
             for (auto i = lf - 1; i < 2 * len0 + lf - 1; ++i) {
                 oup01[i - lf + 1] = oup00L[i] + oup00H[i];
             }
 
-            circshift(oup01, 2 * len0, -1);
+            circshift(oup01.get(), 2 * len0, -1);
 
             index2 = 0;
 
@@ -2685,20 +2533,6 @@ void iswt(wt_object wt, double* swtop)
             appx_sig[i] = swtop[i];
         }
     }
-
-    free(appx_sig);
-    free(det_sig);
-    free(appx1);
-    free(det1);
-    free(tempx);
-    free(cL0);
-    free(cH0);
-    free(oup00L);
-    free(oup00H);
-    free(oup00);
-    free(oup01);
-    free(appx2);
-    free(det2);
 }
 
 static void modwt_per(wt_object wt, int M, const double* inp, double* cA, int len_cA, double* cD)
@@ -3017,7 +2851,7 @@ auto getMODWTmra(wt_object wt, double* wavecoeffs) -> double*
     int J;
     int temp_len;
     int iter;
-    int M;
+    // int M;
     int N;
     int len_avg;
     int lmra;
@@ -3088,7 +2922,7 @@ auto getMODWTmra(wt_object wt, double* wavecoeffs) -> double*
     conj_complex(low_pass, N);
     conj_complex(high_pass, N);
 
-    M = (int)pow(2.0, (double)J - 1.0);
+    // M = (int)pow(2.0, (double)J - 1.0);
     lenacc = N;
 
     //
@@ -3143,7 +2977,7 @@ auto getMODWTmra(wt_object wt, double* wavecoeffs) -> double*
 void imodwt_fft(wt_object wt, double* oup)
 {
     int J;
-    int temp_len;
+    // int temp_len;
     int iter;
     int M;
     int N;
@@ -3162,11 +2996,11 @@ void imodwt_fft(wt_object wt, double* oup)
 
     N = wt->modwtsiglength;
     len_avg = wt->wave->lpd_len;
-    if (strcmp(wt->ext, "sym") == 0) {
-        temp_len = N / 2;
-    } else if (strcmp(wt->ext, "per") == 0) {
-        temp_len = N;
-    }
+    // if (strcmp(wt->ext, "sym") == 0) {
+    //     temp_len = N / 2;
+    // } else if (strcmp(wt->ext, "per") == 0) {
+    //     temp_len = N;
+    // }
     J = wt->J;
 
     s = sqrt(2.0);
@@ -4102,7 +3936,7 @@ void imodwt2(wt2_object wt, double* wavecoeff, double* oup)
     int rows;
     int cols;
     int M;
-    int N;
+    // int N;
     int ir;
     int ic;
     int lf;
@@ -4125,7 +3959,7 @@ void imodwt2(wt2_object wt, double* wavecoeff, double* oup)
     J = wt->J;
 
     M = (int)pow(2.0, (double)J - 1.0);
-    N = rows > cols ? rows : cols;
+    // N = rows > cols ? rows : cols;
     lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
     filt = (double*)malloc(sizeof(double) * 2 * lf);

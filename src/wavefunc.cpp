@@ -1,28 +1,10 @@
 #include "wavefunc.h"
 
+#include <memory>
+
 void meyer(int N, double lb, double ub, double* phi, double* psi, double* tgrid)
 {
-    int M;
-    int i;
-    double* w;
-    double delta;
-    double j;
-    double theta;
-    double x;
-    double x2;
-    double x3;
-    double x4;
-    double v;
-    double cs;
-    double sn;
-    double wf;
-    fft_data* phiw;
-    fft_data* psiw;
-    fft_data* oup;
-    fft_object obj;
-
-    M = divideby(N, 2);
-
+    auto const M = divideby(N, 2);
     if (M == 0) {
         printf("Size of Wavelet must be a power of 2");
         exit(1);
@@ -32,73 +14,68 @@ void meyer(int N, double lb, double ub, double* phi, double* psi, double* tgrid)
         exit(1);
     }
 
-    obj = fft_init(N, -1);
-    w = (double*)malloc(sizeof(double) * N);
-    phiw = (fft_data*)malloc(sizeof(fft_data) * N);
-    psiw = (fft_data*)malloc(sizeof(fft_data) * N);
-    oup = (fft_data*)malloc(sizeof(fft_data) * N);
+    fft_object obj = fft_init(N, -1);
+    auto w = std::make_unique<double[]>(N);
+    auto phiw = std::make_unique<fft_data[]>(N);
+    auto psiw = std::make_unique<fft_data[]>(N);
+    auto oup = std::make_unique<fft_data[]>(N);
 
-    delta = 2 * (ub - lb) / PI2;
+    auto const delta = 2 * (ub - lb) / PI2;
 
-    j = (double)N;
+    auto j = (double)N;
     j *= -1.0;
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         w[i] = j / delta;
         j += 2.0;
         psiw[i].re = psiw[i].im = 0.0;
         phiw[i].re = phiw[i].im = 0.0;
     }
 
-    for (i = 0; i < N; ++i) {
-        wf = fabs(w[i]);
+    for (auto i = 0; i < N; ++i) {
+        auto const wf = fabs(w[i]);
         if (wf <= PI2 / 3.0) {
             phiw[i].re = 1.0;
         }
         if (wf > PI2 / 3.0 && wf <= 2 * PI2 / 3.0) {
-            x = (3 * wf / PI2) - 1.0;
-            x2 = x * x;
-            x3 = x2 * x;
-            x4 = x3 * x;
-            v = x4 * (35 - 84 * x + 70 * x2 - 20 * x3);
-            theta = v * PI2 / 4.0;
-            cs = cos(theta);
-            sn = sin(theta);
+            auto const x = (3 * wf / PI2) - 1.0;
+            auto const x2 = x * x;
+            auto const x3 = x2 * x;
+            auto const x4 = x3 * x;
+            auto const v = x4 * (35 - 84 * x + 70 * x2 - 20 * x3);
+            auto const theta = v * PI2 / 4.0;
+            auto const cs = cos(theta);
+            auto const sn = sin(theta);
 
             phiw[i].re = cs;
             psiw[i].re = cos(w[i] / 2.0) * sn;
             psiw[i].im = sin(w[i] / 2.0) * sn;
         }
         if (wf > 2.0 * PI2 / 3.0 && wf <= 4 * PI2 / 3.0) {
-            x = (1.5 * wf / PI2) - 1.0;
-            x2 = x * x;
-            x3 = x2 * x;
-            x4 = x3 * x;
-            v = x4 * (35 - 84 * x + 70 * x2 - 20 * x3);
-            theta = v * PI2 / 4.0;
-            cs = cos(theta);
+            auto const x = (1.5 * wf / PI2) - 1.0;
+            auto const x2 = x * x;
+            auto const x3 = x2 * x;
+            auto const x4 = x3 * x;
+            auto const v = x4 * (35 - 84 * x + 70 * x2 - 20 * x3);
+            auto const theta = v * PI2 / 4.0;
+            auto const cs = cos(theta);
 
             psiw[i].re = cos(w[i] / 2.0) * cs;
             psiw[i].im = sin(w[i] / 2.0) * cs;
         }
     }
 
-    nsfft_exec(obj, phiw, oup, lb, ub, tgrid);
+    nsfft_exec(obj, phiw.get(), oup.get(), lb, ub, tgrid);
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         phi[i] = oup[i].re / N;
     }
 
-    nsfft_exec(obj, psiw, oup, lb, ub, tgrid);
+    nsfft_exec(obj, psiw.get(), oup.get(), lb, ub, tgrid);
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         psi[i] = oup[i].re / N;
     }
-
-    free(oup);
-    free(phiw);
-    free(psiw);
-    free(w);
 }
 
 void gauss(int N, int p, double lb, double ub, double* psi, double* t)

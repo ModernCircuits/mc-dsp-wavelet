@@ -8,8 +8,6 @@ void cwavelet(const double* y, int N, double dt, int mother, double param, doubl
 
 void psi0(int mother, double param, double* val, int* real);
 
-auto factorial(int N) -> double;
-
 auto cdelta(int mother, double param, double psi0) -> double;
 
 void icwavelet(const double* wave, int N, double* scale, int jtot, double dt, double dj, double cdelta, double psi0, double* oup);

@@ -3,16 +3,6 @@
 #include <sstream>
 #include <string>
 
-namespace patch {
-template <typename T>
-auto to_string(const T& n) -> std::string
-{
-    std::ostringstream stm;
-    stm << n;
-    return stm.str();
-}
-} // namespace patch
-
 auto absmax(double* array, int N) -> double;
 auto sum1(const double* array, int N) -> double;
 auto sum2(const double* array, int N) -> double;

@@ -4,37 +4,15 @@
 
 static void nsfft_fd(fft_object obj, fft_data* inp, fft_data* oup, double lb, double ub, double* w)
 {
-    int M;
-    int N;
-    int i;
-    int j;
-    int L;
-    double delta;
-    double den;
-    double theta;
-    double tempr;
-    double tempi;
-    double plb;
-    double* temp1;
-    double* temp2;
+    auto const N = obj->N;
+    auto const L = N / 2;
 
-    N = obj->N;
-    L = N / 2;
-    //w = (double*)malloc(sizeof(double)*N);
+    auto temp1 = std::make_unique<double[]>(L);
+    auto temp2 = std::make_unique<double[]>(L);
 
-    M = divideby(N, 2);
-
-    if (M == 0) {
-        printf("The Non-Standard FFT Length must be a power of 2");
-        exit(1);
-    }
-
-    temp1 = (double*)malloc(sizeof(double) * L);
-    temp2 = (double*)malloc(sizeof(double) * L);
-
-    delta = (ub - lb) / N;
-    j = -N;
-    den = 2 * (ub - lb);
+    auto const delta = (ub - lb) / N;
+    auto const den = 2 * (ub - lb);
+    auto j = -N;
 
     for (auto i = 0; i < N; ++i) {
         w[i] = (double)j / den;
@@ -58,32 +36,25 @@ static void nsfft_fd(fft_object obj, fft_data* inp, fft_data* oup, double lb, do
         oup[N - L + i].im = temp2[i];
     }
 
-    plb = PI2 * lb;
+    auto const plb = PI2 * lb;
 
     for (auto i = 0; i < N; ++i) {
-        tempr = oup[i].re;
-        tempi = oup[i].im;
-        theta = w[i] * plb;
+        auto const tempr = oup[i].re;
+        auto const tempi = oup[i].im;
+        auto const theta = w[i] * plb;
 
         oup[i].re = delta * (tempr * cos(theta) + tempi * sin(theta));
         oup[i].im = delta * (tempi * cos(theta) - tempr * sin(theta));
     }
-
-    //free(w);
-    free(temp1);
-    free(temp2);
 }
 
 static void nsfft_bk(fft_object obj, fft_data* inp, fft_data* oup, double lb, double ub, double* t)
 {
-    int j;
-    double den;
-    double plb;
 
-    auto N = obj->N;
-    auto L = N / 2;
+    auto const N = obj->N;
+    auto const L = N / 2;
 
-    auto M = divideby(N, 2);
+    auto const M = divideby(N, 2);
 
     if (M == 0) {
         printf("The Non-Standard FFT Length must be a power of 2");
@@ -95,16 +66,16 @@ static void nsfft_bk(fft_object obj, fft_data* inp, fft_data* oup, double lb, do
     auto w = std::make_unique<double[]>(N);
     auto inpt = std::make_unique<fft_data[]>(N);
 
-    auto delta = (ub - lb) / N;
-    j = -N;
-    den = 2 * (ub - lb);
+    auto const delta = (ub - lb) / N;
+    auto const den = 2 * (ub - lb);
+    auto j = -N;
 
     for (auto i = 0; i < N; ++i) {
         w[i] = (double)j / den;
         j += 2;
     }
 
-    plb = PI2 * lb;
+    auto const plb = PI2 * lb;
 
     for (auto i = 0; i < N; ++i) {
         auto const theta = w[i] * plb;
@@ -143,9 +114,9 @@ void nsfft_exec(fft_object obj, fft_data* inp, fft_data* oup, double lb, double 
     }
 }
 
+// Rounds to the integer nearest to zero
 static auto fix(double x) -> double
 {
-    // Rounds to the integer nearest to zero
     if (x >= 0.) {
         return floor(x);
     }
@@ -154,11 +125,7 @@ static auto fix(double x) -> double
 
 auto nint(double N) -> int
 {
-    int i;
-
-    i = (int)(N + 0.49999);
-
-    return i;
+    return static_cast<int>(N + 0.49999);
 }
 
 auto cwt_gamma(double x) -> double

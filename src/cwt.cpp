@@ -10,7 +10,7 @@ C. Torrence and G. Compo, and is available at URL: http://atoc.colorado.edu/rese
 
 #include <memory>
 
-auto factorial(int N) -> double
+static auto factorial(int N) -> double
 {
     static const double fact[41] = {
         1.0,
@@ -63,6 +63,7 @@ auto factorial(int N) -> double
 
     return fact[N];
 }
+
 static void wave_function(int nk, double dt, int mother, double param, double scale1, const double* kwave, double pi, double* period1,
     double* coi1, fft_data* daughter)
 {
@@ -169,7 +170,6 @@ void cwavelet(const double* y, int N, double dt, int mother, double param, doubl
     double tmp1;
     double tmp2;
     double scale1;
-    double* kwave;
     fft_object obj;
     fft_object iobj;
     fft_data* ypad;
@@ -192,8 +192,7 @@ void cwavelet(const double* y, int N, double dt, int mother, double param, doubl
     ypad = (fft_data*)malloc(sizeof(fft_data) * npad);
     yfft = (fft_data*)malloc(sizeof(fft_data) * npad);
     daughter = (fft_data*)malloc(sizeof(fft_data) * npad);
-    kwave = (double*)malloc(sizeof(double) * npad);
-
+    auto kwave = std::make_unique<double[]>(npad);
     ymean = 0.0;
 
     for (auto i = 0; i < N; ++i) {
@@ -237,7 +236,7 @@ void cwavelet(const double* y, int N, double dt, int mother, double param, doubl
 
     for (j = 1; j <= jtot; ++j) {
         scale1 = scale[j - 1]; // = s0*std::pow(2.0, (double)(j - 1)*dj);
-        wave_function(npad, dt, mother, param, scale1, kwave, pi, &period1, &coi1, daughter);
+        wave_function(npad, dt, mother, param, scale1, kwave.get(), pi, &period1, &coi1, daughter);
         period[j - 1] = period1;
         for (k = 0; k < npad; ++k) {
             tmp1 = daughter[k].re * yfft[k].re - daughter[k].im * yfft[k].im;
@@ -258,7 +257,6 @@ void cwavelet(const double* y, int N, double dt, int mother, double param, doubl
         coi[N - i] = coi[i - 1];
     }
 
-    free(kwave);
     free(ypad);
     free(yfft);
     free(daughter);

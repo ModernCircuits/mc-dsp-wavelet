@@ -26,7 +26,7 @@ auto fft_real_init(int N, int sgn) -> fft_real_object
     return obj;
 }
 
-void fft_r2c_exec(fft_real_object obj, const fft_type* inp, fft_data* oup)
+void fft_r2c_exec(fft_real_object obj, fft_type const* inp, fft_data* oup)
 {
     fft_data* cinp;
     fft_data* coup;
