@@ -16,7 +16,6 @@ struct denoise_set {
     char thresh[10]; // thresholding - soft or hard
     char level[10]; // Noise Estimation level - first or all
     char dmethod[20]; //Denoising Method -sureshrink or visushrink
-    //double params[0];
 };
 
 using denoise_object = struct denoise_set*;

@@ -58,7 +58,7 @@ struct fft_set {
     int factors[64];
     int lf;
     int lt;
-    fft_data twiddle[1];
+    std::unique_ptr<fft_data[]> data;
 };
 
 using fft_object = fft_set*;

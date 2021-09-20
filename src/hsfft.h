@@ -20,21 +20,11 @@
 #define fft_type double
 #endif
 
-/*
-#define SADD(a,b) ((a)+(b))
-
-#define SSUB(a,b) ((a)+(b))
-
-#define SMUL(a,b) ((a)*(b))
-*/
-
 void fft_exec(fft_object obj, fft_data* inp, fft_data* oup);
 
 auto divideby(int M, int d) -> int;
 
 auto dividebyN(int N) -> int;
-
-//void arrrev(int M, int* arr);
 
 auto factors(int M, int* arr) -> int;
 

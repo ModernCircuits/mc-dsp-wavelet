@@ -11,18 +11,15 @@
 
 auto fft_init(int N, int sgn) -> fft_object
 {
-    fft_object obj = nullptr;
-    // Change N/2 to N-1 for longvector case
-
-    int twi_len;
-    int ct;
-    int out;
-    out = dividebyN(N);
+    auto obj = std::unique_ptr<fft_set>();
+    int twi_len { 0 };
+    auto const out = dividebyN(N);
 
     if (out == 1) {
-        obj = (fft_object)malloc(sizeof(struct fft_set) + sizeof(fft_data) * (N - 1));
+        obj = std::make_unique<fft_set>();
+        obj->data = makeZeros<fft_data>(N);
         obj->lf = factors(N, obj->factors);
-        longvectorN(obj->twiddle, obj->factors, obj->lf);
+        longvectorN(obj->data.get(), obj->factors, obj->lf);
         twi_len = N;
         obj->lt = 0;
     } else {
@@ -35,9 +32,10 @@ auto fft_init(int N, int sgn) -> fft_object
         } else {
             M = K;
         }
-        obj = (fft_object)malloc(sizeof(struct fft_set) + sizeof(fft_data) * (M - 1));
+        obj = std::make_unique<fft_set>();
+        obj->data = makeZeros<fft_data>(M);
         obj->lf = factors(M, obj->factors);
-        longvectorN(obj->twiddle, obj->factors, obj->lf);
+        longvectorN(obj->data.get(), obj->factors, obj->lf);
         obj->lt = 1;
         twi_len = M;
     }
@@ -46,12 +44,12 @@ auto fft_init(int N, int sgn) -> fft_object
     obj->sgn = sgn;
 
     if (sgn == -1) {
-        for (ct = 0; ct < twi_len; ct++) {
-            (obj->twiddle + ct)->im = -(obj->twiddle + ct)->im;
+        for (auto ct = 0; ct < twi_len; ct++) {
+            (obj->data.get() + ct)->im = -(obj->data.get() + ct)->im;
         }
     }
 
-    return obj;
+    return obj.release();
 }
 
 static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj, int sgn, int N, int l, int inc)
@@ -565,8 +563,8 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
 
         for (k = 0; k < m; k++) {
             ind = m - 1 + k;
-            wlr = (obj->twiddle + ind)->re;
-            wli = (obj->twiddle + ind)->im;
+            wlr = (obj->data.get() + ind)->re;
+            wli = (obj->data.get() + ind)->im;
 
             tkm1 = k + m;
 
@@ -613,11 +611,11 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
 
         for (k = 0; k < m; ++k) {
             ind = m - 1 + 2 * k;
-            wlr = (obj->twiddle + ind)->re;
-            wli = (obj->twiddle + ind)->im;
+            wlr = (obj->data.get() + ind)->re;
+            wli = (obj->data.get() + ind)->im;
             ind++;
-            wl2r = (obj->twiddle + ind)->re;
-            wl2i = (obj->twiddle + ind)->im;
+            wl2r = (obj->data.get() + ind)->re;
+            wl2i = (obj->data.get() + ind)->im;
             tkm1 = k + m;
             tkm2 = tkm1 + m;
 
@@ -728,14 +726,14 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
 
         for (k = 1; k < m; k++) {
             ind = m - 1 + 3 * k;
-            wlr = (obj->twiddle + ind)->re;
-            wli = (obj->twiddle + ind)->im;
+            wlr = (obj->data.get() + ind)->re;
+            wli = (obj->data.get() + ind)->im;
             ind++;
-            wl2r = (obj->twiddle + ind)->re;
-            wl2i = (obj->twiddle + ind)->im;
+            wl2r = (obj->data.get() + ind)->re;
+            wl2i = (obj->data.get() + ind)->im;
             ind++;
-            wl3r = (obj->twiddle + ind)->re;
-            wl3i = (obj->twiddle + ind)->im;
+            wl3r = (obj->data.get() + ind)->re;
+            wl3i = (obj->data.get() + ind)->im;
 
             tkm1 = k + m;
             tkm2 = tkm1 + m;
@@ -902,17 +900,17 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
 
         for (k = 1; k < m; k++) {
             ind = m - 1 + 4 * k;
-            wlr = (obj->twiddle + ind)->re;
-            wli = (obj->twiddle + ind)->im;
+            wlr = (obj->data.get() + ind)->re;
+            wli = (obj->data.get() + ind)->im;
             ind++;
-            wl2r = (obj->twiddle + ind)->re;
-            wl2i = (obj->twiddle + ind)->im;
+            wl2r = (obj->data.get() + ind)->re;
+            wl2i = (obj->data.get() + ind)->im;
             ind++;
-            wl3r = (obj->twiddle + ind)->re;
-            wl3i = (obj->twiddle + ind)->im;
+            wl3r = (obj->data.get() + ind)->re;
+            wl3i = (obj->data.get() + ind)->im;
             ind++;
-            wl4r = (obj->twiddle + ind)->re;
-            wl4i = (obj->twiddle + ind)->im;
+            wl4r = (obj->data.get() + ind)->re;
+            wl4i = (obj->data.get() + ind)->im;
 
             tkm1 = k + m;
             tkm2 = tkm1 + m;
@@ -1184,23 +1182,23 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
 
         for (k = 1; k < m; k++) {
             ind = m - 1 + 6 * k;
-            wlr = (obj->twiddle + ind)->re;
-            wli = (obj->twiddle + ind)->im;
+            wlr = (obj->data.get() + ind)->re;
+            wli = (obj->data.get() + ind)->im;
             ind++;
-            wl2r = (obj->twiddle + ind)->re;
-            wl2i = (obj->twiddle + ind)->im;
+            wl2r = (obj->data.get() + ind)->re;
+            wl2i = (obj->data.get() + ind)->im;
             ind++;
-            wl3r = (obj->twiddle + ind)->re;
-            wl3i = (obj->twiddle + ind)->im;
+            wl3r = (obj->data.get() + ind)->re;
+            wl3i = (obj->data.get() + ind)->im;
             ind++;
-            wl4r = (obj->twiddle + ind)->re;
-            wl4i = (obj->twiddle + ind)->im;
+            wl4r = (obj->data.get() + ind)->re;
+            wl4i = (obj->data.get() + ind)->im;
             ind++;
-            wl5r = (obj->twiddle + ind)->re;
-            wl5i = (obj->twiddle + ind)->im;
+            wl5r = (obj->data.get() + ind)->re;
+            wl5i = (obj->data.get() + ind)->im;
             ind++;
-            wl6r = (obj->twiddle + ind)->re;
-            wl6i = (obj->twiddle + ind)->im;
+            wl6r = (obj->data.get() + ind)->re;
+            wl6i = (obj->data.get() + ind)->im;
 
             tkm1 = k + m;
             tkm2 = tkm1 + m;
@@ -1396,26 +1394,26 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
 
         for (k = 0; k < m; k++) {
             ind = m - 1 + 7 * k;
-            wlr = (obj->twiddle + ind)->re;
-            wli = (obj->twiddle + ind)->im;
+            wlr = (obj->data.get() + ind)->re;
+            wli = (obj->data.get() + ind)->im;
             ind++;
-            wl2r = (obj->twiddle + ind)->re;
-            wl2i = (obj->twiddle + ind)->im;
+            wl2r = (obj->data.get() + ind)->re;
+            wl2i = (obj->data.get() + ind)->im;
             ind++;
-            wl3r = (obj->twiddle + ind)->re;
-            wl3i = (obj->twiddle + ind)->im;
+            wl3r = (obj->data.get() + ind)->re;
+            wl3i = (obj->data.get() + ind)->im;
             ind++;
-            wl4r = (obj->twiddle + ind)->re;
-            wl4i = (obj->twiddle + ind)->im;
+            wl4r = (obj->data.get() + ind)->re;
+            wl4i = (obj->data.get() + ind)->im;
             ind++;
-            wl5r = (obj->twiddle + ind)->re;
-            wl5i = (obj->twiddle + ind)->im;
+            wl5r = (obj->data.get() + ind)->re;
+            wl5i = (obj->data.get() + ind)->im;
             ind++;
-            wl6r = (obj->twiddle + ind)->re;
-            wl6i = (obj->twiddle + ind)->im;
+            wl6r = (obj->data.get() + ind)->re;
+            wl6i = (obj->data.get() + ind)->im;
             ind++;
-            wl7r = (obj->twiddle + ind)->re;
-            wl7i = (obj->twiddle + ind)->im;
+            wl7r = (obj->data.get() + ind)->re;
+            wl7i = (obj->data.get() + ind)->im;
 
             tkm1 = k + m;
             tkm2 = tkm1 + m;
@@ -1592,8 +1590,8 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
             yr[0] = op[k].re;
             yi[0] = op[k].im;
             for (i = 0; i < radix - 1; ++i) {
-                wlr[i] = (obj->twiddle + ind)->re;
-                wli[i] = (obj->twiddle + ind)->im;
+                wlr[i] = (obj->data.get() + ind)->re;
+                wli[i] = (obj->data.get() + ind)->im;
                 tkm = k + (i + 1) * m;
                 yr[i + 1] = op[tkm].re * wlr[i] - op[tkm].im * wli[i];
                 yi[i + 1] = op[tkm].im * wlr[i] + op[tkm].re * wli[i];
@@ -1768,7 +1766,7 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_object obj, int sgn
     //IFFT
 
     for (ii = 0; ii < M; ++ii) {
-        (obj->twiddle + ii)->im = -(obj->twiddle + ii)->im;
+        (obj->data.get() + ii)->im = -(obj->data.get() + ii)->im;
     }
 
     obj->sgn = -1 * sgn;
@@ -1791,7 +1789,7 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_object obj, int sgn
     obj->N = def_N;
     obj->lt = def_lt;
     for (ii = 0; ii < M; ++ii) {
-        (obj->twiddle + ii)->im = -(obj->twiddle + ii)->im;
+        (obj->data.get() + ii)->im = -(obj->data.get() + ii)->im;
     }
 }
 
