@@ -23,14 +23,14 @@ auto wave_init(char const* wname) -> wave_set*
     if (wname != nullptr) {
         retval = filtlength(wname);
         //obj->filtlength = retval;
-        //strcopy(obj->wname, wname);
+        //strcopy(obj->wname.c_str(), wname);
     }
 
     auto obj = std::make_unique<wave_set>();
     obj->params = std::make_unique<double[]>(4 * retval);
     obj->filtlength = retval;
     obj->lpd_len = obj->hpd_len = obj->lpr_len = obj->hpr_len = obj->filtlength;
-    strcpy(obj->wname, wname);
+    obj->wname = wname;
     if (wname != nullptr) {
         filtcoef(wname, obj->params.get(), obj->params.get() + retval, obj->params.get() + 2 * retval, obj->params.get() + 3 * retval);
     }
@@ -65,12 +65,12 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_set
         obj = std::make_unique<wt_set>();
         obj->params = std::make_unique<double[]>(siglength + 2 * J * (size + 1));
         obj->outlength = siglength + 2 * J * (size + 1);
-        strcpy(obj->ext, "sym");
+        obj->ext = "sym";
     } else if ((method == "dwt"sv) || (method == "DWT"sv)) {
         obj = std::make_unique<wt_set>();
         obj->params = std::make_unique<double[]>(siglength + 2 * J * (size + 1));
         obj->outlength = siglength + 2 * J * (size + 1);
-        strcpy(obj->ext, "sym");
+        obj->ext = "sym";
     } else if ((method == "swt"sv) || (method == "SWT"sv)) {
         if (testSWTlength(siglength, J) == 0) {
             printf("\n For SWT the signal length must be a multiple of 2^J. \n");
@@ -80,13 +80,13 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_set
         obj = std::make_unique<wt_set>();
         obj->params = std::make_unique<double[]>(siglength * (J + 1));
         obj->outlength = siglength * (J + 1);
-        strcpy(obj->ext, "per");
+        obj->ext = "per";
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
 
-        if (strstr(wave->wname, "haar") == nullptr) {
-            if (strstr(wave->wname, "db") == nullptr) {
-                if (strstr(wave->wname, "sym") == nullptr) {
-                    if (strstr(wave->wname, "coif") == nullptr) {
+        if (strstr(wave->wname.c_str(), "haar") == nullptr) {
+            if (strstr(wave->wname.c_str(), "db") == nullptr) {
+                if (strstr(wave->wname.c_str(), "sym") == nullptr) {
+                    if (strstr(wave->wname.c_str(), "coif") == nullptr) {
                         printf("\n MODWT is only implemented for orthogonal wavelet families - db, sym and coif \n");
                         exit(-1);
                     }
@@ -97,7 +97,7 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_set
         obj = std::make_unique<wt_set>();
         obj->params = std::make_unique<double[]>(siglength * 2 * (J + 1));
         obj->outlength = siglength * (J + 1);
-        strcpy(obj->ext, "per");
+        obj->ext = "per";
     }
 
     obj->wave = wave;
@@ -105,7 +105,7 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_set
     obj->modwtsiglength = siglength;
     obj->J = J;
     obj->MaxIter = MaxIter;
-    strcpy(obj->method, method);
+    obj->method = method;
 
     if (siglength % 2 == 0) {
         obj->even = 1;
@@ -115,7 +115,7 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_set
 
     obj->cobj = nullptr;
 
-    strcpy(obj->cmethod, "direct");
+    obj->cmethod = "direct";
     obj->cfftset = 0;
     obj->lenlength = J + 2;
     obj->output = &obj->params[0];
@@ -163,13 +163,13 @@ auto wtree_init(wave_set* wave, int siglength, int J) -> wtree_set*
     auto obj = std::make_unique<wtree_set>();
     obj->params = std::make_unique<double[]>(siglength * (J + 1) + elength + nodes + J + 1);
     obj->outlength = siglength * (J + 1) + elength;
-    strcpy(obj->ext, "sym");
+    obj->ext = "sym";
 
     obj->wave = wave;
     obj->siglength = siglength;
     obj->J = J;
     obj->MaxIter = MaxIter;
-    strcpy(obj->method, "dwt");
+    obj->method = "dwt";
 
     if (siglength % 2 == 0) {
         obj->even = 1;
@@ -232,8 +232,8 @@ auto wpt_init(wave_set* wave, int siglength, int J) -> wpt_set*
     auto obj = std::make_unique<wpt_set>();
     obj->params = std::make_unique<double[]>(elength + 4 * nodes + 2 * J + 6);
     obj->outlength = siglength + 2 * (J + 1) * (size + 1);
-    strcpy(obj->ext, "sym");
-    strcpy(obj->entropy, "shannon");
+    obj->ext = "sym";
+    obj->entropy = "shannon";
     obj->eparam = 0.0;
 
     obj->wave = wave;
@@ -300,7 +300,7 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
         if (param == 0) {
             param = 6.0;
         }
-        strcpy(obj->wave, "morlet");
+        obj->wave = "morlet";
 
     } else if (wave == "paul"sv) {
         s0 = 2 * dt;
@@ -313,7 +313,7 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
         if (param == 0) {
             param = 4.0;
         }
-        strcpy(obj->wave, "paul");
+        obj->wave = "paul";
 
     } else if ((wave == "dgauss"sv) || (wave == "dog"sv)) {
         s0 = 2 * dt;
@@ -326,11 +326,11 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
         if (param == 0) {
             param = 2.0;
         }
-        strcpy(obj->wave, "dog");
+        obj->wave = "dog";
     }
 
     obj->pow = 2;
-    strcpy(obj->type, pdefault);
+    obj->type = pdefault;
 
     obj->s0 = s0;
     obj->dj = dj;
@@ -388,28 +388,28 @@ auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> 
     obj->params = std::make_unique<int[]>(2 * J + sumacc);
     obj->outlength = 0;
     if (method == nullptr) {
-        strcpy(obj->ext, "per");
+        obj->ext = "per";
     } else if ((method == "dwt"sv) || (method == "DWT"sv)) {
-        strcpy(obj->ext, "per");
+        obj->ext = "per";
     } else if ((method == "swt"sv) || (method == "SWT"sv)) {
         if ((testSWTlength(rows, J) == 0) || (testSWTlength(cols, J) == 0)) {
             printf("\n For SWT data rows and columns must be a multiple of 2^J. \n");
             exit(-1);
         }
 
-        strcpy(obj->ext, "per");
+        obj->ext = "per";
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
-        if (strstr(wave->wname, "haar") == nullptr) {
-            if (strstr(wave->wname, "db") == nullptr) {
-                if (strstr(wave->wname, "sym") == nullptr) {
-                    if (strstr(wave->wname, "coif") == nullptr) {
+        if (strstr(wave->wname.c_str(), "haar") == nullptr) {
+            if (strstr(wave->wname.c_str(), "db") == nullptr) {
+                if (strstr(wave->wname.c_str(), "sym") == nullptr) {
+                    if (strstr(wave->wname.c_str(), "coif") == nullptr) {
                         printf("\n MODWT is only implemented for orthogonal wavelet families - db, sym and coif \n");
                         exit(-1);
                     }
                 }
             }
         }
-        strcpy(obj->ext, "per");
+        obj->ext = "per";
     }
 
     obj->wave = wave;
@@ -417,7 +417,7 @@ auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> 
     obj->cols = cols;
     obj->J = J;
     obj->MaxIter = MaxIter;
-    strcpy(obj->method, method);
+    obj->method = method;
     obj->coeffaccesslength = sumacc;
 
     obj->dimensions = &obj->params[0];
@@ -895,13 +895,13 @@ auto getDWTmra(wt_set* wt, double* wavecoeffs) -> double*
     auto access = 0;
 
     // Approximation MRA
-    getDWTRecCoeff(wt->output + access, wt->length, "appx", wt->ext, J, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra.get());
+    getDWTRecCoeff(wt->output + access, wt->length, "appx", wt->ext.c_str(), J, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra.get());
 
     // Details MRA
     auto N = wt->siglength;
     for (auto i = J; i > 0; --i) {
         access += wt->length[J - i];
-        getDWTRecCoeff(wt->output + access, wt->length, "det", wt->ext, i, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra.get() + N);
+        getDWTRecCoeff(wt->output + access, wt->length, "det", wt->ext.c_str(), i, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra.get() + N);
         N += wt->siglength;
     }
 
@@ -1094,7 +1094,7 @@ void dwpt(wpt_set* wt, double const* inp)
     // p2 = 1;
 
     //set eparam value here
-    wt->costvalues[0] = costfunc(orig.get(), wt->siglength, wt->entropy, eparam);
+    wt->costvalues[0] = costfunc(orig.get(), wt->siglength, wt->entropy.c_str(), eparam);
     auto it2 = 1;
     if (wt->ext == "per"sv) {
         auto i = J;
@@ -1120,9 +1120,9 @@ void dwpt(wpt_set* wt, double const* inp)
                 } else {
                     dwpt_per(wt, tree.get() + Np + k * temp_len, temp_len, tree.get() + N, len_cA, tree.get() + N + len_cA);
                 }
-                wt->costvalues[it2] = costfunc(tree.get() + N, len_cA, wt->entropy, eparam);
+                wt->costvalues[it2] = costfunc(tree.get() + N, len_cA, wt->entropy.c_str(), eparam);
                 it2++;
-                wt->costvalues[it2] = costfunc(tree.get() + N + len_cA, len_cA, wt->entropy, eparam);
+                wt->costvalues[it2] = costfunc(tree.get() + N + len_cA, len_cA, wt->entropy.c_str(), eparam);
                 it2++;
                 N += 2 * len_cA;
             }
@@ -1157,9 +1157,9 @@ void dwpt(wpt_set* wt, double const* inp)
                 } else {
                     dwpt_sym(wt, tree.get() + Np + k * temp_len, temp_len, tree.get() + N, len_cA, tree.get() + N + len_cA);
                 }
-                wt->costvalues[it2] = costfunc(tree.get() + N, len_cA, wt->entropy, eparam);
+                wt->costvalues[it2] = costfunc(tree.get() + N, len_cA, wt->entropy.c_str(), eparam);
                 it2++;
-                wt->costvalues[it2] = costfunc(tree.get() + N + len_cA, len_cA, wt->entropy, eparam);
+                wt->costvalues[it2] = costfunc(tree.get() + N + len_cA, len_cA, wt->entropy.c_str(), eparam);
                 it2++;
                 N += 2 * len_cA;
             }
@@ -1397,7 +1397,7 @@ auto getCWTScaleLength(int N) -> int
 
 void setCWTScales(cwt_set* wt, double s0, double dj, char const* type, int power)
 {
-    strcpy(wt->type, type);
+    wt->type = type;
     //s0*std::pow(2.0, (double)(j - 1)*dj);
     if ((wt->type == "pow"sv) || (wt->type == "power"sv)) {
         for (auto i = 0; i < wt->J; ++i) {
@@ -2949,9 +2949,9 @@ void imodwt(wt_set* wt, double* oup)
 void setDWTExtension(wt_set* wt, char const* extension)
 {
     if (extension == "sym"sv) {
-        strcpy(wt->ext, "sym");
+        wt->ext = "sym";
     } else if (extension == "per"sv) {
-        strcpy(wt->ext, "per");
+        wt->ext = "per";
     } else {
         printf("Signal extension can be either per or sym");
         exit(-1);
@@ -2961,9 +2961,9 @@ void setDWTExtension(wt_set* wt, char const* extension)
 void setWTREEExtension(wtree_set* wt, char const* extension)
 {
     if (extension == "sym"sv) {
-        strcpy(wt->ext, "sym");
+        wt->ext = "sym";
     } else if (extension == "per"sv) {
-        strcpy(wt->ext, "per");
+        wt->ext = "per";
     } else {
         printf("Signal extension can be either per or sym");
         exit(-1);
@@ -2973,9 +2973,9 @@ void setWTREEExtension(wtree_set* wt, char const* extension)
 void setDWPTExtension(wpt_set* wt, char const* extension)
 {
     if (extension == "sym"sv) {
-        strcpy(wt->ext, "sym");
+        wt->ext = "sym";
     } else if (extension == "per"sv) {
-        strcpy(wt->ext, "per");
+        wt->ext = "per";
     } else {
         printf("Signal extension can be either per or sym");
         exit(-1);
@@ -2984,18 +2984,18 @@ void setDWPTExtension(wpt_set* wt, char const* extension)
 
 void setDWT2Extension(wt2_set* wt, char const* extension)
 {
-    if (strcmp(wt->method, "dwt") == 0) {
+    if (wt->method == "dwt"sv) {
         if (extension == "sym"sv) {
-            strcpy(wt->ext, "sym");
+            wt->ext = "sym";
         } else if (extension == "per"sv) {
-            strcpy(wt->ext, "per");
+            wt->ext = "per";
         } else {
             printf("Signal extension can be either per or sym");
             exit(-1);
         }
-    } else if ((wt->method == "swt"sv) || (strcmp(wt->method, "modwt") == 0)) {
+    } else if ((wt->method == "swt"sv) || (wt->method == "modwt")) {
         if (extension == "per"sv) {
-            strcpy(wt->ext, "per");
+            wt->ext = "per";
         } else {
             printf("Signal extension can only be per");
             exit(-1);
@@ -3006,15 +3006,15 @@ void setDWT2Extension(wt2_set* wt, char const* extension)
 void setDWPTEntropy(wpt_set* wt, char const* entropy, double eparam)
 {
     if (strcmp(entropy, "shannon") == 0) {
-        strcpy(wt->entropy, "shannon");
+        wt->entropy = "shannon";
     } else if (strcmp(entropy, "threshold") == 0) {
-        strcpy(wt->entropy, "threshold");
+        wt->entropy = "threshold";
         wt->eparam = eparam;
     } else if (strcmp(entropy, "norm") == 0) {
-        strcpy(wt->entropy, "norm");
+        wt->entropy = "norm";
         wt->eparam = eparam;
     } else if ((strcmp(entropy, "logenergy") == 0) || (strcmp(entropy, "log energy") == 0) || (strcmp(entropy, "energy") == 0)) {
-        strcpy(wt->entropy, "logenergy");
+        wt->entropy = "logenergy";
     } else {
         printf("Entropy should be one of shannon, threshold, norm or logenergy");
         exit(-1);
@@ -3024,9 +3024,9 @@ void setDWPTEntropy(wpt_set* wt, char const* entropy, double eparam)
 void setWTConv(wt_set* wt, char const* cmethod)
 {
     if ((cmethod == "fft"sv) || (cmethod == "FFT"sv)) {
-        strcpy(wt->cmethod, "fft");
+        wt->cmethod = "fft";
     } else if (cmethod == "direct"sv) {
-        strcpy(wt->cmethod, "direct");
+        wt->cmethod = "direct";
     } else {
         printf("Convolution Only accepts two methods - direct and fft");
         exit(-1);
@@ -3780,7 +3780,7 @@ void wave_summary(wave_set* obj)
     int N;
     N = obj->filtlength;
     printf("\n");
-    printf("Wavelet Name : %s \n", obj->wname);
+    printf("Wavelet Name : %s \n", obj->wname.c_str());
     printf("\n");
     printf("Wavelet Filters \n\n");
     printf("lpd : [");
@@ -3816,11 +3816,11 @@ void wt_summary(wt_set* wt)
     J = wt->J;
     wave_summary(wt->wave);
     printf("\n");
-    printf("Wavelet Transform : %s \n", wt->method);
+    printf("Wavelet Transform : %s \n", wt->method.c_str());
     printf("\n");
-    printf("Signal Extension : %s \n", wt->ext);
+    printf("Signal Extension : %s \n", wt->ext.c_str());
     printf("\n");
-    printf("Convolutional Method : %s \n", wt->cmethod);
+    printf("Convolutional Method : %s \n", wt->cmethod.c_str());
     printf("\n");
     printf("Number of Decomposition Levels %d \n", wt->J);
     printf("\n");
@@ -3851,9 +3851,9 @@ void wtree_summary(wtree_set* wt)
     J = wt->J;
     wave_summary(wt->wave);
     printf("\n");
-    printf("Wavelet Transform : %s \n", wt->method);
+    printf("Wavelet Transform : %s \n", wt->method.c_str());
     printf("\n");
-    printf("Signal Extension : %s \n", wt->ext);
+    printf("Signal Extension : %s \n", wt->ext.c_str());
     printf("\n");
     printf("Number of Decomposition Levels %d \n", wt->J);
     printf("\n");
@@ -3886,9 +3886,9 @@ void wpt_summary(wpt_set* wt)
     J = wt->J;
     wave_summary(wt->wave);
     printf("\n");
-    printf("Signal Extension : %s \n", wt->ext);
+    printf("Signal Extension : %s \n", wt->ext.c_str());
     printf("\n");
-    printf("Entropy : %s \n", wt->entropy);
+    printf("Entropy : %s \n", wt->entropy.c_str());
     printf("\n");
     printf("Number of Decomposition Levels %d \n", wt->J);
     printf("\n");
@@ -3924,7 +3924,7 @@ void cwt_summary(cwt_set* wt)
 {
 
     printf("\n");
-    printf("Wavelet : %s Parameter %lf \n", wt->wave, wt->m);
+    printf("Wavelet : %s Parameter %lf \n", wt->wave.c_str(), wt->m);
     printf("\n");
     printf("Length of Input Signal : %d \n", wt->siglength);
     printf("\n");
@@ -3936,7 +3936,7 @@ void cwt_summary(cwt_set* wt)
     printf("\n");
     printf("Separation Between Scales (dj) %lf \n", wt->dj);
     printf("\n");
-    printf("Scale Type %s \n", wt->type);
+    printf("Scale Type %s \n", wt->type.c_str());
     printf("\n");
     printf("Complex CWT Output Vector is of size %d * %d stored in Row Major format \n", wt->J, wt->siglength);
     printf("\n");
@@ -3954,9 +3954,9 @@ void wt2_summary(wt2_set* wt)
     J = wt->J;
     wave_summary(wt->wave);
     printf("\n");
-    printf("Wavelet Transform : %s \n", wt->method);
+    printf("Wavelet Transform : %s \n", wt->method.c_str());
     printf("\n");
-    printf("Signal Extension : %s \n", wt->ext);
+    printf("Signal Extension : %s \n", wt->ext.c_str());
     printf("\n");
     printf("Number of Decomposition Levels %d \n", wt->J);
     printf("\n");

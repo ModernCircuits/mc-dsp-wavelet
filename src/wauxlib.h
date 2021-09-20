@@ -5,17 +5,19 @@
 
 #include "wavelib.h"
 
+#include <string>
+
 struct denoise_set {
     int N; //signal length
     int J; // Levels of Wavelet decomposition
-    char wname[10]; //Wavelet name
-    char wmethod[10]; //Wavelet decomposition method - dwt or swt
-    char cmethod[10]; //Cnvolution Method - direct or fft . Available only for modwt.
+    std::string wname; //Wavelet name
+    std::string wmethod; //Wavelet decomposition method - dwt or swt
+    std::string cmethod; //Cnvolution Method - direct or fft . Available only for modwt.
     // SWT and DWT only use direct method.
-    char ext[10]; // Signal Extension - sym or per
-    char thresh[10]; // thresholding - soft or hard
-    char level[10]; // Noise Estimation level - first or all
-    char dmethod[20]; //Denoising Method -sureshrink or visushrink
+    std::string ext; // Signal Extension - sym or per
+    std::string thresh; // thresholding - soft or hard
+    std::string level; // Noise Estimation level - first or all
+    std::string dmethod; //Denoising Method -sureshrink or visushrink
 };
 
 auto denoise_init(int length, int J, char const* wname) -> denoise_set*;

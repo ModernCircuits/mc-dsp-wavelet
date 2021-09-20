@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <string>
 
 #if defined(_MSC_VER)
 #pragma warning(disable : 4200)
@@ -31,7 +32,7 @@ struct cplx_data {
 };
 
 struct wave_set {
-    char wname[50];
+    std::string wname;
     int filtlength; // When all filters are of the same length. [Matlab uses zero-padding to make all filters of the same length]
     int lpd_len; // Default filtlength = lpd_len = lpr_len = hpd_len = hpr_len
     int hpd_len;
@@ -82,7 +83,7 @@ auto conv_init(int N, int L) -> std::unique_ptr<conv_set>;
 struct wt_set {
     wave_set* wave;
     std::unique_ptr<conv_set> cobj;
-    char method[10];
+    std::string method;
     int siglength; // Length of the original signal.
     int modwtsiglength; // Modified signal length for MODWT
     int outlength; // Length of the output DWT vector
@@ -90,8 +91,8 @@ struct wt_set {
     int J; // Number of decomposition Levels
     int MaxIter; // Maximum Iterations J <= MaxIter
     int even; // even = 1 if signal is of even length. even = 0 otherwise
-    char ext[10]; // Type of Extension used - "per" or "sym"
-    char cmethod[10]; // Convolution Method - "direct" or "FFT"
+    std::string ext; // Type of Extension used - "per" or "sym"
+    std::string cmethod; // Convolution Method - "direct" or "FFT"
 
     int N; //
     int cfftset;
@@ -106,14 +107,14 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_set
 struct wtree_set {
     wave_set* wave;
     conv_set* cobj;
-    char method[10];
+    std::string method;
     int siglength; // Length of the original signal.
     int outlength; // Length of the output DWT vector
     int lenlength; // Length of the Output Dimension Vector "length"
     int J; // Number of decomposition Levels
     int MaxIter; // Maximum Iterations J <= MaxIter
     int even; // even = 1 if signal is of even length. even = 0 otherwise
-    char ext[10]; // Type of Extension used - "per" or "sym"
+    std::string ext; // Type of Extension used - "per" or "sym"
 
     int N; //
     int nodes;
@@ -137,8 +138,8 @@ struct wpt_set {
     int J; // Number of decomposition Levels
     int MaxIter; // Maximum Iterations J <= MaxIter
     int even; // even = 1 if signal is of even length. even = 0 otherwise
-    char ext[10]; // Type of Extension used - "per" or "sym"
-    char entropy[20];
+    std::string ext; // Type of Extension used - "per" or "sym"
+    std::string entropy;
     double eparam;
 
     int N; //
@@ -156,13 +157,13 @@ struct wpt_set {
 auto wpt_init(wave_set* wave, int siglength, int J) -> wpt_set*;
 
 struct cwt_set {
-    char wave[10]; // Wavelet - morl/morlet,paul,dog/dgauss
+    std::string wave; // Wavelet - morl/morlet,paul,dog/dgauss
     int siglength; // Length of Input Data
     int J; // Total Number of Scales
     double s0; // Smallest scale. It depends on the sampling rate. s0 <= 2 * dt for most wavelets
     double dt; // Sampling Rate
     double dj; // Separation between scales. eg., scale = s0 * 2 ^ ( [0:N-1] *dj ) or scale = s0 *[0:N-1] * dj
-    char type[10]; // Scale Type - Power or Linear
+    std::string type; // Scale Type - Power or Linear
     int pow; // Base of Power in case type = pow. Typical value is pow = 2
     int sflag;
     int pflag;
@@ -182,13 +183,13 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
 
 struct wt2_set {
     wave_set* wave;
-    char method[10];
+    std::string method;
     int rows; // Matrix Number of rows
     int cols; // Matrix Number of columns
     int outlength; // Length of the output DWT vector
     int J; // Number of decomposition Levels
     int MaxIter; // Maximum Iterations J <= MaxIter
-    char ext[10]; // Type of Extension used - "per" or "sym"
+    std::string ext; // Type of Extension used - "per" or "sym"
     int coeffaccesslength;
 
     int N; //

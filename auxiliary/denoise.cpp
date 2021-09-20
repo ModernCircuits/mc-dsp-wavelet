@@ -19,15 +19,15 @@ auto denoise_init(int length, int J, char const* wname) -> denoise_set*
     obj->N = length;
     obj->J = J;
 
-    strcpy(obj->wname, wname);
+    obj->wname = wname;
 
     //Set Default Values
-    strcpy(obj->dmethod, "sureshrink");
-    strcpy(obj->ext, "sym");
-    strcpy(obj->level, "all");
-    strcpy(obj->thresh, "soft");
-    strcpy(obj->wmethod, "dwt");
-    strcpy(obj->cmethod, "direct");
+    obj->dmethod = "sureshrink";
+    obj->ext = "sym";
+    obj->level = "all";
+    obj->thresh = "soft";
+    obj->wmethod = "dwt";
+    obj->cmethod = "direct";
 
     return obj.release();
 }
@@ -401,19 +401,19 @@ void denoise(denoise_set* obj, double* signal, double* denoised)
             std::printf("sureshrink method only works with swt and dwt. Please use setDenoiseWTMethod to set the correct method\n");
             std::exit(-1);
         }
-        sureshrink(signal, obj->N, obj->J, obj->wname, obj->wmethod, obj->ext, obj->thresh, obj->level, denoised);
+        sureshrink(signal, obj->N, obj->J, obj->wname.c_str(), obj->wmethod.c_str(), obj->ext.c_str(), obj->thresh.c_str(), obj->level.c_str(), denoised);
     } else if (obj->dmethod == "visushrink"sv) {
         if (obj->wmethod == "modwt"sv) {
             std::printf("visushrink method only works with swt and dwt. Please use setDenoiseWTMethod to set the correct method\n");
             std::exit(-1);
         }
-        visushrink(signal, obj->N, obj->J, obj->wname, obj->wmethod, obj->ext, obj->thresh, obj->level, denoised);
+        visushrink(signal, obj->N, obj->J, obj->wname.c_str(), obj->wmethod.c_str(), obj->ext.c_str(), obj->thresh.c_str(), obj->level.c_str(), denoised);
     } else if (obj->dmethod == "modwtshrink"sv) {
         if (obj->wmethod != "modwt"sv) {
             std::printf("modwtshrink method only works with modwt. Please use setDenoiseWTMethod to set the correct method\n");
             std::exit(-1);
         }
-        modwtshrink(signal, obj->N, obj->J, obj->wname, obj->cmethod, obj->ext, obj->thresh, denoised);
+        modwtshrink(signal, obj->N, obj->J, obj->wname.c_str(), obj->cmethod.c_str(), obj->ext.c_str(), obj->thresh.c_str(), denoised);
     } else {
         std::printf("Acceptable Denoising methods are - sureshrink and visushrink\n");
         std::exit(-1);
@@ -423,11 +423,11 @@ void denoise(denoise_set* obj, double* signal, double* denoised)
 void setDenoiseMethod(denoise_set* obj, char const* dmethod)
 {
     if (strcmp(dmethod, "sureshrink") == 0) {
-        strcpy(obj->dmethod, "sureshrink");
+        obj->dmethod = "sureshrink";
     } else if (strcmp(dmethod, "visushrink") == 0) {
-        strcpy(obj->dmethod, "visushrink");
+        obj->dmethod = "visushrink";
     } else if (strcmp(dmethod, "modwtshrink") == 0) {
-        strcpy(obj->dmethod, "modwtshrink");
+        obj->dmethod = "modwtshrink";
     } else {
         std::printf("Acceptable Denoising methods are - sureshrink, visushrink and modwtshrink\n");
         std::exit(-1);
@@ -436,13 +436,8 @@ void setDenoiseMethod(denoise_set* obj, char const* dmethod)
 
 void setDenoiseWTMethod(denoise_set* obj, char const* wmethod)
 {
-    if (strcmp(wmethod, "dwt") == 0) {
-        strcpy(obj->wmethod, "dwt");
-    } else if (strcmp(wmethod, "swt") == 0) {
-        strcpy(obj->wmethod, "swt");
-    } else if (strcmp(wmethod, "modwt") == 0) {
-        strcpy(obj->wmethod, "modwt");
-    } else {
+    obj->wmethod = wmethod;
+    if (!((wmethod == "dwt"sv) || (wmethod == "swt"sv) || (wmethod == "modwt"sv))) {
         std::printf("Wavelet decomposition method can be one of dwt, modwt or swt.\n");
         std::exit(-1);
     }
@@ -451,9 +446,9 @@ void setDenoiseWTMethod(denoise_set* obj, char const* wmethod)
 void setDenoiseWTExtension(denoise_set* obj, char const* extension)
 {
     if (strcmp(extension, "sym") == 0) {
-        strcpy(obj->ext, "sym");
+        obj->ext = "sym";
     } else if (strcmp(extension, "per") == 0) {
-        strcpy(obj->ext, "per");
+        obj->ext = "per";
     } else {
         std::printf("Signal extension can be either per or sym");
         std::exit(-1);
@@ -465,9 +460,9 @@ void setDenoiseParameters(denoise_set* obj, char const* thresh, char const* leve
 
     //Set thresholding
     if (thresh == "soft"sv) {
-        strcpy(obj->thresh, "soft");
+        obj->thresh = "soft";
     } else if (thresh == "hard"sv) {
-        strcpy(obj->thresh, "hard");
+        obj->thresh = "hard";
     } else {
         std::printf("Thresholding Method - soft or hard");
         std::exit(-1);
@@ -476,9 +471,9 @@ void setDenoiseParameters(denoise_set* obj, char const* thresh, char const* leve
     // Set Noise estimation at the first level or at all levels
 
     if (level == "first"sv) {
-        strcpy(obj->level, "first");
+        obj->level = "first";
     } else if (level == "all"sv) {
-        strcpy(obj->level, "all");
+        obj->level = "all";
     } else {
         std::printf("Noise Estimation at level - first or all");
         std::exit(-1);

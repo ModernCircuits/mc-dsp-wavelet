@@ -45,6 +45,6 @@ auto testSWTlength(int N, int J) -> int;
 
 auto wmaxiter(int sig_len, int filt_len) -> int;
 
-auto costfunc(double* x, int N, char* entropy, double p) -> double;
+auto costfunc(double* x, int N, char const* entropy, double p) -> double;
 
 #endif /* WAVELIB_H_ */

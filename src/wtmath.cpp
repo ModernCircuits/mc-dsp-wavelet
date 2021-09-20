@@ -679,7 +679,7 @@ static auto entropy_l(double const* x, int N) -> double
     return val;
 }
 
-auto costfunc(double* x, int N, char* entropy, double p) -> double
+auto costfunc(double* x, int N, char const* entropy, double p) -> double
 {
     double val;
 
