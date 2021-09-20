@@ -228,9 +228,9 @@ auto wpt_init(wave_set* wave, int siglength, int J) -> wpt_object
         i--;
         p2 *= 2;
     }
-    //printf("elength %d", elength);
 
-    auto* obj = (wpt_object)malloc(sizeof(struct wpt_set) + sizeof(double) * (elength + 4 * nodes + 2 * J + 6));
+    auto obj = std::make_unique<wpt_set>();
+    obj->params = std::make_unique<double[]>(elength + 4 * nodes + 2 * J + 6);
     obj->outlength = siglength + 2 * (J + 1) * (size + 1);
     strcpy(obj->ext, "sym");
     strcpy(obj->entropy, "shannon");
@@ -262,12 +262,11 @@ auto wpt_init(wave_set* wave, int siglength, int J) -> wpt_object
         obj->params[i] = 0.0;
     }
 
-    return obj;
+    return obj.release();
 }
 
 auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -> cwt_object
 {
-    cwt_object obj = nullptr;
     int N;
     int nj2;
     int ibase2;
@@ -287,7 +286,8 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
 
     N = siglength;
     nj2 = 2 * N * J;
-    obj = (cwt_object)malloc(sizeof(struct cwt_set) + sizeof(double) * (nj2 + 2 * J + N));
+    auto obj = std::make_unique<cwt_set>();
+    obj->params = std::make_unique<double[]>(nj2 + 2 * J + N);
 
     if ((wave == "morlet"sv) || (wave == "morl"sv)) {
         s0 = 2 * dt;
@@ -356,7 +356,7 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
         obj->params[i] = 0.0;
     }
 
-    return obj;
+    return obj.release();
 }
 
 auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> wt2_object
@@ -384,14 +384,12 @@ auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> 
         exit(-1);
     }
 
-    wt2_object obj = nullptr;
+    auto obj = std::make_unique<wt2_set>();
+    obj->params = std::make_unique<int[]>(2 * J + sumacc);
+    obj->outlength = 0;
     if (method == nullptr) {
-        obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
-        obj->outlength = 0;
         strcpy(obj->ext, "per");
     } else if ((method == "dwt"sv) || (method == "DWT"sv)) {
-        obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
-        obj->outlength = 0;
         strcpy(obj->ext, "per");
     } else if ((method == "swt"sv) || (method == "SWT"sv)) {
         if ((testSWTlength(rows, J) == 0) || (testSWTlength(cols, J) == 0)) {
@@ -399,8 +397,6 @@ auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> 
             exit(-1);
         }
 
-        obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
-        obj->outlength = 0;
         strcpy(obj->ext, "per");
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
         if (strstr(wave->wname, "haar") == nullptr) {
@@ -413,8 +409,6 @@ auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> 
                 }
             }
         }
-        obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
-        obj->outlength = 0;
         strcpy(obj->ext, "per");
     }
 
@@ -432,7 +426,7 @@ auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> 
         obj->params[i] = 0;
     }
 
-    return obj;
+    return obj.release();
 }
 
 static void wconv(wt_object wt, double* sig, int N, double* filt, int L, double* oup)
@@ -1507,7 +1501,7 @@ void cwt(cwt_object wt, double const* inp)
     }
     wt->smean /= N;
 
-    cwavelet(inp, N, wt->dt, wt->mother, wt->m, wt->s0, wt->dj, wt->J, npad, wt->params, wt->params + nj2, wt->params + nj2 + j, wt->params + nj2 + j2);
+    cwavelet(inp, N, wt->dt, wt->mother, wt->m, wt->s0, wt->dj, wt->J, npad, wt->params.get(), wt->params.get() + nj2, wt->params.get() + nj2 + j, wt->params.get() + nj2 + j2);
 }
 
 void icwt(cwt_object wt, double* cwtop)
@@ -1526,7 +1520,7 @@ void icwt(cwt_object wt, double* cwtop)
 
     //printf("\n PSI %g CDEL %g param %g mother %d \n", psi, cdel,wt->m,wt->mother);
     if (((wt->type == "pow"sv) || (wt->type == "power"sv)) && wt->pow == 2) {
-        icwavelet(wt->params, N, wt->params + nj2, wt->J, wt->dt, wt->dj, cdel, psi, cwtop);
+        icwavelet(wt->params.get(), N, wt->params.get() + nj2, wt->J, wt->dt, wt->dj, cdel, psi, cwtop);
     } else {
         printf("Inverse CWT is only available for power of 2.0 scales \n");
         exit(-1);

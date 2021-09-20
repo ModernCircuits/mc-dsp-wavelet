@@ -155,7 +155,7 @@ struct wpt_set {
     int* nodeindex;
     int* numnodeslevel;
     int* coeflength;
-    double params[0];
+    std::unique_ptr<double[]> params;
 };
 
 using wpt_object = struct wpt_set*;
@@ -181,7 +181,7 @@ struct cwt_set {
     double* scale;
     double* period;
     double* coi;
-    double params[0];
+    std::unique_ptr<double[]> params;
 };
 
 using cwt_object = struct cwt_set*;
@@ -201,7 +201,7 @@ struct wt2_set {
     int N; //
     int* dimensions;
     int* coeffaccess;
-    int params[0];
+    std::unique_ptr<int[]> params;
 };
 
 using wt2_object = struct wt2_set*;
