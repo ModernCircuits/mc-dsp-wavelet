@@ -127,7 +127,7 @@ struct wtree_set {
     double* output;
     int* nodelength;
     int* coeflength;
-    double params[0];
+    std::unique_ptr<double[]> params;
 };
 
 using wtree_object = wtree_set*;

@@ -160,7 +160,8 @@ auto wtree_init(wave_set* wave, int siglength, int J) -> wtree_object
         elength += temp2;
     }
 
-    auto* obj = (wtree_object)malloc(sizeof(struct wtree_set) + sizeof(double) * (siglength * (J + 1) + elength + nodes + J + 1));
+    auto obj = std::make_unique<wtree_set>();
+    obj->params = std::make_unique<double[]>(siglength * (J + 1) + elength + nodes + J + 1);
     obj->outlength = siglength * (J + 1) + elength;
     strcpy(obj->ext, "sym");
 
@@ -191,7 +192,7 @@ auto wtree_init(wave_set* wave, int siglength, int J) -> wtree_object
 
     //wave_summary(obj->wave);
 
-    return obj;
+    return obj.release();
 }
 
 auto wpt_init(wave_set* wave, int siglength, int J) -> wpt_object
@@ -983,9 +984,9 @@ void wtree(wtree_object wt, double const* inp)
             N = N2;
             for (k = 0; k < p2; ++k) {
                 if (iter == 0) {
-                    wtree_per(wt, orig, temp_len, wt->params + N, len_cA, wt->params + N + len_cA);
+                    wtree_per(wt, orig, temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
                 } else {
-                    wtree_per(wt, wt->params + Np + k * temp_len, temp_len, wt->params + N, len_cA, wt->params + N + len_cA);
+                    wtree_per(wt, wt->params.get() + Np + k * temp_len, temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
                 }
                 N += 2 * len_cA;
             }
@@ -1017,9 +1018,9 @@ void wtree(wtree_object wt, double const* inp)
             N = N2;
             for (k = 0; k < p2; ++k) {
                 if (iter == 0) {
-                    wtree_sym(wt, orig, temp_len, wt->params + N, len_cA, wt->params + N + len_cA);
+                    wtree_sym(wt, orig, temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
                 } else {
-                    wtree_sym(wt, wt->params + Np + k * temp_len, temp_len, wt->params + N, len_cA, wt->params + N + len_cA);
+                    wtree_sym(wt, wt->params.get() + Np + k * temp_len, temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
                 }
                 N += 2 * len_cA;
             }
@@ -1537,20 +1538,15 @@ void icwt(cwt_object wt, double* cwtop)
 
 static void idwt1(wt_object wt, double* temp, double* cA_up, double* cA, int len_cA, double* cD, int len_cD, double* X_lp, double* X_hp, double* X)
 {
-    int len_avg;
-    int N;
-    int U;
-    int N2;
-
-    len_avg = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
-    N = 2 * len_cD;
-    U = 2;
+    auto len_avg = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
+    auto N = 2 * len_cD;
+    auto U = 2;
 
     upsamp2(cA, len_cA, U, cA_up);
 
     per_ext(cA_up, 2 * len_cA, len_avg / 2, temp);
 
-    N2 = 2 * len_cA + len_avg;
+    auto N2 = 2 * len_cA + len_avg;
 
     if (wt->wave->lpr_len == wt->wave->hpr_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
         wt->cobj = conv_init(N2, len_avg);
