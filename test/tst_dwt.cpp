@@ -370,18 +370,18 @@ void DBCoefTests()
 
     for (auto const& name : waveletNames) {
         auto obj = wavelet { name.c_str() };
-        auto t1 = sum1(obj.lpr, obj.lpr_len) - std::sqrt(2.0);
-        auto t2 = sum2(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
-        auto t3 = sum3(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
-        auto t4 = sum4(obj.lpr, obj.lpr_len) - 1.0;
+        auto t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0);
+        auto t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
+        auto t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
+        auto t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
             printf("\n ERROR : DB Coefficients Unit Test Failed. Exiting. \n");
             exit(-1);
         }
 
-        for (int m = 1; m < (obj.lpr_len / 2) - 1; m++) {
-            auto t5 = sum5(obj.lpr, obj.lpr_len, m);
+        for (int m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
+            auto t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             if (fabs(t5) > epsilon) {
                 printf("\n ERROR : DB Coefficients Unit Test Failed. Exiting. \n");
                 exit(-1);
@@ -406,18 +406,18 @@ void CoifCoefTests()
 
     for (auto const& name : waveletNames) {
         auto obj = wavelet { name.c_str() };
-        t1 = sum1(obj.lpr, obj.lpr_len) - std::sqrt(2.0);
-        t2 = sum2(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
-        t3 = sum3(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
-        t4 = sum4(obj.lpr, obj.lpr_len) - 1.0;
+        t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0);
+        t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
+        t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
+        t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
             printf("\n ERROR : Coif Coefficients Unit Test Failed. Exiting. \n");
             exit(-1);
         }
 
-        for (int m = 1; m < (obj.lpr_len / 2) - 1; m++) {
-            t5 = sum5(obj.lpr, obj.lpr_len, m);
+        for (int m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
+            t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             if (fabs(t5) > epsilon) {
                 printf("\n ERROR : Coif Coefficients Unit Test Failed. Exiting. \n");
                 exit(-1);
@@ -441,18 +441,18 @@ void SymCoefTests()
 
     for (auto const& name : waveletNames) {
         auto obj = wavelet { name.c_str() };
-        t1 = sum1(obj.lpr, obj.lpr_len) - std::sqrt(2.0);
-        t2 = sum2(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
-        t3 = sum3(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
-        t4 = sum4(obj.lpr, obj.lpr_len) - 1.0;
+        t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0);
+        t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
+        t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
+        t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
             printf("\n ERROR : Sym Coefficients Unit Test Failed. Exiting. \n");
             exit(-1);
         }
 
-        for (int m = 1; m < (obj.lpr_len / 2) - 1; m++) {
-            t5 = sum5(obj.lpr, obj.lpr_len, m);
+        for (int m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
+            t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             if (fabs(t5) > epsilon) {
                 printf("\n ERROR : Sym Coefficients Unit Test Failed. Exiting. \n");
                 exit(-1);
@@ -490,14 +490,14 @@ void BiorCoefTests()
     for (auto const& name : waveletNames) {
         auto obj = wavelet { name.c_str() };
 
-        t1 = sum1(obj.lpr, obj.lpr_len) - std::sqrt(2.0);
-        t2 = sum1(obj.lpd, obj.lpd_len) - std::sqrt(2.0);
+        t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0);
+        t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0);
 
-        t3 = sum2(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
-        t4 = sum2(obj.lpd, obj.lpd_len) - 1.0 / std::sqrt(2.0);
+        t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
+        t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0 / std::sqrt(2.0);
 
-        t5 = sum3(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
-        t6 = sum3(obj.lpd, obj.lpd_len) - 1.0 / std::sqrt(2.0);
+        t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
+        t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0 / std::sqrt(2.0);
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon || fabs(t5) > epsilon || fabs(t6) > epsilon) {
             printf("\n ERROR : Bior Coefficients Unit Test Failed. Exiting. \n");
@@ -535,14 +535,14 @@ void RBiorCoefTests()
     for (auto const& name : waveletNames) {
         auto obj = wavelet { name.c_str() };
 
-        t1 = sum1(obj.lpr, obj.lpr_len) - std::sqrt(2.0);
-        t2 = sum1(obj.lpd, obj.lpd_len) - std::sqrt(2.0);
+        t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0);
+        t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0);
 
-        t3 = sum2(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
-        t4 = sum2(obj.lpd, obj.lpd_len) - 1.0 / std::sqrt(2.0);
+        t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
+        t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0 / std::sqrt(2.0);
 
-        t5 = sum3(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
-        t6 = sum3(obj.lpd, obj.lpd_len) - 1.0 / std::sqrt(2.0);
+        t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
+        t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0 / std::sqrt(2.0);
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon || fabs(t5) > epsilon || fabs(t6) > epsilon) {
             printf("\n ERROR : RBior Coefficients Unit Test Failed. Exiting. \n");

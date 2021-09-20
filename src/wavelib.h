@@ -1,6 +1,8 @@
 #ifndef WAVELIB_H_
 #define WAVELIB_H_
 
+#include "span.hpp"
+
 #include <algorithm>
 #include <memory>
 #include <string>
@@ -34,22 +36,26 @@ struct cplx_data {
 struct wavelet {
     explicit wavelet(char const* wname);
 
-    auto size() const noexcept -> int { return size_; }
-    auto name() const noexcept -> std::string const& { return name_; }
+    [[nodiscard]] auto size() const noexcept -> int { return static_cast<int>(size_); }
+    [[nodiscard]] auto name() const noexcept -> std::string const& { return name_; }
+
+    [[nodiscard]] auto lpd() const noexcept -> lt::span<double> { return lpd_; }
+    [[nodiscard]] auto hpd() const noexcept -> lt::span<double> { return hpd_; }
+    [[nodiscard]] auto lpr() const noexcept -> lt::span<double> { return lpr_; }
+    [[nodiscard]] auto hpr() const noexcept -> lt::span<double> { return hpr_; }
 
 private:
     std::string name_;
-    int size_; // When all filters are of the same length. [Matlab uses zero-padding to make all filters of the same length]
-public:
-    int lpd_len; // Default size_ = lpd_len = lpr_len = hpd_len = hpr_len
-    int hpd_len;
-    int lpr_len;
-    int hpr_len;
-    double* lpd;
-    double* hpd;
-    double* lpr;
-    double* hpr;
-    std::unique_ptr<double[]> params;
+
+    // When all filters are of the same length.
+    // [Matlab uses zero-padding to make all filters of the same length]
+    std::size_t size_;
+    std::unique_ptr<double[]> params_;
+
+    lt::span<double> lpd_;
+    lt::span<double> hpd_;
+    lt::span<double> lpr_;
+    lt::span<double> hpr_;
 };
 
 struct fft_data {

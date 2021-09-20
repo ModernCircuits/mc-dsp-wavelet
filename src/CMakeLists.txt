@@ -1,6 +1,7 @@
 add_library(${CMAKE_PROJECT_NAME})
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC lt::CompilerOptions lt::CompilerWarnings lt::CodeCoverage)
+target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC TCB_SPAN_NAMESPACE_NAME=lt)
 target_sources(${CMAKE_PROJECT_NAME}
     PRIVATE
         conv.h
