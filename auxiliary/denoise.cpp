@@ -42,7 +42,7 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
     double tmp;
 
     auto wave = wavelet { wname };
-    auto filt_len = wave.filtlength;
+    auto filt_len = wave.size();
     auto MaxIter = (int)(std::log((double)N / ((double)filt_len - 1.0)) / std::log(2.0));
 
     if (J > MaxIter) {
@@ -159,7 +159,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
     wt_set* wt;
 
     auto wave = wavelet { wname };
-    filt_len = wave.filtlength;
+    filt_len = wave.size();
 
     MaxIter = (int)(std::log((double)N / ((double)filt_len - 1.0)) / std::log(2.0));
     // Depends on J
@@ -303,7 +303,7 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
     wt_set* wt;
 
     auto wave = wavelet { wname };
-    auto filt_len = wave.filtlength;
+    auto filt_len = wave.size();
 
     auto MaxIter = (int)(std::log((double)N / ((double)filt_len - 1.0)) / std::log(2.0));
 

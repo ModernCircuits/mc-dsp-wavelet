@@ -16,24 +16,27 @@
 using namespace std::string_view_literals;
 
 wavelet::wavelet(char const* name)
-    : wname { name }
-    , filtlength { ::filtlength(name) }
-    , lpd_len { filtlength }
-    , hpd_len { filtlength }
-    , lpr_len { filtlength }
-    , hpr_len { filtlength }
-    , params { std::make_unique<double[]>(4 * filtlength) }
+    : name_ { name }
+    , size_ { ::filtlength(name) }
+    , lpd_len { size_ }
+    , hpd_len { size_ }
+    , lpr_len { size_ }
+    , hpr_len { size_ }
+    , lpd { nullptr }
+    , hpd { nullptr }
+    , lpr { nullptr }
+    , hpr { nullptr }
+    , params { std::make_unique<double[]>(4 * size_) }
 {
-
     auto* p = params.get();
     if (name != nullptr) {
-        filtcoef(name, p, p + filtlength, p + 2 * filtlength, p + 3 * filtlength);
+        filtcoef(name, p, p + size_, p + 2 * size_, p + 3 * size_);
     }
 
     lpd = &params[0];
-    hpd = &params[filtlength];
-    lpr = &params[2 * filtlength];
-    hpr = &params[3 * filtlength];
+    hpd = &params[size_];
+    lpr = &params[2 * size_];
+    hpr = &params[3 * size_];
 }
 
 auto wt_init(wavelet& wave, char const* method, int siglength, int J) -> wt_set*
@@ -42,7 +45,7 @@ auto wt_init(wavelet& wave, char const* method, int siglength, int J) -> wt_set*
     int MaxIter;
     auto obj = std::unique_ptr<wt_set>(nullptr);
 
-    size = wave.filtlength;
+    size = wave.size();
 
     if (J > 100) {
         printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
@@ -78,10 +81,10 @@ auto wt_init(wavelet& wave, char const* method, int siglength, int J) -> wt_set*
         obj->ext = "per";
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
 
-        if (strstr(wave.wname.c_str(), "haar") == nullptr) {
-            if (strstr(wave.wname.c_str(), "db") == nullptr) {
-                if (strstr(wave.wname.c_str(), "sym") == nullptr) {
-                    if (strstr(wave.wname.c_str(), "coif") == nullptr) {
+        if (strstr(wave.name().c_str(), "haar") == nullptr) {
+            if (strstr(wave.name().c_str(), "db") == nullptr) {
+                if (strstr(wave.name().c_str(), "sym") == nullptr) {
+                    if (strstr(wave.name().c_str(), "coif") == nullptr) {
                         printf("\n MODWT is only implemented for orthogonal wavelet families - db, sym and coif \n");
                         exit(-1);
                     }
@@ -133,7 +136,7 @@ auto wt_init(wavelet& wave, char const* method, int siglength, int J) -> wt_set*
 
 auto wtree_init(wavelet* wave, int siglength, int J) -> wtree_set*
 {
-    auto const size = wave->filtlength;
+    auto const size = wave->size();
     auto const MaxIter = wmaxiter(siglength, size);
     if (J > 100) {
         printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
@@ -189,7 +192,7 @@ auto wtree_init(wavelet* wave, int siglength, int J) -> wtree_set*
 
 auto wpt_init(wavelet* wave, int siglength, int J) -> wpt_set*
 {
-    auto const size = wave->filtlength;
+    auto const size = wave->size();
 
     if (J > 100) {
         printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
@@ -354,7 +357,7 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
 auto wt2_init(wavelet& wave, char const* method, int rows, int cols, int J) -> wt2_set*
 {
 
-    auto const size = wave.filtlength;
+    auto const size = wave.size();
 
     auto const MaxRows = wmaxiter(rows, size);
     auto const MaxCols = wmaxiter(cols, size);
@@ -391,10 +394,10 @@ auto wt2_init(wavelet& wave, char const* method, int rows, int cols, int J) -> w
 
         obj->ext = "per";
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
-        if (strstr(wave.wname.c_str(), "haar") == nullptr) {
-            if (strstr(wave.wname.c_str(), "db") == nullptr) {
-                if (strstr(wave.wname.c_str(), "sym") == nullptr) {
-                    if (strstr(wave.wname.c_str(), "coif") == nullptr) {
+        if (strstr(wave.name().c_str(), "haar") == nullptr) {
+            if (strstr(wave.name().c_str(), "db") == nullptr) {
+                if (strstr(wave.name().c_str(), "sym") == nullptr) {
+                    if (strstr(wave.name().c_str(), "coif") == nullptr) {
                         printf("\n MODWT is only implemented for orthogonal wavelet families - db, sym and coif \n");
                         exit(-1);
                     }
@@ -903,7 +906,7 @@ void dwpt(wpt_set* wt, double const* inp)
     wt->outlength = 0;
     auto temp = 1;
     auto elength = 0;
-    auto size = wt->wave->filtlength;
+    auto size = wt->wave->size();
     auto nodes = wt->nodes;
     auto n1 = nodes + 1;
     for (auto i = 0; i < J; ++i) {
@@ -1749,7 +1752,7 @@ static void swt_fft(wt_set* wt, double const* inp)
         wt->length[iter] = temp_len;
     }
 
-    auto const len_filt = wt->wave->filtlength;
+    auto const len_filt = wt->wave->size();
 
     auto low_pass = std::make_unique<double[]>(M * len_filt);
     auto high_pass = std::make_unique<double[]>(M * len_filt);
@@ -3204,9 +3207,9 @@ void dispWT2Coeffs(double* A, int row, int col)
 
 void wave_summary(wavelet const& obj)
 {
-    auto const N = obj.filtlength;
+    auto const N = obj.size();
     printf("\n");
-    printf("Wavelet Name : %s \n", obj.wname.c_str());
+    printf("Wavelet Name : %s \n", obj.name().c_str());
     printf("\n");
     printf("Wavelet Filters \n\n");
     printf("lpd : [");

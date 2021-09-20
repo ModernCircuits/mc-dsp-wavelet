@@ -34,9 +34,14 @@ struct cplx_data {
 struct wavelet {
     explicit wavelet(char const* wname);
 
-    std::string wname;
-    int filtlength; // When all filters are of the same length. [Matlab uses zero-padding to make all filters of the same length]
-    int lpd_len; // Default filtlength = lpd_len = lpr_len = hpd_len = hpr_len
+    auto size() const noexcept -> int { return size_; }
+    auto name() const noexcept -> std::string const& { return name_; }
+
+private:
+    std::string name_;
+    int size_; // When all filters are of the same length. [Matlab uses zero-padding to make all filters of the same length]
+public:
+    int lpd_len; // Default size_ = lpd_len = lpr_len = hpd_len = hpr_len
     int hpd_len;
     int lpr_len;
     int hpr_len;
