@@ -407,9 +407,9 @@ void DBCoefTests()
 
     for (auto const& name : waveletNames) {
         auto obj = wave_init(name.c_str());
-        auto t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
-        auto t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
-        auto t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
+        auto t1 = sum1(obj->lpr, obj->lpr_len) - std::sqrt(2.0);
+        auto t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
+        auto t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
         auto t4 = sum4(obj->lpr, obj->lpr_len) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
@@ -447,9 +447,9 @@ void CoifCoefTests()
         char* name = new char[waveletName.size() + 1];
         memcpy(name, waveletName.c_str(), waveletName.size() + 1);
         auto* obj = wave_init(name); // Initialize the wavelet
-        t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
-        t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
-        t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
+        t1 = sum1(obj->lpr, obj->lpr_len) - std::sqrt(2.0);
+        t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
+        t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
         t4 = sum4(obj->lpr, obj->lpr_len) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
@@ -486,9 +486,9 @@ void SymCoefTests()
         char* name = new char[waveletName.size() + 1];
         memcpy(name, waveletName.c_str(), waveletName.size() + 1);
         auto* obj = wave_init(name); // Initialize the wavelet
-        t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
-        t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
-        t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
+        t1 = sum1(obj->lpr, obj->lpr_len) - std::sqrt(2.0);
+        t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
+        t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
         t4 = sum4(obj->lpr, obj->lpr_len) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
@@ -539,14 +539,14 @@ void BiorCoefTests()
         memcpy(name, waveletName.c_str(), waveletName.size() + 1);
         auto* obj = wave_init(name); // Initialize the wavelet
 
-        t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
-        t2 = sum1(obj->lpd, obj->lpd_len) - sqrt(2.0);
+        t1 = sum1(obj->lpr, obj->lpr_len) - std::sqrt(2.0);
+        t2 = sum1(obj->lpd, obj->lpd_len) - std::sqrt(2.0);
 
-        t3 = sum2(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
-        t4 = sum2(obj->lpd, obj->lpd_len) - 1.0 / sqrt(2.0);
+        t3 = sum2(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
+        t4 = sum2(obj->lpd, obj->lpd_len) - 1.0 / std::sqrt(2.0);
 
-        t5 = sum3(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
-        t6 = sum3(obj->lpd, obj->lpd_len) - 1.0 / sqrt(2.0);
+        t5 = sum3(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
+        t6 = sum3(obj->lpd, obj->lpd_len) - 1.0 / std::sqrt(2.0);
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon || fabs(t5) > epsilon || fabs(t6) > epsilon) {
             printf("\n ERROR : Bior Coefficients Unit Test Failed. Exiting. \n");
@@ -589,14 +589,14 @@ void RBiorCoefTests()
         memcpy(name, waveletName.c_str(), waveletName.size() + 1);
         auto* obj = wave_init(name); // Initialize the wavelet
 
-        t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
-        t2 = sum1(obj->lpd, obj->lpd_len) - sqrt(2.0);
+        t1 = sum1(obj->lpr, obj->lpr_len) - std::sqrt(2.0);
+        t2 = sum1(obj->lpd, obj->lpd_len) - std::sqrt(2.0);
 
-        t3 = sum2(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
-        t4 = sum2(obj->lpd, obj->lpd_len) - 1.0 / sqrt(2.0);
+        t3 = sum2(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
+        t4 = sum2(obj->lpd, obj->lpd_len) - 1.0 / std::sqrt(2.0);
 
-        t5 = sum3(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
-        t6 = sum3(obj->lpd, obj->lpd_len) - 1.0 / sqrt(2.0);
+        t5 = sum3(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
+        t6 = sum3(obj->lpd, obj->lpd_len) - 1.0 / std::sqrt(2.0);
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon || fabs(t5) > epsilon || fabs(t6) > epsilon) {
             printf("\n ERROR : RBior Coefficients Unit Test Failed. Exiting. \n");

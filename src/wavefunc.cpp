@@ -99,7 +99,7 @@ void gauss(int N, int p, double lb, double ub, double* psi, double* t)
         t[i] = lb + delta * i;
     }
 
-    den = sqrt(cwt_gamma(p + 0.5));
+    den = std::sqrt(cwt_gamma(p + 0.5));
 
     if ((p + 1) % 2 == 0) {
         num = 1.0;

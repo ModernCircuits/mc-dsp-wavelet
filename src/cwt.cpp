@@ -82,7 +82,7 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
         if (param < 0.0) {
             param = 6.0;
         }
-        norm = sqrt(2.0 * pi * scale1 / dt) * std::pow(pi, -0.25);
+        norm = std::sqrt(2.0 * pi * scale1 / dt) * std::pow(pi, -0.25);
 
         for (k = 1; k <= nk / 2 + 1; ++k) {
             temp = (scale1 * kwave[k - 1] - param);
@@ -93,16 +93,16 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
         for (k = nk / 2 + 2; k <= nk; ++k) {
             daughter[k - 1].re = daughter[k - 1].im = 0.0;
         }
-        fourier_factor = (4.0 * pi) / (param + sqrt(2.0 + param * param));
+        fourier_factor = (4.0 * pi) / (param + std::sqrt(2.0 + param * param));
         *period1 = scale1 * fourier_factor;
-        *coi1 = fourier_factor / sqrt(2.0);
+        *coi1 = fourier_factor / std::sqrt(2.0);
     } else if (mother == 1) {
         // PAUL
         if (param < 0.0) {
             param = 4.0;
         }
         m = (int)param;
-        norm = sqrt(2.0 * pi * scale1 / dt) * (std::pow(2.0, (double)m) / sqrt((double)(m * factorial(2 * m - 1))));
+        norm = std::sqrt(2.0 * pi * scale1 / dt) * (std::pow(2.0, (double)m) / std::sqrt((double)(m * factorial(2 * m - 1))));
         for (k = 1; k <= nk / 2 + 1; ++k) {
             temp = scale1 * kwave[k - 1];
             expnt = -temp;
@@ -114,7 +114,7 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
         }
         fourier_factor = (4.0 * pi) / (2.0 * m + 1.0);
         *period1 = scale1 * fourier_factor;
-        *coi1 = fourier_factor * sqrt(2.0);
+        *coi1 = fourier_factor * std::sqrt(2.0);
     } else if (mother == 2) {
         if (param < 0.0) {
             param = 2.0;
@@ -133,7 +133,7 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
             sign = 1;
         }
 
-        norm = sqrt(2.0 * pi * scale1 / dt) * sqrt(1.0 / cwt_gamma(m + 0.50));
+        norm = std::sqrt(2.0 * pi * scale1 / dt) * std::sqrt(1.0 / cwt_gamma(m + 0.50));
         norm *= sign;
 
         if (re == 1) {
@@ -149,9 +149,9 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
                 daughter[k - 1].im = norm * std::pow(temp, (double)m) * exp(-0.50 * std::pow(temp, 2.0));
             }
         }
-        fourier_factor = (2.0 * pi) * sqrt(2.0 / (2.0 * m + 1.0));
+        fourier_factor = (2.0 * pi) * std::sqrt(2.0 / (2.0 * m + 1.0));
         *period1 = scale1 * fourier_factor;
-        *coi1 = fourier_factor / sqrt(2.0);
+        *coi1 = fourier_factor / std::sqrt(2.0);
     }
 }
 
@@ -270,7 +270,7 @@ void psi0(int mother, double param, double* val, int* real)
 
     if (mother == 0) {
         // Morlet
-        *val = 1.0 / sqrt(sqrt(pi));
+        *val = 1.0 / std::sqrt(std::sqrt(pi));
         *real = 1;
     } else if (mother == 1) {
         //Paul
@@ -285,7 +285,7 @@ void psi0(int mother, double param, double* val, int* real)
         } else {
             sign = -1;
         }
-        *val = sign * std::pow(2.0, (double)m) * factorial(m) / (sqrt(pi * factorial(2 * m)));
+        *val = sign * std::pow(2.0, (double)m) * factorial(m) / (std::sqrt(pi * factorial(2 * m)));
 
     } else if (mother == 2) {
         // D.O.G
@@ -298,7 +298,7 @@ void psi0(int mother, double param, double* val, int* real)
                 sign = 1;
             }
             coeff = sign * std::pow(2.0, (double)m / 2) / cwt_gamma(0.5);
-            *val = coeff * cwt_gamma(((double)m + 1.0) / 2.0) / sqrt(cwt_gamma(m + 0.50));
+            *val = coeff * cwt_gamma(((double)m + 1.0) / 2.0) / std::sqrt(cwt_gamma(m + 0.50));
         } else {
             *val = 0;
         }
@@ -376,14 +376,14 @@ auto cdelta(int mother, double param, double psi0) -> double
 
     for (auto j = 0; j < jtot; ++j) {
         auto const iter = 2 * j * N;
-        auto const den = sqrt(scale[j]);
+        auto const den = std::sqrt(scale[j]);
         for (auto i = 0; i < N; ++i) {
             mval[i] += wave[iter + 2 * i] / den;
         }
     }
 
     auto const maxarr = maxabs(mval.get(), N);
-    auto const cdel = sqrt(dt) * dj * mval[maxarr] / psi0;
+    auto const cdel = std::sqrt(dt) * dj * mval[maxarr] / psi0;
     return cdel;
 }
 
@@ -395,7 +395,7 @@ void icwavelet(double const* wave, int N, double* scale, int jtot, double dt, do
     double den;
     double coeff;
 
-    coeff = sqrt(dt) * dj / (cdelta * psi0);
+    coeff = std::sqrt(dt) * dj / (cdelta * psi0);
 
     for (auto i = 0; i < N; ++i) {
         oup[i] = 0.0;
@@ -403,7 +403,7 @@ void icwavelet(double const* wave, int N, double* scale, int jtot, double dt, do
 
     for (j = 0; j < jtot; ++j) {
         iter = 2 * j * N;
-        den = sqrt(scale[j]);
+        den = std::sqrt(scale[j]);
         for (auto i = 0; i < N; ++i) {
             oup[i] += wave[iter + 2 * i] / den;
         }

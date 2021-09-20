@@ -2406,7 +2406,7 @@ static void modwt_per(wt_set* wt, int M, double const* inp, double* cA, int len_
 {
     auto const len_avg = wt->wave->lpd_len;
     auto filt = std::make_unique<double[]>(2 * len_avg);
-    auto s = sqrt(2.0);
+    auto s = std::sqrt(2.0);
 
     for (auto i = 0; i < len_avg; ++i) {
         filt[i] = wt->wave->lpd[i] / s;
@@ -2501,7 +2501,7 @@ static void modwt_fft(wt_set* wt, double const* inp)
     wt->length[0] = wt->length[J] = N;
     wt->outlength = wt->length[J + 1] = (J + 1) * N;
 
-    s = sqrt(2.0);
+    s = std::sqrt(2.0);
     for (iter = 1; iter < J; ++iter) {
         wt->length[iter] = N;
     }
@@ -2693,7 +2693,7 @@ auto getMODWTmra(wt_set* wt, double* wavecoeffs) -> double*
 
     auto const J = wt->J;
 
-    auto const s = sqrt(2.0);
+    auto const s = std::sqrt(2.0);
     fft_set* fft_fd = fft_init(N, 1);
     fft_set* fft_bd = fft_init(N, -1);
 
@@ -2790,7 +2790,7 @@ void imodwt_fft(wt_set* wt, double* oup)
     auto len_avg = wt->wave->lpd_len;
     auto J = wt->J;
 
-    auto s = sqrt(2.0);
+    auto s = std::sqrt(2.0);
     auto fft_fd = std::unique_ptr<fft_set> { fft_init(N, 1) };
     auto fft_bd = std::unique_ptr<fft_set> { fft_init(N, -1) };
 
@@ -2881,7 +2881,7 @@ static void imodwt_per(wt_set* wt, int M, double const* cA, int len_cA, double c
 {
     auto const len_avg = wt->wave->lpd_len;
     auto filt = std::make_unique<double[]>(2 * len_avg);
-    auto s = sqrt(2.0);
+    auto s = std::sqrt(2.0);
 
     for (auto i = 0; i < len_avg; ++i) {
         filt[i] = wt->wave->lpd[i] / s;
@@ -3606,7 +3606,7 @@ auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     N = wt->outlength;
     auto wavecoeff = makeZeros<double>(wt->outlength);
     auto filt = std::make_unique<double[]>(2 * lp);
-    s = sqrt(2.0);
+    s = std::sqrt(2.0);
     for (auto i = 0; i < lp; ++i) {
         filt[i] = wt->wave->lpd[i] / s;
         filt[lp + i] = wt->wave->hpd[i] / s;
@@ -3691,7 +3691,7 @@ void imodwt2(wt2_set* wt, double* wavecoeff, double* oup)
     lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
     auto filt = makeZeros<double>(2 * lf);
-    s = sqrt(2.0);
+    s = std::sqrt(2.0);
     for (auto i = 0; i < lf; ++i) {
         filt[i] = wt->wave->lpd[i] / s;
         filt[lf + i] = wt->wave->hpd[i] / s;

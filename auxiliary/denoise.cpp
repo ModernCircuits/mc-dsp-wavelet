@@ -104,7 +104,7 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
     for (it = 0; it < J; ++it) {
         sigma = lnoise[it];
         dlen = wt->length[it + 1];
-        td = sqrt(2.0 * log(dwt_len)) * sigma;
+        td = std::sqrt(2.0 * log(dwt_len)) * sigma;
 
         if (thresh == "hard"sv) {
             for (auto i = 0; i < dlen; ++i) {
@@ -228,13 +228,13 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
         if (sigma < 0.00000001) {
             td = 0;
         } else {
-            tv = sqrt(2.0 * log(dwt_len));
+            tv = std::sqrt(2.0 * log(dwt_len));
             norm = 0.0;
             for (auto i = 0; i < dwt_len; ++i) {
                 norm += (wt->output[len + i] * wt->output[len + i] / (sigma * sigma));
             }
             te = (norm - (double)dwt_len) / (double)dwt_len;
-            ct = pow(log((double)dwt_len) / log(2.0), 1.5) / sqrt((double)dwt_len);
+            ct = pow(log((double)dwt_len) / log(2.0), 1.5) / std::sqrt((double)dwt_len);
 
             if (te < ct) {
                 td = tv;
@@ -256,7 +256,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
                     risk[i] = ((double)dwt_len - 2 * ((double)i + 1) + dsum[i] + dout[i] * ((double)dwt_len - 1 - (double)i)) / (double)dwt_len;
                 }
                 min_index = minindex(risk.get(), dwt_len);
-                thr = sqrt(dout[min_index]);
+                thr = std::sqrt(dout[min_index]);
                 td = thr < tv ? thr : tv;
             }
         }
@@ -351,7 +351,7 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
             dout[i] = fabs(wt->output[iter + i]);
         }
 
-        sigma = sqrt(2.0) * median(dout.get(), dlen) / 0.6745;
+        sigma = std::sqrt(2.0) * median(dout.get(), dlen) / 0.6745;
         lnoise[it] = sigma;
         iter += dlen;
     }
@@ -364,7 +364,7 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
     for (it = 0; it < J; ++it) {
         sigma = lnoise[it];
         dlen = wt->length[it + 1];
-        td = sqrt(2.0 * llen / M) * sigma;
+        td = std::sqrt(2.0 * llen / M) * sigma;
 
         if (thresh == "hard"sv) {
             for (auto i = 0; i < dlen; ++i) {

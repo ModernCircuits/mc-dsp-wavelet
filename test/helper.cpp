@@ -83,7 +83,7 @@ auto RMS_Error(double const* data, double const* rec, int N) -> double
     for (i = 0; i < N; ++i) {
         sum += (data[i] - rec[i]) * (data[i] - rec[i]);
     }
-    return sqrt(sum / ((double)N - 1));
+    return std::sqrt(sum / ((double)N - 1));
 }
 
 auto REL_Error(double const* data, double const* rec, int N) -> double
@@ -95,7 +95,7 @@ auto REL_Error(double const* data, double const* rec, int N) -> double
         sum1 += (data[i] - rec[i]) * (data[i] - rec[i]);
         sum2 += data[i] * data[i];
     }
-    return sqrt(sum1) / sqrt(sum2);
+    return std::sqrt(sum1) / std::sqrt(sum2);
 }
 
 auto generate_rnd() -> double

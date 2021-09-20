@@ -17,7 +17,7 @@ static auto rmse(int N, double const* x, double const* y) -> double
         rms += (x[i] - y[i]) * (x[i] - y[i]);
     }
 
-    rms = sqrt(rms / (double)N);
+    rms = std::sqrt(rms / (double)N);
 
     return rms;
 }
@@ -51,7 +51,7 @@ static auto corrcoef(int N, double const* x, double const* y) -> double
         den2 += (ty * ty);
     }
 
-    cc = num / sqrt(den1 * den2);
+    cc = num / std::sqrt(den1 * den2);
 
     return cc;
 }
