@@ -12,7 +12,7 @@
 
 void SWTReconstructionTest()
 {
-    wt_object wt;
+    wt_set* wt;
 
     int N;
     int i;
@@ -135,7 +135,7 @@ void SWTReconstructionTest()
 
 void SWT2ReconstructionTest()
 {
-    wt2_object wt;
+    wt2_set* wt;
     int i;
     int k;
     int J;

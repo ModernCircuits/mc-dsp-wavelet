@@ -9,13 +9,13 @@
 #include <cstdio>
 #include <memory>
 
-auto fft_real_init(int N, int sgn) -> fft_real_object
+auto fft_real_init(int N, int sgn) -> fft_real_set*
 {
-    fft_real_object obj = nullptr;
+    fft_real_set* obj = nullptr;
     fft_type theta;
     int k;
 
-    obj = (fft_real_object)malloc(sizeof(struct fft_real_set) + sizeof(fft_data) * (N / 2));
+    obj = (fft_real_set*)malloc(sizeof(struct fft_real_set) + sizeof(fft_data) * (N / 2));
 
     obj->cobj = fft_init(N / 2, sgn);
 
@@ -28,7 +28,7 @@ auto fft_real_init(int N, int sgn) -> fft_real_object
     return obj;
 }
 
-void fft_r2c_exec(fft_real_object obj, fft_type const* inp, fft_data* oup)
+void fft_r2c_exec(fft_real_set* obj, fft_type const* inp, fft_data* oup)
 {
     int i;
     int N2;
@@ -67,7 +67,7 @@ void fft_r2c_exec(fft_real_object obj, fft_type const* inp, fft_data* oup)
     }
 }
 
-void fft_c2r_exec(fft_real_object obj, fft_data* inp, fft_type* oup)
+void fft_c2r_exec(fft_real_set* obj, fft_data* inp, fft_type* oup)
 {
     int i;
     int N2;
@@ -92,7 +92,7 @@ void fft_c2r_exec(fft_real_object obj, fft_data* inp, fft_type* oup)
     }
 }
 
-void free_real_fft(fft_real_object object)
+void free_real_fft(fft_real_set* object)
 {
     free_fft(object->cobj);
     free(object);

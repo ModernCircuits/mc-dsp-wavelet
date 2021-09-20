@@ -2,7 +2,7 @@
 
 #include <memory>
 
-static void nsfft_fd(fft_object obj, fft_data* inp, fft_data* oup, double lb, double ub, double* w)
+static void nsfft_fd(fft_set* obj, fft_data* inp, fft_data* oup, double lb, double ub, double* w)
 {
     auto const N = obj->N;
     auto const L = N / 2;
@@ -48,7 +48,7 @@ static void nsfft_fd(fft_object obj, fft_data* inp, fft_data* oup, double lb, do
     }
 }
 
-static void nsfft_bk(fft_object obj, fft_data* inp, fft_data* oup, double lb, double ub, double* t)
+static void nsfft_bk(fft_set* obj, fft_data* inp, fft_data* oup, double lb, double ub, double* t)
 {
 
     auto const N = obj->N;
@@ -105,7 +105,7 @@ static void nsfft_bk(fft_object obj, fft_data* inp, fft_data* oup, double lb, do
     }
 }
 
-void nsfft_exec(fft_object obj, fft_data* inp, fft_data* oup, double lb, double ub, double* w)
+void nsfft_exec(fft_set* obj, fft_data* inp, fft_data* oup, double lb, double ub, double* w)
 {
     if (obj->sgn == 1) {
         nsfft_fd(obj, inp, oup, lb, ub, w);

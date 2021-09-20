@@ -14,7 +14,7 @@
 
 void DWTReconstructionTest()
 {
-    wt_object wt;
+    wt_set* wt;
     int J;
     auto const N = 79926;
 
@@ -115,7 +115,7 @@ void DWTReconstructionTest()
 
 void DWT2ReconstructionTest()
 {
-    wt2_object wt;
+    wt2_set* wt;
     int i;
     int k;
     int J;

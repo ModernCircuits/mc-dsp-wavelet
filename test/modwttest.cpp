@@ -22,7 +22,7 @@ auto main() -> int
     auto diff = std::make_unique<double[]>(N);
 
     // Initialize the wavelet transform object
-    wt_object wt = wt_init(obj, "modwt", N, J);
+    wt_set* wt = wt_init(obj, "modwt", N, J);
 
     // MODWT output can be accessed using wt->output vector.
     // Use wt_summary to find out how to extract appx and detail coefficients

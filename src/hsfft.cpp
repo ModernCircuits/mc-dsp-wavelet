@@ -9,7 +9,7 @@
 
 #include <memory>
 
-auto fft_init(int N, int sgn) -> fft_object
+auto fft_init(int N, int sgn) -> fft_set*
 {
     auto obj = std::unique_ptr<fft_set>();
     int twi_len { 0 };
@@ -52,7 +52,7 @@ auto fft_init(int N, int sgn) -> fft_object
     return obj.release();
 }
 
-static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj, int sgn, int N, int l, int inc)
+static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, int sgn, int N, int l, int inc)
 {
 
     auto const radix = N > 1 ? obj->factors[inc] : 0;
@@ -1691,7 +1691,7 @@ static void bluestein_exp(fft_data* hl, fft_data* hlt, int len, int M)
     }
 }
 
-static void bluestein_fft(fft_data* data, fft_data* oup, fft_object obj, int sgn, int N)
+static void bluestein_fft(fft_data* data, fft_data* oup, fft_set* obj, int sgn, int N)
 {
 
     int M;
@@ -1727,7 +1727,7 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_object obj, int sgn
         tempop[ii].re *= scale;
     }
 
-    //fft_object obj = initialize_fft2(M,1);
+    //fft_set* obj = initialize_fft2(M,1);
     fft_exec(obj, tempop.get(), hk.get());
 
     if (sgn == 1) {
@@ -1793,7 +1793,7 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_object obj, int sgn
     }
 }
 
-void fft_exec(fft_object obj, fft_data* inp, fft_data* oup)
+void fft_exec(fft_set* obj, fft_data* inp, fft_data* oup)
 {
     if (obj->lt == 0) {
         //fftct_radix3_dit_rec(inp,oup,obj, obj->sgn, obj->N);
@@ -2053,7 +2053,7 @@ void longvectorN(fft_data* sig, int const* array, int tx)
     }
 }
 
-void free_fft(fft_object object)
+void free_fft(fft_set* object)
 {
     free(object);
 }

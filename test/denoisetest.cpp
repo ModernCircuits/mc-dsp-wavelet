@@ -64,7 +64,7 @@ auto main() -> int
     int J;
     FILE* ifp;
 
-    denoise_object obj;
+    denoise_set* obj;
     double temp[2400];
 
     char const* wname = "db5";
@@ -127,7 +127,7 @@ auto main() -> int
 
     denoise(obj, inp.get(), oup.get());
 
-    // Alternative to denoise_object
+    // Alternative to denoise_set*
     // Just use visushrink, modwtshrink and sureshrink functions
     //visushrink(inp.get(),N,J,wname,method,ext,thresh,level,oup.get());
     //sureshrink(inp.get(),N,J,wname,method,ext,thresh,level,oup.get());

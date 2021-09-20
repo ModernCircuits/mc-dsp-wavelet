@@ -19,7 +19,7 @@
 void MODWTReconstructionTest()
 {
 
-    wt_object wt;
+    wt_set* wt;
 
     int N;
     int i;
@@ -110,7 +110,7 @@ void MODWTReconstructionTest()
 
 void MODWT2ReconstructionTest()
 {
-    wt2_object wt;
+    wt2_set* wt;
     int i;
     int k;
     int J;
@@ -196,7 +196,7 @@ void MODWT2ReconstructionTest()
 void DWPTReconstructionTest()
 {
 
-    wpt_object wt;
+    wpt_set* wt;
 
     int N;
     int i;
@@ -321,7 +321,7 @@ void CWTReconstructionTest()
     double epsilon;
     int it1;
     int it2;
-    cwt_object wt;
+    cwt_set* wt;
 
     char const* wave[3] {
         "morl",

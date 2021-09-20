@@ -18,8 +18,7 @@ struct denoise_set {
     char dmethod[20]; //Denoising Method -sureshrink or visushrink
 };
 
-using denoise_object = struct denoise_set*;
-auto denoise_init(int length, int J, char const* wname) -> denoise_object;
+auto denoise_init(int length, int J, char const* wname) -> denoise_set*;
 
 void visushrink(double* signal, int N, int J, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised);
 
@@ -27,17 +26,17 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
 
 void modwtshrink(double* signal, int N, int J, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised);
 
-void denoise(denoise_object obj, double* signal, double* denoised);
+void denoise(denoise_set* obj, double* signal, double* denoised);
 
-void setDenoiseMethod(denoise_object obj, char const* dmethod);
+void setDenoiseMethod(denoise_set* obj, char const* dmethod);
 
-void setDenoiseWTMethod(denoise_object obj, char const* wmethod);
+void setDenoiseWTMethod(denoise_set* obj, char const* wmethod);
 
-void setDenoiseWTExtension(denoise_object obj, char const* extension);
+void setDenoiseWTExtension(denoise_set* obj, char const* extension);
 
-void setDenoiseParameters(denoise_object obj, char const* thresh, char const* level);
+void setDenoiseParameters(denoise_set* obj, char const* thresh, char const* level);
 
-void denoise_free(denoise_object object);
+void denoise_free(denoise_set* object);
 
 void getDWTRecCoeff(double const* coeff, int const* length, char const* ctype, char const* ext, int level, int J, double* lpr,
     double* hpr, int lf, int siglength, double* reccoeff);

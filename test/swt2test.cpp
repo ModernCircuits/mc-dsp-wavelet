@@ -22,7 +22,7 @@ auto main() -> int
     auto diff = makeZeros<double>(N);
     auto const J = 2;
 
-    wt2_object wt = wt2_init(obj, "swt", rows, cols, J);
+    wt2_set* wt = wt2_init(obj, "swt", rows, cols, J);
 
     for (auto i = 0; i < rows; ++i) {
         for (auto k = 0; k < cols; ++k) {

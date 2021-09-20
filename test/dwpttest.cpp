@@ -23,7 +23,7 @@ auto main() -> int
         inp[i - 1] = i;
     }
 
-    wpt_object wt = wpt_init(obj, N, J);
+    wpt_set* wt = wpt_init(obj, N, J);
     setDWPTExtension(wt, "per");
     setDWPTEntropy(wt, "logenergy", 0);
 

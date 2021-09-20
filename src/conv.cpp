@@ -54,14 +54,14 @@ auto findnexte(int M) -> int
     return N;
 }
 
-auto conv_init(int N, int L) -> conv_object
+auto conv_init(int N, int L) -> conv_set*
 {
 
-    conv_object obj = nullptr;
+    conv_set* obj = nullptr;
     int conv_len;
     conv_len = N + L - 1;
 
-    obj = (conv_object)malloc(sizeof(struct conv_set));
+    obj = (conv_set*)malloc(sizeof(struct conv_set));
 
     //obj->clen = npow2(conv_len);
     //obj->clen = conv_len;
@@ -126,7 +126,7 @@ void conv_direct(fft_type const* inp1, int N, fft_type const* inp2, int L, fft_t
     }
 }
 
-void conv_fft(const conv_object obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup)
+void conv_fft(const conv_set* obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup)
 {
     int i;
     int N;
@@ -182,7 +182,7 @@ void conv_fft(const conv_object obj, fft_type const* inp1, fft_type const* inp2,
     free(co);
 }
 
-void free_conv(conv_object object)
+void free_conv(conv_set* object)
 {
     free_real_fft(object->fobj);
     free_real_fft(object->iobj);

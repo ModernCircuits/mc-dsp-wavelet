@@ -16,7 +16,7 @@ auto main() -> int
     }
     auto const J = 3;
 
-    wtree_object wt = wtree_init(obj, N, J);
+    wtree_set* wt = wtree_init(obj, N, J);
     setWTREEExtension(wt, "sym");
 
     wtree(wt, inp.get());

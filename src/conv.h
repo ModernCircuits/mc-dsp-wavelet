@@ -15,8 +15,8 @@ auto findnext(int M) -> int;
 auto findnexte(int M) -> int;
 
 void conv_direct(fft_type const* inp1, int N, fft_type const* inp2, int L, fft_type* oup);
-void conv_fft(conv_object obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup);
+void conv_fft(conv_set const* obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup);
 
-void free_conv(conv_object object);
+void free_conv(conv_set* object);
 
 #endif /* CONV_H_ */

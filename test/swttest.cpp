@@ -23,7 +23,7 @@ auto main() -> int
 
     auto const J = 1;
 
-    wt_object wt = wt_init(obj, "swt", N, J); // Initialize the wavelet transform object
+    wt_set* wt = wt_init(obj, "swt", N, J); // Initialize the wavelet transform object
     setWTConv(wt, "direct");
 
     swt(wt, inp.data()); // Perform SWT

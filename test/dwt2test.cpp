@@ -21,7 +21,7 @@ auto main() -> int
 
     auto const J = 3;
 
-    wt2_object wt = wt2_init(obj, "dwt", rows, cols, J);
+    wt2_set* wt = wt2_init(obj, "dwt", rows, cols, J);
 
     for (auto i = 0; i < rows; ++i) {
         for (auto k = 0; k < cols; ++k) {

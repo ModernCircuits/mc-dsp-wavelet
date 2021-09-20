@@ -170,8 +170,8 @@ void cwavelet(double const* y, int N, double dt, int mother, double param, doubl
     double tmp1;
     double tmp2;
     double scale1;
-    fft_object obj;
-    fft_object iobj;
+    fft_set* obj;
+    fft_set* iobj;
 
     (void)s0;
     (void)dj; /* yes, we need these parameters unused */
