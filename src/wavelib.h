@@ -64,24 +64,24 @@ auto fft_init(int N, int sgn) -> fft_set*;
 
 struct fft_real_set {
     fft_set* cobj;
-    fft_data twiddle2[1];
+    std::unique_ptr<fft_data[]> data;
 };
 
-auto fft_real_init(int N, int sgn) -> fft_real_set*;
+auto fft_real_init(int N, int sgn) -> std::unique_ptr<fft_real_set>;
 
 struct conv_set {
-    fft_real_set* fobj;
-    fft_real_set* iobj;
+    std::unique_ptr<fft_real_set> fobj;
+    std::unique_ptr<fft_real_set> iobj;
     int ilen1;
     int ilen2;
     int clen;
 };
 
-auto conv_init(int N, int L) -> conv_set*;
+auto conv_init(int N, int L) -> std::unique_ptr<conv_set>;
 
 struct wt_set {
     wave_set* wave;
-    conv_set* cobj;
+    std::unique_ptr<conv_set> cobj;
     char method[10];
     int siglength; // Length of the original signal.
     int modwtsiglength; // Modified signal length for MODWT

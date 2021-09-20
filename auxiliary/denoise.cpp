@@ -13,9 +13,8 @@ using namespace std::string_view_literals;
 
 auto denoise_init(int length, int J, char const* wname) -> denoise_set*
 {
-    denoise_set* obj = nullptr;
 
-    obj = (denoise_set*)malloc(sizeof(struct denoise_set) + sizeof(double));
+    auto obj = std::make_unique<denoise_set>();
 
     obj->N = length;
     obj->J = J;
@@ -30,7 +29,7 @@ auto denoise_init(int length, int J, char const* wname) -> denoise_set*
     strcpy(obj->wmethod, "dwt");
     strcpy(obj->cmethod, "direct");
 
-    return obj;
+    return obj.release();
 }
 
 void visushrink(double* signal, int N, int J, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised)

@@ -436,10 +436,9 @@ static void wconv(wt_set* wt, double* sig, int N, double* filt, int L, double* o
     } else if ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv)) {
         if (wt->cfftset == 0) {
             wt->cobj = conv_init(N, L);
-            conv_fft(wt->cobj, sig, filt, oup);
-            free_conv(wt->cobj);
+            conv_fft(wt->cobj.get(), sig, filt, oup);
         } else {
-            conv_fft(wt->cobj, sig, filt, oup);
+            conv_fft(wt->cobj.get(), sig, filt, oup);
         }
     } else {
         printf("Convolution Only accepts two methods - direct and fft");
@@ -660,7 +659,7 @@ static void dwt1(wt_set* wt, double* sig, int len_sig, double* cA, double* cD)
     }
 
     if (wt->wave->lpd_len == wt->wave->hpd_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
-        free_conv(wt->cobj);
+
         wt->cfftset = 0;
     }
 }
@@ -892,26 +891,22 @@ static void getDWTRecCoeff(double const* coeff, int const* length, char const* c
 
 auto getDWTmra(wt_set* wt, double* wavecoeffs) -> double*
 {
-    int J;
-    int access;
-    int N;
-    double* mra;
-    J = wt->J;
-    mra = (double*)malloc(sizeof(double) * wt->siglength * (J + 1));
-    access = 0;
+    auto J = wt->J;
+    auto mra = std::make_unique<double[]>(wt->siglength * (J + 1));
+    auto access = 0;
 
     // Approximation MRA
-    getDWTRecCoeff(wt->output + access, wt->length, "appx", wt->ext, J, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra);
+    getDWTRecCoeff(wt->output + access, wt->length, "appx", wt->ext, J, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra.get());
 
     // Details MRA
-    N = wt->siglength;
+    auto N = wt->siglength;
     for (auto i = J; i > 0; --i) {
         access += wt->length[J - i];
-        getDWTRecCoeff(wt->output + access, wt->length, "det", wt->ext, i, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra + N);
+        getDWTRecCoeff(wt->output + access, wt->length, "det", wt->ext, i, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra.get() + N);
         N += wt->siglength;
     }
 
-    return mra;
+    return mra.release();
 }
 
 void wtree(wtree_set* wt, double const* inp)
@@ -1553,7 +1548,7 @@ static void idwt1(wt_set* wt, double* temp, double* cA_up, double* cA, int len_c
     }
 
     if (wt->wave->lpr_len == wt->wave->hpr_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
-        free_conv(wt->cobj);
+
         wt->cfftset = 0;
     }
 }
@@ -1693,7 +1688,7 @@ void idwt(wt_set* wt, double* dwtop)
             }
             iter += det_len;
             if (wt->wave->lpr_len == wt->wave->hpr_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
-                free_conv(wt->cobj);
+
                 wt->cfftset = 0;
             }
         }
@@ -1808,17 +1803,13 @@ void idwpt(wpt_set* wt, double* dwtop)
         }
 
         if (wt->ext == "per"sv) {
-            // app_len = wt->length[0];
-            // det_len = wt->length[1];
             index = 0;
-
             for (auto i = 0; i < J; ++i) {
                 auto p = ipow2(J - i - 1);
                 auto det_len = wt->length[i + 1];
                 index2 *= 2;
                 auto index3 = 0;
                 auto index4 = 0;
-                //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp.get(), X_hp, out);
                 n1 -= llb;
                 for (l = 0; l < llb; ++l) {
                     if (ptemp[l] != 2) {
@@ -1888,26 +1879,11 @@ void idwpt(wpt_set* wt, double* dwtop)
                     }
                 }
 
-                /*
-				idwt_per(wt, out, det_len, wt->output + iter, det_len, X_lp);
-				for (k = lf / 2 - 1; k < 2 * det_len + lf / 2 - 1; ++k) {
-				out[k - lf / 2 + 1] = X_lp[k];
-				}
-
-				iter += det_len;
-				det_len = wt->length[i + 2];
-				*/
                 llb /= 2;
                 indexp = index2;
             }
 
-            //free(X_lp);
-
         } else if (wt->ext == "sym"sv) {
-            // app_len = wt->length[0];
-            // det_len = wt->length[1];
-
-            //X_lp = (double*)malloc(sizeof(double)* (N + 2 * lf - 1));
             index = 0;
 
             for (auto i = 0; i < J; ++i) {
@@ -1916,7 +1892,6 @@ void idwpt(wpt_set* wt, double* dwtop)
                 index2 *= 2;
                 auto index3 = 0;
                 auto index4 = 0;
-                //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp.get(), X_hp, out);
                 n1 -= llb;
                 for (l = 0; l < llb; ++l) {
                     if (ptemp[l] != 2) {
@@ -2081,7 +2056,7 @@ static void swt_fft(wt_set* wt, double const* inp)
         wconv(wt, sig.get(), N + temp_len + (temp_len % 2), high_pass.get(), N, cD.get());
 
         if (wt->wave->lpd_len == wt->wave->hpd_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
-            free_conv(wt->cobj);
+
             wt->cfftset = 0;
         }
 
@@ -2099,8 +2074,6 @@ static void swt_direct(wt_set* wt, double const* inp)
     int iter;
     int M;
     int lenacc;
-    double* cA;
-    double* cD;
 
     temp_len = wt->siglength;
     J = wt->J;
@@ -2112,8 +2085,8 @@ static void swt_direct(wt_set* wt, double const* inp)
         wt->length[iter] = temp_len;
     }
 
-    cA = (double*)malloc(sizeof(double) * temp_len);
-    cD = (double*)malloc(sizeof(double) * temp_len);
+    auto cA = std::make_unique<double[]>(temp_len);
+    auto cD = std::make_unique<double[]>(temp_len);
 
     M = 1;
 
@@ -2129,16 +2102,13 @@ static void swt_direct(wt_set* wt, double const* inp)
             M = 2 * M;
         }
 
-        swt_per(wt, M, wt->params.get(), temp_len, cA, temp_len, cD);
+        swt_per(wt, M, wt->params.get(), temp_len, cA.get(), temp_len, cD.get());
 
         for (auto i = 0; i < temp_len; ++i) {
             wt->params[i] = cA[i];
             wt->params[lenacc + i] = cD[i];
         }
     }
-
-    free(cA);
-    free(cD);
 }
 
 void swt(wt_set* wt, double const* inp)
@@ -2282,26 +2252,22 @@ static void getSWTRecCoeff(double const* coeff, int* length, char const* ctype, 
 
 auto getSWTmra(wt_set* wt, double* wavecoeffs) -> double*
 {
-    int J;
-    int access;
-    int N;
-    double* mra;
-    J = wt->J;
-    mra = (double*)malloc(sizeof(double) * wt->siglength * (J + 1));
-    access = 0;
+    auto J = wt->J;
+    auto mra = std::make_unique<double[]>(wt->siglength * (J + 1));
+    auto access = 0;
 
     // Approximation MRA
-    getSWTRecCoeff(wt->output + access, wt->length, "appx", J, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra);
+    getSWTRecCoeff(wt->output + access, wt->length, "appx", J, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra.get());
     // Details MRA
-    N = wt->siglength;
+    auto N = wt->siglength;
 
     for (auto i = J; i > 0; --i) {
         access += wt->length[J - i];
-        getSWTRecCoeff(wt->output + access, wt->length, "det", i, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra + N);
+        getSWTRecCoeff(wt->output + access, wt->length, "det", i, J, wt->wave->lpr, wt->wave->hpr, wt->wave->lpr_len, wt->siglength, mra.get() + N);
         N += wt->siglength;
     }
 
-    return mra;
+    return mra.release();
 }
 
 void iswt(wt_set* wt, double* swtop)
@@ -2438,25 +2404,20 @@ void iswt(wt_set* wt, double* swtop)
 
 static void modwt_per(wt_set* wt, int M, double const* inp, double* cA, int len_cA, double* cD)
 {
-    int l;
-    int t;
-    int len_avg;
-    double s;
-    double* filt;
-    len_avg = wt->wave->lpd_len;
+    auto const len_avg = wt->wave->lpd_len;
+    auto filt = std::make_unique<double[]>(2 * len_avg);
+    auto s = sqrt(2.0);
 
-    filt = (double*)malloc(sizeof(double) * 2 * len_avg);
-    s = sqrt(2.0);
     for (auto i = 0; i < len_avg; ++i) {
         filt[i] = wt->wave->lpd[i] / s;
         filt[len_avg + i] = wt->wave->hpd[i] / s;
     }
 
     for (auto i = 0; i < len_cA; ++i) {
-        t = i;
+        auto t = i;
         cA[i] = filt[0] * inp[t];
         cD[i] = filt[len_avg] * inp[t];
-        for (l = 1; l < len_avg; l++) {
+        for (auto l = 1; l < len_avg; l++) {
             t -= M;
             while (t >= len_cA) {
                 t -= len_cA;
@@ -2469,7 +2430,6 @@ static void modwt_per(wt_set* wt, int M, double const* inp, double* cA, int len_
             cD[i] += filt[len_avg + l] * inp[t];
         }
     }
-    free(filt);
 }
 
 static void modwt_direct(wt_set* wt, double const* inp)
@@ -2528,13 +2488,6 @@ static void modwt_fft(wt_set* wt, double const* inp)
     double s;
     double tmp1;
     double tmp2;
-    fft_data* cA;
-    fft_data* cD;
-    fft_data* low_pass;
-    fft_data* high_pass;
-    fft_data* sig;
-    fft_set* fft_fd = nullptr;
-    fft_set* fft_bd = nullptr;
 
     temp_len = wt->siglength;
     len_avg = wt->wave->lpd_len;
@@ -2553,14 +2506,14 @@ static void modwt_fft(wt_set* wt, double const* inp)
         wt->length[iter] = N;
     }
 
-    fft_fd = fft_init(N, 1);
-    fft_bd = fft_init(N, -1);
+    auto fft_fd = std::unique_ptr<fft_set> { fft_init(N, 1) };
+    auto fft_bd = std::unique_ptr<fft_set> { fft_init(N, -1) };
 
-    sig = (fft_data*)malloc(sizeof(fft_data) * N);
-    cA = (fft_data*)malloc(sizeof(fft_data) * N);
-    cD = (fft_data*)malloc(sizeof(fft_data) * N);
-    low_pass = (fft_data*)malloc(sizeof(fft_data) * N);
-    high_pass = (fft_data*)malloc(sizeof(fft_data) * N);
+    auto sig = std::make_unique<fft_data[]>(N);
+    auto cA = std::make_unique<fft_data[]>(N);
+    auto cD = std::make_unique<fft_data[]>(N);
+    auto low_pass = std::make_unique<fft_data[]>(N);
+    auto high_pass = std::make_unique<fft_data[]>(N);
     auto index = std::make_unique<int[]>(N);
 
     // N-point FFT of low pass and high pass filters
@@ -2576,7 +2529,7 @@ static void modwt_fft(wt_set* wt, double const* inp)
         sig[i].im = 0.0;
     }
 
-    fft_exec(fft_fd, sig, low_pass);
+    fft_exec(fft_fd.get(), sig.get(), low_pass.get());
 
     // High Pass Filter
 
@@ -2589,7 +2542,7 @@ static void modwt_fft(wt_set* wt, double const* inp)
         sig[i].im = 0.0;
     }
 
-    fft_exec(fft_fd, sig, high_pass);
+    fft_exec(fft_fd.get(), sig.get(), high_pass.get());
 
     // symmetric extension
     for (auto i = 0; i < temp_len; ++i) {
@@ -2603,7 +2556,7 @@ static void modwt_fft(wt_set* wt, double const* inp)
 
     // FFT of data
 
-    fft_exec(fft_fd, sig, cA);
+    fft_exec(fft_fd.get(), sig.get(), cA.get());
 
     lenacc = wt->outlength;
 
@@ -2626,7 +2579,7 @@ static void modwt_fft(wt_set* wt, double const* inp)
             cD[i].im = high_pass[index[i]].re * tmp2 + high_pass[index[i]].im * tmp1;
         }
 
-        fft_exec(fft_bd, cD, sig);
+        fft_exec(fft_bd.get(), cD.get(), sig.get());
 
         for (auto i = 0; i < N; ++i) {
             wt->params[lenacc + i] = sig[i].re / N;
@@ -2635,19 +2588,11 @@ static void modwt_fft(wt_set* wt, double const* inp)
         M *= 2;
     }
 
-    fft_exec(fft_bd, cA, sig);
+    fft_exec(fft_bd.get(), cA.get(), sig.get());
 
     for (auto i = 0; i < N; ++i) {
         wt->params[i] = sig[i].re / N;
     }
-
-    free(sig);
-    free(cA);
-    free(cD);
-    free(low_pass);
-    free(high_pass);
-    free_fft(fft_fd);
-    free_fft(fft_bd);
 }
 
 void modwt(wt_set* wt, double const* inp)
@@ -2841,42 +2786,19 @@ auto getMODWTmra(wt_set* wt, double* wavecoeffs) -> double*
 
 void imodwt_fft(wt_set* wt, double* oup)
 {
-    int J;
-    // int temp_len;
-    int iter;
-    int M;
-    int N;
-    int len_avg;
-    int lenacc;
-    double s;
-    double tmp1;
-    double tmp2;
-    fft_data* cA;
-    fft_data* cD;
-    fft_data* low_pass;
-    fft_data* high_pass;
-    fft_data* sig;
-    fft_set* fft_fd = nullptr;
-    fft_set* fft_bd = nullptr;
+    auto N = wt->modwtsiglength;
+    auto len_avg = wt->wave->lpd_len;
+    auto J = wt->J;
 
-    N = wt->modwtsiglength;
-    len_avg = wt->wave->lpd_len;
-    // if (wt->ext == "sym"sv) {
-    //     temp_len = N / 2;
-    // } else if (wt->ext== "per"sv) {
-    //     temp_len = N;
-    // }
-    J = wt->J;
+    auto s = sqrt(2.0);
+    auto fft_fd = std::unique_ptr<fft_set> { fft_init(N, 1) };
+    auto fft_bd = std::unique_ptr<fft_set> { fft_init(N, -1) };
 
-    s = sqrt(2.0);
-    fft_fd = fft_init(N, 1);
-    fft_bd = fft_init(N, -1);
-
-    sig = (fft_data*)malloc(sizeof(fft_data) * N);
-    cA = (fft_data*)malloc(sizeof(fft_data) * N);
-    cD = (fft_data*)malloc(sizeof(fft_data) * N);
-    low_pass = (fft_data*)malloc(sizeof(fft_data) * N);
-    high_pass = (fft_data*)malloc(sizeof(fft_data) * N);
+    auto sig = std::make_unique<fft_data[]>(N);
+    auto cA = std::make_unique<fft_data[]>(N);
+    auto cD = std::make_unique<fft_data[]>(N);
+    auto low_pass = std::make_unique<fft_data[]>(N);
+    auto high_pass = std::make_unique<fft_data[]>(N);
     auto index = std::make_unique<int[]>(N);
 
     // N-point FFT of low pass and high pass filters
@@ -2892,7 +2814,7 @@ void imodwt_fft(wt_set* wt, double* oup)
         sig[i].im = 0.0;
     }
 
-    fft_exec(fft_fd, sig, low_pass);
+    fft_exec(fft_fd.get(), sig.get(), low_pass.get());
 
     // High Pass Filter
 
@@ -2905,15 +2827,15 @@ void imodwt_fft(wt_set* wt, double* oup)
         sig[i].im = 0.0;
     }
 
-    fft_exec(fft_fd, sig, high_pass);
+    fft_exec(fft_fd.get(), sig.get(), high_pass.get());
 
     // Complex conjugate of the two filters
 
-    conj_complex(low_pass, N);
-    conj_complex(high_pass, N);
+    conj_complex(low_pass.get(), N);
+    conj_complex(high_pass.get(), N);
 
-    M = (int)pow(2.0, (double)J - 1.0);
-    lenacc = N;
+    auto M = (int)pow(2.0, (double)J - 1.0);
+    auto lenacc = N;
 
     //
     for (auto i = 0; i < N; ++i) {
@@ -2921,26 +2843,26 @@ void imodwt_fft(wt_set* wt, double* oup)
         sig[i].im = 0.0;
     }
 
-    for (iter = 0; iter < J; ++iter) {
-        fft_exec(fft_fd, sig, cA);
+    for (auto iter = 0; iter < J; ++iter) {
+        fft_exec(fft_fd.get(), sig.get(), cA.get());
         for (auto i = 0; i < N; ++i) {
             sig[i].re = wt->output[lenacc + i];
             sig[i].im = 0.0;
         }
-        fft_exec(fft_fd, sig, cD);
+        fft_exec(fft_fd.get(), sig.get(), cD.get());
 
         for (auto i = 0; i < N; ++i) {
             index[i] = (M * i) % N;
         }
 
         for (auto i = 0; i < N; ++i) {
-            tmp1 = cA[i].re;
-            tmp2 = cA[i].im;
+            auto const tmp1 = cA[i].re;
+            auto const tmp2 = cA[i].im;
             cA[i].re = low_pass[index[i]].re * tmp1 - low_pass[index[i]].im * tmp2 + high_pass[index[i]].re * cD[i].re - high_pass[index[i]].im * cD[i].im;
             cA[i].im = low_pass[index[i]].re * tmp2 + low_pass[index[i]].im * tmp1 + high_pass[index[i]].re * cD[i].im + high_pass[index[i]].im * cD[i].re;
         }
 
-        fft_exec(fft_bd, cA, sig);
+        fft_exec(fft_bd.get(), cA.get(), sig.get());
 
         for (auto i = 0; i < N; ++i) {
             sig[i].re /= N;
@@ -2953,36 +2875,23 @@ void imodwt_fft(wt_set* wt, double* oup)
     for (auto i = 0; i < wt->siglength; ++i) {
         oup[i] = sig[i].re;
     }
-
-    free(sig);
-    free(cA);
-    free(cD);
-    free(low_pass);
-    free(high_pass);
-    free_fft(fft_fd);
-    free_fft(fft_bd);
 }
 
 static void imodwt_per(wt_set* wt, int M, double const* cA, int len_cA, double const* cD, double* X)
 {
-    int len_avg;
-    int l;
-    int t;
-    double s;
-    double* filt;
-    len_avg = wt->wave->lpd_len;
+    auto const len_avg = wt->wave->lpd_len;
+    auto filt = std::make_unique<double[]>(2 * len_avg);
+    auto s = sqrt(2.0);
 
-    filt = (double*)malloc(sizeof(double) * 2 * len_avg);
-    s = sqrt(2.0);
     for (auto i = 0; i < len_avg; ++i) {
         filt[i] = wt->wave->lpd[i] / s;
         filt[len_avg + i] = wt->wave->hpd[i] / s;
     }
 
     for (auto i = 0; i < len_cA; ++i) {
-        t = i;
+        auto t = i;
         X[i] = (filt[0] * cA[t]) + (filt[len_avg] * cD[t]);
-        for (l = 1; l < len_avg; l++) {
+        for (auto l = 1; l < len_avg; l++) {
             t += M;
             while (t >= len_cA) {
                 t -= len_cA;
@@ -2994,7 +2903,6 @@ static void imodwt_per(wt_set* wt, int M, double const* cA, int len_cA, double c
             X[i] += (filt[l] * cA[t]) + (filt[len_avg + l] * cD[t]);
         }
     }
-    free(filt);
 }
 
 static void imodwt_direct(wt_set* wt, double* dwtop)
@@ -3005,14 +2913,13 @@ static void imodwt_direct(wt_set* wt, double* dwtop)
     int j;
     int lenacc;
     int M;
-    double* X;
 
     N = wt->siglength;
     J = wt->J;
     lenacc = N;
     M = (int)pow(2.0, (double)J - 1.0);
     //M = 1;
-    X = (double*)malloc(sizeof(double) * N);
+    auto X = std::make_unique<double[]>(N);
 
     for (auto i = 0; i < N; ++i) {
         dwtop[i] = wt->output[i];
@@ -3022,7 +2929,7 @@ static void imodwt_direct(wt_set* wt, double* dwtop)
         if (iter > 0) {
             M = M / 2;
         }
-        imodwt_per(wt, M, dwtop, N, wt->params.get() + lenacc, X);
+        imodwt_per(wt, M, dwtop, N, wt->params.get() + lenacc, X.get());
         /*
 		for (auto j = lf - 1; j < N; ++j) {
 			dwtop[j - lf + 1] = X[j];
@@ -3037,7 +2944,6 @@ static void imodwt_direct(wt_set* wt, double* dwtop)
 
         lenacc += N;
     }
-    free(X);
 }
 
 void imodwt(wt_set* wt, double* oup)
@@ -3486,8 +3392,6 @@ auto swt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     int cdim;
     int clen;
     double* orig;
-    double* lp_dn1;
-    double* hp_dn1;
 
     J = wt->J;
     M = 1;
@@ -3514,8 +3418,8 @@ auto swt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     ic = wt->cols;
     cols_i = wt->dimensions[2 * J - 1];
 
-    lp_dn1 = (double*)malloc(sizeof(double) * ir * cols_i);
-    hp_dn1 = (double*)malloc(sizeof(double) * ir * cols_i);
+    auto lp_dn1 = std::make_unique<double[]>(ir * cols_i);
+    auto hp_dn1 = std::make_unique<double[]>(ir * cols_i);
 
     for (iter = 0; iter < J; ++iter) {
         if (iter > 0) {
@@ -3528,7 +3432,7 @@ auto swt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
         cdim = rows_i * cols_i;
         // Row filtering and column subsampling
         for (auto i = 0; i < ir; ++i) {
-            swt_per_stride(M, orig + i * ic, ic, wt->wave->lpd, wt->wave->hpd, lp, lp_dn1 + i * cols_i, cols_i, hp_dn1 + i * cols_i, istride, ostride);
+            swt_per_stride(M, orig + i * ic, ic, wt->wave->lpd, wt->wave->hpd, lp, lp_dn1.get() + i * cols_i, cols_i, hp_dn1.get() + i * cols_i, istride, ostride);
         }
         // Column Filtering and Row subsampling
         aHH = N - cdim;
@@ -3544,11 +3448,11 @@ auto swt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
         istride = ic;
         ostride = ic;
         for (auto i = 0; i < ic; ++i) {
-            swt_per_stride(M, lp_dn1 + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff.get() + aLL + i, rows_i, wavecoeff.get() + aLH + i, istride, ostride);
+            swt_per_stride(M, lp_dn1.get() + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff.get() + aLL + i, rows_i, wavecoeff.get() + aLH + i, istride, ostride);
         }
 
         for (auto i = 0; i < ic; ++i) {
-            swt_per_stride(M, hp_dn1 + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff.get() + aHL + i, rows_i, wavecoeff.get() + aHH + i, istride, ostride);
+            swt_per_stride(M, hp_dn1.get() + i, ir, wt->wave->lpd, wt->wave->hpd, lp, wavecoeff.get() + aHL + i, rows_i, wavecoeff.get() + aHH + i, istride, ostride);
         }
 
         ir = rows_i;
@@ -3556,8 +3460,6 @@ auto swt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
         clen -= 3;
     }
     wt->coeffaccess[0] = 0;
-    free(lp_dn1);
-    free(hp_dn1);
 
     return wavecoeff;
 }
@@ -3682,9 +3584,6 @@ auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     int cdim;
     int clen;
     double* orig;
-    double* lp_dn1;
-    double* hp_dn1;
-    double* filt;
     double s;
 
     J = wt->J;
@@ -3706,7 +3605,7 @@ auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     wt->outlength += (rows_n * cols_n);
     N = wt->outlength;
     auto wavecoeff = makeZeros<double>(wt->outlength);
-    filt = (double*)malloc(sizeof(double) * 2 * lp);
+    auto filt = std::make_unique<double[]>(2 * lp);
     s = sqrt(2.0);
     for (auto i = 0; i < lp; ++i) {
         filt[i] = wt->wave->lpd[i] / s;
@@ -3718,8 +3617,8 @@ auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     ic = wt->cols;
     cols_i = wt->dimensions[2 * J - 1];
 
-    lp_dn1 = (double*)malloc(sizeof(double) * ir * cols_i);
-    hp_dn1 = (double*)malloc(sizeof(double) * ir * cols_i);
+    auto lp_dn1 = std::make_unique<double[]>(ir * cols_i);
+    auto hp_dn1 = std::make_unique<double[]>(ir * cols_i);
 
     for (iter = 0; iter < J; ++iter) {
         if (iter > 0) {
@@ -3732,7 +3631,7 @@ auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
         cdim = rows_i * cols_i;
         // Row filtering and column subsampling
         for (auto i = 0; i < ir; ++i) {
-            modwt_per_stride(M, orig + i * ic, ic, filt, lp, lp_dn1 + i * cols_i, cols_i, hp_dn1 + i * cols_i, istride, ostride);
+            modwt_per_stride(M, orig + i * ic, ic, filt.get(), lp, lp_dn1.get() + i * cols_i, cols_i, hp_dn1.get() + i * cols_i, istride, ostride);
         }
         // Column Filtering and Row subsampling
         aHH = N - cdim;
@@ -3747,11 +3646,11 @@ auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
         istride = ic;
         ostride = ic;
         for (auto i = 0; i < ic; ++i) {
-            modwt_per_stride(M, lp_dn1 + i, ir, filt, lp, wavecoeff.get() + aLL + i, rows_i, wavecoeff.get() + aLH + i, istride, ostride);
+            modwt_per_stride(M, lp_dn1.get() + i, ir, filt.get(), lp, wavecoeff.get() + aLL + i, rows_i, wavecoeff.get() + aLH + i, istride, ostride);
         }
 
         for (auto i = 0; i < ic; ++i) {
-            modwt_per_stride(M, hp_dn1 + i, ir, filt, lp, wavecoeff.get() + aHL + i, rows_i, wavecoeff.get() + aHH + i, istride, ostride);
+            modwt_per_stride(M, hp_dn1.get() + i, ir, filt.get(), lp, wavecoeff.get() + aHL + i, rows_i, wavecoeff.get() + aHH + i, istride, ostride);
         }
 
         ir = rows_i;
@@ -3759,9 +3658,7 @@ auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
         clen -= 3;
     }
     wt->coeffaccess[0] = 0;
-    free(lp_dn1);
-    free(hp_dn1);
-    free(filt);
+
     return wavecoeff;
 }
 

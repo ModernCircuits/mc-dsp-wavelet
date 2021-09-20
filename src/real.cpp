@@ -9,20 +9,16 @@
 #include <cstdio>
 #include <memory>
 
-auto fft_real_init(int N, int sgn) -> fft_real_set*
+auto fft_real_init(int N, int sgn) -> std::unique_ptr<fft_real_set>
 {
-    fft_real_set* obj = nullptr;
-    fft_type theta;
-    int k;
-
-    obj = (fft_real_set*)malloc(sizeof(struct fft_real_set) + sizeof(fft_data) * (N / 2));
-
+    auto obj = std::make_unique<fft_real_set>();
+    obj->data = std::make_unique<fft_data[]>(N / 2);
     obj->cobj = fft_init(N / 2, sgn);
 
-    for (k = 0; k < N / 2; ++k) {
-        theta = PI2 * k / N;
-        obj->twiddle2[k].re = cos(theta);
-        obj->twiddle2[k].im = sin(theta);
+    for (auto k = 0; k < N / 2; ++k) {
+        auto const theta = PI2 * k / N;
+        obj->data[k].re = cos(theta);
+        obj->data[k].im = sin(theta);
     }
 
     return obj;
@@ -54,8 +50,8 @@ void fft_r2c_exec(fft_real_set* obj, fft_type const* inp, fft_data* oup)
     for (i = 1; i < N2; ++i) {
         temp1 = coup[i].im + coup[N2 - i].im;
         temp2 = coup[N2 - i].re - coup[i].re;
-        oup[i].re = (coup[i].re + coup[N2 - i].re + (temp1 * obj->twiddle2[i].re) + (temp2 * obj->twiddle2[i].im)) / 2.0;
-        oup[i].im = (coup[i].im - coup[N2 - i].im + (temp2 * obj->twiddle2[i].re) - (temp1 * obj->twiddle2[i].im)) / 2.0;
+        oup[i].re = (coup[i].re + coup[N2 - i].re + (temp1 * obj->data[i].re) + (temp2 * obj->data[i].im)) / 2.0;
+        oup[i].im = (coup[i].im - coup[N2 - i].im + (temp2 * obj->data[i].re) - (temp1 * obj->data[i].im)) / 2.0;
     }
 
     oup[N2].re = coup[0].re - coup[0].im;
@@ -81,8 +77,8 @@ void fft_c2r_exec(fft_real_set* obj, fft_data* inp, fft_type* oup)
     for (i = 0; i < N2; ++i) {
         temp1 = -inp[i].im - inp[N2 - i].im;
         temp2 = -inp[N2 - i].re + inp[i].re;
-        cinp[i].re = inp[i].re + inp[N2 - i].re + (temp1 * obj->twiddle2[i].re) - (temp2 * obj->twiddle2[i].im);
-        cinp[i].im = inp[i].im - inp[N2 - i].im + (temp2 * obj->twiddle2[i].re) + (temp1 * obj->twiddle2[i].im);
+        cinp[i].re = inp[i].re + inp[N2 - i].re + (temp1 * obj->data[i].re) - (temp2 * obj->data[i].im);
+        cinp[i].im = inp[i].im - inp[N2 - i].im + (temp2 * obj->data[i].re) + (temp1 * obj->data[i].im);
     }
 
     fft_exec(obj->cobj, cinp.get(), coup.get());

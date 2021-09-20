@@ -1557,14 +1557,14 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
         fft_type temp1i;
         fft_type temp2r;
         fft_type temp2i;
-        auto* wlr = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
-        auto* wli = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
-        auto* taur = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
-        auto* taui = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
-        auto* c1 = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
-        auto* s1 = (fft_type*)malloc(sizeof(fft_type) * (radix - 1));
-        auto* yr = (fft_type*)malloc(sizeof(fft_type) * (radix));
-        auto* yi = (fft_type*)malloc(sizeof(fft_type) * (radix));
+        auto wlr = std::make_unique<fft_type[]>(radix - 1);
+        auto wli = std::make_unique<fft_type[]>(radix - 1);
+        auto taur = std::make_unique<fft_type[]>(radix - 1);
+        auto taui = std::make_unique<fft_type[]>(radix - 1);
+        auto c1 = std::make_unique<fft_type[]>(radix - 1);
+        auto s1 = std::make_unique<fft_type[]>(radix - 1);
+        auto yr = std::make_unique<fft_type[]>(radix);
+        auto yi = std::make_unique<fft_type[]>(radix);
 
         auto const m = N / radix;
         auto const ll = radix * l;
@@ -1644,14 +1644,6 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
                 op[k + (radix - u - 1) * m].im = temp1i - temp2r;
             }
         }
-        free(wlr);
-        free(wli);
-        free(taur);
-        free(taui);
-        free(c1);
-        free(s1);
-        free(yr);
-        free(yi);
     }
 }
 
