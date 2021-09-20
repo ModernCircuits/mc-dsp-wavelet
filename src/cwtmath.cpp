@@ -114,18 +114,9 @@ void nsfft_exec(fft_set* obj, fft_data* inp, fft_data* oup, double lb, double ub
     }
 }
 
-// Rounds to the integer nearest to zero
-static auto fix(double x) -> double
+static auto roundTowardsZero(double x) -> double
 {
-    if (x >= 0.) {
-        return floor(x);
-    }
-    return ceil(x);
-}
-
-auto nint(double N) -> int
-{
-    return static_cast<int>(N + 0.49999);
+    return x >= 0.0 ? std::floor(x) : std::ceil(x);
 }
 
 auto cwt_gamma(double x) -> double
@@ -164,33 +155,39 @@ auto cwt_gamma(double x) -> double
     constexpr double eps = 2.22e-16;
     constexpr double xninf = 1.79e-308;
 
-    double num[8] = { -1.71618513886549492533811e+0,
+    double num[8] = {
+        -1.71618513886549492533811e+0,
         2.47656508055759199108314e+1,
         -3.79804256470945635097577e+2,
         6.29331155312818442661052e+2,
         8.66966202790413211295064e+2,
         -3.14512729688483675254357e+4,
         -3.61444134186911729807069e+4,
-        6.64561438202405440627855e+4 };
+        6.64561438202405440627855e+4,
+    };
 
-    double den[8] = { -3.08402300119738975254353e+1,
+    double den[8] = {
+        -3.08402300119738975254353e+1,
         3.15350626979604161529144e+2,
         -1.01515636749021914166146e+3,
         -3.10777167157231109440444e+3,
         2.25381184209801510330112e+4,
         4.75584627752788110767815e+3,
         -1.34659959864969306392456e+5,
-        -1.15132259675553483497211e+5 };
+        -1.15132259675553483497211e+5,
+    };
 
     // Coefficients for Hart's Minimax approximation x >= 12
 
-    double c[7] = { -1.910444077728e-03,
+    double c[7] = {
+        -1.910444077728e-03,
         8.4171387781295e-04,
         -5.952379913043012e-04,
         7.93650793500350248e-04,
         -2.777777777777681622553e-03,
         8.333333333333333331554247e-02,
-        5.7083835261e-03 };
+        5.7083835261e-03,
+    };
 
     y = x;
     swi = 0;
@@ -200,11 +197,11 @@ auto cwt_gamma(double x) -> double
     if (y < 0.) {
         // Negative x
         y = -x;
-        yi = fix(y);
+        yi = roundTowardsZero(y);
         oup = y - yi;
 
         if (oup != 0.0) {
-            if (yi != fix(yi * .5) * 2.) {
+            if (yi != roundTowardsZero(yi * .5) * 2.) {
                 swi = 1;
             }
             fact = -pi / sin(pi * oup);
@@ -258,8 +255,8 @@ auto cwt_gamma(double x) -> double
                 sum = sum / y2 + c[i];
             }
             sum = sum / y - y + spi;
-            sum += (y - .5) * log(y);
-            oup = exp(sum);
+            sum += (y - .5) * std::log(y);
+            oup = std::exp(sum);
         } else {
             return (xinf);
         }

@@ -11,6 +11,6 @@
 #include "real.h"
 
 void conv_direct(fft_type const* inp1, int N, fft_type const* inp2, int L, fft_type* oup);
-void conv_fft(conv_set const* obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup);
+void conv_fft(conv_set const& obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup);
 
 #endif /* CONV_H_ */

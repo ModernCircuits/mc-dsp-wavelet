@@ -25,7 +25,7 @@ auto fft_init(int N, int sgn) -> std::unique_ptr<fft_set>
     } else {
         int K;
         int M;
-        K = (int)pow(2.0, ceil(log10(N) / log10(2.0)));
+        K = (int)std::pow(2.0, ceil(log10(N) / log10(2.0)));
 
         if (K < 2 * N - 2) {
             M = K * 2;
@@ -1693,7 +1693,7 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_set* obj, int sgn, 
     fft_type temp;
 
     obj->lt = 0;
-    auto K = (int)pow(2.0, ceil((double)log10((double)N) / log10((double)2.0)));
+    auto K = (int)std::pow(2.0, ceil((double)log10((double)N) / log10((double)2.0)));
     auto def_lt = 1;
     auto def_sgn = obj->sgn;
     auto def_N = obj->N;

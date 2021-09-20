@@ -43,7 +43,7 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
 
     auto* wave = wave_init(wname);
     auto filt_len = wave->filtlength;
-    auto MaxIter = (int)(log((double)N / ((double)filt_len - 1.0)) / log(2.0));
+    auto MaxIter = (int)(std::log((double)N / ((double)filt_len - 1.0)) / std::log(2.0));
 
     if (J > MaxIter) {
         std::printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
@@ -104,7 +104,7 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
     for (it = 0; it < J; ++it) {
         sigma = lnoise[it];
         dlen = wt->length[it + 1];
-        td = std::sqrt(2.0 * log(dwt_len)) * sigma;
+        td = std::sqrt(2.0 * std::log(dwt_len)) * sigma;
 
         if (thresh == "hard"sv) {
             for (auto i = 0; i < dlen; ++i) {
@@ -163,7 +163,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
 
     filt_len = wave->filtlength;
 
-    MaxIter = (int)(log((double)N / ((double)filt_len - 1.0)) / log(2.0));
+    MaxIter = (int)(std::log((double)N / ((double)filt_len - 1.0)) / std::log(2.0));
     // Depends on J
     if (J > MaxIter) {
         std::printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
@@ -228,13 +228,13 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
         if (sigma < 0.00000001) {
             td = 0;
         } else {
-            tv = std::sqrt(2.0 * log(dwt_len));
+            tv = std::sqrt(2.0 * std::log(dwt_len));
             norm = 0.0;
             for (auto i = 0; i < dwt_len; ++i) {
                 norm += (wt->output[len + i] * wt->output[len + i] / (sigma * sigma));
             }
             te = (norm - (double)dwt_len) / (double)dwt_len;
-            ct = pow(log((double)dwt_len) / log(2.0), 1.5) / std::sqrt((double)dwt_len);
+            ct = pow(std::log((double)dwt_len) / std::log(2.0), 1.5) / std::sqrt((double)dwt_len);
 
             if (te < ct) {
                 td = tv;
@@ -309,7 +309,7 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
 
     auto filt_len = wave->filtlength;
 
-    auto MaxIter = (int)(log((double)N / ((double)filt_len - 1.0)) / log(2.0));
+    auto MaxIter = (int)(std::log((double)N / ((double)filt_len - 1.0)) / std::log(2.0));
 
     if (J > MaxIter) {
         std::printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
@@ -357,7 +357,7 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
     }
 
     M = pow(2.0, J);
-    llen = log((double)wt->modwtsiglength);
+    llen = std::log((double)wt->modwtsiglength);
     // Thresholding
 
     iter = wt->length[0];

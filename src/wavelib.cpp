@@ -342,10 +342,10 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
     obj->mother = mother;
     obj->m = param;
 
-    t1 = 0.499999 + log((double)N) / log(2.0);
+    t1 = 0.499999 + std::log((double)N) / std::log(2.0);
     ibase2 = 1 + (int)t1;
 
-    obj->npad = (int)pow(2.0, (double)ibase2);
+    obj->npad = (int)std::pow(2.0, (double)ibase2);
 
     obj->output = (cplx_data*)&obj->params[0];
     obj->scale = &obj->params[nj2];
@@ -436,9 +436,9 @@ static void wconv(wt_set* wt, double* sig, int N, double* filt, int L, double* o
     } else if ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv)) {
         if (wt->cfftset == 0) {
             wt->cobj = conv_init(N, L);
-            conv_fft(wt->cobj.get(), sig, filt, oup);
+            conv_fft(*wt->cobj, sig, filt, oup);
         } else {
-            conv_fft(wt->cobj.get(), sig, filt, oup);
+            conv_fft(*wt->cobj, sig, filt, oup);
         }
     } else {
         printf("Convolution Only accepts two methods - direct and fft");
@@ -1397,7 +1397,7 @@ auto getCWTScaleLength(int N) -> int
 
     dj = 0.4875;
 
-    temp = (log((double)N / 2.0) / log(2.0)) / dj;
+    temp = (std::log((double)N / 2.0) / std::log(2.0)) / dj;
     J = (int)temp;
 
     return J;
@@ -1406,10 +1406,10 @@ auto getCWTScaleLength(int N) -> int
 void setCWTScales(cwt_set* wt, double s0, double dj, char const* type, int power)
 {
     strcpy(wt->type, type);
-    //s0*pow(2.0, (double)(j - 1)*dj);
+    //s0*std::pow(2.0, (double)(j - 1)*dj);
     if ((wt->type == "pow"sv) || (wt->type == "power"sv)) {
         for (auto i = 0; i < wt->J; ++i) {
-            wt->scale[i] = s0 * pow((double)power, (double)(i)*dj);
+            wt->scale[i] = s0 * std::pow((double)power, (double)(i)*dj);
         }
         wt->sflag = 1;
         wt->pow = power;
@@ -1462,7 +1462,7 @@ void cwt(cwt_set* wt, double const* inp)
     N = wt->siglength;
     if (wt->sflag == 0) {
         for (auto i = 0; i < wt->J; ++i) {
-            wt->scale[i] = wt->s0 * pow(2.0, (double)(i)*wt->dj);
+            wt->scale[i] = wt->s0 * std::pow(2.0, (double)(i)*wt->dj);
         }
         wt->sflag = 1;
     }
@@ -2175,7 +2175,7 @@ static void getSWTRecCoeff(double const* coeff, int* length, char const* ctype, 
             }
         }
 
-        value = (int)pow(2.0, (double)(J - 1 - iter));
+        value = (int)std::pow(2.0, (double)(J - 1 - iter));
 
         for (count = 0; count < value; count++) {
             len = 0;
@@ -2320,7 +2320,7 @@ void iswt(wt_set* wt, double* swtop)
             }
         }
 
-        value = (int)pow(2.0, (double)(J - 1 - iter));
+        value = (int)std::pow(2.0, (double)(J - 1 - iter));
 
         for (count = 0; count < value; count++) {
             len = 0;
@@ -2620,7 +2620,7 @@ static void getMODWTRecCoeff(fft_set* fft_fd, fft_set* fft_bd, fft_data* appx, f
     fft_type tmp1;
     fft_type tmp2;
 
-    auto M = (int)pow(2.0, (double)level - 1.0);
+    auto M = (int)std::pow(2.0, (double)level - 1.0);
 
     if (ctype == "appx"sv) {
         for (auto iter = 0; iter < level; ++iter) {
@@ -2739,7 +2739,7 @@ auto getMODWTmra(wt_set* wt, double* wavecoeffs) -> double*
     conj_complex(low_pass.get(), N);
     conj_complex(high_pass.get(), N);
 
-    // M = (int)pow(2.0, (double)J - 1.0);
+    // M = (int)std::pow(2.0, (double)J - 1.0);
     auto lenacc = N;
 
     //
@@ -2831,7 +2831,7 @@ void imodwt_fft(wt_set* wt, double* oup)
     conj_complex(low_pass.get(), N);
     conj_complex(high_pass.get(), N);
 
-    auto M = (int)pow(2.0, (double)J - 1.0);
+    auto M = (int)std::pow(2.0, (double)J - 1.0);
     auto lenacc = N;
 
     //
@@ -2914,7 +2914,7 @@ static void imodwt_direct(wt_set* wt, double* dwtop)
     N = wt->siglength;
     J = wt->J;
     lenacc = N;
-    M = (int)pow(2.0, (double)J - 1.0);
+    M = (int)std::pow(2.0, (double)J - 1.0);
     //M = 1;
     auto X = std::make_unique<double[]>(N);
 
@@ -3506,7 +3506,7 @@ void iswt2(wt2_set* wt, double const* wavecoeffs, double* oup)
         aLH = wt->coeffaccess[(J - iter) * 3 + 1];
         aHL = wt->coeffaccess[(J - iter) * 3 + 2];
         aHH = wt->coeffaccess[(J - iter) * 3 + 3];
-        M = (int)pow(2.0, (double)iter - 1);
+        M = (int)std::pow(2.0, (double)iter - 1);
 
         for (it2 = 0; it2 < M; ++it2) {
             ir = 0;
@@ -3683,7 +3683,7 @@ void imodwt2(wt2_set* wt, double* wavecoeff, double* oup)
     cols = wt->cols;
     J = wt->J;
 
-    M = (int)pow(2.0, (double)J - 1.0);
+    M = (int)std::pow(2.0, (double)J - 1.0);
     // N = rows > cols ? rows : cols;
     lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 

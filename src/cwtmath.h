@@ -9,6 +9,4 @@ void nsfft_exec(fft_set* obj, fft_data* inp, fft_data* oup, double lb, double ub
 
 auto cwt_gamma(double x) -> double;
 
-auto nint(double N) -> int;
-
 #endif /* WAVELIB_H_ */

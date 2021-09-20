@@ -110,12 +110,12 @@ void conv_direct(fft_type const* inp1, int N, fft_type const* inp2, int L, fft_t
     }
 }
 
-void conv_fft(conv_set const* obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup)
+void conv_fft(conv_set const& obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup)
 {
 
-    auto N = obj->clen;
-    auto L1 = obj->ilen1;
-    auto L2 = obj->ilen2;
+    auto N = obj.clen;
+    auto L1 = obj.ilen1;
+    auto L2 = obj.ilen2;
     auto ls = L1 + L2 - 1;
 
     auto a = std::make_unique<fft_type[]>(N);
@@ -139,15 +139,15 @@ void conv_fft(conv_set const* obj, fft_type const* inp1, fft_type const* inp2, f
         }
     }
 
-    fft_r2c_exec(obj->fobj.get(), a.get(), ao.get());
-    fft_r2c_exec(obj->fobj.get(), b.get(), bo.get());
+    fft_r2c_exec(obj.fobj.get(), a.get(), ao.get());
+    fft_r2c_exec(obj.fobj.get(), b.get(), bo.get());
 
     for (auto i = 0; i < N; i++) {
         c[i].re = ao[i].re * bo[i].re - ao[i].im * bo[i].im;
         c[i].im = ao[i].im * bo[i].re + ao[i].re * bo[i].im;
     }
 
-    fft_c2r_exec(obj->iobj.get(), c.get(), co.get());
+    fft_c2r_exec(obj.iobj.get(), c.get(), co.get());
 
     for (auto i = 0; i < ls; i++) {
         oup[i] = co[i] / N;

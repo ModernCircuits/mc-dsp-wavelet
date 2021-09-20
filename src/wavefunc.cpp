@@ -113,55 +113,55 @@ void gauss(int N, int p, double lb, double ub, double* psi, double* t)
 
     if (p == 1) {
         for (i = 0; i < N; ++i) {
-            psi[i] = -t[i] * exp(-t[i] * t[i] / 2.0) * num;
+            psi[i] = -t[i] * std::exp(-t[i] * t[i] / 2.0) * num;
         }
     } else if (p == 2) {
         for (i = 0; i < N; ++i) {
             t2 = t[i] * t[i];
-            psi[i] = (-1.0 + t2) * exp(-t2 / 2.0) * num;
+            psi[i] = (-1.0 + t2) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 3) {
         for (i = 0; i < N; ++i) {
             t2 = t[i] * t[i];
-            psi[i] = t[i] * (3.0 - t2) * exp(-t2 / 2.0) * num;
+            psi[i] = t[i] * (3.0 - t2) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 4) {
         for (i = 0; i < N; ++i) {
             t2 = t[i] * t[i];
-            psi[i] = (t2 * t2 - 6.0 * t2 + 3.0) * exp(-t2 / 2.0) * num;
+            psi[i] = (t2 * t2 - 6.0 * t2 + 3.0) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 5) {
         for (i = 0; i < N; ++i) {
             t2 = t[i] * t[i];
-            psi[i] = t[i] * (-t2 * t2 + 10.0 * t2 - 15.0) * exp(-t2 / 2.0) * num;
+            psi[i] = t[i] * (-t2 * t2 + 10.0 * t2 - 15.0) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 6) {
         for (i = 0; i < N; ++i) {
             t2 = t[i] * t[i];
-            psi[i] = (t2 * t2 * t2 - 15.0 * t2 * t2 + 45.0 * t2 - 15.0) * exp(-t2 / 2.0) * num;
+            psi[i] = (t2 * t2 * t2 - 15.0 * t2 * t2 + 45.0 * t2 - 15.0) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 7) {
         for (i = 0; i < N; ++i) {
             t2 = t[i] * t[i];
-            psi[i] = t[i] * (-t2 * t2 * t2 + 21.0 * t2 * t2 - 105.0 * t2 + 105.0) * exp(-t2 / 2.0) * num;
+            psi[i] = t[i] * (-t2 * t2 * t2 + 21.0 * t2 * t2 - 105.0 * t2 + 105.0) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 8) {
         for (i = 0; i < N; ++i) {
             t2 = t[i] * t[i];
             t4 = t2 * t2;
-            psi[i] = (t4 * t4 - 28.0 * t4 * t2 + 210.0 * t4 - 420.0 * t2 + 105.0) * exp(-t2 / 2.0) * num;
+            psi[i] = (t4 * t4 - 28.0 * t4 * t2 + 210.0 * t4 - 420.0 * t2 + 105.0) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 9) {
         for (i = 0; i < N; ++i) {
             t2 = t[i] * t[i];
             t4 = t2 * t2;
-            psi[i] = t[i] * (-t4 * t4 + 36.0 * t4 * t2 - 378.0 * t4 + 1260.0 * t2 - 945.0) * exp(-t2 / 2.0) * num;
+            psi[i] = t[i] * (-t4 * t4 + 36.0 * t4 * t2 - 378.0 * t4 + 1260.0 * t2 - 945.0) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 10) {
         for (i = 0; i < N; ++i) {
             t2 = t[i] * t[i];
             t4 = t2 * t2;
-            psi[i] = (t4 * t4 * t2 - 45.0 * t4 * t4 + 630.0 * t4 * t2 - 3150.0 * t4 + 4725.0 * t2 - 945.0) * exp(-t2 / 2.0) * num;
+            psi[i] = (t4 * t4 * t2 - 45.0 * t4 * t4 + 630.0 * t4 * t2 - 3150.0 * t4 + 4725.0 * t2 - 945.0) * std::exp(-t2 / 2.0) * num;
         }
     } else {
         printf("\n The Gaussian Derivative Wavelet is only available for Derivatives 1 to 10");
@@ -192,6 +192,6 @@ void morlet(int N, double lb, double ub, double* psi, double* t)
     }
 
     for (i = 0; i < N; ++i) {
-        psi[i] = exp(-t[i] * t[i] / 2.0) * cos(5 * t[i]);
+        psi[i] = std::exp(-t[i] * t[i] / 2.0) * cos(5 * t[i]);
     }
 }

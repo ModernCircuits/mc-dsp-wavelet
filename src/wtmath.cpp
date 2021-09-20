@@ -600,7 +600,7 @@ auto wmaxiter(int sig_len, int filt_len) -> int
     int lev;
     double temp;
 
-    temp = log((double)sig_len / ((double)filt_len - 1.0)) / log(2.0);
+    temp = std::log((double)sig_len / ((double)filt_len - 1.0)) / std::log(2.0);
     lev = (int)temp;
 
     return lev;
@@ -617,7 +617,7 @@ static auto entropy_s(double const* x, int N) -> double
     for (i = 0; i < N; ++i) {
         if (x[i] != 0) {
             x2 = x[i] * x[i];
-            val -= x2 * log(x2);
+            val -= x2 * std::log(x2);
         }
     }
     return val;
@@ -629,8 +629,8 @@ static auto entropy_t(double* x, int N, double t) -> double
     double val;
     double x2;
     if (t < 0) {
-        printf("Threshold value must be >= 0");
-        exit(1);
+        std::printf("Threshold value must be >= 0");
+        std::exit(1);
     }
     val = 0.0;
 
@@ -650,13 +650,13 @@ static auto entropy_n(double* x, int N, double p) -> double
     double val;
     double x2;
     if (p < 1) {
-        printf("Norm power value must be >= 1");
-        exit(1);
+        std::printf("Norm power value must be >= 1");
+        std::exit(1);
     }
     val = 0.0;
     for (i = 0; i < N; ++i) {
         x2 = fabs(x[i]);
-        val += pow(x2, (double)p);
+        val += std::pow(x2, (double)p);
     }
 
     return val;
@@ -673,7 +673,7 @@ static auto entropy_l(double const* x, int N) -> double
     for (i = 0; i < N; ++i) {
         if (x[i] != 0) {
             x2 = x[i] * x[i];
-            val += log(x2);
+            val += std::log(x2);
         }
     }
     return val;
@@ -692,8 +692,8 @@ auto costfunc(double* x, int N, char* entropy, double p) -> double
     } else if ((strcmp(entropy, "logenergy") == 0) || (strcmp(entropy, "log energy") == 0) || (strcmp(entropy, "energy") == 0)) {
         val = entropy_l(x, N);
     } else {
-        printf("Entropy must be one of shannon, threshold, norm or energy");
-        exit(-1);
+        std::printf("Entropy must be one of shannon, threshold, norm or energy");
+        std::exit(-1);
     }
 
     return val;

@@ -87,7 +87,7 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
         for (k = 1; k <= nk / 2 + 1; ++k) {
             temp = (scale1 * kwave[k - 1] - param);
             expnt = -0.5 * temp * temp;
-            daughter[k - 1].re = norm * exp(expnt);
+            daughter[k - 1].re = norm * std::exp(expnt);
             daughter[k - 1].im = 0.0;
         }
         for (k = nk / 2 + 2; k <= nk; ++k) {
@@ -106,7 +106,7 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
         for (k = 1; k <= nk / 2 + 1; ++k) {
             temp = scale1 * kwave[k - 1];
             expnt = -temp;
-            daughter[k - 1].re = norm * std::pow(temp, (double)m) * exp(expnt);
+            daughter[k - 1].re = norm * std::pow(temp, (double)m) * std::exp(expnt);
             daughter[k - 1].im = 0.0;
         }
         for (k = nk / 2 + 2; k <= nk; ++k) {
@@ -139,14 +139,14 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
         if (re == 1) {
             for (k = 1; k <= nk; ++k) {
                 temp = scale1 * kwave[k - 1];
-                daughter[k - 1].re = norm * std::pow(temp, (double)m) * exp(-0.50 * std::pow(temp, 2.0));
+                daughter[k - 1].re = norm * std::pow(temp, (double)m) * std::exp(-0.50 * std::pow(temp, 2.0));
                 daughter[k - 1].im = 0.0;
             }
         } else if (re == 0) {
             for (k = 1; k <= nk; ++k) {
                 temp = scale1 * kwave[k - 1];
                 daughter[k - 1].re = 0.0;
-                daughter[k - 1].im = norm * std::pow(temp, (double)m) * exp(-0.50 * std::pow(temp, 2.0));
+                daughter[k - 1].im = norm * std::pow(temp, (double)m) * std::exp(-0.50 * std::pow(temp, 2.0));
             }
         }
         fourier_factor = (2.0 * pi) * std::sqrt(2.0 / (2.0 * m + 1.0));
