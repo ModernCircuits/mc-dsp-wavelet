@@ -39,8 +39,8 @@ void MODWTReconstructionTest()
 
     for (std::size_t direct_fft = 0; direct_fft < 2; direct_fft++) {
         for (std::size_t sym_per = 0; sym_per < 1; sym_per++) {
-            for (auto& waveletName : waveletNames) {
-                auto* obj = wave_init(waveletName.c_str());
+            for (auto const& name : waveletNames) {
+                auto obj = wavelet { name.c_str() };
                 for (auto J = 1; J < 3; J++) {
                     auto* wt = wt_init(obj, "modwt", N, J);
 
@@ -74,7 +74,6 @@ void MODWTReconstructionTest()
                     }
                     wt_free(wt);
                 }
-                wave_free(obj);
             }
         }
     }
@@ -122,10 +121,8 @@ void MODWT2ReconstructionTest()
 
     for (std::size_t direct_fft = 0; direct_fft < 1; direct_fft++) {
         for (std::size_t sym_per = 0; sym_per < 1; sym_per++) {
-            for (auto& waveletName : waveletNames) {
-                char* name = new char[waveletName.size() + 1];
-                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                auto* obj = wave_init(name); // Initialize the wavelet
+            for (auto const& name : waveletNames) {
+                auto obj = wavelet { name.c_str() };
                 for (J = 1; J < 3; J++) {
                     wt = wt2_init(obj, "modwt", rows, cols, J);
                     if (sym_per == 0) {
@@ -147,8 +144,6 @@ void MODWT2ReconstructionTest()
                     }
                     wt2_free(wt);
                 }
-                wave_free(obj);
-                delete[] name;
             }
         }
     }
@@ -221,14 +216,12 @@ void DWPTReconstructionTest()
 
     for (std::size_t ent = 0; ent < 2; ent++) {
         for (std::size_t sym_per = 0; sym_per < 2; sym_per++) {
-            for (auto& waveletName : waveletNames) {
-                char* name = new char[waveletName.size() + 1];
-                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                auto* obj = wave_init(name); // Initialize the wavelet
+            for (auto const& name : waveletNames) {
+                auto obj = wavelet { name.c_str() };
                 for (J = 1; J < 3; J++) {
                     // J = 3;
 
-                    wt = wpt_init(obj, N, J); // Initialize the wavelet transform object
+                    wt = wpt_init(&obj, N, J); // Initialize the wavelet transform object
                     if (sym_per == 0) {
                         setDWPTExtension(wt,
                             "sym"); // Options are "per" and "sym".
@@ -260,8 +253,6 @@ void DWPTReconstructionTest()
                     }
                     wpt_free(wt);
                 }
-                wave_free(obj);
-                delete[] name;
             }
         }
     }
@@ -378,26 +369,24 @@ void DBCoefTests()
     });
 
     for (auto const& name : waveletNames) {
-        auto obj = wave_init(name.c_str());
-        auto t1 = sum1(obj->lpr, obj->lpr_len) - std::sqrt(2.0);
-        auto t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
-        auto t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
-        auto t4 = sum4(obj->lpr, obj->lpr_len) - 1.0;
+        auto obj = wavelet { name.c_str() };
+        auto t1 = sum1(obj.lpr, obj.lpr_len) - std::sqrt(2.0);
+        auto t2 = sum2(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
+        auto t3 = sum3(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
+        auto t4 = sum4(obj.lpr, obj.lpr_len) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
             printf("\n ERROR : DB Coefficients Unit Test Failed. Exiting. \n");
             exit(-1);
         }
 
-        for (int m = 1; m < (obj->lpr_len / 2) - 1; m++) {
-            auto t5 = sum5(obj->lpr, obj->lpr_len, m);
+        for (int m = 1; m < (obj.lpr_len / 2) - 1; m++) {
+            auto t5 = sum5(obj.lpr, obj.lpr_len, m);
             if (fabs(t5) > epsilon) {
                 printf("\n ERROR : DB Coefficients Unit Test Failed. Exiting. \n");
                 exit(-1);
             }
         }
-
-        wave_free(obj);
     }
 }
 
@@ -415,29 +404,25 @@ void CoifCoefTests()
         waveletNames[i] = std::string("coif") + std::to_string(i + 1);
     }
 
-    for (auto& waveletName : waveletNames) {
-        char* name = new char[waveletName.size() + 1];
-        memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-        auto* obj = wave_init(name); // Initialize the wavelet
-        t1 = sum1(obj->lpr, obj->lpr_len) - std::sqrt(2.0);
-        t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
-        t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
-        t4 = sum4(obj->lpr, obj->lpr_len) - 1.0;
+    for (auto const& name : waveletNames) {
+        auto obj = wavelet { name.c_str() };
+        t1 = sum1(obj.lpr, obj.lpr_len) - std::sqrt(2.0);
+        t2 = sum2(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
+        t3 = sum3(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
+        t4 = sum4(obj.lpr, obj.lpr_len) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
             printf("\n ERROR : Coif Coefficients Unit Test Failed. Exiting. \n");
             exit(-1);
         }
 
-        for (int m = 1; m < (obj->lpr_len / 2) - 1; m++) {
-            t5 = sum5(obj->lpr, obj->lpr_len, m);
+        for (int m = 1; m < (obj.lpr_len / 2) - 1; m++) {
+            t5 = sum5(obj.lpr, obj.lpr_len, m);
             if (fabs(t5) > epsilon) {
                 printf("\n ERROR : Coif Coefficients Unit Test Failed. Exiting. \n");
                 exit(-1);
             }
         }
-        wave_free(obj);
-        delete[] name;
     }
 }
 
@@ -454,29 +439,25 @@ void SymCoefTests()
         waveletNames.push_back(std::string("sym") + std::to_string(i + 1));
     }
 
-    for (auto& waveletName : waveletNames) {
-        char* name = new char[waveletName.size() + 1];
-        memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-        auto* obj = wave_init(name); // Initialize the wavelet
-        t1 = sum1(obj->lpr, obj->lpr_len) - std::sqrt(2.0);
-        t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
-        t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
-        t4 = sum4(obj->lpr, obj->lpr_len) - 1.0;
+    for (auto const& name : waveletNames) {
+        auto obj = wavelet { name.c_str() };
+        t1 = sum1(obj.lpr, obj.lpr_len) - std::sqrt(2.0);
+        t2 = sum2(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
+        t3 = sum3(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
+        t4 = sum4(obj.lpr, obj.lpr_len) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
             printf("\n ERROR : Sym Coefficients Unit Test Failed. Exiting. \n");
             exit(-1);
         }
 
-        for (int m = 1; m < (obj->lpr_len / 2) - 1; m++) {
-            t5 = sum5(obj->lpr, obj->lpr_len, m);
+        for (int m = 1; m < (obj.lpr_len / 2) - 1; m++) {
+            t5 = sum5(obj.lpr, obj.lpr_len, m);
             if (fabs(t5) > epsilon) {
                 printf("\n ERROR : Sym Coefficients Unit Test Failed. Exiting. \n");
                 exit(-1);
             }
         }
-        wave_free(obj);
-        delete[] name;
     }
 }
 
@@ -506,27 +487,22 @@ void BiorCoefTests()
     waveletNames.emplace_back("bior5.5");
     waveletNames.emplace_back("bior6.8");
 
-    for (auto& waveletName : waveletNames) {
-        char* name = new char[waveletName.size() + 1];
-        memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-        auto* obj = wave_init(name); // Initialize the wavelet
+    for (auto const& name : waveletNames) {
+        auto obj = wavelet { name.c_str() };
 
-        t1 = sum1(obj->lpr, obj->lpr_len) - std::sqrt(2.0);
-        t2 = sum1(obj->lpd, obj->lpd_len) - std::sqrt(2.0);
+        t1 = sum1(obj.lpr, obj.lpr_len) - std::sqrt(2.0);
+        t2 = sum1(obj.lpd, obj.lpd_len) - std::sqrt(2.0);
 
-        t3 = sum2(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
-        t4 = sum2(obj->lpd, obj->lpd_len) - 1.0 / std::sqrt(2.0);
+        t3 = sum2(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
+        t4 = sum2(obj.lpd, obj.lpd_len) - 1.0 / std::sqrt(2.0);
 
-        t5 = sum3(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
-        t6 = sum3(obj->lpd, obj->lpd_len) - 1.0 / std::sqrt(2.0);
+        t5 = sum3(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
+        t6 = sum3(obj.lpd, obj.lpd_len) - 1.0 / std::sqrt(2.0);
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon || fabs(t5) > epsilon || fabs(t6) > epsilon) {
             printf("\n ERROR : Bior Coefficients Unit Test Failed. Exiting. \n");
             exit(-1);
         }
-
-        wave_free(obj);
-        delete[] name;
     }
 }
 
@@ -556,26 +532,22 @@ void RBiorCoefTests()
     waveletNames.emplace_back("rbior5.5");
     waveletNames.emplace_back("rbior6.8");
 
-    for (auto& waveletName : waveletNames) {
-        char* name = new char[waveletName.size() + 1];
-        memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-        auto* obj = wave_init(name); // Initialize the wavelet
+    for (auto const& name : waveletNames) {
+        auto obj = wavelet { name.c_str() };
 
-        t1 = sum1(obj->lpr, obj->lpr_len) - std::sqrt(2.0);
-        t2 = sum1(obj->lpd, obj->lpd_len) - std::sqrt(2.0);
+        t1 = sum1(obj.lpr, obj.lpr_len) - std::sqrt(2.0);
+        t2 = sum1(obj.lpd, obj.lpd_len) - std::sqrt(2.0);
 
-        t3 = sum2(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
-        t4 = sum2(obj->lpd, obj->lpd_len) - 1.0 / std::sqrt(2.0);
+        t3 = sum2(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
+        t4 = sum2(obj.lpd, obj.lpd_len) - 1.0 / std::sqrt(2.0);
 
-        t5 = sum3(obj->lpr, obj->lpr_len) - 1.0 / std::sqrt(2.0);
-        t6 = sum3(obj->lpd, obj->lpd_len) - 1.0 / std::sqrt(2.0);
+        t5 = sum3(obj.lpr, obj.lpr_len) - 1.0 / std::sqrt(2.0);
+        t6 = sum3(obj.lpd, obj.lpd_len) - 1.0 / std::sqrt(2.0);
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon || fabs(t5) > epsilon || fabs(t6) > epsilon) {
             printf("\n ERROR : RBior Coefficients Unit Test Failed. Exiting. \n");
             exit(-1);
         }
-        wave_free(obj);
-        delete[] name;
     }
 }
 

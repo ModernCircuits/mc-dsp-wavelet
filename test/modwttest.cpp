@@ -11,7 +11,7 @@
 
 auto main() -> int
 {
-    auto* obj = wave_init("db4");
+    auto obj = wavelet { "db4" };
     wave_summary(obj);
 
     auto N = 177;
@@ -43,7 +43,6 @@ auto main() -> int
 
     wt_summary(wt); // Prints the full summary.
 
-    wave_free(obj);
     wt_free(wt);
 
     return 0;

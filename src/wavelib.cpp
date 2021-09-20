@@ -15,39 +15,34 @@
 
 using namespace std::string_view_literals;
 
-auto wave_init(char const* wname) -> wave_set*
+wavelet::wavelet(char const* name)
+    : wname { name }
+    , filtlength { ::filtlength(name) }
+    , lpd_len { filtlength }
+    , hpd_len { filtlength }
+    , lpr_len { filtlength }
+    , hpr_len { filtlength }
+    , params { std::make_unique<double[]>(4 * filtlength) }
 {
-    int retval;
-    retval = 0;
 
-    if (wname != nullptr) {
-        retval = filtlength(wname);
-        //obj->filtlength = retval;
-        //strcopy(obj->wname.c_str(), wname);
+    auto* p = params.get();
+    if (name != nullptr) {
+        filtcoef(name, p, p + filtlength, p + 2 * filtlength, p + 3 * filtlength);
     }
 
-    auto obj = std::make_unique<wave_set>();
-    obj->params = std::make_unique<double[]>(4 * retval);
-    obj->filtlength = retval;
-    obj->lpd_len = obj->hpd_len = obj->lpr_len = obj->hpr_len = obj->filtlength;
-    obj->wname = wname;
-    if (wname != nullptr) {
-        filtcoef(wname, obj->params.get(), obj->params.get() + retval, obj->params.get() + 2 * retval, obj->params.get() + 3 * retval);
-    }
-    obj->lpd = &obj->params[0];
-    obj->hpd = &obj->params[retval];
-    obj->lpr = &obj->params[2 * retval];
-    obj->hpr = &obj->params[3 * retval];
-    return obj.release();
+    lpd = &params[0];
+    hpd = &params[filtlength];
+    lpr = &params[2 * filtlength];
+    hpr = &params[3 * filtlength];
 }
 
-auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_set*
+auto wt_init(wavelet& wave, char const* method, int siglength, int J) -> wt_set*
 {
     int size;
     int MaxIter;
     auto obj = std::unique_ptr<wt_set>(nullptr);
 
-    size = wave->filtlength;
+    size = wave.filtlength;
 
     if (J > 100) {
         printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
@@ -83,10 +78,10 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_set
         obj->ext = "per";
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
 
-        if (strstr(wave->wname.c_str(), "haar") == nullptr) {
-            if (strstr(wave->wname.c_str(), "db") == nullptr) {
-                if (strstr(wave->wname.c_str(), "sym") == nullptr) {
-                    if (strstr(wave->wname.c_str(), "coif") == nullptr) {
+        if (strstr(wave.wname.c_str(), "haar") == nullptr) {
+            if (strstr(wave.wname.c_str(), "db") == nullptr) {
+                if (strstr(wave.wname.c_str(), "sym") == nullptr) {
+                    if (strstr(wave.wname.c_str(), "coif") == nullptr) {
                         printf("\n MODWT is only implemented for orthogonal wavelet families - db, sym and coif \n");
                         exit(-1);
                     }
@@ -100,7 +95,7 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_set
         obj->ext = "per";
     }
 
-    obj->wave = wave;
+    obj->wave = &wave;
     obj->siglength = siglength;
     obj->modwtsiglength = siglength;
     obj->J = J;
@@ -132,12 +127,11 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_set
             obj->params[i] = 0.0;
         }
     }
-    //wave_summary(obj->wave);
 
     return obj.release();
 }
 
-auto wtree_init(wave_set* wave, int siglength, int J) -> wtree_set*
+auto wtree_init(wavelet* wave, int siglength, int J) -> wtree_set*
 {
     auto const size = wave->filtlength;
     auto const MaxIter = wmaxiter(siglength, size);
@@ -190,12 +184,10 @@ auto wtree_init(wave_set* wave, int siglength, int J) -> wtree_set*
         obj->params[i] = 0.0;
     }
 
-    //wave_summary(obj->wave);
-
     return obj.release();
 }
 
-auto wpt_init(wave_set* wave, int siglength, int J) -> wpt_set*
+auto wpt_init(wavelet* wave, int siglength, int J) -> wpt_set*
 {
     auto const size = wave->filtlength;
 
@@ -359,10 +351,10 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
     return obj.release();
 }
 
-auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> wt2_set*
+auto wt2_init(wavelet& wave, char const* method, int rows, int cols, int J) -> wt2_set*
 {
 
-    auto const size = wave->filtlength;
+    auto const size = wave.filtlength;
 
     auto const MaxRows = wmaxiter(rows, size);
     auto const MaxCols = wmaxiter(cols, size);
@@ -399,10 +391,10 @@ auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> 
 
         obj->ext = "per";
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
-        if (strstr(wave->wname.c_str(), "haar") == nullptr) {
-            if (strstr(wave->wname.c_str(), "db") == nullptr) {
-                if (strstr(wave->wname.c_str(), "sym") == nullptr) {
-                    if (strstr(wave->wname.c_str(), "coif") == nullptr) {
+        if (strstr(wave.wname.c_str(), "haar") == nullptr) {
+            if (strstr(wave.wname.c_str(), "db") == nullptr) {
+                if (strstr(wave.wname.c_str(), "sym") == nullptr) {
+                    if (strstr(wave.wname.c_str(), "coif") == nullptr) {
                         printf("\n MODWT is only implemented for orthogonal wavelet families - db, sym and coif \n");
                         exit(-1);
                     }
@@ -412,7 +404,7 @@ auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> 
         obj->ext = "per";
     }
 
-    obj->wave = wave;
+    obj->wave = &wave;
     obj->rows = rows;
     obj->cols = cols;
     obj->J = J;
@@ -3210,37 +3202,36 @@ void dispWT2Coeffs(double* A, int row, int col)
     }
 }
 
-void wave_summary(wave_set* obj)
+void wave_summary(wavelet const& obj)
 {
-    int N;
-    N = obj->filtlength;
+    auto const N = obj.filtlength;
     printf("\n");
-    printf("Wavelet Name : %s \n", obj->wname.c_str());
+    printf("Wavelet Name : %s \n", obj.wname.c_str());
     printf("\n");
     printf("Wavelet Filters \n\n");
     printf("lpd : [");
     for (auto i = 0; i < N - 1; ++i) {
-        printf("%g,", obj->lpd[i]);
+        printf("%g,", obj.lpd[i]);
     }
-    printf("%g", obj->lpd[N - 1]);
+    printf("%g", obj.lpd[N - 1]);
     printf("] \n\n");
     printf("hpd : [");
     for (auto i = 0; i < N - 1; ++i) {
-        printf("%g,", obj->hpd[i]);
+        printf("%g,", obj.hpd[i]);
     }
-    printf("%g", obj->hpd[N - 1]);
+    printf("%g", obj.hpd[N - 1]);
     printf("] \n\n");
     printf("lpr : [");
     for (auto i = 0; i < N - 1; ++i) {
-        printf("%g,", obj->lpr[i]);
+        printf("%g,", obj.lpr[i]);
     }
-    printf("%g", obj->lpr[N - 1]);
+    printf("%g", obj.lpr[N - 1]);
     printf("] \n\n");
     printf("hpr : [");
     for (auto i = 0; i < N - 1; ++i) {
-        printf("%g,", obj->hpr[i]);
+        printf("%g,", obj.hpr[i]);
     }
-    printf("%g", obj->hpr[N - 1]);
+    printf("%g", obj.hpr[N - 1]);
     printf("] \n\n");
 }
 
@@ -3249,7 +3240,7 @@ void wt_summary(wt_set* wt)
     int J;
     int t;
     J = wt->J;
-    wave_summary(wt->wave);
+    wave_summary(*wt->wave);
     printf("\n");
     printf("Wavelet Transform : %s \n", wt->method.c_str());
     printf("\n");
@@ -3284,7 +3275,7 @@ void wtree_summary(wtree_set* wt)
     int J;
     int t;
     J = wt->J;
-    wave_summary(wt->wave);
+    wave_summary(*wt->wave);
     printf("\n");
     printf("Wavelet Transform : %s \n", wt->method.c_str());
     printf("\n");
@@ -3319,7 +3310,7 @@ void wpt_summary(wpt_set* wt)
     int it1;
     int it2;
     J = wt->J;
-    wave_summary(wt->wave);
+    wave_summary(*wt->wave);
     printf("\n");
     printf("Signal Extension : %s \n", wt->ext.c_str());
     printf("\n");
@@ -3387,7 +3378,7 @@ void wt2_summary(wt2_set* wt)
     int cols;
     int vsize;
     J = wt->J;
-    wave_summary(wt->wave);
+    wave_summary(*wt->wave);
     printf("\n");
     printf("Wavelet Transform : %s \n", wt->method.c_str());
     printf("\n");
@@ -3421,11 +3412,6 @@ void wt2_summary(wt2_set* wt)
         t += 1;
         printf("Diagonal Coefficients access at wt->coeffaccess[%d]=%d, Vector size:%d \n\n", t, wt->coeffaccess[t], vsize);
     }
-}
-
-void wave_free(wave_set* object)
-{
-    delete object;
 }
 
 void wt_free(wt_set* object)

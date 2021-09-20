@@ -71,7 +71,7 @@ void DWTReconstructionTest()
             for (auto& waveletName : waveletNames) {
                 char* name = new char[waveletName.size() + 1];
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                auto* obj = wave_init(name); // Initialize the wavelet
+                auto obj = wavelet { name };
                 for (auto J = 1; J < 3; J++) {
                     auto* wt = wt_init(obj, "dwt", N, J);
                     if (sym_per == 0) {
@@ -104,7 +104,6 @@ void DWTReconstructionTest()
                     }
                     wt_free(wt);
                 }
-                wave_free(obj);
                 delete[] name;
             }
         }
@@ -180,9 +179,7 @@ void DWT2ReconstructionTest()
     for (unsigned int direct_fft = 0; direct_fft < 1; direct_fft++) {
         for (unsigned int sym_per = 0; sym_per < 2; sym_per++) {
             for (auto& waveletName : waveletNames) {
-                char* name = new char[waveletName.size() + 1];
-                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                auto* obj = wave_init(name); // Initialize the wavelet
+                auto obj = wavelet { waveletName.c_str() };
                 for (J = 1; J < 3; J++) {
                     // J = 3;
 
@@ -213,8 +210,6 @@ void DWT2ReconstructionTest()
                     }
                     wt2_free(wt);
                 }
-                wave_free(obj);
-                delete[] name;
             }
         }
     }

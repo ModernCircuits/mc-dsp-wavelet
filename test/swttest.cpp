@@ -11,8 +11,7 @@
 
 auto main() -> int
 {
-    char const* name = "bior3.5";
-    auto* obj = wave_init(name); // Initialize the wavelet
+    auto obj = wavelet { "bior3.5" };
     auto const N = 256;
 
     auto const inp = readFileToVector("testData/signal.txt");
@@ -44,7 +43,6 @@ auto main() -> int
 
     wt_summary(wt); // Prints the full summary.
 
-    wave_free(obj);
     wt_free(wt);
 
     return EXIT_SUCCESS;

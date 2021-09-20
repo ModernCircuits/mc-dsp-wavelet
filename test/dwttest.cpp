@@ -11,7 +11,7 @@
 
 auto main() -> int
 {
-    auto* obj = wave_init("db4");
+    auto obj = wavelet { "db4" };
 
     auto const input = readFileToVector("testData/signal.txt");
     auto const N = 256;
@@ -41,7 +41,6 @@ auto main() -> int
 
     // Prints the full summary.
     wt_summary(wt);
-    wave_free(obj);
     wt_free(wt);
 
     return 0;

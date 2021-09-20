@@ -8,7 +8,7 @@
 
 auto main() -> int
 {
-    auto* obj = wave_init("db3");
+    auto obj = wavelet { "db3" };
     auto const N = 147;
     auto inp = std::make_unique<double[]>(N);
     for (auto i = 1; i < N + 1; ++i) {
@@ -16,7 +16,7 @@ auto main() -> int
     }
     auto const J = 3;
 
-    wtree_set* wt = wtree_init(obj, N, J);
+    wtree_set* wt = wtree_init(&obj, N, J);
     setWTREEExtension(wt, "sym");
 
     wtree(wt, inp.get());
@@ -35,7 +35,6 @@ auto main() -> int
     }
     std::printf("\n");
 
-    wave_free(obj);
     wtree_free(wt);
     return EXIT_SUCCESS;
 }

@@ -10,8 +10,7 @@
 
 auto main() -> int
 {
-    auto* obj = wave_init("db4");
-
+    auto obj = wavelet { "db4" };
     auto const N = 788 + 23;
     auto const J = 4;
 
@@ -23,7 +22,7 @@ auto main() -> int
         inp[i - 1] = i;
     }
 
-    wpt_set* wt = wpt_init(obj, N, J);
+    wpt_set* wt = wpt_init(&obj, N, J);
     setDWPTExtension(wt, "per");
     setDWPTEntropy(wt, "logenergy", 0);
 
@@ -40,7 +39,6 @@ auto main() -> int
     // If Reconstruction succeeded then the output should be a small value.
     printf("\n MAX %g \n", absmax(diff.get(), wt->siglength));
 
-    wave_free(obj);
     wpt_free(wt);
     return 0;
 }

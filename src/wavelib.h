@@ -31,7 +31,9 @@ struct cplx_data {
     cplx_type im;
 };
 
-struct wave_set {
+struct wavelet {
+    explicit wavelet(char const* wname);
+
     std::string wname;
     int filtlength; // When all filters are of the same length. [Matlab uses zero-padding to make all filters of the same length]
     int lpd_len; // Default filtlength = lpd_len = lpr_len = hpd_len = hpr_len
@@ -44,8 +46,6 @@ struct wave_set {
     double* hpr;
     std::unique_ptr<double[]> params;
 };
-
-auto wave_init(char const* wname) -> wave_set*;
 
 struct fft_data {
     fft_type re;
@@ -81,7 +81,7 @@ struct conv_set {
 auto conv_init(int N, int L) -> std::unique_ptr<conv_set>;
 
 struct wt_set {
-    wave_set* wave;
+    wavelet* wave;
     std::unique_ptr<conv_set> cobj;
     std::string method;
     int siglength; // Length of the original signal.
@@ -102,10 +102,10 @@ struct wt_set {
     std::unique_ptr<double[]> params;
 };
 
-auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_set*;
+auto wt_init(wavelet& wave, char const* method, int siglength, int J) -> wt_set*;
 
 struct wtree_set {
-    wave_set* wave;
+    wavelet* wave;
     conv_set* cobj;
     std::string method;
     int siglength; // Length of the original signal.
@@ -127,10 +127,10 @@ struct wtree_set {
     std::unique_ptr<double[]> params;
 };
 
-auto wtree_init(wave_set* wave, int siglength, int J) -> wtree_set*;
+auto wtree_init(wavelet* wave, int siglength, int J) -> wtree_set*;
 
 struct wpt_set {
-    wave_set* wave;
+    wavelet* wave;
     conv_set* cobj;
     int siglength; // Length of the original signal.
     int outlength; // Length of the output DWT vector
@@ -154,7 +154,7 @@ struct wpt_set {
     std::unique_ptr<double[]> params;
 };
 
-auto wpt_init(wave_set* wave, int siglength, int J) -> wpt_set*;
+auto wpt_init(wavelet* wave, int siglength, int J) -> wpt_set*;
 
 struct cwt_set {
     std::string wave; // Wavelet - morl/morlet,paul,dog/dgauss
@@ -182,7 +182,7 @@ struct cwt_set {
 auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -> cwt_set*;
 
 struct wt2_set {
-    wave_set* wave;
+    wavelet* wave;
     std::string method;
     int rows; // Matrix Number of rows
     int cols; // Matrix Number of columns
@@ -198,7 +198,7 @@ struct wt2_set {
     std::unique_ptr<int[]> params;
 };
 
-auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> wt2_set*;
+auto wt2_init(wavelet& wave, char const* method, int rows, int cols, int J) -> wt2_set*;
 
 void dwt(wt_set* wt, double const* inp);
 
@@ -258,7 +258,7 @@ auto getWT2Coeffs(wt2_set* wt, double* wcoeffs, int level, char const* type, int
 
 void dispWT2Coeffs(double* A, int row, int col);
 
-void wave_summary(wave_set* obj);
+void wave_summary(wavelet const& obj);
 
 void wt_summary(wt_set* wt);
 
@@ -269,8 +269,6 @@ void wpt_summary(wpt_set* wt);
 void cwt_summary(cwt_set* wt);
 
 void wt2_summary(wt2_set* wt);
-
-void wave_free(wave_set* object);
 
 void wt_free(wt_set* object);
 

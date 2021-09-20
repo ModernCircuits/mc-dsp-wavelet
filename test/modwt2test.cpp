@@ -10,7 +10,7 @@
 
 auto main() -> int
 {
-    auto* obj = wave_init("db2"); // Initialize the wavelet
+    auto obj = wavelet { "db2" };
 
     auto rows = 51;
     auto cols = 40;
@@ -46,7 +46,6 @@ auto main() -> int
     wt2_summary(wt);
     printf("Abs Max %g \n", absmax(diff.get(), N));
 
-    wave_free(obj);
     wt2_free(wt);
     return 0;
 }

@@ -9,7 +9,7 @@
 
 auto main() -> int
 {
-    auto* obj = wave_init("db2");
+    auto obj = wavelet { "db2" };
 
     auto rows = 32;
     auto cols = 30;
@@ -47,7 +47,6 @@ auto main() -> int
     wt2_summary(wt);
     std::printf("Abs Max %g \n", absmax(diff.get(), rows * cols));
 
-    wave_free(obj);
     wt2_free(wt);
 
     return EXIT_SUCCESS;

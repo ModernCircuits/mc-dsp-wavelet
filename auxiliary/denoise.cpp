@@ -41,8 +41,8 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
     double td;
     double tmp;
 
-    auto* wave = wave_init(wname);
-    auto filt_len = wave->filtlength;
+    auto wave = wavelet { wname };
+    auto filt_len = wave.filtlength;
     auto MaxIter = (int)(std::log((double)N / ((double)filt_len - 1.0)) / std::log(2.0));
 
     if (J > MaxIter) {
@@ -133,7 +133,6 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         iswt(wt, denoised);
     }
 
-    wave_free(wave);
     wt_free(wt);
 }
 
@@ -159,9 +158,8 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
     double x_sum;
     wt_set* wt;
 
-    auto* wave = wave_init(wname);
-
-    filt_len = wave->filtlength;
+    auto wave = wavelet { wname };
+    filt_len = wave.filtlength;
 
     MaxIter = (int)(std::log((double)N / ((double)filt_len - 1.0)) / std::log(2.0));
     // Depends on J
@@ -290,7 +288,6 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
         iswt(wt, denoised);
     }
 
-    wave_free(wave);
     wt_free(wt);
 }
 
@@ -305,9 +302,8 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
     double llen;
     wt_set* wt;
 
-    auto* wave = wave_init(wname);
-
-    auto filt_len = wave->filtlength;
+    auto wave = wavelet { wname };
+    auto filt_len = wave.filtlength;
 
     auto MaxIter = (int)(std::log((double)N / ((double)filt_len - 1.0)) / std::log(2.0));
 
@@ -390,7 +386,6 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
 
     imodwt(wt, denoised);
 
-    wave_free(wave);
     wt_free(wt);
 }
 

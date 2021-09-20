@@ -76,10 +76,8 @@ void SWTReconstructionTest()
 
     for (unsigned int direct_fft = 0; direct_fft < 2; direct_fft++) {
         for (unsigned int sym_per = 0; sym_per < 1; sym_per++) {
-            for (auto& waveletName : waveletNames) {
-                char* name = new char[waveletName.size() + 1];
-                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                auto* obj = wave_init(name); // Initialize the wavelet
+            for (auto& name : waveletNames) {
+                auto obj = wavelet { name.c_str() };
                 for (auto J = 1; J < 3; J++) {
                     wt = wt_init(obj, (char*)"swt", N, J);
 
@@ -122,8 +120,6 @@ void SWTReconstructionTest()
                     }
                     wt_free(wt);
                 }
-                wave_free(obj);
-                delete[] name;
             }
         }
     }
@@ -198,10 +194,8 @@ void SWT2ReconstructionTest()
 
     for (unsigned int direct_fft = 0; direct_fft < 1; direct_fft++) {
         for (unsigned int sym_per = 0; sym_per < 1; sym_per++) {
-            for (auto& waveletName : waveletNames) {
-                char* name = new char[waveletName.size() + 1];
-                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                auto* obj = wave_init(name); // Initialize the wavelet
+            for (auto& name : waveletNames) {
+                auto obj = wavelet { name.c_str() };
                 for (auto J = 1; J < 3; J++) {
                     wt = wt2_init(obj, (char*)"swt", rows, cols,
                         J); // Initialize the wavelet transform object
@@ -231,8 +225,6 @@ void SWT2ReconstructionTest()
                     }
                     wt2_free(wt);
                 }
-                wave_free(obj);
-                delete[] name;
             }
         }
     }

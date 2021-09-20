@@ -11,7 +11,7 @@
 
 auto main() -> int
 {
-    auto* obj = wave_init("bior3.1");
+    auto obj = wavelet { "bior3.1" };
 
     auto const rows = 64;
     auto const cols = 48;
@@ -48,7 +48,6 @@ auto main() -> int
     wt2_summary(wt);
     std::printf("Abs Max %g \n", absmax(diff.get(), N));
 
-    wave_free(obj);
     wt2_free(wt);
 
     return 0;
