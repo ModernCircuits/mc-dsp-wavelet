@@ -132,8 +132,8 @@ void SWT2ReconstructionTest()
     // int k;
     // int J;
 
-    auto const rows = 1024;
-    auto const cols = 1000;
+    auto const rows = 512;
+    auto const cols = 500;
 
     auto const N = rows * cols;
 

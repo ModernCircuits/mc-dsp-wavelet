@@ -91,8 +91,8 @@ void MODWT2ReconstructionTest()
 
     double epsilon;
 
-    rows = 1024;
-    cols = 1000;
+    rows = 512;
+    cols = 500;
 
     N = rows * cols;
 
@@ -159,7 +159,7 @@ void DWPTReconstructionTest()
     int J;
     double epsilon = 1e-8;
 
-    N = 79926;
+    N = 8096;
 
     // N = 256;
 

@@ -14,7 +14,7 @@
 
 void DWTReconstructionTest()
 {
-    auto const N = 79926;
+    auto const N = 22'050;
 
     auto inp = std::make_unique<double[]>(N);
     auto out = std::make_unique<double[]>(N);
@@ -116,8 +116,8 @@ void DWT2ReconstructionTest()
     int J;
     double epsilon;
 
-    auto const rows = 1024;
-    auto const cols = 1000;
+    auto const rows = 256;
+    auto const cols = 200;
 
     auto const N = rows * cols;
 
