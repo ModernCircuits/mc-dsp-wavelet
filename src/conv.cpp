@@ -53,8 +53,8 @@ auto conv_init(int N, int L) -> std::unique_ptr<conv_set>
     obj->ilen1 = N;
     obj->ilen2 = L;
 
-    obj->fobj = std::move(fft_real_init(obj->clen, 1));
-    obj->iobj = std::move(fft_real_init(obj->clen, -1));
+    obj->fobj = fft_real_init(obj->clen, 1);
+    obj->iobj = fft_real_init(obj->clen, -1);
 
     return obj;
 }

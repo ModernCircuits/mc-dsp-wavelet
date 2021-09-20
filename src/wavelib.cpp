@@ -216,16 +216,16 @@ auto wpt_init(wave_set* wave, int siglength, int J) -> wpt_set*
         nodes += temp;
     }
 
-    auto i = J;
+    auto idx = J;
     auto p2 = 2;
     auto N = siglength;
     auto lp = size;
     auto elength = 0;
-    while (i > 0) {
+    while (idx > 0) {
         N = N + lp - 2;
         N = (int)ceil((double)N / 2.0);
         elength = p2 * N;
-        i--;
+        idx--;
         p2 *= 2;
     }
 
@@ -270,9 +270,8 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
     int N;
     int nj2;
     int ibase2;
-    int mother;
-    double s0;
-    double dj;
+    double s0 {};
+    double dj {};
     double t1;
     int m;
     int odd;
@@ -289,6 +288,7 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
     auto obj = std::make_unique<cwt_set>();
     obj->params = std::make_unique<double[]>(nj2 + 2 * J + N);
 
+    int mother { 0 };
     if ((wave == "morlet"sv) || (wave == "morl"sv)) {
         s0 = 2 * dt;
         dj = 0.4875;
@@ -689,12 +689,12 @@ void dwt(wt_set* wt, double const* inp)
     auto lp = wt->wave->lpd_len;
 
     if (wt->ext == "per"sv) {
-        auto i = J;
-        while (i > 0) {
+        auto idx = J;
+        while (idx > 0) {
             N = (int)ceil((double)N / 2.0);
-            wt->length[i] = N;
-            wt->outlength += wt->length[i];
-            i--;
+            wt->length[idx] = N;
+            wt->outlength += wt->length[idx];
+            idx--;
         }
         wt->length[0] = wt->length[1];
         wt->outlength += wt->length[0];
@@ -720,13 +720,13 @@ void dwt(wt_set* wt, double const* inp)
             }
         }
     } else if (wt->ext == "sym"sv) {
-        auto i = J;
-        while (i > 0) {
+        auto idx = J;
+        while (idx > 0) {
             N = N + lp - 2;
             N = (int)ceil((double)N / 2.0);
-            wt->length[i] = N;
-            wt->outlength += wt->length[i];
-            i--;
+            wt->length[idx] = N;
+            wt->outlength += wt->length[idx];
+            idx--;
         }
         wt->length[0] = wt->length[1];
         wt->outlength += wt->length[0];
@@ -888,7 +888,8 @@ static void getDWTRecCoeff(double const* coeff, int const* length, char const* c
     }
 }
 
-auto getDWTmra(wt_set* wt, double* wavecoeffs) -> double*
+// TODO [tobi]: Check original source for unsed parameter
+auto getDWTmra(wt_set* wt, double* /*wavecoeffs*/) -> double*
 {
     auto J = wt->J;
     auto mra = std::make_unique<double[]>(wt->siglength * (J + 1));
@@ -1050,7 +1051,6 @@ void dwpt(wpt_set* wt, double const* inp)
     int N2;
     int Np;
     int llb;
-    int j;
     double v1;
     double v2;
     int len_cA;
@@ -1360,7 +1360,6 @@ void getDWPTCoeffs(wpt_set* wt, int X, int Y, double* coeffs, int N)
         citer += wt->numnodeslevel[i] * wt->coeflength[i];
     }
 
-    auto i = 0;
     flag = 0;
     for (auto i = 0; i < wt->numnodeslevel[X]; ++i) {
         if (wt->nodeindex[2 * np + 1] == Y) {
@@ -1759,19 +1758,19 @@ void idwpt(wpt_set* wt, double* dwtop)
 
     auto J = wt->J;
     auto app_len = wt->length[0];
-    auto p = ipow2(J);
+    auto powJ = ipow2(J);
     auto lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
-    auto xlen = p * (app_len + 2 * lf);
+    auto xlen = powJ * (app_len + 2 * lf);
 
     auto X_lp = std::make_unique<double[]>(2 * (wt->length[J] + lf));
     auto X = std::make_unique<double[]>(xlen);
     auto out = std::make_unique<double[]>(wt->length[J]);
     auto out2 = std::make_unique<double[]>(wt->length[J]);
-    auto prep = makeZeros<int>(p);
-    auto ptemp = makeZeros<int>(p);
+    auto prep = makeZeros<int>(powJ);
+    auto ptemp = makeZeros<int>(powJ);
     auto n1 = 1;
     auto llb = 1;
-    auto index2 = xlen / p;
+    auto index2 = xlen / powJ;
     auto indexp = 0;
     if (wt->basisvector[0] == 1) {
         for (auto i = 0; i < wt->siglength; ++i) {
@@ -1878,7 +1877,7 @@ void idwpt(wpt_set* wt, double* dwtop)
             index = 0;
 
             for (auto i = 0; i < J; ++i) {
-                p = ipow2(J - i - 1);
+                auto p = ipow2(J - i - 1);
                 auto det_len = wt->length[i + 1];
                 index2 *= 2;
                 auto index3 = 0;
@@ -2114,7 +2113,8 @@ void swt(wt_set* wt, double const* inp)
     }
 }
 
-static void getSWTRecCoeff(double const* coeff, int* length, char const* ctype, int level, int J, double* lpr,
+/// \todo [tobi] Check original source for unused parameter
+static void getSWTRecCoeff(double const* coeff, int* /*length*/, char const* ctype, int level, int J, double* lpr,
     double* hpr, int lf, int siglength, double* swtop)
 {
     int N;
@@ -2241,7 +2241,8 @@ static void getSWTRecCoeff(double const* coeff, int* length, char const* ctype, 
     }
 }
 
-auto getSWTmra(wt_set* wt, double* wavecoeffs) -> double*
+/// \todo [tobi] Check original source for unused parameter
+auto getSWTmra(wt_set* wt, double* /*wavecoeffs*/) -> double*
 {
     auto J = wt->J;
     auto mra = std::make_unique<double[]>(wt->siglength * (J + 1));
@@ -2603,8 +2604,9 @@ static void conj_complex(fft_data* x, int N)
     }
 }
 
+/// \todo [tobi] Check original source for unused parameter (J)
 static void getMODWTRecCoeff(fft_set* fft_fd, fft_set* fft_bd, fft_data* appx, fft_data* det, fft_data* cA, fft_data* cD, int* index, char const* ctype, int level,
-    int J, fft_data* low_pass, fft_data* high_pass, int N)
+    int /*J*/, fft_data* low_pass, fft_data* high_pass, int N)
 {
     fft_type tmp1;
     fft_type tmp2;
@@ -2669,8 +2671,10 @@ static void getMODWTRecCoeff(fft_set* fft_fd, fft_set* fft_bd, fft_data* appx, f
     }
 }
 
-auto getMODWTmra(wt_set* wt, double* wavecoeffs) -> double*
+/// \todo [tobi] Check original source for unused parameter
+auto getMODWTmra(wt_set* wt, double* /*wavecoeffs*/) -> double*
 {
+
     auto const N = wt->modwtsiglength;
     auto const len_avg = wt->wave->lpd_len;
     int temp_len {};

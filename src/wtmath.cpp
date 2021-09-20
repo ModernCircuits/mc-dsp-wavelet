@@ -97,7 +97,7 @@ void dwt_sym_stride(double const* inp, int N, double const* lpd, double const* h
     }
 }
 
-void modwt_per_stride(int M, double const* inp, int N, double const* filt, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
+void modwt_per_stride(int M, double const* inp, int /*N*/, double const* filt, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
 {
     int l;
     int i;
