@@ -12,8 +12,6 @@
 
 void SWTReconstructionTest()
 {
-
-    wave_object obj;
     wt_object wt;
 
     int N;
@@ -82,7 +80,7 @@ void SWTReconstructionTest()
             for (auto& waveletName : waveletNames) {
                 char* name = new char[waveletName.size() + 1];
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                obj = wave_init(name); // Initialize the wavelet
+                auto* obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
                     // J = 3;
 
@@ -137,7 +135,6 @@ void SWTReconstructionTest()
 
 void SWT2ReconstructionTest()
 {
-    wave_object obj;
     wt2_object wt;
     int i;
     int k;
@@ -212,7 +209,7 @@ void SWT2ReconstructionTest()
             for (auto& waveletName : waveletNames) {
                 char* name = new char[waveletName.size() + 1];
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                obj = wave_init(name); // Initialize the wavelet
+                auto* obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
                     // J = 3;
 

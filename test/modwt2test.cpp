@@ -10,7 +10,7 @@
 
 auto main() -> int
 {
-    wave_object obj = wave_init("db2"); // Initialize the wavelet
+    auto* obj = wave_init("db2"); // Initialize the wavelet
 
     auto rows = 51;
     auto cols = 40;

@@ -10,7 +10,7 @@
 
 auto main() -> int
 {
-    wave_object obj = wave_init("db4");
+    auto* obj = wave_init("db4");
 
     auto const N = 788 + 23;
     auto const J = 4;

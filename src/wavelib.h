@@ -41,11 +41,10 @@ struct wave_set {
     double* hpd;
     double* lpr;
     double* hpr;
-    double params[0];
+    std::unique_ptr<double[]> params;
 };
 
-using wave_object = wave_set*;
-auto wave_init(char const* wname) -> wave_object;
+auto wave_init(char const* wname) -> wave_set*;
 
 struct fft_data {
     fft_type re;
@@ -84,7 +83,7 @@ using conv_object = conv_set*;
 auto conv_init(int N, int L) -> conv_object;
 
 struct wt_set {
-    wave_object wave;
+    wave_set* wave;
     conv_object cobj;
     char method[10];
     int siglength; // Length of the original signal.
@@ -106,10 +105,10 @@ struct wt_set {
 };
 
 using wt_object = wt_set*;
-auto wt_init(wave_object wave, char const* method, int siglength, int J) -> wt_object;
+auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_object;
 
 struct wtree_set {
-    wave_object wave;
+    wave_set* wave;
     conv_object cobj;
     char method[10];
     int siglength; // Length of the original signal.
@@ -132,10 +131,10 @@ struct wtree_set {
 };
 
 using wtree_object = wtree_set*;
-auto wtree_init(wave_object wave, int siglength, int J) -> wtree_object;
+auto wtree_init(wave_set* wave, int siglength, int J) -> wtree_object;
 
 struct wpt_set {
-    wave_object wave;
+    wave_set* wave;
     conv_object cobj;
     int siglength; // Length of the original signal.
     int outlength; // Length of the output DWT vector
@@ -160,7 +159,7 @@ struct wpt_set {
 };
 
 using wpt_object = struct wpt_set*;
-auto wpt_init(wave_object wave, int siglength, int J) -> wpt_object;
+auto wpt_init(wave_set* wave, int siglength, int J) -> wpt_object;
 
 struct cwt_set {
     char wave[10]; // Wavelet - morl/morlet,paul,dog/dgauss
@@ -189,7 +188,7 @@ using cwt_object = struct cwt_set*;
 auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -> cwt_object;
 
 struct wt2_set {
-    wave_object wave;
+    wave_set* wave;
     char method[10];
     int rows; // Matrix Number of rows
     int cols; // Matrix Number of columns
@@ -206,7 +205,7 @@ struct wt2_set {
 };
 
 using wt2_object = struct wt2_set*;
-auto wt2_init(wave_object wave, char const* method, int rows, int cols, int J) -> wt2_object;
+auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> wt2_object;
 
 void dwt(wt_object wt, double const* inp);
 
@@ -280,7 +279,7 @@ auto getWT2Coeffs(wt2_object wt, double* wcoeffs, int level, char const* type, i
 
 void dispWT2Coeffs(double* A, int row, int col);
 
-void wave_summary(wave_object obj);
+void wave_summary(wave_set* obj);
 
 void wt_summary(wt_object wt);
 
@@ -292,7 +291,7 @@ void cwt_summary(cwt_object wt);
 
 void wt2_summary(wt2_object wt);
 
-void wave_free(wave_object object);
+void wave_free(wave_set* object);
 
 void wt_free(wt_object object);
 

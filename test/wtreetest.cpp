@@ -8,7 +8,7 @@
 
 auto main() -> int
 {
-    wave_object obj = wave_init("db3");
+    auto* obj = wave_init("db3");
     auto const N = 147;
     auto inp = std::make_unique<double[]>(N);
     for (auto i = 1; i < N + 1; ++i) {

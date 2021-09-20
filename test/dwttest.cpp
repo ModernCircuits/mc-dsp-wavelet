@@ -11,7 +11,7 @@
 
 auto main() -> int
 {
-    wave_object obj = wave_init("db4");
+    auto* obj = wave_init("db4");
 
     auto const input = readFileToVector("testData/signal.txt");
     auto const N = 256;

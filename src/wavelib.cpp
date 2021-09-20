@@ -15,9 +15,8 @@
 
 using namespace std::string_view_literals;
 
-auto wave_init(char const* wname) -> wave_object
+auto wave_init(char const* wname) -> wave_set*
 {
-    wave_object obj = nullptr;
     int retval;
     retval = 0;
 
@@ -27,22 +26,22 @@ auto wave_init(char const* wname) -> wave_object
         //strcopy(obj->wname, wname);
     }
 
-    obj = (wave_object)malloc(sizeof(struct wave_set) + sizeof(double) * 4 * retval);
-
+    auto obj = std::make_unique<wave_set>();
+    obj->params = std::make_unique<double[]>(4 * retval);
     obj->filtlength = retval;
     obj->lpd_len = obj->hpd_len = obj->lpr_len = obj->hpr_len = obj->filtlength;
     strcpy(obj->wname, wname);
     if (wname != nullptr) {
-        filtcoef(wname, obj->params, obj->params + retval, obj->params + 2 * retval, obj->params + 3 * retval);
+        filtcoef(wname, obj->params.get(), obj->params.get() + retval, obj->params.get() + 2 * retval, obj->params.get() + 3 * retval);
     }
     obj->lpd = &obj->params[0];
     obj->hpd = &obj->params[retval];
     obj->lpr = &obj->params[2 * retval];
     obj->hpr = &obj->params[3 * retval];
-    return obj;
+    return obj.release();
 }
 
-auto wt_init(wave_object wave, char const* method, int siglength, int J) -> wt_object
+auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_object
 {
     int size;
     int MaxIter;
@@ -134,7 +133,7 @@ auto wt_init(wave_object wave, char const* method, int siglength, int J) -> wt_o
     return obj;
 }
 
-auto wtree_init(wave_object wave, int siglength, int J) -> wtree_object
+auto wtree_init(wave_set* wave, int siglength, int J) -> wtree_object
 {
     auto const size = wave->filtlength;
     auto const MaxIter = wmaxiter(siglength, size);
@@ -191,7 +190,7 @@ auto wtree_init(wave_object wave, int siglength, int J) -> wtree_object
     return obj;
 }
 
-auto wpt_init(wave_object wave, int siglength, int J) -> wpt_object
+auto wpt_init(wave_set* wave, int siglength, int J) -> wpt_object
 {
     auto const size = wave->filtlength;
 
@@ -355,7 +354,7 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
     return obj;
 }
 
-auto wt2_init(wave_object wave, char const* method, int rows, int cols, int J) -> wt2_object
+auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> wt2_object
 {
 
     auto const size = wave->filtlength;
@@ -3909,7 +3908,7 @@ void dispWT2Coeffs(double* A, int row, int col)
     }
 }
 
-void wave_summary(wave_object obj)
+void wave_summary(wave_set* obj)
 {
     int N;
     N = obj->filtlength;
@@ -4122,7 +4121,7 @@ void wt2_summary(wt2_object wt)
     }
 }
 
-void wave_free(wave_object object)
+void wave_free(wave_set* object)
 {
     free(object);
 }

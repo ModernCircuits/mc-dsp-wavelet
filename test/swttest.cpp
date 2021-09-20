@@ -12,7 +12,7 @@
 auto main() -> int
 {
     char const* name = "bior3.5";
-    wave_object obj = wave_init(name); // Initialize the wavelet
+    auto* obj = wave_init(name); // Initialize the wavelet
     auto const N = 256;
 
     auto const inp = readFileToVector("testData/signal.txt");

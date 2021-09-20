@@ -9,7 +9,7 @@
 
 auto main() -> int
 {
-    wave_object obj = wave_init("db2");
+    auto* obj = wave_init("db2");
 
     auto rows = 32;
     auto cols = 30;

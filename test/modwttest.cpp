@@ -11,7 +11,7 @@
 
 auto main() -> int
 {
-    wave_object obj = wave_init("db4");
+    auto* obj = wave_init("db4");
     wave_summary(obj);
 
     auto N = 177;

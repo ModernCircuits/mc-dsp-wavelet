@@ -19,7 +19,6 @@
 void MODWTReconstructionTest()
 {
 
-    wave_object obj;
     wt_object wt;
 
     int N;
@@ -56,7 +55,7 @@ void MODWTReconstructionTest()
             for (auto& waveletName : waveletNames) {
                 char* name = new char[waveletName.size() + 1];
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                obj = wave_init(name); // Initialize the wavelet
+                auto* obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
                     // J = 3;
 
@@ -111,7 +110,6 @@ void MODWTReconstructionTest()
 
 void MODWT2ReconstructionTest()
 {
-    wave_object obj;
     wt2_object wt;
     int i;
     int k;
@@ -156,7 +154,7 @@ void MODWT2ReconstructionTest()
             for (auto& waveletName : waveletNames) {
                 char* name = new char[waveletName.size() + 1];
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                obj = wave_init(name); // Initialize the wavelet
+                auto* obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
                     // J = 3;
 
@@ -198,7 +196,6 @@ void MODWT2ReconstructionTest()
 void DWPTReconstructionTest()
 {
 
-    wave_object obj;
     wpt_object wt;
 
     int N;
@@ -266,7 +263,7 @@ void DWPTReconstructionTest()
             for (auto& waveletName : waveletNames) {
                 char* name = new char[waveletName.size() + 1];
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                obj = wave_init(name); // Initialize the wavelet
+                auto* obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
                     // J = 3;
 
@@ -445,7 +442,6 @@ void DBCoefTests()
 
 void CoifCoefTests()
 {
-    wave_object obj;
     double epsilon = 1e-15;
     double t1;
     double t2;
@@ -461,7 +457,7 @@ void CoifCoefTests()
     for (auto& waveletName : waveletNames) {
         char* name = new char[waveletName.size() + 1];
         memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-        obj = wave_init(name); // Initialize the wavelet
+        auto* obj = wave_init(name); // Initialize the wavelet
         t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
         t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
         t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
@@ -486,7 +482,6 @@ void CoifCoefTests()
 
 void SymCoefTests()
 {
-    wave_object obj;
     double epsilon = 1e-10;
     double t1;
     double t2;
@@ -501,7 +496,7 @@ void SymCoefTests()
     for (auto& waveletName : waveletNames) {
         char* name = new char[waveletName.size() + 1];
         memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-        obj = wave_init(name); // Initialize the wavelet
+        auto* obj = wave_init(name); // Initialize the wavelet
         t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
         t2 = sum2(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
         t3 = sum3(obj->lpr, obj->lpr_len) - 1.0 / sqrt(2.0);
@@ -526,7 +521,6 @@ void SymCoefTests()
 
 void BiorCoefTests()
 {
-    wave_object obj;
     double epsilon = 1e-10;
     double t1;
     double t2;
@@ -554,7 +548,7 @@ void BiorCoefTests()
     for (auto& waveletName : waveletNames) {
         char* name = new char[waveletName.size() + 1];
         memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-        obj = wave_init(name); // Initialize the wavelet
+        auto* obj = wave_init(name); // Initialize the wavelet
 
         t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
         t2 = sum1(obj->lpd, obj->lpd_len) - sqrt(2.0);
@@ -577,7 +571,6 @@ void BiorCoefTests()
 
 void RBiorCoefTests()
 {
-    wave_object obj;
     double epsilon = 1e-10;
     double t1;
     double t2;
@@ -605,7 +598,7 @@ void RBiorCoefTests()
     for (auto& waveletName : waveletNames) {
         char* name = new char[waveletName.size() + 1];
         memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-        obj = wave_init(name); // Initialize the wavelet
+        auto* obj = wave_init(name); // Initialize the wavelet
 
         t1 = sum1(obj->lpr, obj->lpr_len) - sqrt(2.0);
         t2 = sum1(obj->lpd, obj->lpd_len) - sqrt(2.0);

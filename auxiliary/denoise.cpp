@@ -35,47 +35,39 @@ auto denoise_init(int length, int J, char const* wname) -> denoise_object
 
 void visushrink(double* signal, int N, int J, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised)
 {
-    int filt_len;
-    int iter;
-    int dlen;
     int dwt_len;
     int sgn;
-    int MaxIter;
     int it;
     double sigma;
     double td;
     double tmp;
-    wave_object wave;
-    wt_object wt;
 
-    wave = wave_init(wname);
-
-    filt_len = wave->filtlength;
-
-    MaxIter = (int)(log((double)N / ((double)filt_len - 1.0)) / log(2.0));
+    auto* wave = wave_init(wname);
+    auto filt_len = wave->filtlength;
+    auto MaxIter = (int)(log((double)N / ((double)filt_len - 1.0)) / log(2.0));
 
     if (J > MaxIter) {
-        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
-        exit(-1);
+        std::printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
+        std::exit(-1);
     }
 
-    wt = wt_init(wave, method, N, J);
+    wt_object wt = wt_init(wave, method, N, J);
     if (method == "dwt"sv) {
         setDWTExtension(wt, ext);
         dwt(wt, signal);
     } else if (method == "swt"sv) {
         swt(wt, signal);
     } else {
-        printf("Acceptable WT methods are - dwt,swt and modwt\n");
-        exit(-1);
+        std::printf("Acceptable WT methods are - dwt,swt and modwt\n");
+        std::exit(-1);
     }
 
     auto lnoise = std::make_unique<double[]>(J);
 
     //Set sigma
 
-    iter = wt->length[0];
-    dlen = wt->length[J];
+    auto iter = wt->length[0];
+    auto dlen = wt->length[J];
 
     auto dout = std::make_unique<double[]>(dlen);
 
@@ -104,8 +96,8 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         }
 
     } else {
-        printf("Acceptable Noise estimation level values are - first and all \n");
-        exit(-1);
+        std::printf("Acceptable Noise estimation level values are - first and all \n");
+        std::exit(-1);
     }
 
     dwt_len = wt->outlength;
@@ -166,18 +158,17 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
     double thr;
     double temp;
     double x_sum;
-    wave_object wave;
     wt_object wt;
 
-    wave = wave_init(wname);
+    auto* wave = wave_init(wname);
 
     filt_len = wave->filtlength;
 
     MaxIter = (int)(log((double)N / ((double)filt_len - 1.0)) / log(2.0));
     // Depends on J
     if (J > MaxIter) {
-        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
-        exit(-1);
+        std::printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
+        std::exit(-1);
     }
 
     wt = wt_init(wave, method, N, J);
@@ -188,8 +179,8 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
     } else if (method == "swt"sv) {
         swt(wt, signal);
     } else {
-        printf("Acceptable WT methods are - dwt and swt\n");
-        exit(-1);
+        std::printf("Acceptable WT methods are - dwt and swt\n");
+        std::exit(-1);
     }
 
     len = wt->length[0];
@@ -227,8 +218,8 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
         }
 
     } else {
-        printf("Acceptable Noise estimation level values are - first and all \n");
-        exit(-1);
+        std::printf("Acceptable Noise estimation level values are - first and all \n");
+        std::exit(-1);
     }
 
     for (it = 0; it < J; ++it) {
@@ -306,29 +297,24 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
 
 void modwtshrink(double* signal, int N, int J, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised)
 {
-    int filt_len;
-    int iter;
-    int dlen;
     int sgn;
-    int MaxIter;
     int it;
     double sigma;
     double td;
     double tmp;
     double M;
     double llen;
-    wave_object wave;
     wt_object wt;
 
-    wave = wave_init(wname);
+    auto* wave = wave_init(wname);
 
-    filt_len = wave->filtlength;
+    auto filt_len = wave->filtlength;
 
-    MaxIter = (int)(log((double)N / ((double)filt_len - 1.0)) / log(2.0));
+    auto MaxIter = (int)(log((double)N / ((double)filt_len - 1.0)) / log(2.0));
 
     if (J > MaxIter) {
-        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
-        exit(-1);
+        std::printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
+        std::exit(-1);
     }
 
     wt = wt_init(wave, "modwt", N, J);
@@ -337,8 +323,8 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
         setWTConv(wt, "fft");
         setDWTExtension(wt, "sym");
     } else if ((ext == "sym"sv) && (cmethod == "direct"sv)) {
-        printf("Symmetric Extension is not available for direct method");
-        exit(-1);
+        std::printf("Symmetric Extension is not available for direct method");
+        std::exit(-1);
     } else if ((ext == "per"sv) && (cmethod == "direct"sv)) {
         setWTConv(wt, "direct");
         setDWTExtension(wt, "per");
@@ -346,8 +332,8 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
         setWTConv(wt, "fft");
         setDWTExtension(wt, "per");
     } else {
-        printf("Signal extension can be either per or sym");
-        exit(-1);
+        std::printf("Signal extension can be either per or sym");
+        std::exit(-1);
     }
 
     modwt(wt, signal);
@@ -356,8 +342,8 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
 
     //Set sigma
 
-    iter = wt->length[0];
-    dlen = wt->length[J];
+    auto iter = wt->length[0];
+    auto dlen = wt->length[J];
     auto dout = std::make_unique<double[]>(dlen);
 
     for (it = 0; it < J; ++it) {
@@ -413,25 +399,25 @@ void denoise(denoise_object obj, double* signal, double* denoised)
 {
     if (obj->dmethod == "sureshrink"sv) {
         if (obj->wmethod == "modwt"sv) {
-            printf("sureshrink method only works with swt and dwt. Please use setDenoiseWTMethod to set the correct method\n");
-            exit(-1);
+            std::printf("sureshrink method only works with swt and dwt. Please use setDenoiseWTMethod to set the correct method\n");
+            std::exit(-1);
         }
         sureshrink(signal, obj->N, obj->J, obj->wname, obj->wmethod, obj->ext, obj->thresh, obj->level, denoised);
     } else if (obj->dmethod == "visushrink"sv) {
         if (obj->wmethod == "modwt"sv) {
-            printf("visushrink method only works with swt and dwt. Please use setDenoiseWTMethod to set the correct method\n");
-            exit(-1);
+            std::printf("visushrink method only works with swt and dwt. Please use setDenoiseWTMethod to set the correct method\n");
+            std::exit(-1);
         }
         visushrink(signal, obj->N, obj->J, obj->wname, obj->wmethod, obj->ext, obj->thresh, obj->level, denoised);
     } else if (obj->dmethod == "modwtshrink"sv) {
         if (obj->wmethod != "modwt"sv) {
-            printf("modwtshrink method only works with modwt. Please use setDenoiseWTMethod to set the correct method\n");
-            exit(-1);
+            std::printf("modwtshrink method only works with modwt. Please use setDenoiseWTMethod to set the correct method\n");
+            std::exit(-1);
         }
         modwtshrink(signal, obj->N, obj->J, obj->wname, obj->cmethod, obj->ext, obj->thresh, denoised);
     } else {
-        printf("Acceptable Denoising methods are - sureshrink and visushrink\n");
-        exit(-1);
+        std::printf("Acceptable Denoising methods are - sureshrink and visushrink\n");
+        std::exit(-1);
     }
 }
 
@@ -444,8 +430,8 @@ void setDenoiseMethod(denoise_object obj, char const* dmethod)
     } else if (strcmp(dmethod, "modwtshrink") == 0) {
         strcpy(obj->dmethod, "modwtshrink");
     } else {
-        printf("Acceptable Denoising methods are - sureshrink, visushrink and modwtshrink\n");
-        exit(-1);
+        std::printf("Acceptable Denoising methods are - sureshrink, visushrink and modwtshrink\n");
+        std::exit(-1);
     }
 }
 
@@ -458,8 +444,8 @@ void setDenoiseWTMethod(denoise_object obj, char const* wmethod)
     } else if (strcmp(wmethod, "modwt") == 0) {
         strcpy(obj->wmethod, "modwt");
     } else {
-        printf("Wavelet decomposition method can be one of dwt, modwt or swt.\n");
-        exit(-1);
+        std::printf("Wavelet decomposition method can be one of dwt, modwt or swt.\n");
+        std::exit(-1);
     }
 }
 
@@ -470,8 +456,8 @@ void setDenoiseWTExtension(denoise_object obj, char const* extension)
     } else if (strcmp(extension, "per") == 0) {
         strcpy(obj->ext, "per");
     } else {
-        printf("Signal extension can be either per or sym");
-        exit(-1);
+        std::printf("Signal extension can be either per or sym");
+        std::exit(-1);
     }
 }
 
@@ -484,8 +470,8 @@ void setDenoiseParameters(denoise_object obj, char const* thresh, char const* le
     } else if (thresh == "hard"sv) {
         strcpy(obj->thresh, "hard");
     } else {
-        printf("Thresholding Method - soft or hard");
-        exit(-1);
+        std::printf("Thresholding Method - soft or hard");
+        std::exit(-1);
     }
 
     // Set Noise estimation at the first level or at all levels
@@ -495,8 +481,8 @@ void setDenoiseParameters(denoise_object obj, char const* thresh, char const* le
     } else if (level == "all"sv) {
         strcpy(obj->level, "all");
     } else {
-        printf("Noise Estimation at level - first or all");
-        exit(-1);
+        std::printf("Noise Estimation at level - first or all");
+        std::exit(-1);
     }
 }
 

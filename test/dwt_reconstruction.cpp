@@ -14,23 +14,14 @@
 
 void DWTReconstructionTest()
 {
-
-    wave_object obj;
     wt_object wt;
-    int N;
-    int i;
     int J;
-    double epsilon = 1e-15;
-
-    N = 79926;
-
-    // N = 256;
+    auto const N = 79926;
 
     auto inp = std::make_unique<double[]>(N);
     auto out = std::make_unique<double[]>(N);
-    // wmean = mean(temp, N);
 
-    for (i = 0; i < N; ++i) {
+    for (auto i = 0; i < N; ++i) {
         inp[i] = (rand() / (double)(RAND_MAX));
     }
     std::vector<std::string> waveletNames;
@@ -82,16 +73,11 @@ void DWTReconstructionTest()
             for (auto& waveletName : waveletNames) {
                 char* name = new char[waveletName.size() + 1];
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                obj = wave_init(name); // Initialize the wavelet
-                for (J = 1; J < 3; J++) {
-                    // J = 3;
-
-                    wt = wt_init(obj, "dwt", N,
-                        J); // Initialize the wavelet transform object
+                auto* obj = wave_init(name); // Initialize the wavelet
+                for (auto J = 1; J < 3; J++) {
+                    auto* wt = wt_init(obj, "dwt", N, J);
                     if (sym_per == 0) {
-                        setDWTExtension(wt,
-                            "sym"); // Options are "per" and "sym".
-                        // Symmetric is the default option
+                        setDWTExtension(wt, "sym");
                     } else {
                         setDWTExtension(wt, "per");
                     }
@@ -106,19 +92,17 @@ void DWTReconstructionTest()
                     idwt(wt, out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
+                    auto epsilon = 1e-15;
                     if (direct_fft == 0) {
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out.get(), inp.get(), wt->siglength), epsilon); //
-                    // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%g ",RMS_Error(out.get(), inp.get(), wt->siglength));
+                    // std::printf("%g ",RMS_Error(out.get(), inp.get(), wt->siglength));
                     if (RMS_Error(out.get(), inp.get(), wt->siglength) > epsilon) {
-                        printf(
-                            "\n ERROR : DWT Reconstruction Unit Test Failed. Exiting. \n");
-                        exit(-1);
+                        std::printf("\n ERROR : DWT Reconstruction Unit Test Failed. Exiting. \n");
+                        std::exit(-1);
                     }
                     wt_free(wt);
                 }
@@ -131,7 +115,6 @@ void DWTReconstructionTest()
 
 void DWT2ReconstructionTest()
 {
-    wave_object obj;
     wt2_object wt;
     int i;
     int k;
@@ -194,7 +177,7 @@ void DWT2ReconstructionTest()
     waveletNames.emplace_back("rbior5.5");
     waveletNames.emplace_back("rbior6.8");
 
-    for (i = 0; i < rows; ++i) {
+    for (auto i = 0; i < rows; ++i) {
         for (k = 0; k < cols; ++k) {
             // inp[i*cols + k] = i*cols + k;
             inp[i * cols + k] = generate_rnd();
@@ -207,7 +190,7 @@ void DWT2ReconstructionTest()
             for (auto& waveletName : waveletNames) {
                 char* name = new char[waveletName.size() + 1];
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                obj = wave_init(name); // Initialize the wavelet
+                auto* obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
                     // J = 3;
 
@@ -231,13 +214,10 @@ void DWT2ReconstructionTest()
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out.get(), inp.get(), wt->siglength), epsilon); //
-                    // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%g ",RMS_Error(out.get(), inp.get(), wt->siglength));
                     if (RMS_Error(out.get(), inp.get(), N) > epsilon) {
-                        printf("\n ERROR : DWT2 Reconstruction Unit Test Failed. Exiting. \n");
-                        exit(-1);
+                        std::printf("\n ERROR : DWT2 Reconstruction Unit Test Failed. Exiting. \n");
+                        std::exit(-1);
                     }
                     wt2_free(wt);
                     free(wavecoeffs);
@@ -251,11 +231,11 @@ void DWT2ReconstructionTest()
 
 auto main() -> int
 {
-    printf("Running DWT ReconstructionTests ... ");
+    std::printf("Running DWT ReconstructionTests ... ");
     DWTReconstructionTest();
-    printf("DONE \n");
-    printf("Running DWT2 ReconstructionTests ... ");
+    std::printf("DONE \n");
+    std::printf("Running DWT2 ReconstructionTests ... ");
     DWT2ReconstructionTest();
-    printf("DONE \n");
+    std::printf("DONE \n");
     return 0;
 }

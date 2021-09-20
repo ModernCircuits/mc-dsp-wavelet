@@ -11,7 +11,7 @@
 
 auto main() -> int
 {
-    wave_object obj = wave_init("bior3.1");
+    auto* obj = wave_init("bior3.1");
 
     auto const rows = 64;
     auto const cols = 48;
