@@ -136,37 +136,28 @@ auto wt_init(wave_object wave, char const* method, int siglength, int J) -> wt_o
 
 auto wtree_init(wave_object wave, int siglength, int J) -> wtree_object
 {
-    int size;
-    int MaxIter;
-    int temp;
-    int temp2;
-    int elength;
-    int nodes;
-    wtree_object obj = nullptr;
-
-    size = wave->filtlength;
-
+    auto const size = wave->filtlength;
+    auto const MaxIter = wmaxiter(siglength, size);
     if (J > 100) {
         printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
         exit(-1);
     }
-
-    MaxIter = wmaxiter(siglength, size);
     if (J > MaxIter) {
         printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
         exit(-1);
     }
-    temp = 1;
-    elength = 0;
-    nodes = 0;
+
+    auto temp = 1;
+    auto elength = 0;
+    auto nodes = 0;
     for (auto i = 0; i < J; ++i) {
         temp *= 2;
         nodes += temp;
-        temp2 = (size - 2) * (temp - 1);
+        auto const temp2 = (size - 2) * (temp - 1);
         elength += temp2;
     }
 
-    obj = (wtree_object)malloc(sizeof(struct wtree_set) + sizeof(double) * (siglength * (J + 1) + elength + nodes + J + 1));
+    auto* obj = (wtree_object)malloc(sizeof(struct wtree_set) + sizeof(double) * (siglength * (J + 1) + elength + nodes + J + 1));
     obj->outlength = siglength * (J + 1) + elength;
     strcpy(obj->ext, "sym");
 
@@ -202,40 +193,30 @@ auto wtree_init(wave_object wave, int siglength, int J) -> wtree_object
 
 auto wpt_init(wave_object wave, int siglength, int J) -> wpt_object
 {
-    int size;
-    int MaxIter;
-    int temp;
-    int nodes;
-    int elength;
-    int p2;
-    int N;
-    int lp;
-    wpt_object obj = nullptr;
-
-    size = wave->filtlength;
+    auto const size = wave->filtlength;
 
     if (J > 100) {
         printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
         exit(-1);
     }
 
-    MaxIter = wmaxiter(siglength, size);
+    auto const MaxIter = wmaxiter(siglength, size);
     if (J > MaxIter) {
         printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
         exit(-1);
     }
-    temp = 1;
-    nodes = 0;
+    auto temp = 1;
+    auto nodes = 0;
     for (auto i = 0; i < J; ++i) {
         temp *= 2;
         nodes += temp;
     }
 
     auto i = J;
-    p2 = 2;
-    N = siglength;
-    lp = size;
-    elength = 0;
+    auto p2 = 2;
+    auto N = siglength;
+    auto lp = size;
+    auto elength = 0;
     while (i > 0) {
         N = N + lp - 2;
         N = (int)ceil((double)N / 2.0);
@@ -245,7 +226,7 @@ auto wpt_init(wave_object wave, int siglength, int J) -> wpt_object
     }
     //printf("elength %d", elength);
 
-    obj = (wpt_object)malloc(sizeof(struct wpt_set) + sizeof(double) * (elength + 4 * nodes + 2 * J + 6));
+    auto* obj = (wpt_object)malloc(sizeof(struct wpt_set) + sizeof(double) * (elength + 4 * nodes + 2 * J + 6));
     obj->outlength = siglength + 2 * (J + 1) * (size + 1);
     strcpy(obj->ext, "sym");
     strcpy(obj->entropy, "shannon");
@@ -276,8 +257,6 @@ auto wpt_init(wave_object wave, int siglength, int J) -> wpt_object
     for (auto i = 0; i < elength + 4 * nodes + 2 * J + 6; ++i) {
         obj->params[i] = 0.0;
     }
-
-    //wave_summary(obj->wave);
 
     return obj;
 }
@@ -378,25 +357,20 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
 
 auto wt2_init(wave_object wave, char const* method, int rows, int cols, int J) -> wt2_object
 {
-    int size;
-    int MaxIter;
-    int MaxRows;
-    int MaxCols;
-    int sumacc;
-    wt2_object obj = nullptr;
 
-    size = wave->filtlength;
+    auto const size = wave->filtlength;
 
-    MaxRows = wmaxiter(rows, size);
-    MaxCols = wmaxiter(cols, size);
+    auto const MaxRows = wmaxiter(rows, size);
+    auto const MaxCols = wmaxiter(cols, size);
 
-    MaxIter = (MaxRows < MaxCols) ? MaxRows : MaxCols;
+    auto const MaxIter = (MaxRows < MaxCols) ? MaxRows : MaxCols;
 
     if (J > MaxIter) {
         printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
         exit(-1);
     }
 
+    int sumacc { 0 };
     if (J == 1) {
         sumacc = 4;
     } else if (J > 1) {
@@ -406,6 +380,7 @@ auto wt2_init(wave_object wave, char const* method, int rows, int cols, int J) -
         exit(-1);
     }
 
+    wt2_object obj = nullptr;
     if (method == nullptr) {
         obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
         obj->outlength = 0; // Default
@@ -1080,61 +1055,45 @@ void wtree(wtree_object wt, double const* inp)
     free(orig);
 }
 
-static auto ipow2(int n) -> int
+static constexpr auto ipow2(int n) -> int
 {
-    int p;
-    p = 1;
-
+    auto p = 1;
     for (auto i = 0; i < n; ++i) {
         p *= 2;
     }
-
     return p;
 }
 
 void dwpt(wpt_object wt, double const* inp)
 {
-    int J;
-    int temp_len;
     int iter;
-    int N;
-    int lp;
     int p2;
     int k;
     int N2;
     int Np;
-    int temp;
-    int elength;
-    int temp2;
-    int size;
-    int nodes;
     int llb;
-    int n1;
     int j;
-    double eparam;
     double v1;
     double v2;
     int len_cA;
     int t;
-    int t2;
-    int it1;
-    int it2;
 
-    temp_len = wt->siglength;
-    J = wt->J;
+    auto temp_len = wt->siglength;
+    auto J = wt->J;
     wt->length[J + 1] = temp_len;
     wt->outlength = 0;
-    temp = 1;
-    elength = 0;
-    size = wt->wave->filtlength;
-    nodes = wt->nodes;
-    n1 = nodes + 1;
+    auto temp = 1;
+    auto elength = 0;
+    auto size = wt->wave->filtlength;
+    auto nodes = wt->nodes;
+    auto n1 = nodes + 1;
     for (auto i = 0; i < J; ++i) {
         temp *= 2;
-        temp2 = (size - 2) * (temp - 1);
+        auto const temp2 = (size - 2) * (temp - 1);
         elength += temp2;
     }
-    eparam = wt->eparam;
+
+    auto eparam = wt->eparam;
     auto orig = std::make_unique<double[]>(temp_len);
     auto tree = std::make_unique<double[]>((temp_len * (J + 1) + elength));
     auto nodelength = std::make_unique<int[]>(nodes);
@@ -1152,13 +1111,13 @@ void dwpt(wpt_object wt, double const* inp)
         wt->costvalues[i] = 0.0;
     }
 
-    N = temp_len;
-    lp = wt->wave->lpd_len;
+    auto N = temp_len;
+    auto lp = wt->wave->lpd_len;
     // p2 = 1;
 
     //set eparam value here
     wt->costvalues[0] = costfunc(orig.get(), wt->siglength, wt->entropy, eparam);
-    it2 = 1;
+    auto it2 = 1;
     if (wt->ext == "per"sv) {
         auto i = J;
         p2 = 2;
@@ -1239,9 +1198,9 @@ void dwpt(wpt_object wt, double const* inp)
     }
 
     J = wt->J;
-    t2 = wt->outlength - 2 * wt->length[J];
+    auto t2 = wt->outlength - 2 * wt->length[J];
     p2 = 2;
-    it1 = 0;
+    auto it1 = 0;
     for (auto i = 0; i < J; ++i) {
         t = t2;
         for (k = 0; k < p2; ++k) {
@@ -1805,25 +1764,18 @@ static void idwpt_per(wpt_object wt, double const* cA, int len_cA, double const*
 
 static void idwpt_sym(wpt_object wt, double const* cA, int len_cA, double const* cD, double* X)
 {
-    int len_avg;
-    int l;
-    int m;
-    int n;
-    int t;
-    int v;
+    auto len_avg = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
+    auto m = -2;
+    auto n = -1;
 
-    len_avg = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
-    m = -2;
-    n = -1;
-
-    for (v = 0; v < len_cA; ++v) {
+    for (auto v = 0; v < len_cA; ++v) {
         auto i = v;
         m += 2;
         n += 2;
         X[m] = 0.0;
         X[n] = 0.0;
-        for (l = 0; l < len_avg / 2; ++l) {
-            t = 2 * l;
+        for (auto l = 0; l < len_avg / 2; ++l) {
+            auto const t = 2 * l;
             if ((i - l) >= 0 && (i - l) < len_cA) {
                 X[m] += wt->wave->lpr[t] * cA[i - l] + wt->wave->hpr[t] * cD[i - l];
                 X[n] += wt->wave->lpr[t + 1] * cA[i - l] + wt->wave->hpr[t + 1] * cD[i - l];
@@ -1834,40 +1786,26 @@ static void idwpt_sym(wpt_object wt, double const* cA, int len_cA, double const*
 
 void idwpt(wpt_object wt, double* dwtop)
 {
-    int J;
-    int lf;
     int k;
-    int p;
     int l;
-    int app_len;
-    int det_len;
     int index;
-    int n1;
-    int llb;
-    int index2;
-    int index3;
-    int index4;
-    int indexp;
-    int xlen;
-    int* prep;
-    int* ptemp;
 
-    J = wt->J;
-    app_len = wt->length[0];
-    p = ipow2(J);
-    lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
-    xlen = p * (app_len + 2 * lf);
+    auto J = wt->J;
+    auto app_len = wt->length[0];
+    auto p = ipow2(J);
+    auto lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
+    auto xlen = p * (app_len + 2 * lf);
 
     auto X_lp = std::make_unique<double[]>(2 * (wt->length[J] + lf));
     auto X = std::make_unique<double[]>(xlen);
     auto out = std::make_unique<double[]>(wt->length[J]);
     auto out2 = std::make_unique<double[]>(wt->length[J]);
-    prep = (int*)malloc(sizeof(int) * p);
-    ptemp = (int*)malloc(sizeof(int) * p);
-    n1 = 1;
-    llb = 1;
-    index2 = xlen / p;
-    indexp = 0;
+    auto prep = makeZeros<int>(p);
+    auto ptemp = makeZeros<int>(p);
+    auto n1 = 1;
+    auto llb = 1;
+    auto index2 = xlen / p;
+    auto indexp = 0;
     if (wt->basisvector[0] == 1) {
         for (auto i = 0; i < wt->siglength; ++i) {
             dwtop[i] = wt->output[i];
@@ -1894,11 +1832,11 @@ void idwpt(wpt_object wt, double* dwtop)
             index = 0;
 
             for (auto i = 0; i < J; ++i) {
-                p = ipow2(J - i - 1);
-                det_len = wt->length[i + 1];
+                auto p = ipow2(J - i - 1);
+                auto det_len = wt->length[i + 1];
                 index2 *= 2;
-                index3 = 0;
-                index4 = 0;
+                auto index3 = 0;
+                auto index4 = 0;
                 //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp.get(), X_hp, out);
                 n1 -= llb;
                 for (l = 0; l < llb; ++l) {
@@ -1993,10 +1931,10 @@ void idwpt(wpt_object wt, double* dwtop)
 
             for (auto i = 0; i < J; ++i) {
                 p = ipow2(J - i - 1);
-                det_len = wt->length[i + 1];
+                auto det_len = wt->length[i + 1];
                 index2 *= 2;
-                index3 = 0;
-                index4 = 0;
+                auto index3 = 0;
+                auto index4 = 0;
                 //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp.get(), X_hp, out);
                 n1 -= llb;
                 for (l = 0; l < llb; ++l) {
@@ -2092,9 +2030,6 @@ void idwpt(wpt_object wt, double* dwtop)
             dwtop[i] = X[i];
         }
     }
-
-    free(prep);
-    free(ptemp);
 }
 
 static void swt_per(wt_object wt, int M, double* inp, int N, double* cA, int len_cA, double* cD)

@@ -57,12 +57,7 @@ auto fft_init(int N, int sgn) -> fft_object
 static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj, int sgn, int N, int l, int inc)
 {
 
-    int radix;
-    int m;
-    int ll;
-    if (N > 1) {
-        radix = obj->factors[inc];
-    }
+    auto const radix = N > 1 ? obj->factors[inc] : 0;
 
     if (N == 1) {
 
@@ -563,8 +558,8 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         fft_type tau1i;
         fft_type tau2r;
         fft_type tau2i;
-        m = N / 2;
-        ll = 2 * l;
+        auto const m = N / 2;
+        auto const ll = 2 * l;
         mixed_radix_dit_rec(op, ip, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
 
@@ -609,8 +604,8 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         fft_type bi;
         fft_type cr;
         fft_type ci;
-        m = N / 3;
-        ll = 3 * l;
+        auto const m = N / 3;
+        auto const ll = 3 * l;
         mixed_radix_dit_rec(op, ip, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
@@ -682,8 +677,8 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         fft_type ci;
         fft_type dr;
         fft_type di;
-        m = N / 4;
-        ll = 4 * l;
+        auto const m = N / 4;
+        auto const ll = 4 * l;
         mixed_radix_dit_rec(op, ip, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
@@ -826,8 +821,8 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         fft_type c2;
         fft_type s1;
         fft_type s2;
-        m = N / 5;
-        ll = 5 * l;
+        auto const m = N / 5;
+        auto const ll = 5 * l;
         mixed_radix_dit_rec(op, ip, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
@@ -1060,8 +1055,8 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         fft_type s1;
         fft_type s2;
         fft_type s3;
-        m = N / 7;
-        ll = 7 * l;
+        auto const m = N / 7;
+        auto const ll = 7 * l;
         mixed_radix_dit_rec(op, ip, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
@@ -1384,8 +1379,8 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         fft_type temp2r;
         fft_type temp2i;
 
-        m = N / 8;
-        ll = 8 * l;
+        auto const m = N / 8;
+        auto const ll = 8 * l;
         mixed_radix_dit_rec(op, ip, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
         mixed_radix_dit_rec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
@@ -1573,8 +1568,8 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_object obj
         auto* yr = (fft_type*)malloc(sizeof(fft_type) * (radix));
         auto* yi = (fft_type*)malloc(sizeof(fft_type) * (radix));
 
-        m = N / radix;
-        ll = radix * l;
+        auto const m = N / radix;
+        auto const ll = radix * l;
 
         for (i = 0; i < radix; ++i) {
             mixed_radix_dit_rec(op + i * m, ip + i * l, obj, sgn, m, ll, inc + 1);
