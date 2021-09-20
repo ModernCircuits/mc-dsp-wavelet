@@ -101,7 +101,7 @@ struct wt_set {
     int zpad;
     int length[102];
     double* output;
-    double params[0];
+    std::unique_ptr<double[]> params;
 };
 
 using wt_object = wt_set*;

@@ -45,7 +45,7 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_obj
 {
     int size;
     int MaxIter;
-    wt_object obj = nullptr;
+    auto obj = std::unique_ptr<wt_set>(nullptr);
 
     size = wave->filtlength;
 
@@ -62,22 +62,25 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_obj
     }
 
     if (method == nullptr) {
-        obj = (wt_object)malloc(sizeof(struct wt_set) + sizeof(double) * (siglength + 2 * J * (size + 1)));
-        obj->outlength = siglength + 2 * J * (size + 1); // Default
-        strcpy(obj->ext, "sym"); // Default
+        obj = std::make_unique<wt_set>();
+        obj->params = std::make_unique<double[]>(siglength + 2 * J * (size + 1));
+        obj->outlength = siglength + 2 * J * (size + 1);
+        strcpy(obj->ext, "sym");
     } else if ((method == "dwt"sv) || (method == "DWT"sv)) {
-        obj = (wt_object)malloc(sizeof(struct wt_set) + sizeof(double) * (siglength + 2 * J * (size + 1)));
-        obj->outlength = siglength + 2 * J * (size + 1); // Default
-        strcpy(obj->ext, "sym"); // Default
+        obj = std::make_unique<wt_set>();
+        obj->params = std::make_unique<double[]>(siglength + 2 * J * (size + 1));
+        obj->outlength = siglength + 2 * J * (size + 1);
+        strcpy(obj->ext, "sym");
     } else if ((method == "swt"sv) || (method == "SWT"sv)) {
         if (testSWTlength(siglength, J) == 0) {
             printf("\n For SWT the signal length must be a multiple of 2^J. \n");
             exit(-1);
         }
 
-        obj = (wt_object)malloc(sizeof(struct wt_set) + sizeof(double) * (siglength * (J + 1)));
-        obj->outlength = siglength * (J + 1); // Default
-        strcpy(obj->ext, "per"); // Default
+        obj = std::make_unique<wt_set>();
+        obj->params = std::make_unique<double[]>(siglength * (J + 1));
+        obj->outlength = siglength * (J + 1);
+        strcpy(obj->ext, "per");
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
 
         if (strstr(wave->wname, "haar") == nullptr) {
@@ -91,9 +94,10 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_obj
             }
         }
 
-        obj = (wt_object)malloc(sizeof(struct wt_set) + sizeof(double) * (siglength * 2 * (J + 1)));
-        obj->outlength = siglength * (J + 1); // Default
-        strcpy(obj->ext, "per"); // Default
+        obj = std::make_unique<wt_set>();
+        obj->params = std::make_unique<double[]>(siglength * 2 * (J + 1));
+        obj->outlength = siglength * (J + 1);
+        strcpy(obj->ext, "per");
     }
 
     obj->wave = wave;
@@ -111,7 +115,7 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_obj
 
     obj->cobj = nullptr;
 
-    strcpy(obj->cmethod, "direct"); // Default
+    strcpy(obj->cmethod, "direct");
     obj->cfftset = 0;
     obj->lenlength = J + 2;
     obj->output = &obj->params[0];
@@ -130,7 +134,7 @@ auto wt_init(wave_set* wave, char const* method, int siglength, int J) -> wt_obj
     }
     //wave_summary(obj->wave);
 
-    return obj;
+    return obj.release();
 }
 
 auto wtree_init(wave_set* wave, int siglength, int J) -> wtree_object
@@ -382,11 +386,11 @@ auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> 
     wt2_object obj = nullptr;
     if (method == nullptr) {
         obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
-        obj->outlength = 0; // Default
+        obj->outlength = 0;
         strcpy(obj->ext, "per");
     } else if ((method == "dwt"sv) || (method == "DWT"sv)) {
         obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
-        obj->outlength = 0; // Default
+        obj->outlength = 0;
         strcpy(obj->ext, "per");
     } else if ((method == "swt"sv) || (method == "SWT"sv)) {
         if ((testSWTlength(rows, J) == 0) || (testSWTlength(cols, J) == 0)) {
@@ -395,7 +399,7 @@ auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> 
         }
 
         obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
-        obj->outlength = 0; // Default
+        obj->outlength = 0;
         strcpy(obj->ext, "per");
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
         if (strstr(wave->wname, "haar") == nullptr) {
@@ -409,7 +413,7 @@ auto wt2_init(wave_set* wave, char const* method, int rows, int cols, int J) -> 
             }
         }
         obj = (wt2_object)malloc(sizeof(struct wt2_set) + sizeof(int) * (2 * J + sumacc));
-        obj->outlength = 0; // Default
+        obj->outlength = 0;
         strcpy(obj->ext, "per");
     }
 
@@ -706,9 +710,9 @@ void dwt(wt_object wt, double const* inp)
             auto const len_cA = wt->length[J - iter];
             N -= len_cA;
             if ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv)) {
-                dwt1(wt, orig.get(), temp_len, orig2.get(), wt->params + N);
+                dwt1(wt, orig.get(), temp_len, orig2.get(), wt->params.get() + N);
             } else {
-                dwt_per(wt, orig.get(), temp_len, orig2.get(), len_cA, wt->params + N);
+                dwt_per(wt, orig.get(), temp_len, orig2.get(), len_cA, wt->params.get() + N);
             }
             temp_len = wt->length[J - iter];
             if (iter == J - 1) {
@@ -739,9 +743,9 @@ void dwt(wt_object wt, double const* inp)
             auto const len_cA = wt->length[J - iter];
             N -= len_cA;
             if ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv)) {
-                dwt1(wt, orig.get(), temp_len, orig2.get(), wt->params + N);
+                dwt1(wt, orig.get(), temp_len, orig2.get(), wt->params.get() + N);
             } else {
-                dwt_sym(wt, orig.get(), temp_len, orig2.get(), len_cA, wt->params + N);
+                dwt_sym(wt, orig.get(), temp_len, orig2.get(), len_cA, wt->params.get() + N);
             }
             temp_len = wt->length[J - iter];
 
@@ -2082,9 +2086,9 @@ static void swt_fft(wt_object wt, double const* inp)
             }
         }
 
-        //swt_per(wt,M, wt->params, temp_len, cA, temp_len, cD,temp_len);
+        //swt_per(wt,M, wt->params.get(), temp_len, cA, temp_len, cD,temp_len);
 
-        per_ext(wt->params, temp_len, N / 2, sig.get());
+        per_ext(wt->params.get(), temp_len, N / 2, sig.get());
 
         if (wt->wave->lpd_len == wt->wave->hpd_len && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
             wt->cobj = conv_init(N + temp_len + (temp_len % 2), N);
@@ -2147,7 +2151,7 @@ static void swt_direct(wt_object wt, double const* inp)
             M = 2 * M;
         }
 
-        swt_per(wt, M, wt->params, temp_len, cA, temp_len, cD);
+        swt_per(wt, M, wt->params.get(), temp_len, cA, temp_len, cD);
 
         for (auto i = 0; i < temp_len; ++i) {
             wt->params[i] = cA[i];
@@ -2525,7 +2529,7 @@ static void modwt_direct(wt_object wt, double const* inp)
             M = 2 * M;
         }
 
-        modwt_per(wt, M, wt->params, cA.get(), temp_len, cD.get());
+        modwt_per(wt, M, wt->params.get(), cA.get(), temp_len, cD.get());
 
         for (auto i = 0; i < temp_len; ++i) {
             wt->params[i] = cA[i];
@@ -3040,7 +3044,7 @@ static void imodwt_direct(wt_object wt, double* dwtop)
         if (iter > 0) {
             M = M / 2;
         }
-        imodwt_per(wt, M, dwtop, N, wt->params + lenacc, X);
+        imodwt_per(wt, M, dwtop, N, wt->params.get() + lenacc, X);
         /*
 		for (auto j = lf - 1; j < N; ++j) {
 			dwtop[j - lf + 1] = X[j];
