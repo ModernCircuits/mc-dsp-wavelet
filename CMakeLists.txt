@@ -28,6 +28,8 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(ltCodeCoverage)
 endif ()
 
+add_subdirectory(3rd_party/span)
+
 add_subdirectory(src)
 add_subdirectory(auxiliary)
 add_subdirectory(test)

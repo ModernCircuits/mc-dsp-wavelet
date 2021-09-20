@@ -1,7 +1,7 @@
 #ifndef WAVELIB_H_
 #define WAVELIB_H_
 
-#include "span.hpp"
+#include "tcb/span.hpp"
 
 #include <algorithm>
 #include <memory>
