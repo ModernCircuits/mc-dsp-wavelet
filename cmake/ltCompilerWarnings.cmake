@@ -20,7 +20,19 @@ else ()
                     -Wunused-parameter
                     -Wnarrowing
                     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
-                        #-Weverything
+                        # -Weverything
+                        # -Wno-c++98-compat-pedantic
+                        # -Wno-documentation-unknown-command
+                        # -Wno-newline-eof
+                        # -Wno-float-equal
+                        # -Wno-global-constructors
+                        # -Wno-padded
+                        # -Wno-missing-noreturn
+                        # -Wno-disabled-macro-expansion
+                        # -Wno-ctad-maybe-unsupported
+                        # -Wno-unused-member-function
+                        # -Wno-old-style-cast
+                        # -Wno-implicit-int-float-conversion
                     >
                     $<$<CXX_COMPILER_ID:AppleClang>:
                         -Wno-poison-system-directories

@@ -40,9 +40,6 @@ void setDenoiseParameters(denoise_set* obj, char const* thresh, char const* leve
 
 void denoise_free(denoise_set* object);
 
-void getDWTRecCoeff(double const* coeff, int const* length, char const* ctype, char const* ext, int level, int J, double* lpr,
-    double* hpr, int lf, int siglength, double* reccoeff);
-
 auto mad(double* x, int N) -> double;
 
 #endif /* WAUXLIB_H_ */

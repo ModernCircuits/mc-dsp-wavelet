@@ -204,8 +204,6 @@ void dwt(wt_set* wt, double const* inp);
 
 void idwt(wt_set* wt, double* dwtop);
 
-auto getDWTmra(wt_set* wt, double* wavecoeffs) -> double*;
-
 void wtree(wtree_set* wt, double const* inp);
 
 void dwpt(wpt_set* wt, double const* inp);
@@ -216,13 +214,9 @@ void swt(wt_set* wt, double const* inp);
 
 void iswt(wt_set* wt, double* swtop);
 
-auto getSWTmra(wt_set* wt, double* wavecoeffs) -> double*;
-
 void modwt(wt_set* wt, double const* inp);
 
 void imodwt(wt_set* wt, double* oup);
-
-auto getMODWTmra(wt_set* wt, double* wavecoeffs) -> double*;
 
 void setDWTExtension(wt_set* wt, char const* extension);
 
@@ -242,19 +236,11 @@ void getWTREECoeffs(wtree_set* wt, int X, int Y, double* coeffs, int N);
 
 auto getDWPTNodelength(wpt_set* wt, int X) -> int;
 
-void getDWPTCoeffs(wpt_set* wt, int X, int Y, double* coeffs, int N);
-
 void setCWTScales(cwt_set* wt, double s0, double dj, char const* type, int power);
-
-void setCWTScaleVector(cwt_set* wt, double const* scale, int J, double s0, double dj);
-
-void setCWTPadding(cwt_set* wt, int pad);
 
 void cwt(cwt_set* wt, double const* inp);
 
 void icwt(cwt_set* wt, double* cwtop);
-
-auto getCWTScaleLength(int N) -> int;
 
 auto dwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>;
 

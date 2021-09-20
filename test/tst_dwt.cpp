@@ -18,27 +18,14 @@
 
 void MODWTReconstructionTest()
 {
+    auto const N = 4096;
+    auto epsilon = 1e-15;
 
-    wt_set* wt;
-
-    int N;
-    int i;
-    int J;
-    double epsilon = 1e-15;
-    double err;
-
-    N = 79926;
-
-    // N = 256;
-
-    auto inp = std::make_unique<double[]>(N);
     auto out = std::make_unique<double[]>(N);
-    // wmean = mean(temp, N);
+    auto inp = std::make_unique<double[]>(N);
+    std::generate_n(inp.get(), N, [] { return (rand() / (double)(RAND_MAX)); });
 
-    for (i = 0; i < N; ++i) {
-        inp[i] = (rand() / (double)(RAND_MAX));
-    }
-    std::vector<std::string> waveletNames;
+    auto waveletNames = std::vector<std::string> {};
 
     for (std::size_t j = 0; j < 15; j++) {
         waveletNames.push_back(std::string("db") + std::to_string(j + 1));
@@ -50,17 +37,12 @@ void MODWTReconstructionTest()
         waveletNames.push_back(std::string("sym") + std::to_string(j + 1));
     }
 
-    for (std::size_t direct_fft = 0; direct_fft < 1; direct_fft++) {
+    for (std::size_t direct_fft = 0; direct_fft < 2; direct_fft++) {
         for (std::size_t sym_per = 0; sym_per < 1; sym_per++) {
             for (auto& waveletName : waveletNames) {
-                char* name = new char[waveletName.size() + 1];
-                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                auto* obj = wave_init(name); // Initialize the wavelet
-                for (J = 1; J < 3; J++) {
-                    // J = 3;
-
-                    wt = wt_init(obj, "modwt", N,
-                        J); // Initialize the wavelet transform object
+                auto* obj = wave_init(waveletName.c_str());
+                for (auto J = 1; J < 3; J++) {
+                    auto* wt = wt_init(obj, "modwt", N, J);
 
                     if (direct_fft == 0) {
                         setWTConv(wt, "direct");
@@ -69,40 +51,30 @@ void MODWTReconstructionTest()
                     }
 
                     if (sym_per == 0) {
-                        setDWTExtension(wt,
-                            "per"); // Options are "per" and "sym".
-                        // Symmetric is the default option
+                        setDWTExtension(wt, "per");
                     } else if (sym_per == 1 && direct_fft == 1) {
                         setDWTExtension(wt, "sym");
                     } else {
                         break;
                     }
 
-                    modwt(wt, inp.get()); // Perform DWT
-
-                    imodwt(wt, out.get()); // Perform IDWT (if needed)
-                    // Test Reconstruction
+                    modwt(wt, inp.get());
+                    imodwt(wt, out.get());
 
                     if (direct_fft == 0) {
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out.get(), inp.get(), wt->siglength), epsilon); //
-                    // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%g ",RMS_Error(out.get(), inp.get(), wt->siglength));
-                    err = RMS_Error(out.get(), inp.get(), wt->siglength);
-                    // printf("%d %d %g \n",direct_fft,sym_per,err);
+                    auto const err = RMS_Error(out.get(), inp.get(), wt->siglength);
                     if (err > epsilon) {
-                        printf(
-                            "\n ERROR : DWT Reconstruction Unit Test Failed. Exiting. \n");
+                        printf("\n ERROR : DWT Reconstruction Unit Test Failed. Exiting. \n");
                         exit(-1);
                     }
                     wt_free(wt);
                 }
                 wave_free(obj);
-                delete[] name;
             }
         }
     }
