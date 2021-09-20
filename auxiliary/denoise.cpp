@@ -487,5 +487,5 @@ void setDenoiseParameters(denoise_set* obj, char const* thresh, char const* leve
 
 void denoise_free(denoise_set* object)
 {
-    free(object);
+    delete object;
 }
