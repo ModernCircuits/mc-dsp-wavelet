@@ -14,8 +14,6 @@
 
 void DWTReconstructionTest()
 {
-    wt_set* wt;
-    int J;
     auto const N = 79926;
 
     auto inp = std::make_unique<double[]>(N);
@@ -116,8 +114,6 @@ void DWTReconstructionTest()
 void DWT2ReconstructionTest()
 {
     wt2_set* wt;
-    int i;
-    int k;
     int J;
     double epsilon;
 
@@ -174,7 +170,7 @@ void DWT2ReconstructionTest()
     waveletNames.emplace_back("rbior6.8");
 
     for (auto i = 0; i < rows; ++i) {
-        for (k = 0; k < cols; ++k) {
+        for (auto k = 0; k < cols; ++k) {
             // inp[i*cols + k] = i*cols + k;
             inp[i * cols + k] = generate_rnd();
             out[i * cols + k] = 0.0;

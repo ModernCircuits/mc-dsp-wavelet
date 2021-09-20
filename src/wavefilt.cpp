@@ -20,7 +20,6 @@ auto filtlength(char const* name) -> int
 {
     int len = strlen(name);
     int i = 0;
-    char* new_str = nullptr;
     int N = 0;
     if (name == "haar"sv || name == "db1"sv) {
         return 2;

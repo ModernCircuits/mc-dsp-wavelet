@@ -16,7 +16,6 @@ void SWTReconstructionTest()
 
     int N;
     int i;
-    int J;
     double epsilon = 1e-15;
     double err;
 

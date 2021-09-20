@@ -2470,18 +2470,16 @@ static void modwt_direct(wt_set* wt, double const* inp)
 static void modwt_fft(wt_set* wt, double const* inp)
 {
     int J;
-    int temp_len;
     int iter;
     int M;
-    int N;
-    int len_avg;
     int lenacc;
     double s;
     double tmp1;
     double tmp2;
 
-    temp_len = wt->siglength;
-    len_avg = wt->wave->lpd_len;
+    auto temp_len = wt->siglength;
+    auto len_avg = wt->wave->lpd_len;
+    int N { 0 };
     if (wt->ext == "sym"sv) {
         N = 2 * temp_len;
     } else if (wt->ext == "per"sv) {
@@ -2895,25 +2893,19 @@ static void imodwt_per(wt_set* wt, int M, double const* cA, int len_cA, double c
 
 static void imodwt_direct(wt_set* wt, double* dwtop)
 {
-    int N;
-    int iter;
-    int J;
-    int j;
-    int lenacc;
-    int M;
+    auto N = wt->siglength;
+    auto lenacc = N;
 
-    N = wt->siglength;
-    J = wt->J;
-    lenacc = N;
-    M = (int)std::pow(2.0, (double)J - 1.0);
-    //M = 1;
+    auto J = wt->J;
+    auto M = (int)std::pow(2.0, (double)J - 1.0);
+
     auto X = std::make_unique<double[]>(N);
 
     for (auto i = 0; i < N; ++i) {
         dwtop[i] = wt->output[i];
     }
 
-    for (iter = 0; iter < J; ++iter) {
+    for (auto iter = 0; iter < J; ++iter) {
         if (iter > 0) {
             M = M / 2;
         }
@@ -3059,14 +3051,14 @@ auto dwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     auto clen = J * 3;
 
     if (wt->ext == "per"sv) {
-        auto i = 2 * J;
-        while (i > 0) {
+        auto idx = 2 * J;
+        while (idx > 0) {
             rows_n = (int)ceil((double)rows_n / 2.0);
             cols_n = (int)ceil((double)cols_n / 2.0);
-            wt->dimensions[i - 1] = cols_n;
-            wt->dimensions[i - 2] = rows_n;
+            wt->dimensions[idx - 1] = cols_n;
+            wt->dimensions[idx - 2] = rows_n;
             wt->outlength += (rows_n * cols_n) * 3;
-            i = i - 2;
+            idx = idx - 2;
         }
         wt->outlength += (rows_n * cols_n);
         N = wt->outlength;
@@ -3124,16 +3116,16 @@ auto dwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
 
     assert(wt->ext == "sym"sv);
 
-    auto i = 2 * J;
-    while (i > 0) {
+    auto idx = 2 * J;
+    while (idx > 0) {
         rows_n += lp - 2;
         cols_n += lp - 2;
         rows_n = (int)ceil((double)rows_n / 2.0);
         cols_n = (int)ceil((double)cols_n / 2.0);
-        wt->dimensions[i - 1] = cols_n;
-        wt->dimensions[i - 2] = rows_n;
+        wt->dimensions[idx - 1] = cols_n;
+        wt->dimensions[idx - 2] = rows_n;
         wt->outlength += (rows_n * cols_n) * 3;
-        i = i - 2;
+        idx = idx - 2;
     }
     wt->outlength += (rows_n * cols_n);
     N = wt->outlength;
@@ -3212,15 +3204,15 @@ void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
         auto const N = rows > cols ? 2 * rows : 2 * cols;
         auto const lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
-        auto i = J;
+        auto idx = J;
         auto dim1 = wt->dimensions[0];
         auto dim2 = wt->dimensions[1];
         auto k = 0;
-        while (i > 0) {
+        while (idx > 0) {
             k += 1;
             dim1 *= 2;
             dim2 *= 2;
-            i--;
+            idx--;
         }
 
         auto X_lp = makeZeros<double>(N + 2 * lf - 1);
@@ -3288,15 +3280,15 @@ void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
     auto const N = rows > cols ? 2 * rows - 1 : 2 * cols - 1;
     auto const lf = (wt->wave->lpr_len + wt->wave->hpr_len) / 2;
 
-    auto i = J;
+    auto idx = J;
     auto dim1 = wt->dimensions[0];
     auto dim2 = wt->dimensions[1];
     auto k = 0;
-    while (i > 0) {
+    while (idx > 0) {
         k += 1;
         dim1 *= 2;
         dim2 *= 2;
-        i--;
+        idx--;
     }
 
     auto X_lp = makeZeros<double>(N + 2 * lf - 1);
@@ -3390,12 +3382,12 @@ auto swt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     lp = wt->wave->lpd_len;
     clen = J * 3;
 
-    auto i = 2 * J;
-    while (i > 0) {
-        wt->dimensions[i - 1] = cols_n;
-        wt->dimensions[i - 2] = rows_n;
+    auto idx = 2 * J;
+    while (idx > 0) {
+        wt->dimensions[idx - 1] = cols_n;
+        wt->dimensions[idx - 2] = rows_n;
         wt->outlength += (rows_n * cols_n) * 3;
-        i = i - 2;
+        idx = idx - 2;
     }
     wt->outlength += (rows_n * cols_n);
     N = wt->outlength;
@@ -3583,12 +3575,12 @@ auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     lp = wt->wave->lpd_len;
     clen = J * 3;
 
-    auto i = 2 * J;
-    while (i > 0) {
-        wt->dimensions[i - 1] = cols_n;
-        wt->dimensions[i - 2] = rows_n;
+    auto idx = 2 * J;
+    while (idx > 0) {
+        wt->dimensions[idx - 1] = cols_n;
+        wt->dimensions[idx - 2] = rows_n;
         wt->outlength += (rows_n * cols_n) * 3;
-        i = i - 2;
+        idx = idx - 2;
     }
     wt->outlength += (rows_n * cols_n);
     N = wt->outlength;
@@ -3763,7 +3755,6 @@ auto getWT2Coeffs(wt2_set* wt, double* wcoeffs, int level, char const* type, int
 
 void dispWT2Coeffs(double* A, int row, int col)
 {
-    int j;
     printf("\n MATRIX Order : %d X %d \n \n", row, col);
 
     for (auto i = 0; i < row; i++) {

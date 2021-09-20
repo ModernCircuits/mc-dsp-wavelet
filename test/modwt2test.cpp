@@ -35,7 +35,7 @@ auto main() -> int
 
     int ir { 0 };
     int ic { 0 };
-    auto* cLL = getWT2Coeffs(wt, wavecoeffs.get(), J, "A", &ir, &ic);
+    getWT2Coeffs(wt, wavecoeffs.get(), J, "A", &ir, &ic);
 
     imodwt2(wt, wavecoeffs.get(), oup.get());
 
