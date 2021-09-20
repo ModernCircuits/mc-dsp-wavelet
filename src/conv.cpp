@@ -186,5 +186,5 @@ void free_conv(conv_set* object)
 {
     free_real_fft(object->fobj);
     free_real_fft(object->iobj);
-    free(object);
+    std::free(object);
 }

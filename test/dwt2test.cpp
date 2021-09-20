@@ -30,15 +30,15 @@ auto main() -> int
         }
     }
 
-    auto* wavecoeffs = dwt2(wt, inp.get());
+    auto wavecoeffs = dwt2(wt, inp.get());
 
     int ir { 0 };
     int ic { 0 };
-    auto* cLL = getWT2Coeffs(wt, wavecoeffs, 1, "D", &ir, &ic);
+    auto* cLL = getWT2Coeffs(wt, wavecoeffs.get(), 1, "D", &ir, &ic);
 
     dispWT2Coeffs(cLL, ir, ic);
 
-    idwt2(wt, wavecoeffs, oup.get());
+    idwt2(wt, wavecoeffs.get(), oup.get());
 
     for (auto i = 0; i < rows * cols; ++i) {
         diff[i] = oup[i] - inp[i];
@@ -49,7 +49,6 @@ auto main() -> int
 
     wave_free(obj);
     wt2_free(wt);
-    std::free(wavecoeffs);
 
     return EXIT_SUCCESS;
 }

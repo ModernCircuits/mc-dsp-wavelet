@@ -255,15 +255,15 @@ void icwt(cwt_set* wt, double* cwtop);
 
 auto getCWTScaleLength(int N) -> int;
 
-auto dwt2(wt2_set* wt, double* inp) -> double*;
+auto dwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>;
 
 void idwt2(wt2_set* wt, double* wavecoeff, double* oup);
 
-auto swt2(wt2_set* wt, double* inp) -> double*;
+auto swt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>;
 
 void iswt2(wt2_set* wt, double const* wavecoeffs, double* oup);
 
-auto modwt2(wt2_set* wt, double* inp) -> double*;
+auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>;
 
 void imodwt2(wt2_set* wt, double* wavecoeff, double* oup);
 

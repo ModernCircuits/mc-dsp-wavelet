@@ -119,16 +119,12 @@ void DWT2ReconstructionTest()
     int i;
     int k;
     int J;
-    int N;
-    int rows;
-    int cols;
-    double* wavecoeffs;
     double epsilon;
 
-    rows = 1024;
-    cols = 1000;
+    auto const rows = 1024;
+    auto const cols = 1000;
 
-    N = rows * cols;
+    auto const N = rows * cols;
 
     auto inp = std::make_unique<double[]>(N);
     auto out = std::make_unique<double[]>(N);
@@ -204,9 +200,9 @@ void DWT2ReconstructionTest()
                         setDWT2Extension(wt, "per");
                     }
 
-                    wavecoeffs = dwt2(wt, inp.get()); // Perform DWT
+                    auto wavecoeffs = dwt2(wt, inp.get()); // Perform DWT
 
-                    idwt2(wt, wavecoeffs, out.get()); // Perform IDWT (if needed)
+                    idwt2(wt, wavecoeffs.get(), out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
                     if (direct_fft == 0) {
@@ -220,7 +216,6 @@ void DWT2ReconstructionTest()
                         std::exit(-1);
                     }
                     wt2_free(wt);
-                    free(wavecoeffs);
                 }
                 wave_free(obj);
                 delete[] name;

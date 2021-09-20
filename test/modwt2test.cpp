@@ -31,13 +31,13 @@ auto main() -> int
         }
     }
 
-    auto* wavecoeffs = modwt2(wt, inp.get());
+    auto wavecoeffs = modwt2(wt, inp.get());
 
     int ir { 0 };
     int ic { 0 };
-    auto* cLL = getWT2Coeffs(wt, wavecoeffs, J, "A", &ir, &ic);
+    auto* cLL = getWT2Coeffs(wt, wavecoeffs.get(), J, "A", &ir, &ic);
 
-    imodwt2(wt, wavecoeffs, oup.get());
+    imodwt2(wt, wavecoeffs.get(), oup.get());
 
     for (auto i = 0; i < N; ++i) {
         diff[i] = oup[i] - inp[i];
@@ -48,6 +48,5 @@ auto main() -> int
 
     wave_free(obj);
     wt2_free(wt);
-    free(wavecoeffs);
     return 0;
 }

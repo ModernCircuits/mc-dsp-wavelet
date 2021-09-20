@@ -118,7 +118,6 @@ void MODWT2ReconstructionTest()
     int rows;
     int cols;
 
-    double* wavecoeffs;
     double epsilon;
 
     rows = 1024;
@@ -156,35 +155,25 @@ void MODWT2ReconstructionTest()
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
                 auto* obj = wave_init(name); // Initialize the wavelet
                 for (J = 1; J < 3; J++) {
-                    // J = 3;
-
-                    wt = wt2_init(obj, "modwt", rows, cols,
-                        J); // Initialize the wavelet transform object
+                    wt = wt2_init(obj, "modwt", rows, cols, J);
                     if (sym_per == 0) {
-                        setDWT2Extension(wt, "per"); // Options are "per"
+                        setDWT2Extension(wt, "per");
                     }
 
-                    wavecoeffs = modwt2(wt, inp.get()); // Perform DWT
-
-                    imodwt2(wt, wavecoeffs, out.get()); // Perform IDWT (if needed)
-                    // Test Reconstruction
+                    auto wavecoeffs = modwt2(wt, inp.get());
+                    imodwt2(wt, wavecoeffs.get(), out.get());
 
                     if (direct_fft == 0) {
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out.get(), inp.get(), wt->siglength), epsilon); //
-                    // If Reconstruction succeeded then the output should be a small value.
-
-                    // printf("%g ",RMS_Error(out.get(), inp.get(), wt->siglength));
                     if (RMS_Error(out.get(), inp.get(), N) > epsilon) {
                         printf("\n ERROR : MODWT2 Reconstruction Unit Test Failed. "
                                "Exiting. \n");
                         exit(-1);
                     }
                     wt2_free(wt);
-                    free(wavecoeffs);
                 }
                 wave_free(obj);
                 delete[] name;

@@ -81,11 +81,8 @@ void SWTReconstructionTest()
                 char* name = new char[waveletName.size() + 1];
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
                 auto* obj = wave_init(name); // Initialize the wavelet
-                for (J = 1; J < 3; J++) {
-                    // J = 3;
-
-                    wt = wt_init(obj, (char*)"swt", N,
-                        J); // Initialize the wavelet transform object
+                for (auto J = 1; J < 3; J++) {
+                    wt = wt_init(obj, (char*)"swt", N, J);
 
                     if (direct_fft == 0) {
                         setWTConv(wt, (char*)"direct");
@@ -136,13 +133,9 @@ void SWTReconstructionTest()
 void SWT2ReconstructionTest()
 {
     wt2_set* wt;
-    int i;
-    int k;
-    int J;
-
-    double* wavecoeffs;
-
-    double epsilon;
+    // int i;
+    // int k;
+    // int J;
 
     auto const rows = 1024;
     auto const cols = 1000;
@@ -210,20 +203,19 @@ void SWT2ReconstructionTest()
                 char* name = new char[waveletName.size() + 1];
                 memcpy(name, waveletName.c_str(), waveletName.size() + 1);
                 auto* obj = wave_init(name); // Initialize the wavelet
-                for (J = 1; J < 3; J++) {
-                    // J = 3;
-
+                for (auto J = 1; J < 3; J++) {
                     wt = wt2_init(obj, (char*)"swt", rows, cols,
                         J); // Initialize the wavelet transform object
                     if (sym_per == 0) {
                         setDWT2Extension(wt, (char*)"per"); // Options are "per"
                     }
 
-                    wavecoeffs = swt2(wt, inp.get()); // Perform DWT
+                    auto wavecoeffs = swt2(wt, inp.get()); // Perform DWT
 
-                    iswt2(wt, wavecoeffs, out.get()); // Perform IDWT (if needed)
+                    iswt2(wt, wavecoeffs.get(), out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
+                    double epsilon { 0.0 };
                     if (direct_fft == 0) {
                         epsilon = 1e-8;
                     } else {
@@ -239,7 +231,6 @@ void SWT2ReconstructionTest()
                         exit(-1);
                     }
                     wt2_free(wt);
-                    free(wavecoeffs);
                 }
                 wave_free(obj);
                 delete[] name;

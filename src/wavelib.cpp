@@ -934,18 +934,8 @@ void wtree(wtree_set* wt, double const* inp)
     wt->outlength = 0;
     wt->zpad = 0;
 
-    auto* orig = (double*)malloc(sizeof(double) * temp_len);
-    /*
-	if ((temp_len % 2) == 0) {
-		wt->zpad = 0;
-		orig = (double*)malloc(sizeof(double)* temp_len);
-	}
-	else {
-		wt->zpad = 1;
-		temp_len++;
-		orig = (double*)malloc(sizeof(double)* temp_len);
-	}
-	*/
+    auto orig = std::make_unique<double[]>(temp_len);
+
     for (auto i = 0; i < wt->siglength; ++i) {
         orig[i] = inp[i];
     }
@@ -978,7 +968,7 @@ void wtree(wtree_set* wt, double const* inp)
             N = N2;
             for (k = 0; k < p2; ++k) {
                 if (iter == 0) {
-                    wtree_per(wt, orig, temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
+                    wtree_per(wt, orig.get(), temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
                 } else {
                     wtree_per(wt, wt->params.get() + Np + k * temp_len, temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
                 }
@@ -1012,7 +1002,7 @@ void wtree(wtree_set* wt, double const* inp)
             N = N2;
             for (k = 0; k < p2; ++k) {
                 if (iter == 0) {
-                    wtree_sym(wt, orig, temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
+                    wtree_sym(wt, orig.get(), temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
                 } else {
                     wtree_sym(wt, wt->params.get() + Np + k * temp_len, temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
                 }
@@ -1049,8 +1039,6 @@ void wtree(wtree_set* wt, double const* inp)
     for (auto i = 1; i < J + 1; ++i) {
         wt->coeflength[i] = wt->length[J - i + 1];
     }
-
-    free(orig);
 }
 
 static constexpr auto ipow2(int n) -> int
@@ -3151,7 +3139,7 @@ void setWTConv(wt_set* wt, char const* cmethod)
     }
 }
 
-auto dwt2(wt2_set* wt, double* inp) -> double*
+auto dwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
 {
     int iter;
     int N;
@@ -3237,7 +3225,7 @@ auto dwt2(wt2_set* wt, double* inp) -> double*
         }
         wt->coeffaccess[0] = 0;
 
-        return wavecoeff.release();
+        return wavecoeff;
     }
 
     assert(wt->ext == "sym"sv);
@@ -3304,7 +3292,7 @@ auto dwt2(wt2_set* wt, double* inp) -> double*
 
     wt->coeffaccess[0] = 0;
 
-    return wavecoeff.release();
+    return wavecoeff;
 }
 
 void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
@@ -3476,7 +3464,7 @@ void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
     }
 }
 
-auto swt2(wt2_set* wt, double* inp) -> double*
+auto swt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
 {
     int J;
     int iter;
@@ -3571,7 +3559,7 @@ auto swt2(wt2_set* wt, double* inp) -> double*
     free(lp_dn1);
     free(hp_dn1);
 
-    return wavecoeff.release();
+    return wavecoeff;
 }
 
 void iswt2(wt2_set* wt, double const* wavecoeffs, double* oup)
@@ -3672,7 +3660,7 @@ void iswt2(wt2_set* wt, double const* wavecoeffs, double* oup)
     }
 }
 
-auto modwt2(wt2_set* wt, double* inp) -> double*
+auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
 {
     int J;
     int iter;
@@ -3774,7 +3762,7 @@ auto modwt2(wt2_set* wt, double* inp) -> double*
     free(lp_dn1);
     free(hp_dn1);
     free(filt);
-    return wavecoeff.release();
+    return wavecoeff;
 }
 
 void imodwt2(wt2_set* wt, double* wavecoeff, double* oup)
@@ -4117,30 +4105,30 @@ void wt2_summary(wt2_set* wt)
 
 void wave_free(wave_set* object)
 {
-    free(object);
+    delete object;
 }
 
 void wt_free(wt_set* object)
 {
-    free(object);
+    delete object;
 }
 
 void wtree_free(wtree_set* object)
 {
-    free(object);
+    delete object;
 }
 
 void wpt_free(wpt_set* object)
 {
-    free(object);
+    delete object;
 }
 
 void cwt_free(cwt_set* object)
 {
-    free(object);
+    delete object;
 }
 
 void wt2_free(wt2_set* wt)
 {
-    free(wt);
+    delete wt;
 }

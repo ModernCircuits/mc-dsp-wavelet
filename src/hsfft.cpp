@@ -2055,5 +2055,5 @@ void longvectorN(fft_data* sig, int const* array, int tx)
 
 void free_fft(fft_set* object)
 {
-    free(object);
+    delete object;
 }
