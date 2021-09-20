@@ -14,7 +14,7 @@ void meyer(int N, double lb, double ub, double* phi, double* psi, double* tgrid)
         exit(1);
     }
 
-    fft_set* obj = fft_init(N, -1);
+    auto obj = fft_init(N, -1);
     auto w = std::make_unique<double[]>(N);
     auto phiw = std::make_unique<fft_data[]>(N);
     auto psiw = std::make_unique<fft_data[]>(N);
@@ -65,13 +65,13 @@ void meyer(int N, double lb, double ub, double* phi, double* psi, double* tgrid)
         }
     }
 
-    nsfft_exec(obj, phiw.get(), oup.get(), lb, ub, tgrid);
+    nsfft_exec(obj.get(), phiw.get(), oup.get(), lb, ub, tgrid);
 
     for (auto i = 0; i < N; ++i) {
         phi[i] = oup[i].re / N;
     }
 
-    nsfft_exec(obj, psiw.get(), oup.get(), lb, ub, tgrid);
+    nsfft_exec(obj.get(), psiw.get(), oup.get(), lb, ub, tgrid);
 
     for (auto i = 0; i < N; ++i) {
         psi[i] = oup[i].re / N;

@@ -42,7 +42,7 @@ void fft_r2c_exec(fft_real_set* obj, fft_type const* inp, fft_data* oup)
         cinp[i].im = inp[2 * i + 1];
     }
 
-    fft_exec(obj->cobj, cinp.get(), coup.get());
+    fft_exec(*(obj->cobj), cinp.get(), coup.get());
 
     oup[0].re = coup[0].re + coup[0].im;
     oup[0].im = 0.0;
@@ -81,15 +81,9 @@ void fft_c2r_exec(fft_real_set* obj, fft_data* inp, fft_type* oup)
         cinp[i].im = inp[i].im - inp[N2 - i].im + (temp2 * obj->data[i].re) + (temp1 * obj->data[i].im);
     }
 
-    fft_exec(obj->cobj, cinp.get(), coup.get());
+    fft_exec(*(obj->cobj), cinp.get(), coup.get());
     for (i = 0; i < N2; ++i) {
         oup[2 * i] = coup[i].re;
         oup[2 * i + 1] = coup[i].im;
     }
-}
-
-void free_real_fft(fft_real_set* object)
-{
-    free_fft(object->cobj);
-    free(object);
 }

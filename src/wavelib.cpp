@@ -2506,8 +2506,8 @@ static void modwt_fft(wt_set* wt, double const* inp)
         wt->length[iter] = N;
     }
 
-    auto fft_fd = std::unique_ptr<fft_set> { fft_init(N, 1) };
-    auto fft_bd = std::unique_ptr<fft_set> { fft_init(N, -1) };
+    auto fft_fd = fft_init(N, 1);
+    auto fft_bd = fft_init(N, -1);
 
     auto sig = std::make_unique<fft_data[]>(N);
     auto cA = std::make_unique<fft_data[]>(N);
@@ -2529,7 +2529,7 @@ static void modwt_fft(wt_set* wt, double const* inp)
         sig[i].im = 0.0;
     }
 
-    fft_exec(fft_fd.get(), sig.get(), low_pass.get());
+    fft_exec(*fft_fd, sig.get(), low_pass.get());
 
     // High Pass Filter
 
@@ -2542,7 +2542,7 @@ static void modwt_fft(wt_set* wt, double const* inp)
         sig[i].im = 0.0;
     }
 
-    fft_exec(fft_fd.get(), sig.get(), high_pass.get());
+    fft_exec(*fft_fd, sig.get(), high_pass.get());
 
     // symmetric extension
     for (auto i = 0; i < temp_len; ++i) {
@@ -2556,7 +2556,7 @@ static void modwt_fft(wt_set* wt, double const* inp)
 
     // FFT of data
 
-    fft_exec(fft_fd.get(), sig.get(), cA.get());
+    fft_exec(*fft_fd, sig.get(), cA.get());
 
     lenacc = wt->outlength;
 
@@ -2579,7 +2579,7 @@ static void modwt_fft(wt_set* wt, double const* inp)
             cD[i].im = high_pass[index[i]].re * tmp2 + high_pass[index[i]].im * tmp1;
         }
 
-        fft_exec(fft_bd.get(), cD.get(), sig.get());
+        fft_exec(*fft_bd, cD.get(), sig.get());
 
         for (auto i = 0; i < N; ++i) {
             wt->params[lenacc + i] = sig[i].re / N;
@@ -2588,7 +2588,7 @@ static void modwt_fft(wt_set* wt, double const* inp)
         M *= 2;
     }
 
-    fft_exec(fft_bd.get(), cA.get(), sig.get());
+    fft_exec(*fft_bd, cA.get(), sig.get());
 
     for (auto i = 0; i < N; ++i) {
         wt->params[i] = sig[i].re / N;
@@ -2624,8 +2624,8 @@ static void getMODWTRecCoeff(fft_set* fft_fd, fft_set* fft_bd, fft_data* appx, f
 
     if (ctype == "appx"sv) {
         for (auto iter = 0; iter < level; ++iter) {
-            fft_exec(fft_fd, appx, cA);
-            fft_exec(fft_fd, det, cD);
+            fft_exec(*fft_fd, appx, cA);
+            fft_exec(*fft_fd, det, cD);
 
             for (auto i = 0; i < N; ++i) {
                 index[i] = (M * i) % N;
@@ -2638,7 +2638,7 @@ static void getMODWTRecCoeff(fft_set* fft_fd, fft_set* fft_bd, fft_data* appx, f
                 cA[i].im = low_pass[index[i]].re * tmp2 + low_pass[index[i]].im * tmp1 + high_pass[index[i]].re * cD[i].im + high_pass[index[i]].im * cD[i].re;
             }
 
-            fft_exec(fft_bd, cA, appx);
+            fft_exec(*fft_bd, cA, appx);
 
             for (auto i = 0; i < N; ++i) {
                 appx[i].re /= N;
@@ -2649,8 +2649,8 @@ static void getMODWTRecCoeff(fft_set* fft_fd, fft_set* fft_bd, fft_data* appx, f
         }
     } else if (strcmp(ctype, "det") == 0) {
         for (auto iter = 0; iter < level; ++iter) {
-            fft_exec(fft_fd, appx, cA);
-            fft_exec(fft_fd, det, cD);
+            fft_exec(*fft_fd, appx, cA);
+            fft_exec(*fft_fd, det, cD);
 
             for (auto i = 0; i < N; ++i) {
                 index[i] = (M * i) % N;
@@ -2663,7 +2663,7 @@ static void getMODWTRecCoeff(fft_set* fft_fd, fft_set* fft_bd, fft_data* appx, f
                 cA[i].im = low_pass[index[i]].re * tmp2 + low_pass[index[i]].im * tmp1 + high_pass[index[i]].re * cD[i].im + high_pass[index[i]].im * cD[i].re;
             }
 
-            fft_exec(fft_bd, cA, appx);
+            fft_exec(*fft_bd, cA, appx);
 
             for (auto i = 0; i < N; ++i) {
                 appx[i].re /= N;
@@ -2694,8 +2694,8 @@ auto getMODWTmra(wt_set* wt, double* wavecoeffs) -> double*
     auto const J = wt->J;
 
     auto const s = std::sqrt(2.0);
-    fft_set* fft_fd = fft_init(N, 1);
-    fft_set* fft_bd = fft_init(N, -1);
+    auto fft_fd = fft_init(N, 1);
+    auto fft_bd = fft_init(N, -1);
 
     auto sig = std::make_unique<fft_data[]>(N);
     auto cA = std::make_unique<fft_data[]>(N);
@@ -2719,7 +2719,7 @@ auto getMODWTmra(wt_set* wt, double* wavecoeffs) -> double*
         sig[i].im = 0.0;
     }
 
-    fft_exec(fft_fd, sig.get(), low_pass.get());
+    fft_exec(*fft_fd, sig.get(), low_pass.get());
 
     // High Pass Filter
 
@@ -2732,7 +2732,7 @@ auto getMODWTmra(wt_set* wt, double* wavecoeffs) -> double*
         sig[i].im = 0.0;
     }
 
-    fft_exec(fft_fd, sig.get(), high_pass.get());
+    fft_exec(*fft_fd, sig.get(), high_pass.get());
 
     // Complex conjugate of the two filters
 
@@ -2752,7 +2752,7 @@ auto getMODWTmra(wt_set* wt, double* wavecoeffs) -> double*
 
     // Find Approximation MRA
 
-    getMODWTRecCoeff(fft_fd, fft_bd, sig.get(), ninp.get(), cA.get(), cD.get(), index.get(), "appx", J, J, low_pass.get(), high_pass.get(), N);
+    getMODWTRecCoeff(fft_fd.get(), fft_bd.get(), sig.get(), ninp.get(), cA.get(), cD.get(), index.get(), "appx", J, J, low_pass.get(), high_pass.get(), N);
 
     for (auto i = 0; i < wt->siglength; ++i) {
         mra[i] = sig[i].re;
@@ -2768,7 +2768,7 @@ auto getMODWTmra(wt_set* wt, double* wavecoeffs) -> double*
             ninp[i].im = 0.0;
         }
 
-        getMODWTRecCoeff(fft_fd, fft_bd, sig.get(), ninp.get(), cA.get(), cD.get(), index.get(), "det", J - iter, J, low_pass.get(), high_pass.get(), N);
+        getMODWTRecCoeff(fft_fd.get(), fft_bd.get(), sig.get(), ninp.get(), cA.get(), cD.get(), index.get(), "det", J - iter, J, low_pass.get(), high_pass.get(), N);
 
         for (auto i = 0; i < wt->siglength; ++i) {
             mra[lmra + i] = sig[i].re;
@@ -2777,9 +2777,6 @@ auto getMODWTmra(wt_set* wt, double* wavecoeffs) -> double*
         lenacc += N;
         lmra += wt->siglength;
     }
-
-    free_fft(fft_fd);
-    free_fft(fft_bd);
 
     return mra.release();
 }
@@ -2791,8 +2788,8 @@ void imodwt_fft(wt_set* wt, double* oup)
     auto J = wt->J;
 
     auto s = std::sqrt(2.0);
-    auto fft_fd = std::unique_ptr<fft_set> { fft_init(N, 1) };
-    auto fft_bd = std::unique_ptr<fft_set> { fft_init(N, -1) };
+    auto fft_fd = fft_init(N, 1);
+    auto fft_bd = fft_init(N, -1);
 
     auto sig = std::make_unique<fft_data[]>(N);
     auto cA = std::make_unique<fft_data[]>(N);
@@ -2814,7 +2811,7 @@ void imodwt_fft(wt_set* wt, double* oup)
         sig[i].im = 0.0;
     }
 
-    fft_exec(fft_fd.get(), sig.get(), low_pass.get());
+    fft_exec(*fft_fd, sig.get(), low_pass.get());
 
     // High Pass Filter
 
@@ -2827,7 +2824,7 @@ void imodwt_fft(wt_set* wt, double* oup)
         sig[i].im = 0.0;
     }
 
-    fft_exec(fft_fd.get(), sig.get(), high_pass.get());
+    fft_exec(*fft_fd, sig.get(), high_pass.get());
 
     // Complex conjugate of the two filters
 
@@ -2844,12 +2841,12 @@ void imodwt_fft(wt_set* wt, double* oup)
     }
 
     for (auto iter = 0; iter < J; ++iter) {
-        fft_exec(fft_fd.get(), sig.get(), cA.get());
+        fft_exec(*fft_fd, sig.get(), cA.get());
         for (auto i = 0; i < N; ++i) {
             sig[i].re = wt->output[lenacc + i];
             sig[i].im = 0.0;
         }
-        fft_exec(fft_fd.get(), sig.get(), cD.get());
+        fft_exec(*fft_fd, sig.get(), cD.get());
 
         for (auto i = 0; i < N; ++i) {
             index[i] = (M * i) % N;
@@ -2862,7 +2859,7 @@ void imodwt_fft(wt_set* wt, double* oup)
             cA[i].im = low_pass[index[i]].re * tmp2 + low_pass[index[i]].im * tmp1 + high_pass[index[i]].re * cD[i].im + high_pass[index[i]].im * cD[i].re;
         }
 
-        fft_exec(fft_bd.get(), cA.get(), sig.get());
+        fft_exec(*fft_bd, cA.get(), sig.get());
 
         for (auto i = 0; i < N; ++i) {
             sig[i].re /= N;

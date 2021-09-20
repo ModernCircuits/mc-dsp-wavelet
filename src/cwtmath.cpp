@@ -19,7 +19,7 @@ static void nsfft_fd(fft_set* obj, fft_data* inp, fft_data* oup, double lb, doub
         j += 2;
     }
 
-    fft_exec(obj, inp, oup);
+    fft_exec(*obj, inp, oup);
 
     for (auto i = 0; i < L; ++i) {
         temp1[i] = oup[i].re;
@@ -98,7 +98,7 @@ static void nsfft_bk(fft_set* obj, fft_data* inp, fft_data* oup, double lb, doub
         inpt[N - L + i].im = temp2[i];
     }
 
-    fft_exec(obj, inpt.get(), oup);
+    fft_exec(*obj, inpt.get(), oup);
 
     for (auto i = 0; i < N; ++i) {
         t[i] = lb + i * delta;

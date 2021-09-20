@@ -60,10 +60,10 @@ struct fft_set {
     std::unique_ptr<fft_data[]> data;
 };
 
-auto fft_init(int N, int sgn) -> fft_set*;
+auto fft_init(int N, int sgn) -> std::unique_ptr<fft_set>;
 
 struct fft_real_set {
-    fft_set* cobj;
+    std::unique_ptr<fft_set> cobj;
     std::unique_ptr<fft_data[]> data;
 };
 

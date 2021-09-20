@@ -9,7 +9,7 @@
 
 #include <memory>
 
-auto fft_init(int N, int sgn) -> fft_set*
+auto fft_init(int N, int sgn) -> std::unique_ptr<fft_set>
 {
     auto obj = std::unique_ptr<fft_set>();
     int twi_len { 0 };
@@ -49,7 +49,7 @@ auto fft_init(int N, int sgn) -> fft_set*
         }
     }
 
-    return obj.release();
+    return obj;
 }
 
 static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, int sgn, int N, int l, int inc)
@@ -1720,7 +1720,7 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_set* obj, int sgn, 
     }
 
     //fft_set* obj = initialize_fft2(M,1);
-    fft_exec(obj, tempop.get(), hk.get());
+    fft_exec(*obj, tempop.get(), hk.get());
 
     if (sgn == 1) {
         for (i = 0; i < N; i++) {
@@ -1739,7 +1739,7 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_set* obj, int sgn, 
         tempop[i].im = 0.0;
     }
 
-    fft_exec(obj, tempop.get(), yn.get());
+    fft_exec(*obj, tempop.get(), yn.get());
 
     if (sgn == 1) {
         for (i = 0; i < M; i++) {
@@ -1763,7 +1763,7 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_set* obj, int sgn, 
 
     obj->sgn = -1 * sgn;
 
-    fft_exec(obj, yn.get(), yno.get());
+    fft_exec(*obj, yn.get(), yno.get());
 
     if (sgn == 1) {
         for (i = 0; i < N; i++) {
@@ -1785,27 +1785,27 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_set* obj, int sgn, 
     }
 }
 
-void fft_exec(fft_set* obj, fft_data* inp, fft_data* oup)
+void fft_exec(fft_set& obj, fft_data* inp, fft_data* oup)
 {
-    if (obj->lt == 0) {
-        //fftct_radix3_dit_rec(inp,oup,obj, obj->sgn, obj->N);
-        //fftct_mixed_rec(inp,oup,obj, obj->sgn, obj->N);
+    if (obj.lt == 0) {
+        //fftct_radix3_dit_rec(inp,oup,obj, obj.sgn, obj.N);
+        //fftct_mixed_rec(inp,oup,obj, obj.sgn, obj.N);
         int l;
         int inc;
         int nn;
         int sgn1;
-        nn = obj->N;
-        sgn1 = obj->sgn;
+        nn = obj.N;
+        sgn1 = obj.sgn;
         l = 1;
         inc = 0;
         //radix3_dit_rec(oup,inp,obj,sgn1,nn,l);
-        mixed_radix_dit_rec(oup, inp, obj, sgn1, nn, l, inc);
-    } else if (obj->lt == 1) {
+        mixed_radix_dit_rec(oup, inp, &obj, sgn1, nn, l, inc);
+    } else if (obj.lt == 1) {
         int nn;
         int sgn1;
-        nn = obj->N;
-        sgn1 = obj->sgn;
-        bluestein_fft(inp, oup, obj, sgn1, nn);
+        nn = obj.N;
+        sgn1 = obj.sgn;
+        bluestein_fft(inp, oup, &obj, sgn1, nn);
     }
 }
 
@@ -2043,9 +2043,4 @@ void longvectorN(fft_data* sig, int const* array, int tx)
             }
         }
     }
-}
-
-void free_fft(fft_set* object)
-{
-    delete object;
 }
