@@ -720,7 +720,6 @@ void dwt(wt_set* wt, double const* inp)
             }
         }
     } else if (wt->ext == "sym"sv) {
-        //printf("\n YES %s \n", wt->ext);
         auto i = J;
         while (i > 0) {
             N = N + lp - 2;
@@ -941,7 +940,6 @@ void wtree(wtree_set* wt, double const* inp)
 
     N = temp_len;
     lp = wt->wave->lpd_len;
-    p2 = 1;
 
     if (wt->ext == "per"sv) {
         auto i = J;
@@ -955,7 +953,7 @@ void wtree(wtree_set* wt, double const* inp)
         }
         wt->length[0] = wt->length[1];
 
-        N2 = N = wt->outlength;
+        N2 = wt->outlength;
         p2 = 1;
         for (iter = 0; iter < J; ++iter) {
             len_cA = wt->length[J - iter];
@@ -975,7 +973,6 @@ void wtree(wtree_set* wt, double const* inp)
             Np = N2;
         }
     } else if (wt->ext == "sym"sv) {
-        //printf("\n YES %s \n", wt->ext);
         auto i = J;
         p2 = 2;
         while (i > 0) {
@@ -988,7 +985,7 @@ void wtree(wtree_set* wt, double const* inp)
         }
         wt->length[0] = wt->length[1];
 
-        N2 = N = wt->outlength;
+        N2 = wt->outlength;
         p2 = 1;
 
         for (iter = 0; iter < J; ++iter) {
@@ -1111,7 +1108,7 @@ void dwpt(wpt_set* wt, double const* inp)
         }
         wt->length[0] = wt->length[1];
 
-        N2 = N = wt->outlength;
+        N2 = wt->outlength;
         p2 = 1;
         for (iter = 0; iter < J; ++iter) {
             len_cA = wt->length[J - iter];
@@ -1135,7 +1132,6 @@ void dwpt(wpt_set* wt, double const* inp)
             Np = N2;
         }
     } else if (wt->ext == "sym"sv) {
-        //printf("\n YES %s \n", wt->ext);
         auto i = J;
         p2 = 2;
         while (i > 0) {
@@ -1148,7 +1144,7 @@ void dwpt(wpt_set* wt, double const* inp)
         }
         wt->length[0] = wt->length[1];
 
-        N2 = N = wt->outlength;
+        N2 = wt->outlength;
         p2 = 1;
 
         for (iter = 0; iter < J; ++iter) {
@@ -1207,14 +1203,12 @@ void dwpt(wpt_set* wt, double const* inp)
         for (k = ipow2(j) - 1; k < ipow2(j + 1) - 1; ++k) {
             v1 = wt->costvalues[k];
             v2 = wt->costvalues[2 * k + 1] + wt->costvalues[2 * k + 2];
-            //printf(" %g %g", v1,v2);
             if (v1 <= v2) {
                 wt->basisvector[k] = 1;
             } else {
                 wt->costvalues[k] = v2;
             }
         }
-        //printf("\n");
     }
 
     for (k = 0; k < nodes / 2; ++k) {
@@ -1235,7 +1229,6 @@ void dwpt(wpt_set* wt, double const* inp)
     it2 = 0;
     wt->nodes = 0;
     wt->numnodeslevel[0] = 0;
-    //printf("Start \n");
 
     if (wt->basisvector[0] == 1) {
         wt->outlength = wt->siglength;
@@ -1253,7 +1246,6 @@ void dwpt(wpt_set* wt, double const* inp)
             wt->numnodeslevel[i] = 0;
             for (auto j = 0; j < llb; ++j) {
                 if (wt->basisvector[it1 + j] == 1) {
-                    //printf("NODE %d %d %d \n", i, j, wt->length[J - i + 1]);
                     wt->nodeindex[2 * wt->nodes] = i;
                     wt->nodeindex[2 * wt->nodes + 1] = j;
                     wt->nodes += 1;
@@ -1501,7 +1493,6 @@ void icwt(cwt_set* wt, double* cwtop)
     psi0(wt->mother, wt->m, &psi, &real);
     cdel = cdelta(wt->mother, wt->m, psi);
 
-    //printf("\n PSI %g CDEL %g param %g mother %d \n", psi, cdel,wt->m,wt->mother);
     if (((wt->type == "pow"sv) || (wt->type == "power"sv)) && wt->pow == 2) {
         icwavelet(wt->params.get(), N, wt->params.get() + nj2, wt->J, wt->dt, wt->dj, cdel, psi, cwtop);
     } else {
@@ -2697,14 +2688,14 @@ auto getMODWTmra(wt_set* wt, double* wavecoeffs) -> double*
     auto fft_fd = fft_init(N, 1);
     auto fft_bd = fft_init(N, -1);
 
-    auto sig = std::make_unique<fft_data[]>(N);
-    auto cA = std::make_unique<fft_data[]>(N);
-    auto cD = std::make_unique<fft_data[]>(N);
-    auto ninp = std::make_unique<fft_data[]>(N);
-    auto low_pass = std::make_unique<fft_data[]>(N);
-    auto high_pass = std::make_unique<fft_data[]>(N);
-    auto index = std::make_unique<int[]>(N);
-    auto mra = std::make_unique<double[]>(temp_len * (J + 1));
+    auto sig = makeZeros<fft_data>(N);
+    auto cA = makeZeros<fft_data>(N);
+    auto cD = makeZeros<fft_data>(N);
+    auto ninp = makeZeros<fft_data>(N);
+    auto low_pass = makeZeros<fft_data>(N);
+    auto high_pass = makeZeros<fft_data>(N);
+    auto index = makeZeros<int>(N);
+    auto mra = makeZeros<double>(temp_len * (J + 1));
 
     // N-point FFT of low pass and high pass filters
 

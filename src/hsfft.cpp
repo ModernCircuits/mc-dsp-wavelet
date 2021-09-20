@@ -7,6 +7,7 @@
 
 #include "hsfft.h"
 
+#include <cstdio>
 #include <memory>
 
 auto fft_init(int N, int sgn) -> std::unique_ptr<fft_set>
@@ -1544,107 +1545,112 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
         }
 
     } else {
-        int k;
-        int i;
-        int ind;
-        int M;
-        int tkm;
-        int u;
-        int v;
-        int t;
-        int tt;
-        fft_type temp1r;
-        fft_type temp1i;
-        fft_type temp2r;
-        fft_type temp2i;
-        auto wlr = std::make_unique<fft_type[]>(radix - 1);
-        auto wli = std::make_unique<fft_type[]>(radix - 1);
-        auto taur = std::make_unique<fft_type[]>(radix - 1);
-        auto taui = std::make_unique<fft_type[]>(radix - 1);
-        auto c1 = std::make_unique<fft_type[]>(radix - 1);
-        auto s1 = std::make_unique<fft_type[]>(radix - 1);
-        auto yr = std::make_unique<fft_type[]>(radix);
-        auto yi = std::make_unique<fft_type[]>(radix);
-
-        auto const m = N / radix;
-        auto const ll = radix * l;
-
-        for (i = 0; i < radix; ++i) {
-            mixed_radix_dit_rec(op + i * m, ip + i * l, obj, sgn, m, ll, inc + 1);
-        }
-
-        M = (radix - 1) / 2;
-
-        for (i = 1; i < M + 1; ++i) {
-            c1[i - 1] = cos(i * PI2 / radix);
-            s1[i - 1] = sin(i * PI2 / radix);
-        }
-
-        for (i = 0; i < M; ++i) {
-            s1[i + M] = -s1[M - 1 - i];
-            c1[i + M] = c1[M - 1 - i];
-        }
-
-        for (k = 0; k < m; ++k) {
-            ind = m - 1 + (radix - 1) * k;
-            yr[0] = op[k].re;
-            yi[0] = op[k].im;
-            for (i = 0; i < radix - 1; ++i) {
-                wlr[i] = (obj->data.get() + ind)->re;
-                wli[i] = (obj->data.get() + ind)->im;
-                tkm = k + (i + 1) * m;
-                yr[i + 1] = op[tkm].re * wlr[i] - op[tkm].im * wli[i];
-                yi[i + 1] = op[tkm].im * wlr[i] + op[tkm].re * wli[i];
-                ind++;
-            }
-
-            for (i = 0; i < M; ++i) {
-                taur[i] = yr[i + 1] + yr[radix - 1 - i];
-                taui[i + M] = yi[i + 1] - yi[radix - 1 - i];
-                taui[i] = yi[i + 1] + yi[radix - 1 - i];
-                taur[i + M] = yr[i + 1] - yr[radix - 1 - i];
-            }
-
-            temp1r = yr[0];
-            temp1i = yi[0];
-
-            for (i = 0; i < M; ++i) {
-                temp1r += taur[i];
-                temp1i += taui[i];
-            }
-
-            op[k].re = temp1r;
-            op[k].im = temp1i;
-
-            for (u = 0; u < M; u++) {
-                temp1r = yr[0];
-                temp1i = yi[0];
-                temp2r = 0.0;
-                temp2i = 0.0;
-                for (v = 0; v < M; v++) {
-                    //int ind2 = (u+v)%M;
-                    t = (u + 1) * (v + 1);
-                    while (t >= radix) {
-                        t -= radix;
-                    }
-                    tt = t - 1;
-
-                    temp1r += c1[tt] * taur[v];
-                    temp1i += c1[tt] * taui[v];
-                    temp2r -= s1[tt] * taur[v + M];
-                    temp2i -= s1[tt] * taui[v + M];
-                }
-                temp2r = sgn * temp2r;
-                temp2i = sgn * temp2i;
-
-                op[k + (u + 1) * m].re = temp1r - temp2i;
-                op[k + (u + 1) * m].im = temp1i + temp2r;
-
-                op[k + (radix - u - 1) * m].re = temp1r + temp2i;
-                op[k + (radix - u - 1) * m].im = temp1i - temp2r;
-            }
-        }
+        std::puts("Should never be reached");
+        std::exit(EXIT_FAILURE);
     }
+
+    // else {
+    //     int k;
+    //     int i;
+    //     int ind;
+    //     int M;
+    //     int tkm;
+    //     int u;
+    //     int v;
+    //     int t;
+    //     int tt;
+    //     fft_type temp1r;
+    //     fft_type temp1i;
+    //     fft_type temp2r;
+    //     fft_type temp2i;
+    //     auto wlr = std::make_unique<fft_type[]>(radix - 1);
+    //     auto wli = std::make_unique<fft_type[]>(radix - 1);
+    //     auto taur = std::make_unique<fft_type[]>(radix - 1);
+    //     auto taui = std::make_unique<fft_type[]>(radix - 1);
+    //     auto c1 = std::make_unique<fft_type[]>(radix - 1);
+    //     auto s1 = std::make_unique<fft_type[]>(radix - 1);
+    //     auto yr = std::make_unique<fft_type[]>(radix);
+    //     auto yi = std::make_unique<fft_type[]>(radix);
+
+    //     auto const m = N / radix;
+    //     auto const ll = radix * l;
+
+    //     for (i = 0; i < radix; ++i) {
+    //         mixed_radix_dit_rec(op + i * m, ip + i * l, obj, sgn, m, ll, inc + 1);
+    //     }
+
+    //     M = (radix - 1) / 2;
+
+    //     for (i = 1; i < M + 1; ++i) {
+    //         c1[i - 1] = cos(i * PI2 / radix);
+    //         s1[i - 1] = sin(i * PI2 / radix);
+    //     }
+
+    //     for (i = 0; i < M; ++i) {
+    //         s1[i + M] = -s1[M - 1 - i];
+    //         c1[i + M] = c1[M - 1 - i];
+    //     }
+
+    //     for (k = 0; k < m; ++k) {
+    //         ind = m - 1 + (radix - 1) * k;
+    //         yr[0] = op[k].re;
+    //         yi[0] = op[k].im;
+    //         for (i = 0; i < radix - 1; ++i) {
+    //             wlr[i] = (obj->data.get() + ind)->re;
+    //             wli[i] = (obj->data.get() + ind)->im;
+    //             tkm = k + (i + 1) * m;
+    //             yr[i + 1] = op[tkm].re * wlr[i] - op[tkm].im * wli[i];
+    //             yi[i + 1] = op[tkm].im * wlr[i] + op[tkm].re * wli[i];
+    //             ind++;
+    //         }
+
+    //         for (i = 0; i < M; ++i) {
+    //             taur[i] = yr[i + 1] + yr[radix - 1 - i];
+    //             taui[i + M] = yi[i + 1] - yi[radix - 1 - i];
+    //             taui[i] = yi[i + 1] + yi[radix - 1 - i];
+    //             taur[i + M] = yr[i + 1] - yr[radix - 1 - i];
+    //         }
+
+    //         temp1r = yr[0];
+    //         temp1i = yi[0];
+
+    //         for (i = 0; i < M; ++i) {
+    //             temp1r += taur[i];
+    //             temp1i += taui[i];
+    //         }
+
+    //         op[k].re = temp1r;
+    //         op[k].im = temp1i;
+
+    //         for (u = 0; u < M; u++) {
+    //             temp1r = yr[0];
+    //             temp1i = yi[0];
+    //             temp2r = 0.0;
+    //             temp2i = 0.0;
+    //             for (v = 0; v < M; v++) {
+    //                 //int ind2 = (u+v)%M;
+    //                 t = (u + 1) * (v + 1);
+    //                 while (t >= radix) {
+    //                     t -= radix;
+    //                 }
+    //                 tt = t - 1;
+
+    //                 temp1r += c1[tt] * taur[v];
+    //                 temp1i += c1[tt] * taui[v];
+    //                 temp2r -= s1[tt] * taur[v + M];
+    //                 temp2i -= s1[tt] * taui[v + M];
+    //             }
+    //             temp2r = sgn * temp2r;
+    //             temp2i = sgn * temp2i;
+
+    //             op[k + (u + 1) * m].re = temp1r - temp2i;
+    //             op[k + (u + 1) * m].im = temp1i + temp2r;
+
+    //             op[k + (radix - u - 1) * m].re = temp1r + temp2i;
+    //             op[k + (radix - u - 1) * m].im = temp1i - temp2r;
+    //         }
+    //     }
+    // }
 }
 
 static void bluestein_exp(fft_data* hl, fft_data* hlt, int len, int M)
