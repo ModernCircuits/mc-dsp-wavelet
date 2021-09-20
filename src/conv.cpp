@@ -10,7 +10,8 @@
 #include <algorithm>
 #include <memory>
 
-auto factorf(int M) -> int
+namespace {
+[[nodiscard]] auto factorf(int M) -> int
 {
     int N;
     N = M;
@@ -30,19 +31,7 @@ auto factorf(int M) -> int
     return N;
 }
 
-auto findnext(int M) -> int
-{
-    int N;
-    N = M;
-
-    while (factorf(N) != 1) {
-        ++N;
-    }
-
-    return N;
-}
-
-auto findnexte(int M) -> int
+[[nodiscard]] auto findnexte(int M) -> int
 {
     int N;
     N = M;
@@ -52,6 +41,7 @@ auto findnexte(int M) -> int
     }
 
     return N;
+}
 }
 
 auto conv_init(int N, int L) -> std::unique_ptr<conv_set>
@@ -120,7 +110,7 @@ void conv_direct(fft_type const* inp1, int N, fft_type const* inp2, int L, fft_t
     }
 }
 
-void conv_fft(const conv_set* obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup)
+void conv_fft(conv_set const* obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup)
 {
 
     auto N = obj->clen;
