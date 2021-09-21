@@ -31,7 +31,7 @@ wavelet::wavelet(char const* name)
 }
 
 wavelet_transform::wavelet_transform(wavelet& w, char const* method, int siglength, int j)
-    : wave { &w }
+    : wave_ { &w }
 
 {
     auto const size = w.size();
@@ -449,7 +449,7 @@ static void wconv(wavelet_transform* wt, double* sig, int N, double const* filt,
 static void dwt_per(wavelet_transform* wt, double* inp, int N, double* cA, int len_cA, double* cD)
 {
 
-    dwt_per_stride(inp, N, wt->wave->lpd(), wt->wave->hpd(), wt->wave->lpd_len(), cA, len_cA, cD, 1, 1);
+    dwt_per_stride(inp, N, wt->wave().lpd(), wt->wave().hpd(), wt->wave().lpd_len(), cA, len_cA, cD, 1, 1);
 }
 
 static void wtree_per(wtree_set* wt, double const* inp, int N, double* cA, int len_cA, double* cD)
@@ -555,7 +555,7 @@ static void dwpt_per(wpt_set* wt, double const* inp, int N, double* cA, int len_
 static void dwt_sym(wavelet_transform* wt, double* inp, int N, double* cA, int len_cA, double* cD)
 {
 
-    dwt_sym_stride(inp, N, wt->wave->lpd(), wt->wave->hpd(), wt->wave->lpd_len(), cA, len_cA, cD, 1, 1);
+    dwt_sym_stride(inp, N, wt->wave().lpd(), wt->wave().hpd(), wt->wave().lpd_len(), cA, len_cA, cD, 1, 1);
 }
 
 static void wtree_sym(wtree_set* wt, double const* inp, int N, double* cA, int len_cA, double* cD)
@@ -617,48 +617,48 @@ static void dwt1(wavelet_transform* wt, double* sig, int len_sig, double* cA, do
     constexpr auto D = 2;
 
     if (wt->ext == "per"sv) {
-        auto len_avg = (wt->wave->lpd_len() + wt->wave->hpd_len()) / 2;
+        auto len_avg = (wt->wave().lpd_len() + wt->wave().hpd_len()) / 2;
         auto signal = std::make_unique<double[]>(len_sig + len_avg + (len_sig % 2));
         len_sig = per_ext(sig, len_sig, len_avg / 2, signal.get());
-        auto cA_undec = std::make_unique<double[]>(len_sig + len_avg + wt->wave->lpd_len() - 1);
+        auto cA_undec = std::make_unique<double[]>(len_sig + len_avg + wt->wave().lpd_len() - 1);
 
-        if (wt->wave->lpd_len() == wt->wave->hpd_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
-            wt->cobj = conv_init(len_sig + len_avg, wt->wave->lpd_len());
+        if (wt->wave().lpd_len() == wt->wave().hpd_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+            wt->cobj = conv_init(len_sig + len_avg, wt->wave().lpd_len());
             wt->cfftset = 1;
-        } else if (!(wt->wave->lpd_len() == wt->wave->hpd_len())) {
+        } else if (!(wt->wave().lpd_len() == wt->wave().hpd_len())) {
             printf("Decomposition Filters must have the same length.");
             exit(-1);
         }
 
-        wconv(wt, signal.get(), len_sig + len_avg, wt->wave->lpd(), wt->wave->lpd_len(), cA_undec.get());
+        wconv(wt, signal.get(), len_sig + len_avg, wt->wave().lpd(), wt->wave().lpd_len(), cA_undec.get());
         downsamp(cA_undec.get() + len_avg, len_sig, D, cA);
-        wconv(wt, signal.get(), len_sig + len_avg, wt->wave->hpd(), wt->wave->hpd_len(), cA_undec.get());
+        wconv(wt, signal.get(), len_sig + len_avg, wt->wave().hpd(), wt->wave().hpd_len(), cA_undec.get());
         downsamp(cA_undec.get() + len_avg, len_sig, D, cD);
 
     } else if (wt->ext == "sym"sv) {
-        auto lf = wt->wave->lpd_len(); // lpd and hpd have the same length
+        auto lf = wt->wave().lpd_len(); // lpd and hpd have the same length
         auto signal = std::make_unique<double[]>(len_sig + 2 * (lf - 1));
         len_sig = symm_ext(sig, len_sig, lf - 1, signal.get());
         auto cA_undec = std::make_unique<double[]>(len_sig + 3 * (lf - 1));
 
-        if (wt->wave->lpd_len() == wt->wave->hpd_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+        if (wt->wave().lpd_len() == wt->wave().hpd_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
             wt->cobj = conv_init(len_sig + 2 * (lf - 1), lf);
             wt->cfftset = 1;
-        } else if (!(wt->wave->lpd_len() == wt->wave->hpd_len())) {
+        } else if (!(wt->wave().lpd_len() == wt->wave().hpd_len())) {
             printf("Decomposition Filters must have the same length.");
             exit(-1);
         }
 
-        wconv(wt, signal.get(), len_sig + 2 * (lf - 1), wt->wave->lpd(), wt->wave->lpd_len(), cA_undec.get());
+        wconv(wt, signal.get(), len_sig + 2 * (lf - 1), wt->wave().lpd(), wt->wave().lpd_len(), cA_undec.get());
         downsamp(cA_undec.get() + lf, len_sig + lf - 2, D, cA);
-        wconv(wt, signal.get(), len_sig + 2 * (lf - 1), wt->wave->hpd(), wt->wave->hpd_len(), cA_undec.get());
+        wconv(wt, signal.get(), len_sig + 2 * (lf - 1), wt->wave().hpd(), wt->wave().hpd_len(), cA_undec.get());
         downsamp(cA_undec.get() + lf, len_sig + lf - 2, D, cD);
     } else {
         printf("Signal extension can be either per or sym");
         exit(-1);
     }
 
-    if (wt->wave->lpd_len() == wt->wave->hpd_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+    if (wt->wave().lpd_len() == wt->wave().hpd_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
 
         wt->cfftset = 0;
     }
@@ -686,7 +686,7 @@ void dwt(wavelet_transform* wt, double const* inp)
     }
 
     auto N = temp_len;
-    auto lp = wt->wave->lpd_len();
+    auto lp = wt->wave().lpd_len();
 
     if (wt->ext == "per"sv) {
         auto idx = J;
@@ -1264,7 +1264,7 @@ void icwt(cwavelet_transform* wt, double* cwtop)
 
 static void idwt1(wavelet_transform* wt, double* temp, double* cA_up, double* cA, int len_cA, double* cD, int len_cD, double* X_lp, double* X_hp, double* X)
 {
-    auto len_avg = (wt->wave->lpr_len() + wt->wave->hpr_len()) / 2;
+    auto len_avg = (wt->wave().lpr_len() + wt->wave().hpr_len()) / 2;
     auto N = 2 * len_cD;
     auto U = 2;
 
@@ -1274,15 +1274,15 @@ static void idwt1(wavelet_transform* wt, double* temp, double* cA_up, double* cA
 
     auto N2 = 2 * len_cA + len_avg;
 
-    if (wt->wave->lpr_len() == wt->wave->hpr_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+    if (wt->wave().lpr_len() == wt->wave().hpr_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
         wt->cobj = conv_init(N2, len_avg);
         wt->cfftset = 1;
-    } else if (!(wt->wave->lpr_len() == wt->wave->hpr_len())) {
+    } else if (!(wt->wave().lpr_len() == wt->wave().hpr_len())) {
         printf("Decomposition Filters must have the same length.");
         exit(-1);
     }
 
-    wconv(wt, temp, N2, wt->wave->lpr(), len_avg, X_lp);
+    wconv(wt, temp, N2, wt->wave().lpr(), len_avg, X_lp);
 
     upsamp2(cD, len_cD, U, cA_up);
 
@@ -1290,13 +1290,13 @@ static void idwt1(wavelet_transform* wt, double* temp, double* cA_up, double* cA
 
     N2 = 2 * len_cD + len_avg;
 
-    wconv(wt, temp, N2, wt->wave->hpr(), len_avg, X_hp);
+    wconv(wt, temp, N2, wt->wave().hpr(), len_avg, X_hp);
 
     for (auto i = len_avg - 1; i < N + len_avg - 1; ++i) {
         X[i - len_avg + 1] = X_lp[i] + X_hp[i];
     }
 
-    if (wt->wave->lpr_len() == wt->wave->hpr_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+    if (wt->wave().lpr_len() == wt->wave().hpr_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
 
         wt->cfftset = 0;
     }
@@ -1304,12 +1304,12 @@ static void idwt1(wavelet_transform* wt, double* temp, double* cA_up, double* cA
 
 static void idwt_per(wavelet_transform* wt, double* cA, int len_cA, double* cD, double* X)
 {
-    idwt_per_stride(cA, len_cA, cD, wt->wave->lpr(), wt->wave->hpr(), wt->wave->lpr_len(), X, 1, 1);
+    idwt_per_stride(cA, len_cA, cD, wt->wave().lpr(), wt->wave().hpr(), wt->wave().lpr_len(), X, 1, 1);
 }
 
 static void idwt_sym(wavelet_transform* wt, double* cA, int len_cA, double* cD, double* X)
 {
-    idwt_sym_stride(cA, len_cA, cD, wt->wave->lpr(), wt->wave->hpr(), wt->wave->lpr_len(), X, 1, 1);
+    idwt_sym_stride(cA, len_cA, cD, wt->wave().lpr(), wt->wave().hpr(), wt->wave().lpr_len(), X, 1, 1);
 }
 
 void idwt(wavelet_transform* wt, double* dwtop)
@@ -1330,7 +1330,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J];
-        lf = (wt->wave->lpr_len() + wt->wave->hpr_len()) / 2;
+        lf = (wt->wave().lpr_len() + wt->wave().hpr_len()) / 2;
 
         auto cA_up = std::make_unique<double[]>(N);
         auto temp = std::make_unique<double[]>((N + lf));
@@ -1359,7 +1359,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J];
-        lf = (wt->wave->lpr_len() + wt->wave->hpr_len()) / 2;
+        lf = (wt->wave().lpr_len() + wt->wave().hpr_len()) / 2;
 
         auto X_lp = std::make_unique<double[]>((N + 2 * lf - 1));
         iter = app_len;
@@ -1382,7 +1382,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J] - 1;
-        lf = (wt->wave->lpr_len() + wt->wave->hpr_len()) / 2;
+        lf = (wt->wave().lpr_len() + wt->wave().hpr_len()) / 2;
 
         auto X_lp = std::make_unique<double[]>((N + 2 * lf - 1));
         iter = app_len;
@@ -1402,7 +1402,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
         }
 
     } else if ((wt->ext == "sym"sv) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
-        lf = wt->wave->lpd_len(); // lpd and hpd have the same length
+        lf = wt->wave().lpd_len(); // lpd and hpd have the same length
 
         N = 2 * wt->length[J] - 1;
         auto cA_up = std::make_unique<double[]>(N);
@@ -1420,23 +1420,23 @@ void idwt(wavelet_transform* wt, double* dwtop)
             upsamp(out.get(), det_len, U, cA_up.get());
             N2 = 2 * wt->length[i + 1] - 1;
 
-            if (wt->wave->lpr_len() == wt->wave->hpr_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+            if (wt->wave().lpr_len() == wt->wave().hpr_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
                 wt->cobj = conv_init(N2, lf);
                 wt->cfftset = 1;
-            } else if (!(wt->wave->lpr_len() == wt->wave->hpr_len())) {
+            } else if (!(wt->wave().lpr_len() == wt->wave().hpr_len())) {
                 printf("Decomposition Filters must have the same length.");
                 exit(-1);
             }
 
-            wconv(wt, cA_up.get(), N2, wt->wave->lpr(), lf, X_lp.get());
+            wconv(wt, cA_up.get(), N2, wt->wave().lpr(), lf, X_lp.get());
             upsamp(wt->output + iter, det_len, U, cA_up.get());
-            wconv(wt, cA_up.get(), N2, wt->wave->hpr(), lf, X_hp.get());
+            wconv(wt, cA_up.get(), N2, wt->wave().hpr(), lf, X_hp.get());
 
             for (k = lf - 2; k < N2 + 1; ++k) {
                 out[k - lf + 2] = X_lp[k] + X_hp[k];
             }
             iter += det_len;
-            if (wt->wave->lpr_len() == wt->wave->hpr_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+            if (wt->wave().lpr_len() == wt->wave().hpr_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
 
                 wt->cfftset = 0;
             }
@@ -1740,7 +1740,7 @@ void idwpt(wpt_set* wt, double* dwtop)
 static void swt_per(wavelet_transform* wt, int M, double* inp, int N, double* cA, int len_cA, double* cD)
 {
 
-    swt_per_stride(M, inp, N, wt->wave->lpd(), wt->wave->hpd(), wt->wave->lpd_len(), cA, len_cA, cD, 1, 1);
+    swt_per_stride(M, inp, N, wt->wave().lpd(), wt->wave().hpd(), wt->wave().lpd_len(), cA, len_cA, cD, 1, 1);
 }
 
 static void swt_fft(wavelet_transform* wt, double const* inp)
@@ -1757,7 +1757,7 @@ static void swt_fft(wavelet_transform* wt, double const* inp)
         wt->length[iter] = temp_len;
     }
 
-    auto const len_filt = wt->wave->size();
+    auto const len_filt = wt->wave().size();
 
     auto low_pass = std::make_unique<double[]>(M * len_filt);
     auto high_pass = std::make_unique<double[]>(M * len_filt);
@@ -1778,13 +1778,13 @@ static void swt_fft(wavelet_transform* wt, double const* inp)
         if (iter > 0) {
             M = 2 * M;
             N = M * len_filt;
-            upsamp2(wt->wave->lpd(), wt->wave->lpd_len(), M, low_pass.get());
-            upsamp2(wt->wave->hpd(), wt->wave->hpd_len(), M, high_pass.get());
+            upsamp2(wt->wave().lpd(), wt->wave().lpd_len(), M, low_pass.get());
+            upsamp2(wt->wave().hpd(), wt->wave().hpd_len(), M, high_pass.get());
         } else {
             N = len_filt;
             for (auto i = 0; i < N; ++i) {
-                low_pass[i] = wt->wave->lpd()[i];
-                high_pass[i] = wt->wave->hpd()[i];
+                low_pass[i] = wt->wave().lpd()[i];
+                high_pass[i] = wt->wave().hpd()[i];
             }
         }
 
@@ -1792,10 +1792,10 @@ static void swt_fft(wavelet_transform* wt, double const* inp)
 
         per_ext(wt->params.get(), temp_len, N / 2, sig.get());
 
-        if (wt->wave->lpd_len() == wt->wave->hpd_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+        if (wt->wave().lpd_len() == wt->wave().hpd_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
             wt->cobj = conv_init(N + temp_len + (temp_len % 2), N);
             wt->cfftset = 1;
-        } else if (!(wt->wave->lpd_len() == wt->wave->hpd_len())) {
+        } else if (!(wt->wave().lpd_len() == wt->wave().hpd_len())) {
             printf("Decomposition Filters must have the same length.");
             exit(-1);
         }
@@ -1804,7 +1804,7 @@ static void swt_fft(wavelet_transform* wt, double const* inp)
 
         wconv(wt, sig.get(), N + temp_len + (temp_len % 2), high_pass.get(), N, cD.get());
 
-        if (wt->wave->lpd_len() == wt->wave->hpd_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+        if (wt->wave().lpd_len() == wt->wave().hpd_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
 
             wt->cfftset = 0;
         }
@@ -1891,7 +1891,7 @@ void iswt(wavelet_transform* wt, double* swtop)
     N = wt->siglength;
     J = wt->J;
     U = 2;
-    lf = wt->wave->lpr_len();
+    lf = wt->wave().lpr_len();
 
     auto appx_sig = std::make_unique<double[]>(N);
     auto det_sig = std::make_unique<double[]>(N);
@@ -1948,17 +1948,17 @@ void iswt(wavelet_transform* wt, double* swtop)
 
             N1 = 2 * len0 + lf;
 
-            if (wt->wave->lpr_len() == wt->wave->hpr_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+            if (wt->wave().lpr_len() == wt->wave().hpr_len() && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
                 wt->cobj = conv_init(N1, lf);
                 wt->cfftset = 1;
-            } else if (!(wt->wave->lpd_len() == wt->wave->hpd_len())) {
+            } else if (!(wt->wave().lpd_len() == wt->wave().hpd_len())) {
                 printf("Decomposition Filters must have the same length.");
                 exit(-1);
             }
 
-            wconv(wt, cL0.get(), N1, wt->wave->lpr(), lf, oup00L.get());
+            wconv(wt, cL0.get(), N1, wt->wave().lpr(), lf, oup00L.get());
 
-            wconv(wt, cH0.get(), N1, wt->wave->hpr(), lf, oup00H.get());
+            wconv(wt, cH0.get(), N1, wt->wave().hpr(), lf, oup00H.get());
 
             for (auto i = lf - 1; i < 2 * len0 + lf - 1; ++i) {
                 oup00[i - lf + 1] = oup00L[i] + oup00H[i];
@@ -1982,8 +1982,8 @@ void iswt(wavelet_transform* wt, double* swtop)
 
             N1 = 2 * len0 + lf;
 
-            wconv(wt, cL0.get(), N1, wt->wave->lpr(), lf, oup00L.get());
-            wconv(wt, cH0.get(), N1, wt->wave->hpr(), lf, oup00H.get());
+            wconv(wt, cL0.get(), N1, wt->wave().lpr(), lf, oup00L.get());
+            wconv(wt, cH0.get(), N1, wt->wave().hpr(), lf, oup00H.get());
 
             for (auto i = lf - 1; i < 2 * len0 + lf - 1; ++i) {
                 oup01[i - lf + 1] = oup00L[i] + oup00H[i];
@@ -2006,13 +2006,13 @@ void iswt(wavelet_transform* wt, double* swtop)
 
 static void modwt_per(wavelet_transform* wt, int M, double const* inp, double* cA, int len_cA, double* cD)
 {
-    auto const len_avg = wt->wave->lpd_len();
+    auto const len_avg = wt->wave().lpd_len();
     auto filt = std::make_unique<double[]>(2 * len_avg);
     auto s = std::sqrt(2.0);
 
     for (auto i = 0; i < len_avg; ++i) {
-        filt[i] = wt->wave->lpd()[i] / s;
-        filt[len_avg + i] = wt->wave->hpd()[i] / s;
+        filt[i] = wt->wave().lpd()[i] / s;
+        filt[len_avg + i] = wt->wave().hpd()[i] / s;
     }
 
     for (auto i = 0; i < len_cA; ++i) {
@@ -2089,7 +2089,7 @@ static void modwt_fft(wavelet_transform* wt, double const* inp)
     double tmp2;
 
     auto temp_len = wt->siglength;
-    auto len_avg = wt->wave->lpd_len();
+    auto len_avg = wt->wave().lpd_len();
     int N { 0 };
     if (wt->ext == "sym"sv) {
         N = 2 * temp_len;
@@ -2121,7 +2121,7 @@ static void modwt_fft(wavelet_transform* wt, double const* inp)
     // Low Pass Filter
 
     for (auto i = 0; i < len_avg; ++i) {
-        sig[i].re = (fft_type)wt->wave->lpd()[i] / s;
+        sig[i].re = (fft_type)wt->wave().lpd()[i] / s;
         sig[i].im = 0.0;
     }
     for (auto i = len_avg; i < N; ++i) {
@@ -2134,7 +2134,7 @@ static void modwt_fft(wavelet_transform* wt, double const* inp)
     // High Pass Filter
 
     for (auto i = 0; i < len_avg; ++i) {
-        sig[i].re = (fft_type)wt->wave->hpd()[i] / s;
+        sig[i].re = (fft_type)wt->wave().hpd()[i] / s;
         sig[i].im = 0.0;
     }
     for (auto i = len_avg; i < N; ++i) {
@@ -2217,7 +2217,7 @@ static void conj_complex(fft_data* x, int N)
 void imodwt_fft(wavelet_transform* wt, double* oup)
 {
     auto N = wt->modwtsiglength;
-    auto len_avg = wt->wave->lpd_len();
+    auto len_avg = wt->wave().lpd_len();
     auto J = wt->J;
 
     auto s = std::sqrt(2.0);
@@ -2236,7 +2236,7 @@ void imodwt_fft(wavelet_transform* wt, double* oup)
     // Low Pass Filter
 
     for (auto i = 0; i < len_avg; ++i) {
-        sig[i].re = (fft_type)wt->wave->lpd()[i] / s;
+        sig[i].re = (fft_type)wt->wave().lpd()[i] / s;
         sig[i].im = 0.0;
     }
     for (auto i = len_avg; i < N; ++i) {
@@ -2249,7 +2249,7 @@ void imodwt_fft(wavelet_transform* wt, double* oup)
     // High Pass Filter
 
     for (auto i = 0; i < len_avg; ++i) {
-        sig[i].re = (fft_type)wt->wave->hpd()[i] / s;
+        sig[i].re = (fft_type)wt->wave().hpd()[i] / s;
         sig[i].im = 0.0;
     }
     for (auto i = len_avg; i < N; ++i) {
@@ -2309,13 +2309,13 @@ void imodwt_fft(wavelet_transform* wt, double* oup)
 
 static void imodwt_per(wavelet_transform* wt, int M, double const* cA, int len_cA, double const* cD, double* X)
 {
-    auto const len_avg = wt->wave->lpd_len();
+    auto const len_avg = wt->wave().lpd_len();
     auto filt = std::make_unique<double[]>(2 * len_avg);
     auto s = std::sqrt(2.0);
 
     for (auto i = 0; i < len_avg; ++i) {
-        filt[i] = wt->wave->lpd()[i] / s;
-        filt[len_avg + i] = wt->wave->hpd()[i] / s;
+        filt[i] = wt->wave().lpd()[i] / s;
+        filt[len_avg + i] = wt->wave().hpd()[i] / s;
     }
 
     for (auto i = 0; i < len_cA; ++i) {
@@ -3224,7 +3224,7 @@ void wt_summary(wavelet_transform* wt)
     int J;
     int t;
     J = wt->J;
-    wave_summary(*wt->wave);
+    wave_summary(wt->wave());
     printf("\n");
     printf("Wavelet Transform : %s \n", wt->method.c_str());
     printf("Signal Extension : %s \n", wt->ext.c_str());

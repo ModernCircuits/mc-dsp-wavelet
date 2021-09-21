@@ -102,7 +102,12 @@ struct wavelet_transform {
     auto convolution_method(char const* conv_method) -> void;
     auto dwt_extension(char const* extension) -> void;
 
-    wavelet* wave;
+    auto wave() const noexcept -> wavelet const& { return *wave_; }
+
+private:
+    wavelet* wave_;
+
+public:
     std::unique_ptr<conv_set> cobj;
     std::string method;
     int siglength; // Length of the original signal.
