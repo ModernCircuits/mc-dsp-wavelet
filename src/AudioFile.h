@@ -610,7 +610,8 @@ bool AudioFile<T>::decodeAiffFile(std::vector<uint8_t>& fileData)
     //int32_t fileSizeInBytes = fourBytesToInt (fileData, 4, Endianness::BigEndian) + 8;
     std::string format(fileData.begin() + 8, fileData.begin() + 12);
 
-    int audioFormat = format == "AIFF" ? AIFFAudioFormat::Uncompressed : format == "AIFC" ? AIFFAudioFormat::Compressed : AIFFAudioFormat::Error;
+    int audioFormat = format == "AIFF" ? AIFFAudioFormat::Uncompressed : format == "AIFC" ? AIFFAudioFormat::Compressed
+                                                                                          : AIFFAudioFormat::Error;
 
     // -----------------------------------------------------------
     // try and find the start points of key chunks

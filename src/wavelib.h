@@ -99,7 +99,7 @@ auto conv_init(int N, int L) -> std::unique_ptr<conv_set>;
 struct wavelet_transform {
     wavelet_transform(wavelet& wave, char const* method, int siglength, int j);
 
-    auto convolution_method(char const* cmethod) -> void;
+    auto convolution_method(char const* conv_method) -> void;
     auto dwt_extension(char const* extension) -> void;
 
     wavelet* wave;

@@ -31,33 +31,29 @@
 // std::cout << IterableToString(c3) << '\n';
 // std::cout << IterableToString(c4) << '\n';
 // std::cout << IterableToString(c5.begin(), c5.end()) << '\n';
-template<typename T>
+template <typename T>
 auto iterableToString(T it, T end) -> std::string
 {
     std::stringstream ss;
     ss << "{";
     bool first = true;
-    for (; it != end; ++it)
-    {
-        if (first)
-        {
+    for (; it != end; ++it) {
+        if (first) {
             ss << *it;
             first = false;
-        }
-        else
-        {
+        } else {
             ss << ", " << *it;
         }
     }
     ss << "}";
     return ss.str();
 }
-template<typename C>  // Overload IterableToString to directly accept any Collection like vector<int>
+template <typename C> // Overload IterableToString to directly accept any Collection like vector<int>
 auto iterableToString(const C& c) -> std::string
 {
     return IterableToString(c.begin(), c.end());
 }
-template<typename T>  // Overload IterableToString to directly accept initializer_lists
+template <typename T> // Overload IterableToString to directly accept initializer_lists
 auto iterableToString(const std::initializer_list<T> c) -> std::string
 {
     return iterableToString(c.begin(), c.end());
@@ -77,57 +73,63 @@ auto iterableToString(const std::initializer_list<T> c) -> std::string
 // CheckAllEqual(v4);
 // CheckAllEqual(v5.begin(), prev(v5.end()));
 // CheckAllEqual(v5);
-template<typename I>
+template <typename I>
 void checkAllEqual(I beg, I end, std::string const& message = "CheckAllEqual")
 {
-    I it       = beg;
+    I it = beg;
     bool allEq = true;
-    auto last  = (it == end) ? end : std::prev(end);
-    for (; it != last; ++it)
-    {
+    auto last = (it == end) ? end : std::prev(end);
+    for (; it != last; ++it) {
         allEq &= (*(it) == *(std::next(it)));
-        if (!allEq) { throw std::runtime_error(std::string("[ERROR] ") + message + " " + iterableToString(beg, end)); }
+        if (!allEq) {
+            throw std::runtime_error(std::string("[ERROR] ") + message + " " + iterableToString(beg, end));
+        }
     }
 }
-template<typename C>
+template <typename C>
 void checkAllEqual(const C& c, const std::string message = "CheckAllEqual")
 {
     CheckAllEqual(c.begin(), c.end(), message);
 }
-template<typename T>
+template <typename T>
 void checkAllEqual(const std::initializer_list<T> c, const std::string message = "CheckAllEqual")
 {
     checkAllEqual(c.begin(), c.end(), message);
 }
 
 // Raises an exception if complex_size!=(real_size/2+1), being "/" an integer division.
-void checkRealComplexRatio(std::size_t const realSize, std::size_t const complexSize,
-                           std::string const& funcName = "CheckRealComplexRatio");
+void checkRealComplexRatio(std::size_t realSize, std::size_t complexSize,
+    std::string const& funcName = "CheckRealComplexRatio");
 
 // Abstract function that performs a comparation between any 2 elements, and if the comparation
 // returns a truthy value raises an exception with the given message.
-template<typename T, class Functor>
+template <typename T, class Functor>
 void checkTwoElements(const T a, const T b, const Functor& binaryPredicate, std::string const& message)
 {
-    if (binaryPredicate(a, b))
-    { throw std::runtime_error(std::string("[ERROR] ") + message + " " + iterableToString({a, b})); }
+    if (binaryPredicate(a, b)) {
+        throw std::runtime_error(std::string("[ERROR] ") + message + " " + iterableToString({ a, b }));
+    }
 }
 
 // Raises an exception with the given message if a>b.
-void checkALessEqualB(std::size_t const a, std::size_t const b, std::string const& message = "a was greater than b!");
+void checkALessEqualB(std::size_t a, std::size_t b, std::string const& message = "a was greater than b!");
 
 auto pow2Ceil(std::size_t x) -> size_t;
 
 /// This is an abstract base class that provides some basic, type-independent functionality for
 /// any container that should behave as a signal. It is not intended to be instantiated directly.
-template<typename T>
-struct Signal
-{
+template <typename T>
+struct Signal {
     /// Given a size and a reference to an array, it fills the array with <SIZE> zeros.
     /// Therefore, **IT DELETES THE CONTENTS OF THE ARRAY**. It is intended to be passed a newly
     /// allocated array by the classes that inherit from Signal, because it isn't an expensive
     /// operation and avoids memory errors due to non-initialized values.
-    explicit Signal(T* data, size_t size) : data_(data), size_(size) { memset(data_, 0, sizeof(T) * size); }
+    explicit Signal(T* data, size_t size)
+        : data_(data)
+        , size_(size)
+    {
+        memset(data_, 0, sizeof(T) * size);
+    }
 
     [[nodiscard]] auto size() -> size_t& { return size_; }
     [[nodiscard]] auto size() const -> std::size_t const& { return size_; }
@@ -140,7 +142,9 @@ struct Signal
     void print(std::string const& name = "signal")
     {
         std::cout << '\n';
-        for (std::size_t i = 0; i < size_; ++i) { std::cout << name << "[" << i << "]\t=\t" << data_[i] << '\n'; }
+        for (std::size_t i = 0; i < size_; ++i) {
+            std::cout << name << "[" << i << "]\t=\t" << data_[i] << '\n';
+        }
     }
 
 protected:
@@ -150,8 +154,7 @@ protected:
 
 /// This class is a Signal that works on aligned float arrays allocated by FFTW.
 /// It also overloads some further operators to do basic arithmetic
-struct FloatSignal : Signal<float>
-{
+struct FloatSignal : Signal<float> {
     /// the basic constructor allocates an aligned, float array, which is zeroed by the superclass
     explicit FloatSignal(std::size_t size);
     FloatSignal(float* data, size_t size);
@@ -165,8 +168,7 @@ struct FloatSignal : Signal<float>
 
 /// This class is a Signal that works on aligned complex (float[2]) arrays allocated by FFTW.
 /// It also overloads some further operators to do basic arithmetic
-struct ComplexSignal : Signal<fftwf_complex>
-{
+struct ComplexSignal : Signal<fftwf_complex> {
     /// the basic constructor allocates an aligned, float[2] array, which is zeroed by the superclass
     explicit ComplexSignal(std::size_t size);
     ~ComplexSignal();
@@ -193,9 +195,11 @@ void spectralCorrelation(ComplexSignal const& a, ComplexSignal const& b, Complex
 /// parameterless execute() method which is also a wrapper for FFTW's execute.
 /// It is not expected to be used directly: rather, to be extended by specific plans, for instance,
 /// if working with real, 1D signals, only 1D complex<->real plans are needed.
-struct FftPlan
-{
-    explicit FftPlan(fftwf_plan p) : plan_(p) { }
+struct FftPlan {
+    explicit FftPlan(fftwf_plan p)
+        : plan_(p)
+    {
+    }
     ~FftPlan() { fftwf_destroy_plan(plan_); }
     void execute() { fftwf_execute(plan_); }
 
@@ -204,8 +208,7 @@ private:
 };
 
 // This forward plan (1D, R->C) is adequate to process 1D floats (real).
-struct FftForwardPlan : FftPlan
-{
+struct FftForwardPlan : FftPlan {
     // This constructor creates a real->complex plan that performs the FFT(real) and saves it into the
     // complex. As explained in the FFTW docs (http://www.fftw.org/#documentation), the size of
     // the complex has to be size(real)/2+1, so the constructor will throw a runtime error if
@@ -215,8 +218,7 @@ struct FftForwardPlan : FftPlan
 };
 
 // This backward plan (1D, C->R) is adequate to process spectra of 1D floats (real).
-struct FftBackwardPlan : FftPlan
-{
+struct FftBackwardPlan : FftPlan {
     // This constructor creates a complex->real plan that performs the IFFT(complex) and saves it
     // complex. As explained in the FFTW docs (http://www.fftw.org/#documentation), the size of
     // the complex has to be size(real)/2+1, so the constructor will throw a runtime error if
@@ -242,8 +244,7 @@ struct FftBackwardPlan : FftPlan
 ///   6. Concatenate the resulting chunks, ignoring (P-1) samples per chunk
 /// Note that steps 3,4,5 may be parallelized with some significant gain in performance.
 /// In this class: X = result_chunksize, L = result_stride
-struct OverlapSaveConvolver
-{
+struct OverlapSaveConvolver {
     /// The only constructor for the class, receives two signals and performs steps 1 and 2 of the
     /// algorithm on them. The signals are passed by reference but the class works with padded copies
     /// of them, so no care has to be taken regarding memory management.
@@ -315,12 +316,11 @@ private:
 
     // Basic state management to prevent getters from being called prematurely.
     // Also to adapt the extractResult getter, since Conv and Xcorr padding behaves differently
-    enum class State
-    {
+    enum class State {
         Uninitialized,
         Conv,
         Xcorr
     };
 
-    State state_;  // Uninitialized after instantiation, Conv/Xcorr after respective op.
+    State state_; // Uninitialized after instantiation, Conv/Xcorr after respective op.
 };
