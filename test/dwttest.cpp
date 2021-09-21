@@ -16,7 +16,7 @@ auto main() -> int
 
     auto obj = wavelet { "db4" };
     auto wt = wavelet_transform(obj, "dwt", N, 3);
-    wt.dwt_extension("sym");
+    wt.extension(signal_extension::symmetric);
     wt.convolution_method("direct");
 
     // DWT output can be accessed using wt.output vector.

@@ -51,9 +51,9 @@ void MODWTReconstructionTest()
                     }
 
                     if (sym_per == 0) {
-                        wt.dwt_extension("per");
+                        wt.extension(signal_extension::periodic);
                     } else if (sym_per == 1 && direct_fft == 1) {
-                        wt.dwt_extension("sym");
+                        wt.extension(signal_extension::symmetric);
                     } else {
                         break;
                     }

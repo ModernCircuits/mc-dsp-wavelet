@@ -51,11 +51,11 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
     if (method == nullptr) {
         this->params = std::make_unique<double[]>(siglength + 2 * levels_ * (size + 1));
         this->outlength = siglength + 2 * levels_ * (size + 1);
-        ext_ = "sym";
+        ext_ = signal_extension::symmetric;
     } else if ((method == "dwt"sv) || (method == "DWT"sv)) {
         this->params = std::make_unique<double[]>(siglength + 2 * levels_ * (size + 1));
         this->outlength = siglength + 2 * levels_ * (size + 1);
-        ext_ = "sym";
+        ext_ = signal_extension::symmetric;
     } else if ((method == "swt"sv) || (method == "SWT"sv)) {
         if (testSWTlength(siglength, levels_) == 0) {
             printf("\n For SWT the signal length must be a multiple of 2^levels_. \n");
@@ -64,7 +64,7 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
 
         this->params = std::make_unique<double[]>(siglength * (levels_ + 1));
         this->outlength = siglength * (levels_ + 1);
-        ext_ = "per";
+        ext_ = signal_extension::periodic;
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
 
         if (strstr(w.name().c_str(), "haar") == nullptr) {
@@ -80,7 +80,7 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
 
         this->params = std::make_unique<double[]>(siglength * 2 * (levels_ + 1));
         this->outlength = siglength * (levels_ + 1);
-        ext_ = "per";
+        ext_ = signal_extension::periodic;
     }
 
     this->siglength = siglength;
@@ -127,16 +127,10 @@ auto wavelet_transform::convolution_method(char const* conv_method) -> void
     }
 }
 
-auto wavelet_transform::dwt_extension(char const* extension) -> void
+auto wavelet_transform::extension(signal_extension ext) -> void
 {
-    if (extension == "sym"sv) {
-        ext_ = "sym";
-    } else if (extension == "per"sv) {
-        ext_ = "per";
-    } else {
-        printf("Signal extension can be either per or sym");
-        exit(-1);
-    }
+    assert((ext == signal_extension::periodic) || (ext == signal_extension::symmetric));
+    ext_ = ext;
 }
 
 auto wavelet_transform::approx() const noexcept -> lt::span<double>
@@ -654,7 +648,7 @@ static void dwt1(wavelet_transform* wt, double* sig, int len_sig, double* cA, do
 {
     constexpr auto D = 2;
 
-    if (wt->extension() == "per"sv) {
+    if (wt->extension() == signal_extension::periodic) {
         auto len_avg = (wt->wave().lpd_len() + wt->wave().hpd_len()) / 2;
         auto signal = std::make_unique<double[]>(len_sig + len_avg + (len_sig % 2));
         len_sig = per_ext(sig, len_sig, len_avg / 2, signal.get());
@@ -673,7 +667,7 @@ static void dwt1(wavelet_transform* wt, double* sig, int len_sig, double* cA, do
         wconv(wt, signal.get(), len_sig + len_avg, wt->wave().hpd(), wt->wave().hpd_len(), cA_undec.get());
         downsamp(cA_undec.get() + len_avg, len_sig, D, cD);
 
-    } else if (wt->extension() == "sym"sv) {
+    } else if (wt->extension() == signal_extension::symmetric) {
         auto lf = wt->wave().lpd_len(); // lpd and hpd have the same length
         auto signal = std::make_unique<double[]>(len_sig + 2 * (lf - 1));
         len_sig = symm_ext(sig, len_sig, lf - 1, signal.get());
@@ -726,7 +720,7 @@ void dwt(wavelet_transform* wt, double const* inp)
     auto N = temp_len;
     auto lp = wt->wave().lpd_len();
 
-    if (wt->extension() == "per"sv) {
+    if (wt->extension() == signal_extension::periodic) {
         auto idx = J;
         while (idx > 0) {
             N = (int)ceil((double)N / 2.0);
@@ -757,7 +751,7 @@ void dwt(wavelet_transform* wt, double const* inp)
                 }
             }
         }
-    } else if (wt->extension() == "sym"sv) {
+    } else if (wt->extension() == signal_extension::symmetric) {
         auto idx = J;
         while (idx > 0) {
             N = N + lp - 2;
@@ -1364,7 +1358,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
     auto U = 2;
     auto app_len = wt->length[0];
     auto out = std::make_unique<double[]>(wt->siglength + 1);
-    if ((wt->extension() == "per"sv) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+    if ((wt->extension() == signal_extension::periodic) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J];
@@ -1393,7 +1387,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-    } else if ((wt->extension() == "per"sv) && (wt->cmethod == "direct"sv)) {
+    } else if ((wt->extension() == signal_extension::periodic) && (wt->cmethod == "direct"sv)) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J];
@@ -1416,7 +1410,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-    } else if ((wt->extension() == "sym"sv) && (wt->cmethod == "direct"sv)) {
+    } else if ((wt->extension() == signal_extension::symmetric) && (wt->cmethod == "direct"sv)) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J] - 1;
@@ -1439,7 +1433,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-    } else if ((wt->extension() == "sym"sv) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+    } else if ((wt->extension() == signal_extension::symmetric) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
         lf = wt->wave().lpd_len(); // lpd and hpd have the same length
 
         N = 2 * wt->length[J] - 1;
@@ -2074,7 +2068,7 @@ static void modwt_per(wavelet_transform* wt, int M, double const* inp, double* c
 
 static void modwt_direct(wavelet_transform* wt, double const* inp)
 {
-    if (wt->extension() != "per"sv) {
+    if (wt->extension() != signal_extension::periodic) {
         printf("MODWT direct method only uses periodic extension per. \n");
         printf(" Use MODWT fft method for symmetric extension sym \n");
         exit(-1);
@@ -2129,9 +2123,9 @@ static void modwt_fft(wavelet_transform* wt, double const* inp)
     auto temp_len = wt->siglength;
     auto len_avg = wt->wave().lpd_len();
     int N { 0 };
-    if (wt->extension() == "sym"sv) {
+    if (wt->extension() == signal_extension::symmetric) {
         N = 2 * temp_len;
-    } else if (wt->extension() == "per"sv) {
+    } else if (wt->extension() == signal_extension::periodic) {
         N = temp_len;
     }
     J = wt->levels();
@@ -3265,7 +3259,7 @@ void wt_summary(wavelet_transform* wt)
     wave_summary(wt->wave());
     printf("\n");
     printf("Wavelet Transform : %s \n", wt->method().c_str());
-    printf("Signal Extension : %s \n", wt->extension().c_str());
+    printf("Signal Extension : %s \n", toString(wt->extension()).c_str());
     printf("Convolutional Method : %s \n", wt->cmethod.c_str());
     printf("Number of Decomposition Levels %d \n", wt->levels());
     printf("Length of Input Signal %d \n", wt->siglength);

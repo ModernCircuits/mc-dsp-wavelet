@@ -86,10 +86,10 @@ void SWTReconstructionTest()
                     }
 
                     if (sym_per == 0) {
-                        wt.dwt_extension("per"); // Options are "per" and "sym".
+                        wt.extension(signal_extension::periodic); // Options are "per" and "sym".
                         // Symmetric is the default option
                     } else if (sym_per == 1 && direct_fft == 1) {
-                        wt.dwt_extension("sym");
+                        wt.extension(signal_extension::symmetric);
                     } else {
                         break;
                     }

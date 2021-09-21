@@ -54,7 +54,7 @@ struct bpm_detect {
         : wave_ { "db4" }
         , wt_ { wave_, "dwt", static_cast<int>(N), static_cast<int>(levels) }
     {
-        wt_.dwt_extension("sym");
+        wt_.extension(signal_extension::symmetric);
         wt_.convolution_method("fft");
     }
 

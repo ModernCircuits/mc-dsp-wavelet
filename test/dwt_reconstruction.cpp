@@ -73,9 +73,9 @@ void DWTReconstructionTest()
                 for (auto J = 1; J < 3; J++) {
                     auto wt = wavelet_transform(obj, "dwt", N, J);
                     if (sym_per == 0) {
-                        wt.dwt_extension("sym");
+                        wt.extension(signal_extension::symmetric);
                     } else {
-                        wt.dwt_extension("per");
+                        wt.extension(signal_extension::periodic);
                     }
                     if (direct_fft == 0) {
                         wt.convolution_method("direct");

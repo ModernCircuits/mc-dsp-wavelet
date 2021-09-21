@@ -28,6 +28,32 @@ auto makeZeros(std::size_t length) -> std::unique_ptr<T[]>
     return ptr;
 }
 
+enum struct signal_extension {
+    periodic,
+    symmetric,
+};
+
+[[nodiscard]] inline auto toString(signal_extension ext) -> std::string
+{
+    if (ext == signal_extension::periodic) {
+        return "periodic";
+    }
+    return "symmetric";
+}
+
+enum struct convolution_method {
+    direct,
+    fft,
+};
+
+[[nodiscard]] inline auto toString(convolution_method method) -> std::string
+{
+    if (method == convolution_method::direct) {
+        return "direct";
+    }
+    return "fft";
+}
+
 struct cplx_data {
     cplx_type re;
     cplx_type im;
@@ -102,10 +128,11 @@ struct wavelet_transform {
     auto wave() const noexcept -> wavelet const& { return *wave_; }
     auto levels() const noexcept -> int { return levels_; }
     auto method() const noexcept -> std::string const& { return method_; }
-    auto extension() const noexcept -> std::string const& { return ext_; }
+
+    auto extension(signal_extension ext) -> void;
+    auto extension() const noexcept -> signal_extension { return ext_; }
 
     auto convolution_method(char const* conv_method) -> void;
-    auto dwt_extension(char const* extension) -> void;
 
     [[nodiscard]] auto approx() const noexcept -> lt::span<double>;
     [[nodiscard]] auto detail(std::size_t level) const noexcept -> lt::span<double>;
@@ -114,7 +141,7 @@ private:
     wavelet* wave_;
     int levels_;
     std::string method_;
-    std::string ext_; // Type of Extension used - "per" or "sym"
+    signal_extension ext_;
 
 public:
     std::unique_ptr<conv_set> cobj;

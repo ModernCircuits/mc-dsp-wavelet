@@ -52,7 +52,7 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
 
     auto wt = wavelet_transform { wave, method, N, J };
     if (method == "dwt"sv) {
-        wt.dwt_extension(ext);
+        wt.extension(ext == "per"sv ? signal_extension::periodic : signal_extension::symmetric);
         dwt(&wt, signal);
     } else if (method == "swt"sv) {
         swt(&wt, signal);
@@ -168,7 +168,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
     auto wt = wavelet_transform(wave, method, N, J);
 
     if (method == "dwt"sv) {
-        wt.dwt_extension(ext);
+        wt.extension(ext == "per"sv ? signal_extension::periodic : signal_extension::symmetric);
         dwt(&wt, signal);
     } else if (method == "swt"sv) {
         swt(&wt, signal);
@@ -310,16 +310,16 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
 
     if ((ext == "sym"sv) && (cmethod == "fft"sv)) {
         wt.convolution_method("fft");
-        wt.dwt_extension("sym");
+        wt.extension(signal_extension::symmetric);
     } else if ((ext == "sym"sv) && (cmethod == "direct"sv)) {
         std::printf("Symmetric Extension is not available for direct method");
         std::exit(-1);
     } else if ((ext == "per"sv) && (cmethod == "direct"sv)) {
         wt.convolution_method("direct");
-        wt.dwt_extension("per");
+        wt.extension(signal_extension::periodic);
     } else if ((ext == "per"sv) && (cmethod == "fft"sv)) {
         wt.convolution_method("fft");
-        wt.dwt_extension("per");
+        wt.extension(signal_extension::periodic);
     } else {
         std::printf("Signal extension can be either per or sym");
         std::exit(-1);
