@@ -107,9 +107,6 @@ struct wavelet_transform {
     [[nodiscard]] auto approx() const noexcept -> lt::span<double>;
     [[nodiscard]] auto detail(std::size_t level) const noexcept -> lt::span<double>;
 
-    auto approx(double* out, std::size_t n) const noexcept -> void;
-    auto detail(double* out, std::size_t n, std::size_t level) const noexcept -> void;
-
 private:
     wavelet* wave_;
 

@@ -177,20 +177,6 @@ auto wavelet_transform::detail(std::size_t level) const noexcept -> lt::span<dou
     return lt::span<double>(&output[iter], static_cast<size_t>(length[level]));
 }
 
-auto wavelet_transform::approx(double* out, std::size_t n) const noexcept -> void
-{
-    auto a = this->approx();
-    a = a.subspan(0, std::min(a.size(), n));
-    std::copy(std::begin(a), std::end(a), out);
-}
-
-auto wavelet_transform::detail(double* out, std::size_t n, std::size_t level) const noexcept -> void
-{
-    auto d = this->detail(level);
-    d = d.subspan(0, std::min(d.size(), n));
-    std::copy(std::begin(d), std::end(d), out);
-}
-
 auto wtree_init(wavelet* wave, int siglength, int J) -> wtree_set*
 {
     auto const size = wave->size();

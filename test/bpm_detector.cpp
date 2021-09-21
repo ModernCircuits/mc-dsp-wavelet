@@ -66,68 +66,71 @@ struct bpm_detect {
         auto const minNdx = std::floor(60.0 / 220.0 * (sampleRate / maxDecimation));
         auto const maxNdx = std::floor(60.0 / 40.0 * (sampleRate / maxDecimation));
 
+        auto cA = lt::span<double> {};
+        auto cD = lt::span<double> {};
+
         auto cD_minlen = 0.0;
         cD_sum_.clear();
         dwt(&wt_, input.data());
-        // for (auto loop { 0 }; loop < levels; ++loop) {
-        //     cD_.clear();
-        //     cA_.clear();
-        //     if (loop == 0) {
-        //         dwt(&wt_, input.data());
-        //         cA_ = approx_coeffs(*wt_);
-        //         cD_ = detail_coeffs(*wt_);
-        //         cD_minlen = static_cast<double>(size(cD_)) / maxDecimation + 1.0;
-        //         cD_sum_.resize(static_cast<std::size_t>(std::floor(cD_minlen)));
-        //         std::fill(begin(cD_sum_), end(cD_sum_), 0.0);
-        //     } else {
-        //         dwt(&wt_, cA_.data());
-        //         cA_ = approx_coeffs(*wt_);
-        //         cD_ = detail_coeffs(*wt_);
-        //     }
+        for (auto loop { 0 }; loop < levels; ++loop) {
+            cD_.clear();
+            cA_.clear();
+            if (loop == 0) {
+                // dwt(&wt_, input.data());
+                cA = wt_.approx();
+                cD = wt_.detail(loop + 1);
+                cD_minlen = static_cast<double>(std::size(cD)) / maxDecimation + 1.0;
+                cD_sum_.resize(static_cast<std::size_t>(std::floor(cD_minlen)));
+                std::fill(begin(cD_sum_), end(cD_sum_), 0.0);
+            } else {
+                // dwt(&wt_, cA.data());
+                cA = wt_.approx();
+                cD = wt_.detail(loop + 1);
+            }
 
-        //     // 2) Filter
-        //     // cD = signal.lfilter([0.01], [1 - 0.99], cD)
+            // 2) Filter
+            // cD = signal.lfilter([0.01], [1 - 0.99], cD)
 
-        //     // 4) Subtract out the mean.
-        //     // cD = cD - np.mean(cD)
-        //     auto const m = mean(begin(cD_), end(cD_));
-        //     std::transform(begin(cD_), end(cD_), begin(cD_), [m](auto v) { return v - m; });
+            // 4) Subtract out the mean.
+            // cD = cD - np.mean(cD)
+            auto const m = mean(std::begin(cD), std::end(cD));
+            std::transform(std::begin(cD), std::end(cD), std::begin(cD), [m](auto v) { return v - m; });
 
-        //     // 5) Decimate for reconstruction later.
-        //     // cD = abs(cD[:: (2 ** (levels - loop - 1))])
-        //     cD_.resize(static_cast<std::size_t>(std::pow(2, levels - loop - 1)));
-        //     std::transform(begin(cD_), end(cD_), begin(cD_), [](auto v) { return std::fabs(v); });
+            // 5) Decimate for reconstruction later.
+            // cD = abs(cD[:: (2 ** (levels - loop - 1))])
+            cD = cD.subspan(0, static_cast<std::size_t>(std::pow(2, levels - loop - 1)));
+            std::transform(std::begin(cD), std::end(cD), std::begin(cD), [](auto v) { return std::fabs(v); });
 
-        //     // 6) Recombine the signal before ACF
-        //     //    Essentially, each level the detail coefs (i.e. the HPF values)
-        //     //    are concatenated to the beginning of the array
-        //     // cD_sum = cD[0: math.floor(cD_minlen)] + cD_sum
-        //     cD_sum_.insert(begin(cD_sum_), begin(cD_), std::next(begin(cD_), static_cast<size_t>(std::floor(cD_minlen))));
-        // }
+            // 6) Recombine the signal before ACF
+            //    Essentially, each level the detail coefs (i.e. the HPF values)
+            //    are concatenated to the beginning of the array
+            // cD_sum = cD[0: math.floor(cD_minlen)] + cD_sum
+            cD_sum_.insert(begin(cD_sum_), std::begin(cD), std::next(std::begin(cD), static_cast<size_t>(std::floor(cD_minlen))));
+        }
 
-        // // if [b for b in cA if b != 0.0] == []:
-        // //     return no_audio_data()
-        // if (std::none_of(begin(cA_), end(cA_), [](auto s) { return s != 0.0; })) {
-        //     return 0.0;
-        // }
+        // if [b for b in cA if b != 0.0] == []:
+        //     return no_audio_data()
+        if (std::none_of(std::begin(cA), std::end(cA), [](auto s) { return s != 0.0; })) {
+            return 0.0;
+        }
 
-        // // # Adding in the approximate data as well...
-        // // cA = signal.lfilter([0.01], [1 - 0.99], cA)
-        // // cA = abs(cA)
-        // // cA = cA - np.mean(cA)
-        // // cD_sum = cA[0: math.floor(cD_minlen)] + cD_sum
-        // std::transform(begin(cA_), end(cA_), begin(cA_), [](auto v) { return std::fabs(v); });
-        // auto const m = mean(begin(cA_), end(cA_));
-        // std::transform(begin(cA_), end(cA_), begin(cA_), [m](auto v) { return v - m; });
-        // cD_sum_.insert(begin(cD_sum_), begin(cA_), std::next(begin(cA_), static_cast<size_t>(std::floor(cD_minlen))));
+        // # Adding in the approximate data as well...
+        // cA = signal.lfilter([0.01], [1 - 0.99], cA)
+        // cA = abs(cA)
+        // cA = cA - np.mean(cA)
+        // cD_sum = cA[0: math.floor(cD_minlen)] + cD_sum
+        std::transform(std::begin(cA), std::end(cA), std::begin(cA), [](auto v) { return std::fabs(v); });
+        auto const m = mean(std::begin(cA), std::end(cA));
+        std::transform(std::begin(cA), std::end(cA), std::begin(cA), [m](auto v) { return v - m; });
+        cD_sum_.insert(begin(cD_sum_), std::begin(cA), std::next(std::begin(cA), static_cast<size_t>(std::floor(cD_minlen))));
 
         // # ACF
         // correl = np.correlate(cD_sum, cD_sum, "full")
         cD_sumf_.clear();
         std::copy(wt_.output, wt_.output + wt_.outlength, std::back_inserter(cD_sumf_));
-        std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [](auto v) { return std::fabs(v); });
-        auto const m = mean(begin(cD_sumf_), end(cD_sumf_));
-        std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [m](auto v) { return v - m; });
+        // std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [](auto v) { return std::fabs(v); });
+        // auto const m = mean(begin(cD_sumf_), end(cD_sumf_));
+        // std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [m](auto v) { return v - m; });
 
         auto s = FloatSignal(cD_sumf_.data(), cD_sumf_.size());
         auto x = OverlapSaveConvolver(s, s);
@@ -177,13 +180,13 @@ auto main(int argc, char** argv) -> int
 
     auto samps_ndx = 0U;
     auto bpms = makeZeros<double>(maxWindowIndex);
-    auto detector = bpm_detect { windowSize, 4 };
     for (auto window_ndx { 0U }; window_ndx < maxWindowIndex; ++window_ndx) {
         if (samps_ndx + windowSize >= std::size(channel)) {
             std::puts("ERROR");
             continue;
         }
 
+        auto detector = bpm_detect { windowSize, 4 };
         auto subBuffer = channel.subspan(samps_ndx, windowSize);
         auto bpm = detector.perform(subBuffer, fs);
 
