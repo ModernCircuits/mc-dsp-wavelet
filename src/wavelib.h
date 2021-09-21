@@ -97,30 +97,33 @@ struct conv_set {
 auto conv_init(int N, int L) -> std::unique_ptr<conv_set>;
 
 struct wavelet_transform {
-    wavelet_transform(wavelet& wave, char const* method, int siglength, int j);
+    wavelet_transform(wavelet& wave, char const* method, int siglength, int J);
+
+    auto wave() const noexcept -> wavelet const& { return *wave_; }
+    auto levels() const noexcept -> int { return levels_; }
+    auto method() const noexcept -> std::string const& { return method_; }
+    auto extension() const noexcept -> std::string const& { return ext_; }
 
     auto convolution_method(char const* conv_method) -> void;
     auto dwt_extension(char const* extension) -> void;
-
-    auto wave() const noexcept -> wavelet const& { return *wave_; }
 
     [[nodiscard]] auto approx() const noexcept -> lt::span<double>;
     [[nodiscard]] auto detail(std::size_t level) const noexcept -> lt::span<double>;
 
 private:
     wavelet* wave_;
+    int levels_;
+    std::string method_;
+    std::string ext_; // Type of Extension used - "per" or "sym"
 
 public:
     std::unique_ptr<conv_set> cobj;
-    std::string method;
     int siglength; // Length of the original signal.
     int modwtsiglength; // Modified signal length for MODWT
     int outlength; // Length of the output DWT vector
     int lenlength; // Length of the Output Dimension Vector "length"
-    int J; // Number of decomposition Levels
     int MaxIter; // Maximum Iterations J <= MaxIter
     int even; // even = 1 if signal is of even length. even = 0 otherwise
-    std::string ext; // Type of Extension used - "per" or "sym"
     std::string cmethod; // Convolution Method - "direct" or "FFT"
 
     int N; //

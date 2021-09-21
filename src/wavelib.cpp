@@ -30,40 +30,41 @@ wavelet::wavelet(char const* name)
     }
 }
 
-wavelet_transform::wavelet_transform(wavelet& w, char const* method, int siglength, int j)
+wavelet_transform::wavelet_transform(wavelet& w, char const* method, int siglength, int J)
     : wave_ { &w }
+    , levels_ { J }
 
 {
     auto const size = w.size();
     auto const maxIter = wmaxiter(siglength, w.size());
 
-    if (j > 100) {
+    if (levels_ > 100) {
         printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
         exit(-1);
     }
 
-    if (j > maxIter) {
+    if (levels_ > maxIter) {
         printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", maxIter);
         exit(-1);
     }
 
     if (method == nullptr) {
-        this->params = std::make_unique<double[]>(siglength + 2 * j * (size + 1));
-        this->outlength = siglength + 2 * j * (size + 1);
-        this->ext = "sym";
+        this->params = std::make_unique<double[]>(siglength + 2 * levels_ * (size + 1));
+        this->outlength = siglength + 2 * levels_ * (size + 1);
+        ext_ = "sym";
     } else if ((method == "dwt"sv) || (method == "DWT"sv)) {
-        this->params = std::make_unique<double[]>(siglength + 2 * j * (size + 1));
-        this->outlength = siglength + 2 * j * (size + 1);
-        this->ext = "sym";
+        this->params = std::make_unique<double[]>(siglength + 2 * levels_ * (size + 1));
+        this->outlength = siglength + 2 * levels_ * (size + 1);
+        ext_ = "sym";
     } else if ((method == "swt"sv) || (method == "SWT"sv)) {
-        if (testSWTlength(siglength, j) == 0) {
-            printf("\n For SWT the signal length must be a multiple of 2^j. \n");
+        if (testSWTlength(siglength, levels_) == 0) {
+            printf("\n For SWT the signal length must be a multiple of 2^levels_. \n");
             exit(-1);
         }
 
-        this->params = std::make_unique<double[]>(siglength * (j + 1));
-        this->outlength = siglength * (j + 1);
-        this->ext = "per";
+        this->params = std::make_unique<double[]>(siglength * (levels_ + 1));
+        this->outlength = siglength * (levels_ + 1);
+        ext_ = "per";
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
 
         if (strstr(w.name().c_str(), "haar") == nullptr) {
@@ -77,16 +78,15 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
             }
         }
 
-        this->params = std::make_unique<double[]>(siglength * 2 * (j + 1));
-        this->outlength = siglength * (j + 1);
-        this->ext = "per";
+        this->params = std::make_unique<double[]>(siglength * 2 * (levels_ + 1));
+        this->outlength = siglength * (levels_ + 1);
+        ext_ = "per";
     }
 
     this->siglength = siglength;
     this->modwtsiglength = siglength;
-    this->J = j;
     this->MaxIter = maxIter;
-    this->method = method;
+    method_ = method;
 
     if (siglength % 2 == 0) {
         this->even = 1;
@@ -98,18 +98,18 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
 
     this->cmethod = "direct";
     this->cfftset = 0;
-    this->lenlength = j + 2;
+    this->lenlength = levels_ + 2;
     this->output = &this->params[0];
     if ((method == "dwt"sv) || (method == "DWT"sv)) {
-        for (auto i = 0; i < siglength + 2 * j * (size + 1); ++i) {
+        for (auto i = 0; i < siglength + 2 * levels() * (size + 1); ++i) {
             this->params[i] = 0.0;
         }
     } else if ((method == "swt"sv) || (method == "SWT"sv)) {
-        for (auto i = 0; i < siglength * (j + 1); ++i) {
+        for (auto i = 0; i < siglength * (levels() + 1); ++i) {
             this->params[i] = 0.0;
         }
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
-        for (auto i = 0; i < siglength * 2 * (j + 1); ++i) {
+        for (auto i = 0; i < siglength * 2 * (levels() + 1); ++i) {
             this->params[i] = 0.0;
         }
     }
@@ -130,9 +130,9 @@ auto wavelet_transform::convolution_method(char const* conv_method) -> void
 auto wavelet_transform::dwt_extension(char const* extension) -> void
 {
     if (extension == "sym"sv) {
-        ext = "sym";
+        ext_ = "sym";
     } else if (extension == "per"sv) {
-        ext = "per";
+        ext_ = "per";
     } else {
         printf("Signal extension can be either per or sym");
         exit(-1);
@@ -164,13 +164,13 @@ auto wavelet_transform::detail(std::size_t level) const noexcept -> lt::span<dou
 	Level J : Length of D(1), ie N, is stored in wt->length[J]
 	*/
 
-    if (level > static_cast<std::size_t>(J) || level < 1U) {
-        printf("The decomposition only has 1,..,%d levels", J);
+    if (level > static_cast<std::size_t>(levels()) || level < 1U) {
+        printf("The decomposition only has 1,..,%d levels", levels());
         exit(-1);
     }
 
     auto iter = length[0];
-    for (auto i = 1U; i < J - level; ++i) {
+    for (auto i = 1U; i < levels() - level; ++i) {
         iter += length[i];
     }
 
@@ -654,7 +654,7 @@ static void dwt1(wavelet_transform* wt, double* sig, int len_sig, double* cA, do
 {
     constexpr auto D = 2;
 
-    if (wt->ext == "per"sv) {
+    if (wt->extension() == "per"sv) {
         auto len_avg = (wt->wave().lpd_len() + wt->wave().hpd_len()) / 2;
         auto signal = std::make_unique<double[]>(len_sig + len_avg + (len_sig % 2));
         len_sig = per_ext(sig, len_sig, len_avg / 2, signal.get());
@@ -673,7 +673,7 @@ static void dwt1(wavelet_transform* wt, double* sig, int len_sig, double* cA, do
         wconv(wt, signal.get(), len_sig + len_avg, wt->wave().hpd(), wt->wave().hpd_len(), cA_undec.get());
         downsamp(cA_undec.get() + len_avg, len_sig, D, cD);
 
-    } else if (wt->ext == "sym"sv) {
+    } else if (wt->extension() == "sym"sv) {
         auto lf = wt->wave().lpd_len(); // lpd and hpd have the same length
         auto signal = std::make_unique<double[]>(len_sig + 2 * (lf - 1));
         len_sig = symm_ext(sig, len_sig, lf - 1, signal.get());
@@ -706,7 +706,7 @@ void dwt(wavelet_transform* wt, double const* inp)
 {
 
     auto temp_len = wt->siglength;
-    auto const J = wt->J;
+    auto const J = wt->levels();
 
     wt->length[J + 1] = temp_len;
     wt->outlength = 0;
@@ -726,7 +726,7 @@ void dwt(wavelet_transform* wt, double const* inp)
     auto N = temp_len;
     auto lp = wt->wave().lpd_len();
 
-    if (wt->ext == "per"sv) {
+    if (wt->extension() == "per"sv) {
         auto idx = J;
         while (idx > 0) {
             N = (int)ceil((double)N / 2.0);
@@ -757,7 +757,7 @@ void dwt(wavelet_transform* wt, double const* inp)
                 }
             }
         }
-    } else if (wt->ext == "sym"sv) {
+    } else if (wt->extension() == "sym"sv) {
         auto idx = J;
         while (idx > 0) {
             N = N + lp - 2;
@@ -1360,11 +1360,11 @@ void idwt(wavelet_transform* wt, double* dwtop)
     int k;
     int det_len;
 
-    auto J = wt->J;
+    auto J = wt->levels();
     auto U = 2;
     auto app_len = wt->length[0];
     auto out = std::make_unique<double[]>(wt->siglength + 1);
-    if ((wt->ext == "per"sv) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+    if ((wt->extension() == "per"sv) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J];
@@ -1393,7 +1393,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-    } else if ((wt->ext == "per"sv) && (wt->cmethod == "direct"sv)) {
+    } else if ((wt->extension() == "per"sv) && (wt->cmethod == "direct"sv)) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J];
@@ -1416,7 +1416,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-    } else if ((wt->ext == "sym"sv) && (wt->cmethod == "direct"sv)) {
+    } else if ((wt->extension() == "sym"sv) && (wt->cmethod == "direct"sv)) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J] - 1;
@@ -1439,7 +1439,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-    } else if ((wt->ext == "sym"sv) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+    } else if ((wt->extension() == "sym"sv) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
         lf = wt->wave().lpd_len(); // lpd and hpd have the same length
 
         N = 2 * wt->length[J] - 1;
@@ -1786,7 +1786,7 @@ static void swt_fft(wavelet_transform* wt, double const* inp)
     int N { 0 };
 
     auto temp_len = wt->siglength;
-    auto J = wt->J;
+    auto J = wt->levels();
     wt->length[0] = wt->length[J] = temp_len;
     wt->outlength = wt->length[J + 1] = (J + 1) * temp_len;
     auto M = 1;
@@ -1863,7 +1863,7 @@ static void swt_direct(wavelet_transform* wt, double const* inp)
     int lenacc;
 
     temp_len = wt->siglength;
-    J = wt->J;
+    J = wt->levels();
     wt->length[0] = wt->length[J] = temp_len;
     wt->outlength = wt->length[J + 1] = (J + 1) * temp_len;
     M = 1;
@@ -1900,9 +1900,9 @@ static void swt_direct(wavelet_transform* wt, double const* inp)
 
 void swt(wavelet_transform* wt, double const* inp)
 {
-    if ((wt->method == "swt"sv) && (wt->cmethod == "direct"sv)) {
+    if ((wt->method() == "swt"sv) && (wt->cmethod == "direct"sv)) {
         swt_direct(wt, inp);
-    } else if ((wt->method == "swt"sv) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
+    } else if ((wt->method() == "swt"sv) && ((wt->cmethod == "fft"sv) || (wt->cmethod == "FFT"sv))) {
         swt_fft(wt, inp);
     } else {
         printf("SWT Only accepts two methods - direct and fft");
@@ -1927,7 +1927,7 @@ void iswt(wavelet_transform* wt, double* swtop)
     int index2;
 
     N = wt->siglength;
-    J = wt->J;
+    J = wt->levels();
     U = 2;
     lf = wt->wave().lpr_len();
 
@@ -2074,14 +2074,14 @@ static void modwt_per(wavelet_transform* wt, int M, double const* inp, double* c
 
 static void modwt_direct(wavelet_transform* wt, double const* inp)
 {
-    if (wt->ext != "per"sv) {
+    if (wt->extension() != "per"sv) {
         printf("MODWT direct method only uses periodic extension per. \n");
         printf(" Use MODWT fft method for symmetric extension sym \n");
         exit(-1);
     }
 
     auto temp_len = wt->siglength;
-    auto J = wt->J;
+    auto J = wt->levels();
     wt->length[0] = wt->length[J] = temp_len;
     wt->outlength = wt->length[J + 1] = (J + 1) * temp_len;
     auto M = 1;
@@ -2129,12 +2129,12 @@ static void modwt_fft(wavelet_transform* wt, double const* inp)
     auto temp_len = wt->siglength;
     auto len_avg = wt->wave().lpd_len();
     int N { 0 };
-    if (wt->ext == "sym"sv) {
+    if (wt->extension() == "sym"sv) {
         N = 2 * temp_len;
-    } else if (wt->ext == "per"sv) {
+    } else if (wt->extension() == "per"sv) {
         N = temp_len;
     }
-    J = wt->J;
+    J = wt->levels();
     wt->modwtsiglength = N;
     wt->length[0] = wt->length[J] = N;
     wt->outlength = wt->length[J + 1] = (J + 1) * N;
@@ -2256,7 +2256,7 @@ void imodwt_fft(wavelet_transform* wt, double* oup)
 {
     auto N = wt->modwtsiglength;
     auto len_avg = wt->wave().lpd_len();
-    auto J = wt->J;
+    auto J = wt->levels();
 
     auto s = std::sqrt(2.0);
     auto fft_fd = fft_init(N, 1);
@@ -2378,7 +2378,7 @@ static void imodwt_direct(wavelet_transform* wt, double* dwtop)
     auto N = wt->siglength;
     auto lenacc = N;
 
-    auto J = wt->J;
+    auto J = wt->levels();
     auto M = (int)std::pow(2.0, (double)J - 1.0);
 
     auto X = std::make_unique<double[]>(N);
@@ -3261,13 +3261,13 @@ void wt_summary(wavelet_transform* wt)
 {
     int J;
     int t;
-    J = wt->J;
+    J = wt->levels();
     wave_summary(wt->wave());
     printf("\n");
-    printf("Wavelet Transform : %s \n", wt->method.c_str());
-    printf("Signal Extension : %s \n", wt->ext.c_str());
+    printf("Wavelet Transform : %s \n", wt->method().c_str());
+    printf("Signal Extension : %s \n", wt->extension().c_str());
     printf("Convolutional Method : %s \n", wt->cmethod.c_str());
-    printf("Number of Decomposition Levels %d \n", wt->J);
+    printf("Number of Decomposition Levels %d \n", wt->levels());
     printf("Length of Input Signal %d \n", wt->siglength);
     printf("Length of WT Output Vector %d \n", wt->outlength);
     printf("Wavelet Coefficients are contained in vector : %s \n", "output");
