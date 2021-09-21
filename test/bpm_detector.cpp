@@ -1,5 +1,6 @@
 #include "wavelib.h"
 
+#include "AudioFile.h"
 #include "helper.hpp"
 #include "overlap_save_convolver.hpp"
 #include "readFileToVector.hpp"
@@ -8,62 +9,6 @@
 #include <cmath>
 #include <numeric>
 #include <utility>
-
-// def bpm_detector(data, fs):
-//     cA = []
-//     cD = []
-//     correl = []
-//     cD_sum = []
-//     levels = 4
-//     max_decimation = 2 ** (levels - 1)
-//     min_ndx = math.floor(60.0 / 220 * (fs / max_decimation))
-//     max_ndx = math.floor(60.0 / 40 * (fs / max_decimation))
-//
-//     for loop in range(0, levels):
-//         cD = []
-//         # 1) DWT
-//         if loop == 0:
-//             [cA, cD] = pywt.dwt(data, "db4")
-//             cD_minlen = len(cD) / max_decimation + 1
-//             cD_sum = np.zeros(math.floor(cD_minlen))
-//         else:
-//             [cA, cD] = pywt.dwt(cA, "db4")
-//
-//         # 2) Filter
-//         cD = signal.lfilter([0.01], [1 - 0.99], cD)
-//
-//         # 4) Subtract out the mean.
-//
-//         # 5) Decimate for reconstruction later.
-//         cD = abs(cD[:: (2 ** (levels - loop - 1))])
-//         cD = cD - np.mean(cD)
-//
-//         # 6) Recombine the signal before ACF
-//         #    Essentially, each level the detail coefs (i.e. the HPF values) are concatenated to the beginning of the array
-//         cD_sum = cD[0: math.floor(cD_minlen)] + cD_sum
-//
-//     if [b for b in cA if b != 0.0] == []:
-//         return no_audio_data()
-//
-//     # Adding in the approximate data as well...
-//     cA = signal.lfilter([0.01], [1 - 0.99], cA)
-//     cA = abs(cA)
-//     cA = cA - np.mean(cA)
-//     cD_sum = cA[0: math.floor(cD_minlen)] + cD_sum
-//
-//     # ACF
-//     correl = np.correlate(cD_sum, cD_sum, "full")
-//
-//     midpoint = math.floor(len(correl) / 2)
-//     correl_midpoint_tmp = correl[midpoint:]
-//     peak_ndx = peak_detect(correl_midpoint_tmp[min_ndx:max_ndx])
-//     if len(peak_ndx) > 1:
-//         return no_audio_data()
-//
-//     peak_ndx_adjusted = peak_ndx[0] + min_ndx
-//     bpm = 60.0 / peak_ndx_adjusted * (fs / max_decimation)
-//     print(bpm)
-//     return bpm, correl
 
 auto approx_coeffs(wt_set const& wt) -> std::vector<double>
 {
@@ -89,12 +34,6 @@ auto mean(It f, It l) -> double
     return sum / static_cast<double>(std::distance(f, l));
 }
 
-// def peak_detect(data):
-//     max_val = np.amax(abs(data))
-//     peak_ndx = np.where(data == max_val)
-//     if len(peak_ndx[0]) == 0:  # if nothing found then the max must be negative
-//         peak_ndx = np.where(data == -max_val)
-//     return peak_ndx
 auto peak_detect(lt::span<float> data) -> std::size_t
 {
     auto peaks = std::minmax_element(data.begin(), data.end());
@@ -157,6 +96,9 @@ struct bpm_detect {
 
         // if [b for b in cA if b != 0.0] == []:
         //     return no_audio_data()
+        if (std::none_of(begin(cA_), end(cA_), [](auto s) { return s != 0.0; })) {
+            return 0.0;
+        }
 
         // # Adding in the approximate data as well...
         // cA = signal.lfilter([0.01], [1 - 0.99], cA)
@@ -179,10 +121,7 @@ struct bpm_detect {
 
         auto midpoint = static_cast<std::size_t>(std::floor(correl.size() / 2.0));
         auto correl_midpoint_tmp = lt::span<float> { correl.data(), correl.size() }.subspan(midpoint);
-        auto const peak_ndx = peak_detect(correl_midpoint_tmp.subspan(minNdx, maxNdx));
-
-        // // if len(peak_ndx) > 1:
-        // //     return no_audio_data()
+        auto const peak_ndx = peak_detect(correl_midpoint_tmp.subspan(minNdx, maxNdx - minNdx));
 
         auto const peak_ndx_adjusted = peak_ndx + minNdx;
         auto const bpm = 60.0 / peak_ndx_adjusted * (sampleRate / maxDecimation);
@@ -206,11 +145,18 @@ auto main(int argc, char** argv) -> int
         return EXIT_FAILURE;
     }
 
-    auto input = readFileToVector(argv[1]);
-    auto const N = input.size();
+    AudioFile<double> audioFile;
+    audioFile.load(argv[1]);
+    audioFile.printSummary();
 
-    auto detector = bpm_detect { N, 4 };
-    auto bpm = detector.perform(lt::span<double>(input.data(), input.size()), 44100.0);
+    // printf("BPM:%f\n", bpm);
+
+    // auto input = readFileToVector(argv[1]);
+    // auto const N = input.size();
+
+    auto detector = bpm_detect { static_cast<size_t>(audioFile.getNumSamplesPerChannel()), 4 };
+    auto channel = lt::span<double>(audioFile.samples[0].data(), audioFile.samples[0].size());
+    auto bpm = detector.perform(channel, static_cast<double>(audioFile.getSampleRate()));
     printf("BPM:%f\n", bpm);
 
     return 0;
