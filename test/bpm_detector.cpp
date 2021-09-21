@@ -123,14 +123,14 @@ struct bpm_detect {
 
         // # ACF
         // correl = np.correlate(cD_sum, cD_sum, "full")
-        auto cD_sumf = std::vector<float> {};
-        std::copy(wt_.output, wt_.output + wt_.outlength, std::back_inserter(cD_sumf));
-        std::transform(begin(cD_sumf), end(cD_sumf), begin(cD_sumf), [](auto v) { return std::fabs(v); });
-        auto const m = mean(begin(cD_sumf), end(cD_sumf));
-        std::transform(begin(cD_sumf), end(cD_sumf), begin(cD_sumf), [m](auto v) { return v - m; });
+        cD_sumf_.clear();
+        std::copy(wt_.output, wt_.output + wt_.outlength, std::back_inserter(cD_sumf_));
+        std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [](auto v) { return std::fabs(v); });
+        auto const m = mean(begin(cD_sumf_), end(cD_sumf_));
+        std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [m](auto v) { return v - m; });
 
-        FloatSignal s(cD_sumf.data(), cD_sumf.size());
-        OverlapSaveConvolver x(s, s);
+        auto s = FloatSignal(cD_sumf_.data(), cD_sumf_.size());
+        auto x = OverlapSaveConvolver(s, s);
         x.executeXcorr();
         auto correl = x.extractResult();
 
@@ -151,6 +151,7 @@ private:
     std::vector<double> cD_ {};
     std::vector<double> correl_ {};
     std::vector<double> cD_sum_ {};
+    std::vector<float> cD_sumf_ {};
 };
 
 auto main(int argc, char** argv) -> int
