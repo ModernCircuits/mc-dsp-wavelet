@@ -24,7 +24,7 @@ auto main() -> int
     dwt(&wt, input.data());
 
     for (auto i = 0; i < wt.outlength; ++i) {
-        printf("%g ", wt.output[i]);
+        printf("%g ", wt.output()[i]);
     }
 
     auto out = std::make_unique<double[]>(N);

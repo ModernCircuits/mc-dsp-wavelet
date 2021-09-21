@@ -99,7 +99,7 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
     this->cmethod_ = convolution_method::direct;
     this->cfftset = 0;
     this->lenlength = levels_ + 2;
-    this->output = &this->params[0];
+    this->output_ = &this->params[0];
     if ((method == "dwt"sv) || (method == "DWT"sv)) {
         for (auto i = 0; i < siglength + 2 * levels() * (size + 1); ++i) {
             this->params[i] = 0.0;
@@ -126,6 +126,11 @@ auto wavelet_transform::extension(signal_extension ext) -> void
     ext_ = ext;
 }
 
+auto wavelet_transform::output() const noexcept -> lt::span<double>
+{
+    return lt::span<double> { output_, static_cast<std::size_t>(outlength) };
+}
+
 auto wavelet_transform::approx() const noexcept -> lt::span<double>
 {
     /*
@@ -135,7 +140,7 @@ auto wavelet_transform::approx() const noexcept -> lt::span<double>
 	Length of A(J) , N = wt->length[0]
 	*/
 
-    return lt::span<double>(&output[0], static_cast<size_t>(length[0]));
+    return lt::span<double>(output_, static_cast<size_t>(length[0]));
 }
 
 auto wavelet_transform::detail(std::size_t level) const noexcept -> lt::span<double>
@@ -161,7 +166,7 @@ auto wavelet_transform::detail(std::size_t level) const noexcept -> lt::span<dou
         iter += length[i];
     }
 
-    return lt::span<double>(&output[iter], static_cast<size_t>(length[level]));
+    return lt::span<double>(&output_[iter], static_cast<size_t>(length[level]));
 }
 
 auto wtree_init(wavelet* wave, int siglength, int J) -> wtree_set*
@@ -1364,14 +1369,14 @@ void idwt(wavelet_transform* wt, double* dwtop)
         iter = app_len;
 
         for (auto i = 0; i < app_len; ++i) {
-            out[i] = wt->output[i];
+            out[i] = wt->output()[i];
         }
 
         for (auto i = 0; i < J; ++i) {
 
-            idwt1(wt, temp.get(), cA_up.get(), out.get(), det_len, wt->output + iter, det_len, X_lp.get(), X_hp.get(), out.get());
+            idwt1(wt, temp.get(), cA_up.get(), out.get(), det_len, wt->output().data() + iter, det_len, X_lp.get(), X_hp.get(), out.get());
             /*
-			idwt_per(wt,out.get(), det_len, wt->output + iter, det_len, X_lp);
+			idwt_per(wt,out.get(), det_len, wt->output().data() + iter, det_len, X_lp);
 			for (k = lf/2 - 1; k < 2 * det_len + lf/2 - 1; ++k) {
 				out[k - lf/2 + 1] = X_lp[k];
 			}
@@ -1390,11 +1395,11 @@ void idwt(wavelet_transform* wt, double* dwtop)
         iter = app_len;
 
         for (auto i = 0; i < app_len; ++i) {
-            out[i] = wt->output[i];
+            out[i] = wt->output()[i];
         }
 
         for (auto i = 0; i < J; ++i) {
-            idwt_per(wt, out.get(), det_len, wt->output + iter, X_lp.get());
+            idwt_per(wt, out.get(), det_len, wt->output().data() + iter, X_lp.get());
             for (k = lf / 2 - 1; k < 2 * det_len + lf / 2 - 1; ++k) {
                 out[k - lf / 2 + 1] = X_lp[k];
             }
@@ -1413,11 +1418,11 @@ void idwt(wavelet_transform* wt, double* dwtop)
         iter = app_len;
 
         for (auto i = 0; i < app_len; ++i) {
-            out[i] = wt->output[i];
+            out[i] = wt->output()[i];
         }
 
         for (auto i = 0; i < J; ++i) {
-            idwt_sym(wt, out.get(), det_len, wt->output + iter, X_lp.get());
+            idwt_sym(wt, out.get(), det_len, wt->output().data() + iter, X_lp.get());
             for (k = lf - 2; k < 2 * det_len; ++k) {
                 out[k - lf + 2] = X_lp[k];
             }
@@ -1435,7 +1440,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
         auto X_hp = std::make_unique<double[]>((N + lf - 1));
 
         for (auto i = 0; i < app_len; ++i) {
-            out[i] = wt->output[i];
+            out[i] = wt->output()[i];
         }
 
         iter = app_len;
@@ -1454,7 +1459,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
             }
 
             wconv(wt, cA_up.get(), N2, wt->wave().lpr(), lf, X_lp.get());
-            upsamp(wt->output + iter, det_len, U, cA_up.get());
+            upsamp(wt->output().data() + iter, det_len, U, cA_up.get());
             wconv(wt, cA_up.get(), N2, wt->wave().hpr(), lf, X_hp.get());
 
             for (k = lf - 2; k < N2 + 1; ++k) {
@@ -1735,9 +1740,9 @@ void idwpt(wpt_set* wt, double* dwtop)
                     }
                 }
 
-                //idwt1(wt, temp, cA_up, out, det_len, wt->output + iter, det_len, X_lp.get(), X_hp, out);
+                //idwt1(wt, temp, cA_up, out, det_len, wt->output().data() + iter, det_len, X_lp.get(), X_hp, out);
                 /*
-				idwpt_sym(wt, out, det_len, wt->output + iter, det_len, X_lp);
+				idwpt_sym(wt, out, det_len, wt->output().data() + iter, det_len, X_lp);
 				for (k = lf - 2; k < 2 * det_len; ++k) {
 				out[k - lf + 2] = X_lp[k];
 				}
@@ -1938,12 +1943,12 @@ void iswt(wavelet_transform* wt, double* swtop)
         }
         if (iter == 0) {
             for (auto i = 0; i < N; ++i) {
-                appx_sig[i] = wt->output[i];
-                det_sig[i] = wt->output[N + i];
+                appx_sig[i] = wt->output()[i];
+                det_sig[i] = wt->output()[N + i];
             }
         } else {
             for (auto i = 0; i < N; ++i) {
-                det_sig[i] = wt->output[(iter + 1) * N + i];
+                det_sig[i] = wt->output()[(iter + 1) * N + i];
             }
         }
 
@@ -2292,14 +2297,14 @@ void imodwt_fft(wavelet_transform* wt, double* oup)
 
     //
     for (auto i = 0; i < N; ++i) {
-        sig[i].re = (fft_type)wt->output[i];
+        sig[i].re = (fft_type)wt->output()[i];
         sig[i].im = 0.0;
     }
 
     for (auto iter = 0; iter < J; ++iter) {
         fft_exec(*fft_fd, sig.get(), cA.get());
         for (auto i = 0; i < N; ++i) {
-            sig[i].re = wt->output[lenacc + i];
+            sig[i].re = wt->output()[lenacc + i];
             sig[i].im = 0.0;
         }
         fft_exec(*fft_fd, sig.get(), cD.get());
@@ -2369,7 +2374,7 @@ static void imodwt_direct(wavelet_transform* wt, double* dwtop)
     auto X = std::make_unique<double[]>(N);
 
     for (auto i = 0; i < N; ++i) {
-        dwtop[i] = wt->output[i];
+        dwtop[i] = wt->output()[i];
     }
 
     for (auto iter = 0; iter < J; ++iter) {
@@ -3362,7 +3367,7 @@ void cwt_summary(cwavelet_transform* wt)
     printf("\n");
     printf("Complex CWT Output Vector is of size %d * %d stored in Row Major format \n", wt->J, wt->siglength);
     printf("\n");
-    printf("The ith real value can be accessed using wt->output[i].re and imaginary value by wt->output[i].im \n");
+    printf("The ith real value can be accessed using wt->output()[i].re and imaginary value by wt->output()[i].im \n");
     printf("\n");
 }
 

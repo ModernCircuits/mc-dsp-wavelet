@@ -29,7 +29,7 @@ auto main() -> int
     //SWT output can be accessed using wt.output vector. Use wt_summary to find out how to extract appx and detail coefficients
 
     for (auto i = 0; i < wt.outlength; ++i) {
-        std::printf("%g ", wt.output[i]);
+        std::printf("%g ", wt.output()[i]);
     }
 
     iswt(&wt, out.get()); // Perform ISWT (if needed)

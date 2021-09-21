@@ -76,7 +76,7 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         }
 
         for (auto i = 0; i < dlen; ++i) {
-            dout[i] = fabs(wt.output[iter + i]);
+            dout[i] = fabs(wt.output()[iter + i]);
         }
 
         sigma = median(dout.get(), dlen) / 0.6745;
@@ -87,7 +87,7 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         for (it = 0; it < J; ++it) {
             dlen = wt.length[it + 1];
             for (auto i = 0; i < dlen; ++i) {
-                dout[i] = fabs(wt.output[iter + i]);
+                dout[i] = fabs(wt.output()[iter + i]);
             }
             sigma = median(dout.get(), dlen) / 0.6745;
             lnoise[it] = sigma;
@@ -108,18 +108,18 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
 
         if (thresh == "hard"sv) {
             for (auto i = 0; i < dlen; ++i) {
-                if (fabs(wt.output[iter + i]) < td) {
-                    wt.output[iter + i] = 0;
+                if (fabs(wt.output()[iter + i]) < td) {
+                    wt.output()[iter + i] = 0;
                 }
             }
         } else if (thresh == "soft"sv) {
             for (auto i = 0; i < dlen; ++i) {
-                if (fabs(wt.output[iter + i]) < td) {
-                    wt.output[iter + i] = 0;
+                if (fabs(wt.output()[iter + i]) < td) {
+                    wt.output()[iter + i] = 0;
                 } else {
-                    sgn = wt.output[iter + i] >= 0 ? 1 : -1;
-                    tmp = sgn * (fabs(wt.output[iter + i]) - td);
-                    wt.output[iter + i] = tmp;
+                    sgn = wt.output()[iter + i] >= 0 ? 1 : -1;
+                    tmp = sgn * (fabs(wt.output()[iter + i]) - td);
+                    wt.output()[iter + i] = tmp;
                 }
             }
         }
@@ -193,7 +193,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
         }
 
         for (auto i = 0; i < dlen; ++i) {
-            dout[i] = fabs(wt.output[iter + i]);
+            dout[i] = fabs(wt.output()[iter + i]);
         }
 
         sigma = median(dout.get(), dlen) / 0.6745;
@@ -204,7 +204,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
         for (it = 0; it < J; ++it) {
             dlen = wt.length[it + 1];
             for (auto i = 0; i < dlen; ++i) {
-                dout[i] = fabs(wt.output[iter + i]);
+                dout[i] = fabs(wt.output()[iter + i]);
             }
             sigma = median(dout.get(), dlen) / 0.6745;
             lnoise[it] = sigma;
@@ -226,7 +226,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
             tv = std::sqrt(2.0 * std::log(dwt_len));
             norm = 0.0;
             for (auto i = 0; i < dwt_len; ++i) {
-                norm += (wt.output[len + i] * wt.output[len + i] / (sigma * sigma));
+                norm += (wt.output()[len + i] * wt.output()[len + i] / (sigma * sigma));
             }
             te = (norm - (double)dwt_len) / (double)dwt_len;
             ct = pow(std::log((double)dwt_len) / std::log(2.0), 1.5) / std::sqrt((double)dwt_len);
@@ -237,7 +237,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
                 x_sum = 0.0;
 
                 for (auto i = 0; i < dwt_len; ++i) {
-                    dout[i] = fabs(wt.output[len + i] / sigma);
+                    dout[i] = fabs(wt.output()[len + i] / sigma);
                 }
 
                 std::sort(dout.get(), dout.get() + dwt_len, std::less<double> {});
@@ -260,18 +260,18 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
 
         if (thresh == "hard"sv) {
             for (auto i = 0; i < dwt_len; ++i) {
-                if (fabs(wt.output[len + i]) < td) {
-                    wt.output[len + i] = 0;
+                if (fabs(wt.output()[len + i]) < td) {
+                    wt.output()[len + i] = 0;
                 }
             }
         } else if (thresh == "soft"sv) {
             for (auto i = 0; i < dwt_len; ++i) {
-                if (fabs(wt.output[len + i]) < td) {
-                    wt.output[len + i] = 0;
+                if (fabs(wt.output()[len + i]) < td) {
+                    wt.output()[len + i] = 0;
                 } else {
-                    sgn = wt.output[len + i] >= 0 ? 1 : -1;
-                    temp = sgn * (fabs(wt.output[len + i]) - td);
-                    wt.output[len + i] = temp;
+                    sgn = wt.output()[len + i] >= 0 ? 1 : -1;
+                    temp = sgn * (fabs(wt.output()[len + i]) - td);
+                    wt.output()[len + i] = temp;
                 }
             }
         }
@@ -338,7 +338,7 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
     for (it = 0; it < J; ++it) {
         dlen = wt.length[it + 1];
         for (auto i = 0; i < dlen; ++i) {
-            dout[i] = fabs(wt.output[iter + i]);
+            dout[i] = fabs(wt.output()[iter + i]);
         }
 
         sigma = std::sqrt(2.0) * median(dout.get(), dlen) / 0.6745;
@@ -358,18 +358,18 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
 
         if (thresh == "hard"sv) {
             for (auto i = 0; i < dlen; ++i) {
-                if (fabs(wt.output[iter + i]) < td) {
-                    wt.output[iter + i] = 0;
+                if (fabs(wt.output()[iter + i]) < td) {
+                    wt.output()[iter + i] = 0;
                 }
             }
         } else if (thresh == "soft"sv) {
             for (auto i = 0; i < dlen; ++i) {
-                if (fabs(wt.output[iter + i]) < td) {
-                    wt.output[iter + i] = 0;
+                if (fabs(wt.output()[iter + i]) < td) {
+                    wt.output()[iter + i] = 0;
                 } else {
-                    sgn = wt.output[iter + i] >= 0 ? 1 : -1;
-                    tmp = sgn * (fabs(wt.output[iter + i]) - td);
-                    wt.output[iter + i] = tmp;
+                    sgn = wt.output()[iter + i] >= 0 ? 1 : -1;
+                    tmp = sgn * (fabs(wt.output()[iter + i]) - td);
+                    wt.output()[iter + i] = tmp;
                 }
             }
         }

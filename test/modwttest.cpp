@@ -29,7 +29,7 @@ auto main() -> int
     modwt(&wt, inp.data()); // Perform MODWT
 
     for (auto i = 0; i < wt.outlength; ++i) {
-        printf("%g ", wt.output[i]);
+        printf("%g ", wt.output()[i]);
     }
 
     imodwt(&wt, out.get()); // Perform ISWT (if needed)

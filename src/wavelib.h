@@ -135,6 +135,7 @@ struct wavelet_transform {
     auto conv_method(convolution_method method) -> void;
     auto conv_method() const noexcept -> convolution_method { return cmethod_; }
 
+    [[nodiscard]] auto output() const noexcept -> lt::span<double>;
     [[nodiscard]] auto approx() const noexcept -> lt::span<double>;
     [[nodiscard]] auto detail(std::size_t level) const noexcept -> lt::span<double>;
 
@@ -144,6 +145,8 @@ private:
     std::string method_;
     signal_extension ext_;
     convolution_method cmethod_;
+
+    double* output_;
 
 public:
     std::unique_ptr<conv_set> cobj;
@@ -158,7 +161,6 @@ public:
     int cfftset;
     int zpad;
     int length[102];
-    double* output;
     std::unique_ptr<double[]> params;
 };
 

@@ -14,13 +14,13 @@ auto approx_coeffs(wavelet_transform const& wt) -> std::vector<double>
 {
     auto size = static_cast<std::size_t>(wt.length[0]);
     auto result = std::vector<double>(size);
-    std::copy(wt.output, wt.output + size, begin(result));
+    std::copy(std::begin(wt.output()), std::begin(wt.output()) + size, begin(result));
     return result;
 }
 
 auto detail_coeffs(wavelet_transform const& wt) -> std::vector<double>
 {
-    auto const* first = wt.output + wt.length[0];
+    auto const* first = std::begin(wt.output()) + wt.length[0];
     auto size = static_cast<std::size_t>(wt.length[1]);
     auto result = std::vector<double>(size);
     std::copy(first, first + size, begin(result));
@@ -127,7 +127,7 @@ struct bpm_detect {
         // # ACF
         // correl = np.correlate(cD_sum, cD_sum, "full")
         cD_sumf_.clear();
-        std::copy(wt_.output, wt_.output + wt_.outlength, std::back_inserter(cD_sumf_));
+        std::copy(std::begin(wt_.output()), std::begin(wt_.output()) + wt_.outlength, std::back_inserter(cD_sumf_));
         // std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [](auto v) { return std::fabs(v); });
         // auto const m = mean(begin(cD_sumf_), end(cD_sumf_));
         // std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [m](auto v) { return v - m; });
