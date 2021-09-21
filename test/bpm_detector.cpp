@@ -157,6 +157,39 @@ private:
     std::vector<float> cD_sumf_ {};
 };
 
+auto median(lt::span<double> data) -> double
+{
+    if (std::empty(data)) {
+        return 0.0;
+    }
+
+    std::sort(std::begin(data), std::end(data));
+    auto const size = std::size(data);
+    auto const mid = size / 2;
+    return size % 2 == 0 ? (data[mid] + data[mid - 1]) / 2 : data[mid];
+}
+
+auto mode(lt::span<double> arr) -> double
+{
+    auto const n = arr.size();
+    double count = 1;
+    double countmax = 0;
+    double current = arr[0];
+    double moda = 0;
+    for (std::size_t i = 1; i < n; i++) {
+        if (arr[i] == current) {
+            count++;
+        } else if (count > countmax) {
+            countmax = count;
+            count = 1;
+            moda = arr[i - 1];
+            current = arr[i];
+        }
+        current = arr[i];
+    }
+    return moda;
+}
+
 auto main(int argc, char** argv) -> int
 {
     if (argc != 2) {
@@ -179,7 +212,7 @@ auto main(int argc, char** argv) -> int
     auto const maxWindowIndex = std::size(channel) / windowSize;
 
     auto samps_ndx = 0U;
-    auto bpms = makeZeros<double>(maxWindowIndex);
+    auto bpms = std::vector<double> {};
     for (auto window_ndx { 0U }; window_ndx < maxWindowIndex; ++window_ndx) {
         if (samps_ndx + windowSize >= std::size(channel)) {
             std::puts("ERROR");
@@ -190,14 +223,19 @@ auto main(int argc, char** argv) -> int
         auto subBuffer = channel.subspan(samps_ndx, windowSize);
         auto bpm = detector.perform(subBuffer, fs);
 
-        printf("BPM:%f\n", bpm);
+        printf("BPM:%.1f\n", std::round(bpm));
         if (bpm == 0.0) {
             continue;
         }
 
-        bpms[window_ndx] = bpm;
+        bpms.push_back(bpm);
         samps_ndx += windowSize;
     }
 
+    auto outOfRange = [](auto b) { return b < 100.0 || b > 200.0; };
+    bpms.erase(std::remove_if(begin(bpms), end(bpms), outOfRange), end(bpms));
+
+    std::printf("Detected BPM (median): %.1f\n", std::round(median(bpms)));
+    std::printf("Detected BPM (mode): %.1f\n", std::round(mode(bpms)));
     return 0;
 }
