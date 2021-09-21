@@ -149,15 +149,40 @@ auto main(int argc, char** argv) -> int
     audioFile.load(argv[1]);
     audioFile.printSummary();
 
-    // printf("BPM:%f\n", bpm);
+    auto const fs = static_cast<double>(audioFile.getSampleRate());
+    // auto const numSamples = static_cast<size_t>(audioFile.getNumSamplesPerChannel());
 
-    // auto input = readFileToVector(argv[1]);
-    // auto const N = input.size();
-
-    auto detector = bpm_detect { static_cast<size_t>(audioFile.getNumSamplesPerChannel()), 4 };
     auto channel = lt::span<double>(audioFile.samples[0].data(), audioFile.samples[0].size());
-    auto bpm = detector.perform(channel, static_cast<double>(audioFile.getSampleRate()));
-    printf("BPM:%f\n", bpm);
+    // channel = channel.subspan(static_cast<std::size_t>(std::size(audioFile.samples[0]) * (0.05 / 100.0)));
+    // channel = channel.last(static_cast<std::size_t>(std::size(audioFile.samples[0]) * (0.05 / 100.0)));
+
+    auto const windowSize = static_cast<std::size_t>(std::floor(3.0 * fs));
+    auto const maxWindowIndex = std::size(channel) / windowSize;
+    auto detector = bpm_detect { std::size(channel), 4 };
+
+    printf("windowSize: %zu\n", windowSize);
+    printf("maxWindowIndex: %zu\n", maxWindowIndex);
+
+    auto samps_ndx = 0U;
+    auto bpms = makeZeros<double>(maxWindowIndex);
+    for (auto window_ndx { 0U }; window_ndx < maxWindowIndex; ++window_ndx) {
+        if (samps_ndx + windowSize >= std::size(channel)) {
+            std::puts("ERROR");
+            continue;
+        }
+
+        auto subBuffer = channel.subspan(samps_ndx, windowSize);
+        printf("size(subBuffer): %zu\n", std::size(subBuffer));
+
+        auto bpm = detector.perform(subBuffer, fs);
+        printf("BPM:%f\n", bpm);
+        if (bpm == 0.0) {
+            continue;
+        }
+
+        bpms[window_ndx] = bpm;
+        samps_ndx += windowSize;
+    }
 
     return 0;
 }

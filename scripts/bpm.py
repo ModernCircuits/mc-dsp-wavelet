@@ -188,9 +188,6 @@ def main():
 
     # Iterate through all windows
     for window_ndx in range(0, max_window_ndx):
-
-        # Get a new set of samples
-        # print(n,":",len(bpms),":",max_window_ndx_int,":",fs,":",nsamps,":",samps_ndx)
         data = samps[samps_ndx: samps_ndx + window_samps]
         if not ((len(data) % window_samps) == 0):
             raise AssertionError(str(len(data)))
