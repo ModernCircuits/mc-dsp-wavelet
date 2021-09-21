@@ -133,6 +133,7 @@ struct wavelet_transform {
     auto extension() const noexcept -> signal_extension { return ext_; }
 
     auto convolution_method(char const* conv_method) -> void;
+    auto convolution_method() const noexcept -> std::string const& { return cmethod_; }
 
     [[nodiscard]] auto approx() const noexcept -> lt::span<double>;
     [[nodiscard]] auto detail(std::size_t level) const noexcept -> lt::span<double>;
@@ -142,6 +143,7 @@ private:
     int levels_;
     std::string method_;
     signal_extension ext_;
+    std::string cmethod_;
 
 public:
     std::unique_ptr<conv_set> cobj;
@@ -151,7 +153,6 @@ public:
     int lenlength; // Length of the Output Dimension Vector "length"
     int MaxIter; // Maximum Iterations J <= MaxIter
     int even; // even = 1 if signal is of even length. even = 0 otherwise
-    std::string cmethod; // Convolution Method - "direct" or "FFT"
 
     int N; //
     int cfftset;
