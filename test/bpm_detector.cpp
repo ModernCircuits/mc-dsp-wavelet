@@ -55,7 +55,7 @@ struct bpm_detect {
         , wt_ { wave_, "dwt", static_cast<int>(N), static_cast<int>(levels) }
     {
         wt_.extension(signal_extension::symmetric);
-        wt_.convolution_method("fft");
+        wt_.conv_method(convolution_method::fft);
     }
 
     [[nodiscard]] auto perform(lt::span<double> input, double sampleRate) -> double

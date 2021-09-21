@@ -78,9 +78,9 @@ void DWTReconstructionTest()
                         wt.extension(signal_extension::periodic);
                     }
                     if (direct_fft == 0) {
-                        wt.convolution_method("direct");
+                        wt.conv_method(convolution_method::direct);
                     } else {
-                        wt.convolution_method("fft");
+                        wt.conv_method(convolution_method::fft);
                     }
 
                     dwt(&wt, inp.get()); // Perform DWT

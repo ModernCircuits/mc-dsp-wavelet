@@ -132,8 +132,8 @@ struct wavelet_transform {
     auto extension(signal_extension ext) -> void;
     auto extension() const noexcept -> signal_extension { return ext_; }
 
-    auto convolution_method(char const* conv_method) -> void;
-    auto convolution_method() const noexcept -> std::string const& { return cmethod_; }
+    auto conv_method(convolution_method method) -> void;
+    auto conv_method() const noexcept -> convolution_method { return cmethod_; }
 
     [[nodiscard]] auto approx() const noexcept -> lt::span<double>;
     [[nodiscard]] auto detail(std::size_t level) const noexcept -> lt::span<double>;
@@ -143,7 +143,7 @@ private:
     int levels_;
     std::string method_;
     signal_extension ext_;
-    std::string cmethod_;
+    convolution_method cmethod_;
 
 public:
     std::unique_ptr<conv_set> cobj;

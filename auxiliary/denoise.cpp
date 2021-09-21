@@ -309,16 +309,16 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
     auto wt = wavelet_transform(wave, "modwt", N, J);
 
     if ((ext == "sym"sv) && (cmethod == "fft"sv)) {
-        wt.convolution_method("fft");
+        wt.conv_method(convolution_method::fft);
         wt.extension(signal_extension::symmetric);
     } else if ((ext == "sym"sv) && (cmethod == "direct"sv)) {
         std::printf("Symmetric Extension is not available for direct method");
         std::exit(-1);
     } else if ((ext == "per"sv) && (cmethod == "direct"sv)) {
-        wt.convolution_method("direct");
+        wt.conv_method(convolution_method::direct);
         wt.extension(signal_extension::periodic);
     } else if ((ext == "per"sv) && (cmethod == "fft"sv)) {
-        wt.convolution_method("fft");
+        wt.conv_method(convolution_method::fft);
         wt.extension(signal_extension::periodic);
     } else {
         std::printf("Signal extension can be either per or sym");

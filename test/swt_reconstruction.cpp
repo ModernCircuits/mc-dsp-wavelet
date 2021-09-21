@@ -80,9 +80,9 @@ void SWTReconstructionTest()
                     auto wt = wavelet_transform(obj, "swt", N, J);
 
                     if (direct_fft == 0) {
-                        wt.convolution_method("direct");
+                        wt.conv_method(convolution_method::direct);
                     } else {
-                        wt.convolution_method("fft");
+                        wt.conv_method(convolution_method::fft);
                     }
 
                     if (sym_per == 0) {

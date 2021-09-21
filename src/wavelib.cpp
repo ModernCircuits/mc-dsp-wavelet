@@ -96,7 +96,7 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
 
     this->cobj = nullptr;
 
-    this->cmethod_ = "direct";
+    this->cmethod_ = convolution_method::direct;
     this->cfftset = 0;
     this->lenlength = levels_ + 2;
     this->output = &this->params[0];
@@ -115,16 +115,9 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
     }
 }
 
-auto wavelet_transform::convolution_method(char const* conv_method) -> void
+auto wavelet_transform::conv_method(convolution_method method) -> void
 {
-    if ((conv_method == "fft"sv) || (conv_method == "FFT"sv)) {
-        this->cmethod_ = "fft";
-    } else if (conv_method == "direct"sv) {
-        this->cmethod_ = "direct";
-    } else {
-        printf("Convolution Only accepts two methods - direct and fft");
-        exit(-1);
-    }
+    cmethod_ = method;
 }
 
 auto wavelet_transform::extension(signal_extension ext) -> void
@@ -463,9 +456,9 @@ auto wt2_init(wavelet& wave, char const* method, int rows, int cols, int J) -> w
 
 static void wconv(wavelet_transform* wt, double* sig, int N, double const* filt, int L, double* oup)
 {
-    if (wt->convolution_method() == "direct"sv) {
+    if (wt->conv_method() == convolution_method::direct) {
         conv_direct(sig, N, filt, L, oup);
-    } else if ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv)) {
+    } else if (wt->conv_method() == convolution_method::fft) {
         if (wt->cfftset == 0) {
             wt->cobj = conv_init(N, L);
             conv_fft(*wt->cobj, sig, filt, oup);
@@ -654,7 +647,7 @@ static void dwt1(wavelet_transform* wt, double* sig, int len_sig, double* cA, do
         len_sig = per_ext(sig, len_sig, len_avg / 2, signal.get());
         auto cA_undec = std::make_unique<double[]>(len_sig + len_avg + wt->wave().lpd_len() - 1);
 
-        if (wt->wave().lpd_len() == wt->wave().hpd_len() && ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv))) {
+        if (wt->wave().lpd_len() == wt->wave().hpd_len() && (wt->conv_method() == convolution_method::fft)) {
             wt->cobj = conv_init(len_sig + len_avg, wt->wave().lpd_len());
             wt->cfftset = 1;
         } else if (!(wt->wave().lpd_len() == wt->wave().hpd_len())) {
@@ -673,7 +666,7 @@ static void dwt1(wavelet_transform* wt, double* sig, int len_sig, double* cA, do
         len_sig = symm_ext(sig, len_sig, lf - 1, signal.get());
         auto cA_undec = std::make_unique<double[]>(len_sig + 3 * (lf - 1));
 
-        if (wt->wave().lpd_len() == wt->wave().hpd_len() && ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv))) {
+        if (wt->wave().lpd_len() == wt->wave().hpd_len() && (wt->conv_method() == convolution_method::fft)) {
             wt->cobj = conv_init(len_sig + 2 * (lf - 1), lf);
             wt->cfftset = 1;
         } else if (!(wt->wave().lpd_len() == wt->wave().hpd_len())) {
@@ -690,7 +683,7 @@ static void dwt1(wavelet_transform* wt, double* sig, int len_sig, double* cA, do
         exit(-1);
     }
 
-    if (wt->wave().lpd_len() == wt->wave().hpd_len() && ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv))) {
+    if (wt->wave().lpd_len() == wt->wave().hpd_len() && (wt->conv_method() == convolution_method::fft)) {
 
         wt->cfftset = 0;
     }
@@ -735,7 +728,7 @@ void dwt(wavelet_transform* wt, double const* inp)
         for (auto iter = 0; iter < J; ++iter) {
             auto const len_cA = wt->length[J - iter];
             N -= len_cA;
-            if ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv)) {
+            if (wt->conv_method() == convolution_method::fft) {
                 dwt1(wt, orig.get(), temp_len, orig2.get(), wt->params.get() + N);
             } else {
                 dwt_per(wt, orig.get(), temp_len, orig2.get(), len_cA, wt->params.get() + N);
@@ -767,7 +760,7 @@ void dwt(wavelet_transform* wt, double const* inp)
         for (auto iter = 0; iter < J; ++iter) {
             auto const len_cA = wt->length[J - iter];
             N -= len_cA;
-            if ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv)) {
+            if (wt->conv_method() == convolution_method::fft) {
                 dwt1(wt, orig.get(), temp_len, orig2.get(), wt->params.get() + N);
             } else {
                 dwt_sym(wt, orig.get(), temp_len, orig2.get(), len_cA, wt->params.get() + N);
@@ -1306,7 +1299,7 @@ static void idwt1(wavelet_transform* wt, double* temp, double* cA_up, double* cA
 
     auto N2 = 2 * len_cA + len_avg;
 
-    if (wt->wave().lpr_len() == wt->wave().hpr_len() && ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv))) {
+    if (wt->wave().lpr_len() == wt->wave().hpr_len() && (wt->conv_method() == convolution_method::fft)) {
         wt->cobj = conv_init(N2, len_avg);
         wt->cfftset = 1;
     } else if (!(wt->wave().lpr_len() == wt->wave().hpr_len())) {
@@ -1328,7 +1321,7 @@ static void idwt1(wavelet_transform* wt, double* temp, double* cA_up, double* cA
         X[i - len_avg + 1] = X_lp[i] + X_hp[i];
     }
 
-    if (wt->wave().lpr_len() == wt->wave().hpr_len() && ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv))) {
+    if (wt->wave().lpr_len() == wt->wave().hpr_len() && (wt->conv_method() == convolution_method::fft)) {
 
         wt->cfftset = 0;
     }
@@ -1358,7 +1351,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
     auto U = 2;
     auto app_len = wt->length[0];
     auto out = std::make_unique<double[]>(wt->siglength + 1);
-    if ((wt->extension() == signal_extension::periodic) && ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv))) {
+    if ((wt->extension() == signal_extension::periodic) && (wt->conv_method() == convolution_method::fft)) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J];
@@ -1387,7 +1380,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-    } else if ((wt->extension() == signal_extension::periodic) && (wt->convolution_method() == "direct"sv)) {
+    } else if ((wt->extension() == signal_extension::periodic) && (wt->conv_method() == convolution_method::direct)) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J];
@@ -1410,7 +1403,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-    } else if ((wt->extension() == signal_extension::symmetric) && (wt->convolution_method() == "direct"sv)) {
+    } else if ((wt->extension() == signal_extension::symmetric) && (wt->conv_method() == convolution_method::direct)) {
         app_len = wt->length[0];
         det_len = wt->length[1];
         N = 2 * wt->length[J] - 1;
@@ -1433,7 +1426,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
             det_len = wt->length[i + 2];
         }
 
-    } else if ((wt->extension() == signal_extension::symmetric) && ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv))) {
+    } else if ((wt->extension() == signal_extension::symmetric) && (wt->conv_method() == convolution_method::fft)) {
         lf = wt->wave().lpd_len(); // lpd and hpd have the same length
 
         N = 2 * wt->length[J] - 1;
@@ -1452,7 +1445,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
             upsamp(out.get(), det_len, U, cA_up.get());
             N2 = 2 * wt->length[i + 1] - 1;
 
-            if (wt->wave().lpr_len() == wt->wave().hpr_len() && ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv))) {
+            if (wt->wave().lpr_len() == wt->wave().hpr_len() && (wt->conv_method() == convolution_method::fft)) {
                 wt->cobj = conv_init(N2, lf);
                 wt->cfftset = 1;
             } else if (!(wt->wave().lpr_len() == wt->wave().hpr_len())) {
@@ -1468,7 +1461,7 @@ void idwt(wavelet_transform* wt, double* dwtop)
                 out[k - lf + 2] = X_lp[k] + X_hp[k];
             }
             iter += det_len;
-            if (wt->wave().lpr_len() == wt->wave().hpr_len() && ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv))) {
+            if (wt->wave().lpr_len() == wt->wave().hpr_len() && (wt->conv_method() == convolution_method::fft)) {
 
                 wt->cfftset = 0;
             }
@@ -1824,7 +1817,7 @@ static void swt_fft(wavelet_transform* wt, double const* inp)
 
         per_ext(wt->params.get(), temp_len, N / 2, sig.get());
 
-        if (wt->wave().lpd_len() == wt->wave().hpd_len() && ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv))) {
+        if (wt->wave().lpd_len() == wt->wave().hpd_len() && (wt->conv_method() == convolution_method::fft)) {
             wt->cobj = conv_init(N + temp_len + (temp_len % 2), N);
             wt->cfftset = 1;
         } else if (!(wt->wave().lpd_len() == wt->wave().hpd_len())) {
@@ -1836,7 +1829,7 @@ static void swt_fft(wavelet_transform* wt, double const* inp)
 
         wconv(wt, sig.get(), N + temp_len + (temp_len % 2), high_pass.get(), N, cD.get());
 
-        if (wt->wave().lpd_len() == wt->wave().hpd_len() && ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv))) {
+        if (wt->wave().lpd_len() == wt->wave().hpd_len() && (wt->conv_method() == convolution_method::fft)) {
 
             wt->cfftset = 0;
         }
@@ -1894,9 +1887,9 @@ static void swt_direct(wavelet_transform* wt, double const* inp)
 
 void swt(wavelet_transform* wt, double const* inp)
 {
-    if ((wt->method() == "swt"sv) && (wt->convolution_method() == "direct"sv)) {
+    if ((wt->method() == "swt"sv) && (wt->conv_method() == convolution_method::direct)) {
         swt_direct(wt, inp);
-    } else if ((wt->method() == "swt"sv) && ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv))) {
+    } else if ((wt->method() == "swt"sv) && (wt->conv_method() == convolution_method::fft)) {
         swt_fft(wt, inp);
     } else {
         printf("SWT Only accepts two methods - direct and fft");
@@ -1980,7 +1973,7 @@ void iswt(wavelet_transform* wt, double* swtop)
 
             N1 = 2 * len0 + lf;
 
-            if (wt->wave().lpr_len() == wt->wave().hpr_len() && ((wt->convolution_method() == "fft"sv) || (wt->convolution_method() == "FFT"sv))) {
+            if (wt->wave().lpr_len() == wt->wave().hpr_len() && (wt->conv_method() == convolution_method::fft)) {
                 wt->cobj = conv_init(N1, lf);
                 wt->cfftset = 1;
             } else if (!(wt->wave().lpd_len() == wt->wave().hpd_len())) {
@@ -2229,14 +2222,12 @@ static void modwt_fft(wavelet_transform* wt, double const* inp)
 
 void modwt(wavelet_transform* wt, double const* inp)
 {
-    if (wt->convolution_method() == "direct"sv) {
+    if (wt->conv_method() == convolution_method::direct) {
         modwt_direct(wt, inp);
-    } else if (wt->convolution_method() == "fft"sv) {
-        modwt_fft(wt, inp);
-    } else {
-        printf("Error- Available Choices for this method are - direct and fft \n");
-        exit(-1);
+        return;
     }
+
+    modwt_fft(wt, inp);
 }
 
 static void conj_complex(fft_data* x, int N)
@@ -2404,14 +2395,11 @@ static void imodwt_direct(wavelet_transform* wt, double* dwtop)
 
 void imodwt(wavelet_transform* wt, double* oup)
 {
-    if (wt->convolution_method() == "direct"sv) {
+    if (wt->conv_method() == convolution_method::direct) {
         imodwt_direct(wt, oup);
-    } else if (wt->convolution_method() == "fft"sv) {
-        imodwt_fft(wt, oup);
-    } else {
-        printf("Error- Available Choices for this method are - direct and fft \n");
-        exit(-1);
+        return;
     }
+    imodwt_fft(wt, oup);
 }
 
 void setWTREEExtension(wtree_set* wt, char const* extension)
@@ -3260,7 +3248,7 @@ void wt_summary(wavelet_transform* wt)
     printf("\n");
     printf("Wavelet Transform : %s \n", wt->method().c_str());
     printf("Signal Extension : %s \n", toString(wt->extension()).c_str());
-    printf("Convolutional Method : %s \n", wt->convolution_method().c_str());
+    printf("Convolutional Method : %s \n", toString(wt->conv_method()).c_str());
     printf("Number of Decomposition Levels %d \n", wt->levels());
     printf("Length of Input Signal %d \n", wt->siglength);
     printf("Length of WT Output Vector %d \n", wt->outlength);
