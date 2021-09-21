@@ -415,7 +415,7 @@ auto wt2_init(wavelet& wave, char const* method, int rows, int cols, int J) -> w
     return obj.release();
 }
 
-static void wconv(wt_set* wt, double* sig, int N, double* filt, int L, double* oup)
+static void wconv(wt_set* wt, double* sig, int N, double const* filt, int L, double* oup)
 {
     if (wt->cmethod == "direct"sv) {
         conv_direct(sig, N, filt, L, oup);

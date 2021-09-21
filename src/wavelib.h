@@ -39,10 +39,10 @@ struct wavelet {
     [[nodiscard]] auto size() const noexcept -> int { return static_cast<int>(size_); }
     [[nodiscard]] auto name() const noexcept -> std::string const& { return name_; }
 
-    [[nodiscard]] auto lpd() const noexcept -> double* { return lpd_.data(); }
-    [[nodiscard]] auto hpd() const noexcept -> double* { return hpd_.data(); }
-    [[nodiscard]] auto lpr() const noexcept -> double* { return lpr_.data(); }
-    [[nodiscard]] auto hpr() const noexcept -> double* { return hpr_.data(); }
+    [[nodiscard]] auto lpd() const noexcept -> double const* { return lpd_.data(); }
+    [[nodiscard]] auto hpd() const noexcept -> double const* { return hpd_.data(); }
+    [[nodiscard]] auto lpr() const noexcept -> double const* { return lpr_.data(); }
+    [[nodiscard]] auto hpr() const noexcept -> double const* { return hpr_.data(); }
 
     [[nodiscard]] auto lpd_len() const noexcept -> int { return static_cast<int>(lpd_.size()); }
     [[nodiscard]] auto hpd_len() const noexcept -> int { return static_cast<int>(hpd_.size()); }

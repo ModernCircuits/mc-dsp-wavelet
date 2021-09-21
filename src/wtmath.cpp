@@ -295,7 +295,7 @@ void imodwt_per_stride(int M, double const* cA, int len_cA, double const* cD, do
     }
 }
 
-void idwt2_shift(int shift, int rows, int cols, double* lpr, double* hpr, int lf, double* A, double* H, double* V, double* D, double* oup)
+void idwt2_shift(int shift, int rows, int cols, double const* lpr, double const* hpr, int lf, double* A, double* H, double* V, double* D, double* oup)
 {
     auto const N = rows > cols ? 2 * rows : 2 * cols;
     auto const dim1 = 2 * rows;
