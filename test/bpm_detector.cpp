@@ -52,10 +52,10 @@ auto peak_detect(lt::span<float> data) -> std::size_t
 struct bpm_detect {
     bpm_detect(std::size_t N, std::size_t levels)
         : wave_ { "db4" }
-        , wt_ { wt_init(wave_, "dwt", N, levels) }
+        , wt_ { wave_, "dwt", static_cast<int>(N), static_cast<int>(levels) }
     {
-        setDWTExtension(wt_.get(), "sym");
-        setWTConv(wt_.get(), "fft");
+        setDWTExtension(&wt_, "sym");
+        setWTConv(&wt_, "fft");
     }
 
     [[nodiscard]] auto perform(lt::span<double> input, double sampleRate) -> double
@@ -68,19 +68,19 @@ struct bpm_detect {
 
         auto cD_minlen = 0.0;
         cD_sum_.clear();
-        dwt(wt_.get(), input.data());
+        dwt(&wt_, input.data());
         // for (auto loop { 0 }; loop < levels; ++loop) {
         //     cD_.clear();
         //     cA_.clear();
         //     if (loop == 0) {
-        //         dwt(wt_.get(), input.data());
+        //         dwt(&wt_, input.data());
         //         cA_ = approx_coeffs(*wt_);
         //         cD_ = detail_coeffs(*wt_);
         //         cD_minlen = static_cast<double>(size(cD_)) / maxDecimation + 1.0;
         //         cD_sum_.resize(static_cast<std::size_t>(std::floor(cD_minlen)));
         //         std::fill(begin(cD_sum_), end(cD_sum_), 0.0);
         //     } else {
-        //         dwt(wt_.get(), cA_.data());
+        //         dwt(&wt_, cA_.data());
         //         cA_ = approx_coeffs(*wt_);
         //         cD_ = detail_coeffs(*wt_);
         //     }
@@ -124,7 +124,7 @@ struct bpm_detect {
         // # ACF
         // correl = np.correlate(cD_sum, cD_sum, "full")
         auto cD_sumf = std::vector<float> {};
-        std::copy(wt_->output, wt_->output + wt_->outlength, std::back_inserter(cD_sumf));
+        std::copy(wt_.output, wt_.output + wt_.outlength, std::back_inserter(cD_sumf));
         std::transform(begin(cD_sumf), end(cD_sumf), begin(cD_sumf), [](auto v) { return std::fabs(v); });
         auto const m = mean(begin(cD_sumf), end(cD_sumf));
         std::transform(begin(cD_sumf), end(cD_sumf), begin(cD_sumf), [m](auto v) { return v - m; });
@@ -145,7 +145,7 @@ struct bpm_detect {
 
 private:
     wavelet wave_;
-    std::unique_ptr<wavelet_transform> wt_;
+    wavelet_transform wt_;
 
     std::vector<double> cA_ {};
     std::vector<double> cD_ {};

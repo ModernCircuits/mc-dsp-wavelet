@@ -12,14 +12,12 @@
 
 void SWTReconstructionTest()
 {
-    wavelet_transform* wt;
 
-    int N;
     int i;
     double epsilon = 1e-15;
     double err;
 
-    N = 4000;
+    auto const N = 4000;
 
     // N = 256;
 
@@ -79,27 +77,27 @@ void SWTReconstructionTest()
             for (auto& name : waveletNames) {
                 auto obj = wavelet { name.c_str() };
                 for (auto J = 1; J < 3; J++) {
-                    wt = wt_init(obj, (char*)"swt", N, J);
+                    auto wt = wavelet_transform(obj, "swt", N, J);
 
                     if (direct_fft == 0) {
-                        setWTConv(wt, (char*)"direct");
+                        setWTConv(&wt, "direct");
                     } else {
-                        setWTConv(wt, (char*)"fft");
+                        setWTConv(&wt, "fft");
                     }
 
                     if (sym_per == 0) {
-                        setDWTExtension(wt,
-                            (char*)"per"); // Options are "per" and "sym".
+                        setDWTExtension(&wt,
+                            "per"); // Options are "per" and "sym".
                         // Symmetric is the default option
                     } else if (sym_per == 1 && direct_fft == 1) {
-                        setDWTExtension(wt, (char*)"sym");
+                        setDWTExtension(&wt, "sym");
                     } else {
                         break;
                     }
 
-                    swt(wt, inp.get()); // Perform DWT
+                    swt(&wt, inp.get()); // Perform DWT
 
-                    iswt(wt, out.get()); // Perform IDWT (if needed)
+                    iswt(&wt, out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
                     if (direct_fft == 0) {
@@ -107,18 +105,17 @@ void SWTReconstructionTest()
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
+                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt.siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%g ",RMS_Error(out, inp, wt->siglength));
-                    err = RMS_Error(out.get(), inp.get(), wt->siglength);
+                    // printf("%g ",RMS_Error(out, inp, wt.siglength));
+                    err = RMS_Error(out.get(), inp.get(), wt.siglength);
                     // printf("%d %d %g \n",direct_fft,sym_per,err);
                     if (err > epsilon) {
                         printf(
                             "\n ERROR : SWT Reconstruction Unit Test Failed. Exiting. \n");
                         exit(-1);
                     }
-                    wt_free(wt);
                 }
             }
         }
@@ -197,10 +194,10 @@ void SWT2ReconstructionTest()
             for (auto& name : waveletNames) {
                 auto obj = wavelet { name.c_str() };
                 for (auto J = 1; J < 3; J++) {
-                    wt = wt2_init(obj, (char*)"swt", rows, cols,
+                    wt = wt2_init(obj, "swt", rows, cols,
                         J); // Initialize the wavelet transform object
                     if (sym_per == 0) {
-                        setDWT2Extension(wt, (char*)"per"); // Options are "per"
+                        setDWT2Extension(wt, "per"); // Options are "per"
                     }
 
                     auto wavecoeffs = swt2(wt, inp.get()); // Perform DWT
@@ -214,10 +211,10 @@ void SWT2ReconstructionTest()
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt->siglength), epsilon); //
+                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt.siglength), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%g ",RMS_Error(out, inp, wt->siglength));
+                    // printf("%g ",RMS_Error(out, inp, wt.siglength));
                     if (RMS_Error(out.get(), inp.get(), N) > epsilon) {
                         printf(
                             "\n ERROR : SWT2 Reconstruction Unit Test Failed. Exiting. \n");

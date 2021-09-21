@@ -11,37 +11,35 @@
 
 auto main() -> int
 {
-    auto obj = wavelet { "db4" };
-
     auto const input = readFileToVector("testData/signal.txt");
     auto const N = 256;
 
-    wavelet_transform* wt = wt_init(obj, "dwt", N, 3);
-    setDWTExtension(wt, "sym");
-    setWTConv(wt, "direct");
+    auto obj = wavelet { "db4" };
+    auto wt = wavelet_transform(obj, "dwt", N, 3);
+    setDWTExtension(&wt, "sym");
+    setWTConv(&wt, "direct");
 
-    // DWT output can be accessed using wt->output vector.
+    // DWT output can be accessed using wt.output vector.
     // Use wt_summary to find out how to extract appx and detail coefficients
-    dwt(wt, input.data());
+    dwt(&wt, input.data());
 
-    for (auto i = 0; i < wt->outlength; ++i) {
-        printf("%g ", wt->output[i]);
+    for (auto i = 0; i < wt.outlength; ++i) {
+        printf("%g ", wt.output[i]);
     }
 
     auto out = std::make_unique<double[]>(N);
-    idwt(wt, out.get());
+    idwt(&wt, out.get());
 
     auto diff = std::make_unique<double[]>(N);
-    for (auto i = 0; i < wt->siglength; ++i) {
+    for (auto i = 0; i < wt.siglength; ++i) {
         diff[i] = out[i] - input[i];
     }
 
     // If Reconstruction succeeded then the output should be a small value.
-    printf("\n MAX %g \n", absmax(diff.get(), wt->siglength));
+    printf("\n MAX %g \n", absmax(diff.get(), wt.siglength));
 
     // Prints the full summary.
-    wt_summary(wt);
-    wt_free(wt);
+    wt_summary(&wt);
 
     return 0;
 }

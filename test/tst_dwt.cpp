@@ -42,24 +42,24 @@ void MODWTReconstructionTest()
             for (auto const& name : waveletNames) {
                 auto obj = wavelet { name.c_str() };
                 for (auto J = 1; J < 3; J++) {
-                    auto* wt = wt_init(obj, "modwt", N, J);
+                    auto wt = wavelet_transform(obj, "modwt", N, J);
 
                     if (direct_fft == 0) {
-                        setWTConv(wt, "direct");
+                        setWTConv(&wt, "direct");
                     } else {
-                        setWTConv(wt, "fft");
+                        setWTConv(&wt, "fft");
                     }
 
                     if (sym_per == 0) {
-                        setDWTExtension(wt, "per");
+                        setDWTExtension(&wt, "per");
                     } else if (sym_per == 1 && direct_fft == 1) {
-                        setDWTExtension(wt, "sym");
+                        setDWTExtension(&wt, "sym");
                     } else {
                         break;
                     }
 
-                    modwt(wt, inp.get());
-                    imodwt(wt, out.get());
+                    modwt(&wt, inp.get());
+                    imodwt(&wt, out.get());
 
                     if (direct_fft == 0) {
                         epsilon = 1e-8;
@@ -67,12 +67,11 @@ void MODWTReconstructionTest()
                         epsilon = 1e-10;
                     }
 
-                    auto const err = RMS_Error(out.get(), inp.get(), wt->siglength);
+                    auto const err = RMS_Error(out.get(), inp.get(), wt.siglength);
                     if (err > epsilon) {
                         printf("\n ERROR : DWT Reconstruction Unit Test Failed. Exiting. \n");
                         exit(-1);
                     }
-                    wt_free(wt);
                 }
             }
         }

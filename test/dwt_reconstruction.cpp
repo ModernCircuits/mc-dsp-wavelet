@@ -69,25 +69,23 @@ void DWTReconstructionTest()
     for (unsigned int direct_fft = 0; direct_fft < 2; direct_fft++) {
         for (unsigned int sym_per = 0; sym_per < 2; sym_per++) {
             for (auto& waveletName : waveletNames) {
-                char* name = new char[waveletName.size() + 1];
-                memcpy(name, waveletName.c_str(), waveletName.size() + 1);
-                auto obj = wavelet { name };
+                auto obj = wavelet { waveletName.c_str() };
                 for (auto J = 1; J < 3; J++) {
-                    auto* wt = wt_init(obj, "dwt", N, J);
+                    auto wt = wavelet_transform(obj, "dwt", N, J);
                     if (sym_per == 0) {
-                        setDWTExtension(wt, "sym");
+                        setDWTExtension(&wt, "sym");
                     } else {
-                        setDWTExtension(wt, "per");
+                        setDWTExtension(&wt, "per");
                     }
                     if (direct_fft == 0) {
-                        setWTConv(wt, "direct");
+                        setWTConv(&wt, "direct");
                     } else {
-                        setWTConv(wt, "fft");
+                        setWTConv(&wt, "fft");
                     }
 
-                    dwt(wt, inp.get()); // Perform DWT
+                    dwt(&wt, inp.get()); // Perform DWT
 
-                    idwt(wt, out.get()); // Perform IDWT (if needed)
+                    idwt(&wt, out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
                     auto epsilon = 1e-15;
@@ -97,14 +95,12 @@ void DWTReconstructionTest()
                         epsilon = 1e-10;
                     }
 
-                    // std::printf("%g ",RMS_Error(out.get(), inp.get(), wt->siglength));
-                    if (RMS_Error(out.get(), inp.get(), wt->siglength) > epsilon) {
+                    // std::printf("%g ",RMS_Error(out.get(), inp.get(), wt.siglength));
+                    if (RMS_Error(out.get(), inp.get(), wt.siglength) > epsilon) {
                         std::printf("\n ERROR : DWT Reconstruction Unit Test Failed. Exiting. \n");
                         std::exit(-1);
                     }
-                    wt_free(wt);
                 }
-                delete[] name;
             }
         }
     }

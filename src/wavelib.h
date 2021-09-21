@@ -97,6 +97,8 @@ struct conv_set {
 auto conv_init(int N, int L) -> std::unique_ptr<conv_set>;
 
 struct wavelet_transform {
+    wavelet_transform(wavelet& wave, char const* method, int siglength, int j);
+
     wavelet* wave;
     std::unique_ptr<conv_set> cobj;
     std::string method;
@@ -117,8 +119,6 @@ struct wavelet_transform {
     double* output;
     std::unique_ptr<double[]> params;
 };
-
-auto wt_init(wavelet& wave, char const* method, int siglength, int J) -> wavelet_transform*;
 
 struct wtree_set {
     wavelet* wave;
@@ -285,8 +285,6 @@ void wpt_summary(wpt_set* wt);
 void cwt_summary(cwavelet_transform* wt);
 
 void wt2_summary(wt2_set* wt);
-
-void wt_free(wavelet_transform* object);
 
 void wtree_free(wtree_set* object);
 

@@ -50,12 +50,12 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         std::exit(-1);
     }
 
-    wavelet_transform* wt = wt_init(wave, method, N, J);
+    auto wt = wavelet_transform { wave, method, N, J };
     if (method == "dwt"sv) {
-        setDWTExtension(wt, ext);
-        dwt(wt, signal);
+        setDWTExtension(&wt, ext);
+        dwt(&wt, signal);
     } else if (method == "swt"sv) {
-        swt(wt, signal);
+        swt(&wt, signal);
     } else {
         std::printf("Acceptable WT methods are - dwt,swt and modwt\n");
         std::exit(-1);
@@ -65,18 +65,18 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
 
     //Set sigma
 
-    auto iter = wt->length[0];
-    auto dlen = wt->length[J];
+    auto iter = wt.length[0];
+    auto dlen = wt.length[J];
 
     auto dout = std::make_unique<double[]>(dlen);
 
     if (level == "first"sv) {
         for (auto i = 1; i < J; ++i) {
-            iter += wt->length[i];
+            iter += wt.length[i];
         }
 
         for (auto i = 0; i < dlen; ++i) {
-            dout[i] = fabs(wt->output[iter + i]);
+            dout[i] = fabs(wt.output[iter + i]);
         }
 
         sigma = median(dout.get(), dlen) / 0.6745;
@@ -85,9 +85,9 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         }
     } else if (level == "all"sv) {
         for (it = 0; it < J; ++it) {
-            dlen = wt->length[it + 1];
+            dlen = wt.length[it + 1];
             for (auto i = 0; i < dlen; ++i) {
-                dout[i] = fabs(wt->output[iter + i]);
+                dout[i] = fabs(wt.output[iter + i]);
             }
             sigma = median(dout.get(), dlen) / 0.6745;
             lnoise[it] = sigma;
@@ -99,41 +99,39 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         std::exit(-1);
     }
 
-    dwt_len = wt->outlength;
-    iter = wt->length[0];
+    dwt_len = wt.outlength;
+    iter = wt.length[0];
     for (it = 0; it < J; ++it) {
         sigma = lnoise[it];
-        dlen = wt->length[it + 1];
+        dlen = wt.length[it + 1];
         td = std::sqrt(2.0 * std::log(dwt_len)) * sigma;
 
         if (thresh == "hard"sv) {
             for (auto i = 0; i < dlen; ++i) {
-                if (fabs(wt->output[iter + i]) < td) {
-                    wt->output[iter + i] = 0;
+                if (fabs(wt.output[iter + i]) < td) {
+                    wt.output[iter + i] = 0;
                 }
             }
         } else if (thresh == "soft"sv) {
             for (auto i = 0; i < dlen; ++i) {
-                if (fabs(wt->output[iter + i]) < td) {
-                    wt->output[iter + i] = 0;
+                if (fabs(wt.output[iter + i]) < td) {
+                    wt.output[iter + i] = 0;
                 } else {
-                    sgn = wt->output[iter + i] >= 0 ? 1 : -1;
-                    tmp = sgn * (fabs(wt->output[iter + i]) - td);
-                    wt->output[iter + i] = tmp;
+                    sgn = wt.output[iter + i] >= 0 ? 1 : -1;
+                    tmp = sgn * (fabs(wt.output[iter + i]) - td);
+                    wt.output[iter + i] = tmp;
                 }
             }
         }
 
-        iter += wt->length[it + 1];
+        iter += wt.length[it + 1];
     }
 
     if (method == "dwt"sv) {
-        idwt(wt, denoised);
+        idwt(&wt, denoised);
     } else if (method == "swt"sv) {
-        iswt(wt, denoised);
+        iswt(&wt, denoised);
     }
-
-    wt_free(wt);
 }
 
 void sureshrink(double* signal, int N, int J, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised)
@@ -156,7 +154,6 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
     double thr;
     double temp;
     double x_sum;
-    wavelet_transform* wt;
 
     auto wave = wavelet { wname };
     filt_len = wave.size();
@@ -168,35 +165,35 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
         std::exit(-1);
     }
 
-    wt = wt_init(wave, method, N, J);
+    auto wt = wavelet_transform(wave, method, N, J);
 
     if (method == "dwt"sv) {
-        setDWTExtension(wt, ext);
-        dwt(wt, signal);
+        setDWTExtension(&wt, ext);
+        dwt(&wt, signal);
     } else if (method == "swt"sv) {
-        swt(wt, signal);
+        swt(&wt, signal);
     } else {
         std::printf("Acceptable WT methods are - dwt and swt\n");
         std::exit(-1);
     }
 
-    len = wt->length[0];
-    dlen = wt->length[J];
+    len = wt.length[0];
+    dlen = wt.length[J];
 
     auto dout = std::make_unique<double[]>(dlen);
     auto risk = std::make_unique<double[]>(dlen);
     auto dsum = std::make_unique<double[]>(dlen);
     auto lnoise = std::make_unique<double[]>(J);
 
-    iter = wt->length[0];
+    iter = wt.length[0];
 
     if (level == "first"sv) {
         for (auto i = 1; i < J; ++i) {
-            iter += wt->length[i];
+            iter += wt.length[i];
         }
 
         for (auto i = 0; i < dlen; ++i) {
-            dout[i] = fabs(wt->output[iter + i]);
+            dout[i] = fabs(wt.output[iter + i]);
         }
 
         sigma = median(dout.get(), dlen) / 0.6745;
@@ -205,9 +202,9 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
         }
     } else if (level == "all"sv) {
         for (it = 0; it < J; ++it) {
-            dlen = wt->length[it + 1];
+            dlen = wt.length[it + 1];
             for (auto i = 0; i < dlen; ++i) {
-                dout[i] = fabs(wt->output[iter + i]);
+                dout[i] = fabs(wt.output[iter + i]);
             }
             sigma = median(dout.get(), dlen) / 0.6745;
             lnoise[it] = sigma;
@@ -220,7 +217,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
     }
 
     for (it = 0; it < J; ++it) {
-        dwt_len = wt->length[it + 1];
+        dwt_len = wt.length[it + 1];
         sigma = lnoise[it];
 
         if (sigma < 0.00000001) {
@@ -229,7 +226,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
             tv = std::sqrt(2.0 * std::log(dwt_len));
             norm = 0.0;
             for (auto i = 0; i < dwt_len; ++i) {
-                norm += (wt->output[len + i] * wt->output[len + i] / (sigma * sigma));
+                norm += (wt.output[len + i] * wt.output[len + i] / (sigma * sigma));
             }
             te = (norm - (double)dwt_len) / (double)dwt_len;
             ct = pow(std::log((double)dwt_len) / std::log(2.0), 1.5) / std::sqrt((double)dwt_len);
@@ -240,7 +237,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
                 x_sum = 0.0;
 
                 for (auto i = 0; i < dwt_len; ++i) {
-                    dout[i] = fabs(wt->output[len + i] / sigma);
+                    dout[i] = fabs(wt.output[len + i] / sigma);
                 }
 
                 std::sort(dout.get(), dout.get() + dwt_len, std::less<double> {});
@@ -263,32 +260,30 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
 
         if (thresh == "hard"sv) {
             for (auto i = 0; i < dwt_len; ++i) {
-                if (fabs(wt->output[len + i]) < td) {
-                    wt->output[len + i] = 0;
+                if (fabs(wt.output[len + i]) < td) {
+                    wt.output[len + i] = 0;
                 }
             }
         } else if (thresh == "soft"sv) {
             for (auto i = 0; i < dwt_len; ++i) {
-                if (fabs(wt->output[len + i]) < td) {
-                    wt->output[len + i] = 0;
+                if (fabs(wt.output[len + i]) < td) {
+                    wt.output[len + i] = 0;
                 } else {
-                    sgn = wt->output[len + i] >= 0 ? 1 : -1;
-                    temp = sgn * (fabs(wt->output[len + i]) - td);
-                    wt->output[len + i] = temp;
+                    sgn = wt.output[len + i] >= 0 ? 1 : -1;
+                    temp = sgn * (fabs(wt.output[len + i]) - td);
+                    wt.output[len + i] = temp;
                 }
             }
         }
 
-        len += wt->length[it + 1];
+        len += wt.length[it + 1];
     }
 
     if (method == "dwt"sv) {
-        idwt(wt, denoised);
+        idwt(&wt, denoised);
     } else if (method == "swt"sv) {
-        iswt(wt, denoised);
+        iswt(&wt, denoised);
     }
-
-    wt_free(wt);
 }
 
 void modwtshrink(double* signal, int N, int J, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised)
@@ -300,7 +295,6 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
     double tmp;
     double M;
     double llen;
-    wavelet_transform* wt;
 
     auto wave = wavelet { wname };
     auto filt_len = wave.size();
@@ -312,39 +306,39 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
         std::exit(-1);
     }
 
-    wt = wt_init(wave, "modwt", N, J);
+    auto wt = wavelet_transform(wave, "modwt", N, J);
 
     if ((ext == "sym"sv) && (cmethod == "fft"sv)) {
-        setWTConv(wt, "fft");
-        setDWTExtension(wt, "sym");
+        setWTConv(&wt, "fft");
+        setDWTExtension(&wt, "sym");
     } else if ((ext == "sym"sv) && (cmethod == "direct"sv)) {
         std::printf("Symmetric Extension is not available for direct method");
         std::exit(-1);
     } else if ((ext == "per"sv) && (cmethod == "direct"sv)) {
-        setWTConv(wt, "direct");
-        setDWTExtension(wt, "per");
+        setWTConv(&wt, "direct");
+        setDWTExtension(&wt, "per");
     } else if ((ext == "per"sv) && (cmethod == "fft"sv)) {
-        setWTConv(wt, "fft");
-        setDWTExtension(wt, "per");
+        setWTConv(&wt, "fft");
+        setDWTExtension(&wt, "per");
     } else {
         std::printf("Signal extension can be either per or sym");
         std::exit(-1);
     }
 
-    modwt(wt, signal);
+    modwt(&wt, signal);
 
     auto lnoise = std::make_unique<double[]>(J);
 
     //Set sigma
 
-    auto iter = wt->length[0];
-    auto dlen = wt->length[J];
+    auto iter = wt.length[0];
+    auto dlen = wt.length[J];
     auto dout = std::make_unique<double[]>(dlen);
 
     for (it = 0; it < J; ++it) {
-        dlen = wt->length[it + 1];
+        dlen = wt.length[it + 1];
         for (auto i = 0; i < dlen; ++i) {
-            dout[i] = fabs(wt->output[iter + i]);
+            dout[i] = fabs(wt.output[iter + i]);
         }
 
         sigma = std::sqrt(2.0) * median(dout.get(), dlen) / 0.6745;
@@ -353,40 +347,38 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
     }
 
     M = pow(2.0, J);
-    llen = std::log((double)wt->modwtsiglength);
+    llen = std::log((double)wt.modwtsiglength);
     // Thresholding
 
-    iter = wt->length[0];
+    iter = wt.length[0];
     for (it = 0; it < J; ++it) {
         sigma = lnoise[it];
-        dlen = wt->length[it + 1];
+        dlen = wt.length[it + 1];
         td = std::sqrt(2.0 * llen / M) * sigma;
 
         if (thresh == "hard"sv) {
             for (auto i = 0; i < dlen; ++i) {
-                if (fabs(wt->output[iter + i]) < td) {
-                    wt->output[iter + i] = 0;
+                if (fabs(wt.output[iter + i]) < td) {
+                    wt.output[iter + i] = 0;
                 }
             }
         } else if (thresh == "soft"sv) {
             for (auto i = 0; i < dlen; ++i) {
-                if (fabs(wt->output[iter + i]) < td) {
-                    wt->output[iter + i] = 0;
+                if (fabs(wt.output[iter + i]) < td) {
+                    wt.output[iter + i] = 0;
                 } else {
-                    sgn = wt->output[iter + i] >= 0 ? 1 : -1;
-                    tmp = sgn * (fabs(wt->output[iter + i]) - td);
-                    wt->output[iter + i] = tmp;
+                    sgn = wt.output[iter + i] >= 0 ? 1 : -1;
+                    tmp = sgn * (fabs(wt.output[iter + i]) - td);
+                    wt.output[iter + i] = tmp;
                 }
             }
         }
 
-        iter += wt->length[it + 1];
+        iter += wt.length[it + 1];
         M /= 2.0;
     }
 
-    imodwt(wt, denoised);
-
-    wt_free(wt);
+    imodwt(&wt, denoised);
 }
 
 void denoise(denoise_set* obj, double* signal, double* denoised)

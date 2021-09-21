@@ -30,52 +30,46 @@ wavelet::wavelet(char const* name)
     }
 }
 
-auto wt_init(wavelet& wave, char const* method, int siglength, int J) -> wavelet_transform*
+wavelet_transform::wavelet_transform(wavelet& w, char const* method, int siglength, int j)
+    : wave { &w }
+
 {
-    int size;
-    int MaxIter;
-    auto obj = std::unique_ptr<wavelet_transform>(nullptr);
+    auto const size = w.size();
+    auto const maxIter = wmaxiter(siglength, w.size());
 
-    size = wave.size();
-
-    if (J > 100) {
+    if (j > 100) {
         printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
         exit(-1);
     }
 
-    MaxIter = wmaxiter(siglength, size);
-
-    if (J > MaxIter) {
-        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
+    if (j > maxIter) {
+        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", maxIter);
         exit(-1);
     }
 
     if (method == nullptr) {
-        obj = std::make_unique<wavelet_transform>();
-        obj->params = std::make_unique<double[]>(siglength + 2 * J * (size + 1));
-        obj->outlength = siglength + 2 * J * (size + 1);
-        obj->ext = "sym";
+        this->params = std::make_unique<double[]>(siglength + 2 * j * (size + 1));
+        this->outlength = siglength + 2 * j * (size + 1);
+        this->ext = "sym";
     } else if ((method == "dwt"sv) || (method == "DWT"sv)) {
-        obj = std::make_unique<wavelet_transform>();
-        obj->params = std::make_unique<double[]>(siglength + 2 * J * (size + 1));
-        obj->outlength = siglength + 2 * J * (size + 1);
-        obj->ext = "sym";
+        this->params = std::make_unique<double[]>(siglength + 2 * j * (size + 1));
+        this->outlength = siglength + 2 * j * (size + 1);
+        this->ext = "sym";
     } else if ((method == "swt"sv) || (method == "SWT"sv)) {
-        if (testSWTlength(siglength, J) == 0) {
-            printf("\n For SWT the signal length must be a multiple of 2^J. \n");
+        if (testSWTlength(siglength, j) == 0) {
+            printf("\n For SWT the signal length must be a multiple of 2^j. \n");
             exit(-1);
         }
 
-        obj = std::make_unique<wavelet_transform>();
-        obj->params = std::make_unique<double[]>(siglength * (J + 1));
-        obj->outlength = siglength * (J + 1);
-        obj->ext = "per";
+        this->params = std::make_unique<double[]>(siglength * (j + 1));
+        this->outlength = siglength * (j + 1);
+        this->ext = "per";
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
 
-        if (strstr(wave.name().c_str(), "haar") == nullptr) {
-            if (strstr(wave.name().c_str(), "db") == nullptr) {
-                if (strstr(wave.name().c_str(), "sym") == nullptr) {
-                    if (strstr(wave.name().c_str(), "coif") == nullptr) {
+        if (strstr(w.name().c_str(), "haar") == nullptr) {
+            if (strstr(w.name().c_str(), "db") == nullptr) {
+                if (strstr(w.name().c_str(), "sym") == nullptr) {
+                    if (strstr(w.name().c_str(), "coif") == nullptr) {
                         printf("\n MODWT is only implemented for orthogonal wavelet families - db, sym and coif \n");
                         exit(-1);
                     }
@@ -83,46 +77,42 @@ auto wt_init(wavelet& wave, char const* method, int siglength, int J) -> wavelet
             }
         }
 
-        obj = std::make_unique<wavelet_transform>();
-        obj->params = std::make_unique<double[]>(siglength * 2 * (J + 1));
-        obj->outlength = siglength * (J + 1);
-        obj->ext = "per";
+        this->params = std::make_unique<double[]>(siglength * 2 * (j + 1));
+        this->outlength = siglength * (j + 1);
+        this->ext = "per";
     }
 
-    obj->wave = &wave;
-    obj->siglength = siglength;
-    obj->modwtsiglength = siglength;
-    obj->J = J;
-    obj->MaxIter = MaxIter;
-    obj->method = method;
+    this->siglength = siglength;
+    this->modwtsiglength = siglength;
+    this->J = j;
+    this->MaxIter = maxIter;
+    this->method = method;
 
     if (siglength % 2 == 0) {
-        obj->even = 1;
+        this->even = 1;
     } else {
-        obj->even = 0;
+        this->even = 0;
     }
 
-    obj->cobj = nullptr;
+    this->cobj = nullptr;
 
-    obj->cmethod = "direct";
-    obj->cfftset = 0;
-    obj->lenlength = J + 2;
-    obj->output = &obj->params[0];
+    this->cmethod = "direct";
+    this->cfftset = 0;
+    this->lenlength = j + 2;
+    this->output = &this->params[0];
     if ((method == "dwt"sv) || (method == "DWT"sv)) {
-        for (auto i = 0; i < siglength + 2 * J * (size + 1); ++i) {
-            obj->params[i] = 0.0;
+        for (auto i = 0; i < siglength + 2 * j * (size + 1); ++i) {
+            this->params[i] = 0.0;
         }
     } else if ((method == "swt"sv) || (method == "SWT"sv)) {
-        for (auto i = 0; i < siglength * (J + 1); ++i) {
-            obj->params[i] = 0.0;
+        for (auto i = 0; i < siglength * (j + 1); ++i) {
+            this->params[i] = 0.0;
         }
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
-        for (auto i = 0; i < siglength * 2 * (J + 1); ++i) {
-            obj->params[i] = 0.0;
+        for (auto i = 0; i < siglength * 2 * (j + 1); ++i) {
+            this->params[i] = 0.0;
         }
     }
-
-    return obj.release();
 }
 
 auto wtree_init(wavelet* wave, int siglength, int J) -> wtree_set*
@@ -3398,11 +3388,6 @@ void wt2_summary(wt2_set* wt)
         t += 1;
         printf("Diagonal Coefficients access at wt->coeffaccess[%d]=%d, Vector size:%d \n\n", t, wt->coeffaccess[t], vsize);
     }
-}
-
-void wt_free(wavelet_transform* object)
-{
-    delete object;
 }
 
 void wtree_free(wtree_set* object)
