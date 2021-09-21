@@ -12,7 +12,7 @@
 
 void SWTReconstructionTest()
 {
-    wt_set* wt;
+    wavelet_transform* wt;
 
     int N;
     int i;

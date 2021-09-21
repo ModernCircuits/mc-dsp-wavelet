@@ -74,7 +74,7 @@ auto minindex(double const* arr, int N) -> int
     return index;
 }
 
-void getDWTAppx(wt_set* wt, double* appx, int N)
+void getDWTAppx(wavelet_transform* wt, double* appx, int N)
 {
     /*
 	Wavelet decomposition is stored as
@@ -88,7 +88,7 @@ void getDWTAppx(wt_set* wt, double* appx, int N)
     }
 }
 
-void getDWTDetail(wt_set* wt, double* detail, int N, int level)
+void getDWTDetail(wavelet_transform* wt, double* detail, int N, int level)
 {
     /*
 	returns Detail coefficents at the jth level where j = J,J-1,...,1

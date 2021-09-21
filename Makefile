@@ -17,7 +17,8 @@ tidy-fix:
 coverage:
 	cmake -S . -G Ninja -B cmake-build-coverage -D CMAKE_BUILD_TYPE=Debug -D LT_BUILD_COVERAGE=TRUE
 	cmake --build cmake-build-coverage
-	cd cmake-build-coverage && ctest -j 12
+	# cd cmake-build-coverage && ctest -j 12
+	./cmake-build-coverage/test/bpm_detector ~/Downloads/BPM\ Detection/The\ Rock\ Show\ \(192\ bpm,\ 4:4\).wav
 
 .PHONY: coverage-html
 coverage-html: coverage

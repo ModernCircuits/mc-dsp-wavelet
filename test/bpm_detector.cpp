@@ -10,7 +10,7 @@
 #include <numeric>
 #include <utility>
 
-auto approx_coeffs(wt_set const& wt) -> std::vector<double>
+auto approx_coeffs(wavelet_transform const& wt) -> std::vector<double>
 {
     auto size = static_cast<std::size_t>(wt.length[0]);
     auto result = std::vector<double>(size);
@@ -18,7 +18,7 @@ auto approx_coeffs(wt_set const& wt) -> std::vector<double>
     return result;
 }
 
-auto detail_coeffs(wt_set const& wt) -> std::vector<double>
+auto detail_coeffs(wavelet_transform const& wt) -> std::vector<double>
 {
     auto const* first = wt.output + wt.length[0];
     auto size = static_cast<std::size_t>(wt.length[1]);
@@ -26,6 +26,12 @@ auto detail_coeffs(wt_set const& wt) -> std::vector<double>
     std::copy(first, first + size, begin(result));
     return result;
 }
+
+// t = wt->length[0];
+// for (auto i = 0; i < J; ++i) {
+//     printf("Level %d Access : output[%d] Length : %d \n", J - i, t, wt->length[i + 1]);
+//     t += wt->length[i + 1];
+// }
 
 template <typename It>
 auto mean(It f, It l) -> double
@@ -61,59 +67,68 @@ struct bpm_detect {
         auto const maxNdx = std::floor(60.0 / 40.0 * (sampleRate / maxDecimation));
 
         auto cD_minlen = 0.0;
-        for (auto loop { 0 }; loop < levels; ++loop) {
-            cD_.clear();
-            if (loop == 0) {
-                dwt(wt_.get(), input.data());
-                cA_ = approx_coeffs(*wt_);
-                cD_ = detail_coeffs(*wt_);
-                cD_minlen = static_cast<double>(size(cD_)) / maxDecimation + 1.0;
-                cD_sum_.resize(static_cast<std::size_t>(std::floor(cD_minlen)));
-                std::fill(begin(cD_sum_), end(cD_sum_), 0.0);
-            } else {
-                dwt(wt_.get(), cA_.data());
-            }
+        cD_sum_.clear();
+        dwt(wt_.get(), input.data());
+        // for (auto loop { 0 }; loop < levels; ++loop) {
+        //     cD_.clear();
+        //     cA_.clear();
+        //     if (loop == 0) {
+        //         dwt(wt_.get(), input.data());
+        //         cA_ = approx_coeffs(*wt_);
+        //         cD_ = detail_coeffs(*wt_);
+        //         cD_minlen = static_cast<double>(size(cD_)) / maxDecimation + 1.0;
+        //         cD_sum_.resize(static_cast<std::size_t>(std::floor(cD_minlen)));
+        //         std::fill(begin(cD_sum_), end(cD_sum_), 0.0);
+        //     } else {
+        //         dwt(wt_.get(), cA_.data());
+        //         cA_ = approx_coeffs(*wt_);
+        //         cD_ = detail_coeffs(*wt_);
+        //     }
 
-            // 2) Filter
-            // cD = signal.lfilter([0.01], [1 - 0.99], cD)
+        //     // 2) Filter
+        //     // cD = signal.lfilter([0.01], [1 - 0.99], cD)
 
-            // 4) Subtract out the mean.
-            // cD = cD - np.mean(cD)
-            auto const m = mean(begin(cD_), end(cD_));
-            std::transform(begin(cD_), end(cD_), begin(cD_), [m](auto v) { return v - m; });
+        //     // 4) Subtract out the mean.
+        //     // cD = cD - np.mean(cD)
+        //     auto const m = mean(begin(cD_), end(cD_));
+        //     std::transform(begin(cD_), end(cD_), begin(cD_), [m](auto v) { return v - m; });
 
-            // 5) Decimate for reconstruction later.
-            // cD = abs(cD[:: (2 ** (levels - loop - 1))])
-            cD_.resize(static_cast<std::size_t>(std::pow(2, levels - loop - 1)));
-            std::transform(begin(cD_), end(cD_), begin(cD_), [](auto v) { return std::fabs(v); });
+        //     // 5) Decimate for reconstruction later.
+        //     // cD = abs(cD[:: (2 ** (levels - loop - 1))])
+        //     cD_.resize(static_cast<std::size_t>(std::pow(2, levels - loop - 1)));
+        //     std::transform(begin(cD_), end(cD_), begin(cD_), [](auto v) { return std::fabs(v); });
 
-            // 6) Recombine the signal before ACF
-            //    Essentially, each level the detail coefs (i.e. the HPF values)
-            //    are concatenated to the beginning of the array
-            // cD_sum = cD[0: math.floor(cD_minlen)] + cD_sum
-            cD_sum_.insert(begin(cD_sum_), begin(cD_), std::next(begin(cD_), static_cast<size_t>(std::floor(cD_minlen))));
-        }
+        //     // 6) Recombine the signal before ACF
+        //     //    Essentially, each level the detail coefs (i.e. the HPF values)
+        //     //    are concatenated to the beginning of the array
+        //     // cD_sum = cD[0: math.floor(cD_minlen)] + cD_sum
+        //     cD_sum_.insert(begin(cD_sum_), begin(cD_), std::next(begin(cD_), static_cast<size_t>(std::floor(cD_minlen))));
+        // }
 
-        // if [b for b in cA if b != 0.0] == []:
-        //     return no_audio_data()
-        if (std::none_of(begin(cA_), end(cA_), [](auto s) { return s != 0.0; })) {
-            return 0.0;
-        }
+        // // if [b for b in cA if b != 0.0] == []:
+        // //     return no_audio_data()
+        // if (std::none_of(begin(cA_), end(cA_), [](auto s) { return s != 0.0; })) {
+        //     return 0.0;
+        // }
 
-        // # Adding in the approximate data as well...
-        // cA = signal.lfilter([0.01], [1 - 0.99], cA)
-        // cA = abs(cA)
-        // cA = cA - np.mean(cA)
-        // cD_sum = cA[0: math.floor(cD_minlen)] + cD_sum
-        std::transform(begin(cA_), end(cA_), begin(cA_), [](auto v) { return std::fabs(v); });
-        auto const m = mean(begin(cA_), end(cA_));
-        std::transform(begin(cA_), end(cA_), begin(cA_), [m](auto v) { return v - m; });
-        cD_sum_.insert(begin(cD_sum_), begin(cA_), std::next(begin(cA_), static_cast<size_t>(std::floor(cD_minlen))));
+        // // # Adding in the approximate data as well...
+        // // cA = signal.lfilter([0.01], [1 - 0.99], cA)
+        // // cA = abs(cA)
+        // // cA = cA - np.mean(cA)
+        // // cD_sum = cA[0: math.floor(cD_minlen)] + cD_sum
+        // std::transform(begin(cA_), end(cA_), begin(cA_), [](auto v) { return std::fabs(v); });
+        // auto const m = mean(begin(cA_), end(cA_));
+        // std::transform(begin(cA_), end(cA_), begin(cA_), [m](auto v) { return v - m; });
+        // cD_sum_.insert(begin(cD_sum_), begin(cA_), std::next(begin(cA_), static_cast<size_t>(std::floor(cD_minlen))));
 
         // # ACF
         // correl = np.correlate(cD_sum, cD_sum, "full")
         auto cD_sumf = std::vector<float> {};
-        std::copy(begin(cD_sum_), end(cD_sum_), std::back_inserter(cD_sumf));
+        std::copy(wt_->output, wt_->output + wt_->outlength, std::back_inserter(cD_sumf));
+        std::transform(begin(cD_sumf), end(cD_sumf), begin(cD_sumf), [](auto v) { return std::fabs(v); });
+        auto const m = mean(begin(cD_sumf), end(cD_sumf));
+        std::transform(begin(cD_sumf), end(cD_sumf), begin(cD_sumf), [m](auto v) { return v - m; });
+
         FloatSignal s(cD_sumf.data(), cD_sumf.size());
         OverlapSaveConvolver x(s, s);
         x.executeXcorr();
@@ -130,7 +145,7 @@ struct bpm_detect {
 
 private:
     wavelet wave_;
-    std::unique_ptr<wt_set> wt_;
+    std::unique_ptr<wavelet_transform> wt_;
 
     std::vector<double> cA_ {};
     std::vector<double> cD_ {};
@@ -158,13 +173,10 @@ auto main(int argc, char** argv) -> int
 
     auto const windowSize = static_cast<std::size_t>(std::floor(3.0 * fs));
     auto const maxWindowIndex = std::size(channel) / windowSize;
-    auto detector = bpm_detect { std::size(channel), 4 };
-
-    printf("windowSize: %zu\n", windowSize);
-    printf("maxWindowIndex: %zu\n", maxWindowIndex);
 
     auto samps_ndx = 0U;
     auto bpms = makeZeros<double>(maxWindowIndex);
+    auto detector = bpm_detect { windowSize, 4 };
     for (auto window_ndx { 0U }; window_ndx < maxWindowIndex; ++window_ndx) {
         if (samps_ndx + windowSize >= std::size(channel)) {
             std::puts("ERROR");
@@ -172,9 +184,8 @@ auto main(int argc, char** argv) -> int
         }
 
         auto subBuffer = channel.subspan(samps_ndx, windowSize);
-        printf("size(subBuffer): %zu\n", std::size(subBuffer));
-
         auto bpm = detector.perform(subBuffer, fs);
+
         printf("BPM:%f\n", bpm);
         if (bpm == 0.0) {
             continue;

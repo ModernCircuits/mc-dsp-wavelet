@@ -273,7 +273,7 @@ void CWTReconstructionTest()
     double epsilon;
     int it1;
     int it2;
-    cwt_set* wt;
+    cwavelet_transform* wt;
 
     char const* wave[3] {
         "morl",

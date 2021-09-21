@@ -16,7 +16,7 @@ auto main() -> int
     auto const input = readFileToVector("testData/signal.txt");
     auto const N = 256;
 
-    wt_set* wt = wt_init(obj, "dwt", N, 3);
+    wavelet_transform* wt = wt_init(obj, "dwt", N, 3);
     setDWTExtension(wt, "sym");
     setWTConv(wt, "direct");
 

@@ -96,7 +96,7 @@ struct conv_set {
 
 auto conv_init(int N, int L) -> std::unique_ptr<conv_set>;
 
-struct wt_set {
+struct wavelet_transform {
     wavelet* wave;
     std::unique_ptr<conv_set> cobj;
     std::string method;
@@ -118,7 +118,7 @@ struct wt_set {
     std::unique_ptr<double[]> params;
 };
 
-auto wt_init(wavelet& wave, char const* method, int siglength, int J) -> wt_set*;
+auto wt_init(wavelet& wave, char const* method, int siglength, int J) -> wavelet_transform*;
 
 struct wtree_set {
     wavelet* wave;
@@ -172,7 +172,7 @@ struct wpt_set {
 
 auto wpt_init(wavelet* wave, int siglength, int J) -> wpt_set*;
 
-struct cwt_set {
+struct cwavelet_transform {
     std::string wave; // Wavelet - morl/morlet,paul,dog/dgauss
     int siglength; // Length of Input Data
     int J; // Total Number of Scales
@@ -195,7 +195,7 @@ struct cwt_set {
     std::unique_ptr<double[]> params;
 };
 
-auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -> cwt_set*;
+auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -> cwavelet_transform*;
 
 struct wt2_set {
     wavelet* wave;
@@ -216,9 +216,9 @@ struct wt2_set {
 
 auto wt2_init(wavelet& wave, char const* method, int rows, int cols, int J) -> wt2_set*;
 
-void dwt(wt_set* wt, double const* inp);
+void dwt(wavelet_transform* wt, double const* inp);
 
-void idwt(wt_set* wt, double* dwtop);
+void idwt(wavelet_transform* wt, double* dwtop);
 
 void wtree(wtree_set* wt, double const* inp);
 
@@ -226,15 +226,15 @@ void dwpt(wpt_set* wt, double const* inp);
 
 void idwpt(wpt_set* wt, double* dwtop);
 
-void swt(wt_set* wt, double const* inp);
+void swt(wavelet_transform* wt, double const* inp);
 
-void iswt(wt_set* wt, double* swtop);
+void iswt(wavelet_transform* wt, double* swtop);
 
-void modwt(wt_set* wt, double const* inp);
+void modwt(wavelet_transform* wt, double const* inp);
 
-void imodwt(wt_set* wt, double* oup);
+void imodwt(wavelet_transform* wt, double* oup);
 
-void setDWTExtension(wt_set* wt, char const* extension);
+void setDWTExtension(wavelet_transform* wt, char const* extension);
 
 void setWTREEExtension(wtree_set* wt, char const* extension);
 
@@ -244,7 +244,7 @@ void setDWT2Extension(wt2_set* wt, char const* extension);
 
 void setDWPTEntropy(wpt_set* wt, char const* entropy, double eparam);
 
-void setWTConv(wt_set* wt, char const* cmethod);
+void setWTConv(wavelet_transform* wt, char const* cmethod);
 
 auto getWTREENodelength(wtree_set* wt, int X) -> int;
 
@@ -252,11 +252,11 @@ void getWTREECoeffs(wtree_set* wt, int X, int Y, double* coeffs, int N);
 
 auto getDWPTNodelength(wpt_set* wt, int X) -> int;
 
-void setCWTScales(cwt_set* wt, double s0, double dj, char const* type, int power);
+void setCWTScales(cwavelet_transform* wt, double s0, double dj, char const* type, int power);
 
-void cwt(cwt_set* wt, double const* inp);
+void cwt(cwavelet_transform* wt, double const* inp);
 
-void icwt(cwt_set* wt, double* cwtop);
+void icwt(cwavelet_transform* wt, double* cwtop);
 
 auto dwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>;
 
@@ -276,23 +276,23 @@ void dispWT2Coeffs(double* A, int row, int col);
 
 void wave_summary(wavelet const& obj);
 
-void wt_summary(wt_set* wt);
+void wt_summary(wavelet_transform* wt);
 
 void wtree_summary(wtree_set* wt);
 
 void wpt_summary(wpt_set* wt);
 
-void cwt_summary(cwt_set* wt);
+void cwt_summary(cwavelet_transform* wt);
 
 void wt2_summary(wt2_set* wt);
 
-void wt_free(wt_set* object);
+void wt_free(wavelet_transform* object);
 
 void wtree_free(wtree_set* object);
 
 void wpt_free(wpt_set* object);
 
-void cwt_free(cwt_set* object);
+void cwt_free(cwavelet_transform* object);
 
 void wt2_free(wt2_set* wt);
 

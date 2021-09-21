@@ -50,7 +50,7 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         std::exit(-1);
     }
 
-    wt_set* wt = wt_init(wave, method, N, J);
+    wavelet_transform* wt = wt_init(wave, method, N, J);
     if (method == "dwt"sv) {
         setDWTExtension(wt, ext);
         dwt(wt, signal);
@@ -156,7 +156,7 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
     double thr;
     double temp;
     double x_sum;
-    wt_set* wt;
+    wavelet_transform* wt;
 
     auto wave = wavelet { wname };
     filt_len = wave.size();
@@ -300,7 +300,7 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
     double tmp;
     double M;
     double llen;
-    wt_set* wt;
+    wavelet_transform* wt;
 
     auto wave = wavelet { wname };
     auto filt_len = wave.size();
