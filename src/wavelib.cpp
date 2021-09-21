@@ -3200,33 +3200,33 @@ void wave_summary(wavelet const& obj)
 {
     auto const N = obj.size();
     printf("\n");
-    printf("Wavelet Name : %s \n", obj.name().c_str());
+    printf("Wavelet Name: %s \n", obj.name().c_str());
     printf("\n");
-    printf("Wavelet Filters \n\n");
-    printf("lpd : [");
+    printf("Wavelet Filters \n");
+    printf("lpd: [");
     for (auto i = 0; i < N - 1; ++i) {
         printf("%g,", obj.lpd()[i]);
     }
     printf("%g", obj.lpd()[N - 1]);
-    printf("] \n\n");
-    printf("hpd : [");
+    printf("] \n");
+    printf("hpd: [");
     for (auto i = 0; i < N - 1; ++i) {
         printf("%g,", obj.hpd()[i]);
     }
     printf("%g", obj.hpd()[N - 1]);
-    printf("] \n\n");
-    printf("lpr : [");
+    printf("] \n");
+    printf("lpr: [");
     for (auto i = 0; i < N - 1; ++i) {
         printf("%g,", obj.lpr()[i]);
     }
     printf("%g", obj.lpr()[N - 1]);
-    printf("] \n\n");
-    printf("hpr : [");
+    printf("] \n");
+    printf("hpr: [");
     for (auto i = 0; i < N - 1; ++i) {
         printf("%g,", obj.hpr()[i]);
     }
     printf("%g", obj.hpr()[N - 1]);
-    printf("] \n\n");
+    printf("] \n");
 }
 
 void wt_summary(wt_set* wt)
@@ -3237,22 +3237,14 @@ void wt_summary(wt_set* wt)
     wave_summary(*wt->wave);
     printf("\n");
     printf("Wavelet Transform : %s \n", wt->method.c_str());
-    printf("\n");
     printf("Signal Extension : %s \n", wt->ext.c_str());
-    printf("\n");
     printf("Convolutional Method : %s \n", wt->cmethod.c_str());
-    printf("\n");
     printf("Number of Decomposition Levels %d \n", wt->J);
-    printf("\n");
     printf("Length of Input Signal %d \n", wt->siglength);
-    printf("\n");
     printf("Length of WT Output Vector %d \n", wt->outlength);
-    printf("\n");
     printf("Wavelet Coefficients are contained in vector : %s \n", "output");
-    printf("\n");
     printf("Approximation Coefficients \n");
     printf("Level %d Access : output[%d] Length : %d \n", J, 0, wt->length[0]);
-    printf("\n");
     printf("Detail Coefficients \n");
     t = wt->length[0];
     for (auto i = 0; i < J; ++i) {

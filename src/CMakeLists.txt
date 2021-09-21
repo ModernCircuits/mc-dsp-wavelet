@@ -3,6 +3,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_D
 target_link_libraries(${CMAKE_PROJECT_NAME}
     PUBLIC
         lt::Span
+        FFTW3::fftw3f
+        coz::coz
         lt::CompilerOptions
         lt::CompilerWarnings
         lt::CodeCoverage
@@ -17,6 +19,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         cwtmath.cpp
         hsfft.h
         hsfft.cpp
+        overlap_save_convolver.hpp
+        overlap_save_convolver.cpp
         real.h
         real.cpp
         wavefilt.h

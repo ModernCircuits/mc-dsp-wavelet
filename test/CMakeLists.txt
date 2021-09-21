@@ -15,6 +15,7 @@ function(wavelib_add_test _target)
     target_link_libraries(${_target} PRIVATE wavelib wavelib_testdata lt::CodeCoverage)
 endfunction()
 
+wavelib_add_test(bpm_detector)
 wavelib_add_test(cwttest)
 wavelib_add_test(dwttest)
 wavelib_add_test(swttest)

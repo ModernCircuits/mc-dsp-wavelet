@@ -13,13 +13,14 @@ inline auto readFileToVector(char const* filePath) -> std::vector<double>
         std::exit(100);
     }
 
-    double temp[1200] {};
-    auto i = std::size_t { 0 };
+    auto result = std::vector<double> {};
+    result.reserve(8096 * 4);
     while (std::feof(ifp) == 0) {
-        std::fscanf(ifp, "%lf \n", &temp[i]);
-        i++;
+        auto temp = 0.0;
+        std::fscanf(ifp, "%lf\n", &temp);
+        result.push_back(temp);
     }
 
     std::fclose(ifp);
-    return std::vector<double>(std::begin(temp), std::begin(temp) + i);
+    return result;
 }
