@@ -74,52 +74,6 @@ auto minindex(double const* arr, int N) -> int
     return index;
 }
 
-void getDWTAppx(wavelet_transform* wt, double* appx, int N)
-{
-    /*
-	Wavelet decomposition is stored as
-	[A(J) D(J) D(J-1) ..... D(1)] in wt->output vector
-
-	Length of A(J) , N = wt->length[0]
-	*/
-
-    for (auto i = 0; i < N; ++i) {
-        appx[i] = wt->output[i];
-    }
-}
-
-void getDWTDetail(wavelet_transform* wt, double* detail, int N, int level)
-{
-    /*
-	returns Detail coefficents at the jth level where j = J,J-1,...,1
-	and Wavelet decomposition is stored as
-	[A(J) D(J) D(J-1) ..... D(1)] in wt->output vector
-	Use getDWTAppx() to get A(J)
-	Level 1 : Length of D(J), ie N, is stored in wt->length[1]
-	Level 2 :Length of D(J-1), ie N, is stored in wt->length[2]
-	....
-	Level J : Length of D(1), ie N, is stored in wt->length[J]
-	*/
-    int iter;
-    int J;
-    J = wt->J;
-
-    if (level > J || level < 1) {
-        printf("The decomposition only has 1,..,%d levels", J);
-        exit(-1);
-    }
-
-    iter = wt->length[0];
-
-    for (auto i = 1; i < J - level; ++i) {
-        iter += wt->length[i];
-    }
-
-    for (auto i = 0; i < N; ++i) {
-        detail[i] = wt->output[i + iter];
-    }
-}
-
 void autocovar(double const* vec, int N, double* acov, int M)
 {
     double m;

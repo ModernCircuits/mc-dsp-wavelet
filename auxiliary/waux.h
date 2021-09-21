@@ -23,10 +23,6 @@ auto median(double* x, int N) -> double;
 
 auto minindex(double const* arr, int N) -> int;
 
-void getDWTAppx(wavelet_transform* wt, double* appx, int N);
-
-void getDWTDetail(wavelet_transform* wt, double* detail, int N, int level);
-
 void autocovar(double const* vec, int N, double* acov, int M);
 
 void autocorr(double const* vec, int N, double* acorr, int M);

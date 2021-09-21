@@ -139,6 +139,58 @@ auto wavelet_transform::dwt_extension(char const* extension) -> void
     }
 }
 
+auto wavelet_transform::approx() const noexcept -> lt::span<double>
+{
+    /*
+	Wavelet decomposition is stored as
+	[A(J) D(J) D(J-1) ..... D(1)] in wt->output vector
+
+	Length of A(J) , N = wt->length[0]
+	*/
+
+    return lt::span<double>(&output[0], static_cast<size_t>(length[0]));
+}
+
+auto wavelet_transform::detail(std::size_t level) const noexcept -> lt::span<double>
+{
+    /*
+	returns Detail coefficents at the jth level where j = J,J-1,...,1
+	and Wavelet decomposition is stored as
+	[A(J) D(J) D(J-1) ..... D(1)] in wt->output vector
+	Use getDWTAppx() to get A(J)
+	Level 1 : Length of D(J), ie N, is stored in wt->length[1]
+	Level 2 :Length of D(J-1), ie N, is stored in wt->length[2]
+	....
+	Level J : Length of D(1), ie N, is stored in wt->length[J]
+	*/
+
+    if (level > static_cast<std::size_t>(J) || level < 1U) {
+        printf("The decomposition only has 1,..,%d levels", J);
+        exit(-1);
+    }
+
+    auto iter = length[0];
+    for (auto i = 1U; i < J - level; ++i) {
+        iter += length[i];
+    }
+
+    return lt::span<double>(&output[iter], static_cast<size_t>(length[level]));
+}
+
+auto wavelet_transform::approx(double* out, std::size_t n) const noexcept -> void
+{
+    auto a = this->approx();
+    a = a.subspan(0, std::min(a.size(), n));
+    std::copy(std::begin(a), std::end(a), out);
+}
+
+auto wavelet_transform::detail(double* out, std::size_t n, std::size_t level) const noexcept -> void
+{
+    auto d = this->detail(level);
+    d = d.subspan(0, std::min(d.size(), n));
+    std::copy(std::begin(d), std::end(d), out);
+}
+
 auto wtree_init(wavelet* wave, int siglength, int J) -> wtree_set*
 {
     auto const size = wave->size();
