@@ -23,7 +23,7 @@ auto main() -> int
     auto const J = 1;
 
     auto wt = wavelet_transform(obj, "swt", N, J); // Initialize the wavelet transform object
-    setWTConv(&wt, "direct");
+    wt.convolution_method("direct");
 
     swt(&wt, inp.data()); // Perform SWT
     //SWT output can be accessed using wt.output vector. Use wt_summary to find out how to extract appx and detail coefficients

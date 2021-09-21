@@ -73,14 +73,14 @@ void DWTReconstructionTest()
                 for (auto J = 1; J < 3; J++) {
                     auto wt = wavelet_transform(obj, "dwt", N, J);
                     if (sym_per == 0) {
-                        setDWTExtension(&wt, "sym");
+                        wt.dwt_extension("sym");
                     } else {
-                        setDWTExtension(&wt, "per");
+                        wt.dwt_extension("per");
                     }
                     if (direct_fft == 0) {
-                        setWTConv(&wt, "direct");
+                        wt.convolution_method("direct");
                     } else {
-                        setWTConv(&wt, "fft");
+                        wt.convolution_method("fft");
                     }
 
                     dwt(&wt, inp.get()); // Perform DWT

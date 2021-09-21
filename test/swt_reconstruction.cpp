@@ -80,17 +80,16 @@ void SWTReconstructionTest()
                     auto wt = wavelet_transform(obj, "swt", N, J);
 
                     if (direct_fft == 0) {
-                        setWTConv(&wt, "direct");
+                        wt.convolution_method("direct");
                     } else {
-                        setWTConv(&wt, "fft");
+                        wt.convolution_method("fft");
                     }
 
                     if (sym_per == 0) {
-                        setDWTExtension(&wt,
-                            "per"); // Options are "per" and "sym".
+                        wt.dwt_extension("per"); // Options are "per" and "sym".
                         // Symmetric is the default option
                     } else if (sym_per == 1 && direct_fft == 1) {
-                        setDWTExtension(&wt, "sym");
+                        wt.dwt_extension("sym");
                     } else {
                         break;
                     }

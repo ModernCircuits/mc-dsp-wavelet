@@ -16,8 +16,8 @@ auto main() -> int
 
     auto obj = wavelet { "db4" };
     auto wt = wavelet_transform(obj, "dwt", N, 3);
-    setDWTExtension(&wt, "sym");
-    setWTConv(&wt, "direct");
+    wt.dwt_extension("sym");
+    wt.convolution_method("direct");
 
     // DWT output can be accessed using wt.output vector.
     // Use wt_summary to find out how to extract appx and detail coefficients

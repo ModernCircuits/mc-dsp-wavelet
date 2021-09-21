@@ -115,6 +115,30 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
     }
 }
 
+auto wavelet_transform::convolution_method(char const* conv_method) -> void
+{
+    if ((conv_method == "fft"sv) || (conv_method == "FFT"sv)) {
+        this->cmethod = "fft";
+    } else if (conv_method == "direct"sv) {
+        this->cmethod = "direct";
+    } else {
+        printf("Convolution Only accepts two methods - direct and fft");
+        exit(-1);
+    }
+}
+
+auto wavelet_transform::dwt_extension(char const* extension) -> void
+{
+    if (extension == "sym"sv) {
+        ext = "sym";
+    } else if (extension == "per"sv) {
+        ext = "per";
+    } else {
+        printf("Signal extension can be either per or sym");
+        exit(-1);
+    }
+}
+
 auto wtree_init(wavelet* wave, int siglength, int J) -> wtree_set*
 {
     auto const size = wave->size();
@@ -2358,18 +2382,6 @@ void imodwt(wavelet_transform* wt, double* oup)
     }
 }
 
-void setDWTExtension(wavelet_transform* wt, char const* extension)
-{
-    if (extension == "sym"sv) {
-        wt->ext = "sym";
-    } else if (extension == "per"sv) {
-        wt->ext = "per";
-    } else {
-        printf("Signal extension can be either per or sym");
-        exit(-1);
-    }
-}
-
 void setWTREEExtension(wtree_set* wt, char const* extension)
 {
     if (extension == "sym"sv) {
@@ -2429,18 +2441,6 @@ void setDWPTEntropy(wpt_set* wt, char const* entropy, double eparam)
         wt->entropy = "logenergy";
     } else {
         printf("Entropy should be one of shannon, threshold, norm or logenergy");
-        exit(-1);
-    }
-}
-
-void setWTConv(wavelet_transform* wt, char const* cmethod)
-{
-    if ((cmethod == "fft"sv) || (cmethod == "FFT"sv)) {
-        wt->cmethod = "fft";
-    } else if (cmethod == "direct"sv) {
-        wt->cmethod = "direct";
-    } else {
-        printf("Convolution Only accepts two methods - direct and fft");
         exit(-1);
     }
 }

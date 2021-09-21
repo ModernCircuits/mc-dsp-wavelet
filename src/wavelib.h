@@ -99,6 +99,9 @@ auto conv_init(int N, int L) -> std::unique_ptr<conv_set>;
 struct wavelet_transform {
     wavelet_transform(wavelet& wave, char const* method, int siglength, int j);
 
+    auto convolution_method(char const* cmethod) -> void;
+    auto dwt_extension(char const* extension) -> void;
+
     wavelet* wave;
     std::unique_ptr<conv_set> cobj;
     std::string method;
@@ -234,8 +237,6 @@ void modwt(wavelet_transform* wt, double const* inp);
 
 void imodwt(wavelet_transform* wt, double* oup);
 
-void setDWTExtension(wavelet_transform* wt, char const* extension);
-
 void setWTREEExtension(wtree_set* wt, char const* extension);
 
 void setDWPTExtension(wpt_set* wt, char const* extension);
@@ -243,8 +244,6 @@ void setDWPTExtension(wpt_set* wt, char const* extension);
 void setDWT2Extension(wt2_set* wt, char const* extension);
 
 void setDWPTEntropy(wpt_set* wt, char const* entropy, double eparam);
-
-void setWTConv(wavelet_transform* wt, char const* cmethod);
 
 auto getWTREENodelength(wtree_set* wt, int X) -> int;
 

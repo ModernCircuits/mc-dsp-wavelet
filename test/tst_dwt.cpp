@@ -45,15 +45,15 @@ void MODWTReconstructionTest()
                     auto wt = wavelet_transform(obj, "modwt", N, J);
 
                     if (direct_fft == 0) {
-                        setWTConv(&wt, "direct");
+                        wt.convolution_method("direct");
                     } else {
-                        setWTConv(&wt, "fft");
+                        wt.convolution_method("fft");
                     }
 
                     if (sym_per == 0) {
-                        setDWTExtension(&wt, "per");
+                        wt.dwt_extension("per");
                     } else if (sym_per == 1 && direct_fft == 1) {
-                        setDWTExtension(&wt, "sym");
+                        wt.dwt_extension("sym");
                     } else {
                         break;
                     }
