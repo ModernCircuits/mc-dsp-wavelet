@@ -1,4 +1,4 @@
-#include "wauxlib.h"
+#include "wavelets/wauxlib.h"
 
 #include "readFileToVector.hpp"
 

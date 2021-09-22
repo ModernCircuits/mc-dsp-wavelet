@@ -1,6 +1,6 @@
 #include "WaveletTree.hpp"
 
-#include "wtmath.h"
+#include "wavelets/wtmath.h"
 
 #include <cmath>
 #include <string_view>

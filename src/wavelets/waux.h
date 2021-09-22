@@ -8,7 +8,7 @@
 #ifndef AUXILIARY_WAUX_H_
 #define AUXILIARY_WAUX_H_
 
-#include "wavelib.h"
+#include "wavelets.hpp"
 #include <cfloat>
 #include <cmath>
 #include <cstdio>

@@ -2,7 +2,7 @@
 
 #include "tcb/span.hpp"
 
-#include "Convolution.hpp"
+#include "wavelets/Convolution.hpp"
 
 #include <string>
 

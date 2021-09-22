@@ -1,4 +1,4 @@
-#include "wavelib.h"
+#include "wavelets.hpp"
 
 #include <cmath>
 #include <cstdio>

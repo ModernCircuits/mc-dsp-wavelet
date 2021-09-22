@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "wavelib.h"
+#include "wavelets.hpp"
 
 #define PI2 6.28318530717958647692528676655900577
 

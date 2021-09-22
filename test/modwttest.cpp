@@ -1,4 +1,4 @@
-#include "wavelib.h"
+#include "wavelets.hpp"
 
 #include "helper.hpp"
 #include "readFileToVector.hpp"

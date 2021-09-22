@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Holger Nahrstaedt (TU Berlin)
  */
-#include "wavelib.h"
+#include "wavelets.hpp"
 
 #include "helper.hpp"
 

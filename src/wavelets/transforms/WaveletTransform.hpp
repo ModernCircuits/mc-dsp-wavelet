@@ -2,10 +2,10 @@
 
 #include "tcb/span.hpp"
 
-#include "Convolution.hpp"
-#include "ConvolutionMethod.hpp"
-#include "SignalExtension.hpp"
-#include "Wavelet.hpp"
+#include "wavelets/Convolution.hpp"
+#include "wavelets/ConvolutionMethod.hpp"
+#include "wavelets/SignalExtension.hpp"
+#include "wavelets/Wavelet.hpp"
 
 #include <string>
 

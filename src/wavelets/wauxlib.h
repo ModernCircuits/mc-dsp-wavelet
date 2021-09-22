@@ -3,7 +3,7 @@
 #ifndef WAUXLIB_H_
 #define WAUXLIB_H_
 
-#include "wavelib.h"
+#include "wavelets.hpp"
 
 #include <string>
 

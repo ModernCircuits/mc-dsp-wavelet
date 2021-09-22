@@ -1,9 +1,9 @@
 #include "ComplexWaveletTransform.hpp"
 
-#include "conv.h"
-#include "cwt.h"
-#include "hsfft.h"
-#include "wtmath.h"
+#include "wavelets/conv.h"
+#include "wavelets/cwt.h"
+#include "wavelets/hsfft.h"
+#include "wavelets/wtmath.h"
 
 #include <cassert>
 #include <cmath>

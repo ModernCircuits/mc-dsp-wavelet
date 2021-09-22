@@ -1,8 +1,8 @@
 #include "WaveletTransform.hpp"
 
-#include "conv.h"
-#include "hsfft.h"
-#include "wtmath.h"
+#include "wavelets/conv.h"
+#include "wavelets/hsfft.h"
+#include "wavelets/wtmath.h"
 
 #include <cassert>
 #include <cmath>

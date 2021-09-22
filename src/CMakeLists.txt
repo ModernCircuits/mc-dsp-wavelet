@@ -12,49 +12,49 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 target_sources(${CMAKE_PROJECT_NAME}
     PRIVATE
         AudioFile.h
-        transforms/ComplexWaveletTransform.cpp
-        transforms/ComplexWaveletTransform.hpp
-        conv.cpp
-        conv.h
-        Convolution.hpp
-        ConvolutionMethod.hpp
-        cwt.cpp
-        cwt.h
-        cwtmath.cpp
-        cwtmath.h
-        denoise.cpp
-        FFT.hpp
-        hsfft.cpp
-        hsfft.h
         OverlapSaveConvolver.cpp
         OverlapSaveConvolver.hpp
-        real.cpp
-        real.h
-        SignalExtension.hpp
-        waux.cpp
-        waux.h
-        wauxlib.h
-        wavefilt.cpp
-        wavefilt.h
-        wavefunc.cpp
-        wavefunc.h
-        Wavelet.cpp
-        Wavelet.hpp
-        transforms/WaveletPacketTransform.cpp
-        transforms/WaveletPacketTransform.hpp
-        transforms/WaveletTransform2D.cpp
-        transforms/WaveletTransform2D.hpp
-        transforms/WaveletTransform.cpp
-        transforms/WaveletTransform.hpp
-        transforms/WaveletTree.cpp
-        transforms/WaveletTree.hpp
-        wavelib.cpp
-        wavelib.h
-        wtmath.cpp
-        wtmath.h
+
+        wavelets.hpp
+        wavelets/conv.cpp
+        wavelets/conv.h
+        wavelets/Convolution.hpp
+        wavelets/ConvolutionMethod.hpp
+        wavelets/cwt.cpp
+        wavelets/cwt.h
+        wavelets/cwtmath.cpp
+        wavelets/cwtmath.h
+        wavelets/denoise.cpp
+        wavelets/FFT.hpp
+        wavelets/hsfft.cpp
+        wavelets/hsfft.h
+        wavelets/real.cpp
+        wavelets/real.h
+        wavelets/SignalExtension.hpp
+        wavelets/waux.cpp
+        wavelets/waux.h
+        wavelets/wauxlib.h
+        wavelets/wavefilt.cpp
+        wavelets/wavefilt.h
+        wavelets/wavefunc.cpp
+        wavelets/wavefunc.h
+        wavelets/Wavelet.cpp
+        wavelets/Wavelet.hpp
+        wavelets/transforms/ComplexWaveletTransform.cpp
+        wavelets/transforms/ComplexWaveletTransform.hpp
+        wavelets/transforms/WaveletPacketTransform.cpp
+        wavelets/transforms/WaveletPacketTransform.hpp
+        wavelets/transforms/WaveletTransform2D.cpp
+        wavelets/transforms/WaveletTransform2D.hpp
+        wavelets/transforms/WaveletTransform.cpp
+        wavelets/transforms/WaveletTransform.hpp
+        wavelets/transforms/WaveletTree.cpp
+        wavelets/transforms/WaveletTree.hpp
+        wavelets/wtmath.cpp
+        wavelets/wtmath.h
 )
 
 add_library(wauxlib)
-target_sources(wauxlib PRIVATE denoise.cpp waux.h waux.cpp)
+target_sources(wauxlib PRIVATE wavelets/denoise.cpp wavelets/waux.h wavelets/waux.cpp)
 target_link_libraries(wauxlib PRIVATE wavelib)
 target_include_directories(wauxlib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
