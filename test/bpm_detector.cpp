@@ -1,8 +1,8 @@
 #include "wavelib.h"
 
 #include "AudioFile.h"
+#include "OverlapSaveConvolver.hpp"
 #include "helper.hpp"
-#include "overlap_save_convolver.hpp"
 #include "readFileToVector.hpp"
 
 #include <algorithm>

@@ -12,8 +12,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 target_sources(${CMAKE_PROJECT_NAME}
     PRIVATE
         AudioFile.h
-        ComplexWaveletTransform.cpp
-        ComplexWaveletTransform.hpp
+        transforms/ComplexWaveletTransform.cpp
+        transforms/ComplexWaveletTransform.hpp
         conv.cpp
         conv.h
         Convolution.hpp
@@ -26,8 +26,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         FFT.hpp
         hsfft.cpp
         hsfft.h
-        overlap_save_convolver.cpp
-        overlap_save_convolver.hpp
+        OverlapSaveConvolver.cpp
+        OverlapSaveConvolver.hpp
         real.cpp
         real.h
         SignalExtension.hpp
@@ -40,14 +40,14 @@ target_sources(${CMAKE_PROJECT_NAME}
         wavefunc.h
         Wavelet.cpp
         Wavelet.hpp
-        WaveletPacketTransform.cpp
-        WaveletPacketTransform.hpp
-        WaveletTransform2D.cpp
-        WaveletTransform2D.hpp
-        WaveletTransform.cpp
-        WaveletTransform.hpp
-        WaveletTree.cpp
-        WaveletTree.hpp
+        transforms/WaveletPacketTransform.cpp
+        transforms/WaveletPacketTransform.hpp
+        transforms/WaveletTransform2D.cpp
+        transforms/WaveletTransform2D.hpp
+        transforms/WaveletTransform.cpp
+        transforms/WaveletTransform.hpp
+        transforms/WaveletTree.cpp
+        transforms/WaveletTree.hpp
         wavelib.cpp
         wavelib.h
         wtmath.cpp

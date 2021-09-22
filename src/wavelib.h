@@ -3,16 +3,16 @@
 
 #include "tcb/span.hpp"
 
-#include "ComplexWaveletTransform.hpp"
 #include "Convolution.hpp"
 #include "ConvolutionMethod.hpp"
 #include "FFT.hpp"
 #include "SignalExtension.hpp"
 #include "Wavelet.hpp"
-#include "WaveletPacketTransform.hpp"
-#include "WaveletTransform.hpp"
-#include "WaveletTransform2D.hpp"
-#include "WaveletTree.hpp"
+#include "transforms/ComplexWaveletTransform.hpp"
+#include "transforms/WaveletPacketTransform.hpp"
+#include "transforms/WaveletTransform.hpp"
+#include "transforms/WaveletTransform2D.hpp"
+#include "transforms/WaveletTree.hpp"
 
 #include <string>
 

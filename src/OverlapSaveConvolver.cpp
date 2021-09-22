@@ -1,6 +1,4 @@
-#include "overlap_save_convolver.hpp"
-
-#include "coz.h"
+#include "OverlapSaveConvolver.hpp"
 
 #define REAL 0
 #define IMAG 1
@@ -49,21 +47,18 @@ auto DoubleSignal::operator+=(double const x) -> void
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i] += x;
     }
-    COZ_PROGRESS;
 }
 auto DoubleSignal::operator*=(double const x) -> void
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i] *= x;
     }
-    COZ_PROGRESS;
 }
 auto DoubleSignal::operator/=(double const x) -> void
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i] /= x;
     }
-    COZ_PROGRESS;
 }
 
 ComplexSignal::ComplexSignal(std::size_t size)
@@ -79,7 +74,6 @@ auto ComplexSignal::operator*=(double const x) -> void
         data_[i][REAL] *= x;
         data_[i][IMAG] *= x;
     }
-    COZ_PROGRESS;
 }
 
 auto ComplexSignal::operator+=(double const x) -> void
@@ -87,7 +81,6 @@ auto ComplexSignal::operator+=(double const x) -> void
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i][REAL] += x;
     }
-    COZ_PROGRESS;
 }
 
 auto ComplexSignal::operator+=(const fftw_complex x) -> void
@@ -96,8 +89,6 @@ auto ComplexSignal::operator+=(const fftw_complex x) -> void
         data_[i][REAL] += x[REAL];
         data_[i][IMAG] += x[IMAG];
     }
-
-    COZ_PROGRESS;
 }
 
 auto ComplexSignal::print(std::string const& /*name*/) -> void
@@ -118,8 +109,6 @@ auto spectralConvolution(ComplexSignal const& a, ComplexSignal const& b, Complex
         result[i][REAL] = a[i][REAL] * b[i][REAL] - a[i][IMAG] * b[i][IMAG];
         result[i][IMAG] = a[i][IMAG] * b[i][REAL] + a[i][REAL] * b[i][IMAG];
     }
-
-    COZ_PROGRESS;
 }
 
 auto spectralCorrelation(ComplexSignal const& a, ComplexSignal const& b, ComplexSignal& result) -> void
@@ -133,8 +122,6 @@ auto spectralCorrelation(ComplexSignal const& a, ComplexSignal const& b, Complex
         result[i][REAL] = a[i][REAL] * b[i][REAL] + a[i][IMAG] * b[i][IMAG];
         result[i][IMAG] = a[i][IMAG] * b[i][REAL] - a[i][REAL] * b[i][IMAG];
     }
-
-    COZ_PROGRESS;
 }
 
 FftForwardPlan::FftForwardPlan(DoubleSignal& fs, ComplexSignal& cs)
@@ -180,8 +167,6 @@ OverlapSaveConvolver::OverlapSaveConvolver(DoubleSignal& signal, DoubleSignal& p
         forwardPlans_.emplace_back(new FftForwardPlan(*inputChunks_.at(i), *inputChunksComplex_.at(i)));
         backwardPlans_.emplace_back(new FftBackwardPlan(*resultChunksComplex_.at(i), *resultChunks_.at(i)));
     }
-
-    COZ_PROGRESS;
 }
 
 auto OverlapSaveConvolver::executeConv() -> void
@@ -245,7 +230,6 @@ auto OverlapSaveConvolver::extractResult() -> DoubleSignal
         std::memcpy(resultArr + kBegin, xcArr + discardOffset, sizeof(double) * copySize);
     }
 
-    COZ_PROGRESS;
     return result;
 }
 
