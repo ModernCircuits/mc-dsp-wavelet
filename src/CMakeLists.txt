@@ -26,12 +26,19 @@ target_sources(${CMAKE_PROJECT_NAME}
         wavelets/FFT.hpp
         wavelets/FFT.cpp
         wavelets/SignalExtension.hpp
-        wavelets/wavefilt.cpp
-        wavelets/wavefilt.h
         wavelets/wavefunc.cpp
         wavelets/wavefunc.h
         wavelets/Wavelet.cpp
         wavelets/Wavelet.hpp
+
+        wavelets/filters/coif.hpp
+        wavelets/filters/daubechies.hpp
+        wavelets/filters/h.hpp
+        wavelets/filters/meyer.hpp
+        wavelets/filters/sym.hpp
+        wavelets/filters/utility.cpp
+        wavelets/filters/utility.hpp
+
         wavelets/transforms/ComplexWaveletTransform.cpp
         wavelets/transforms/ComplexWaveletTransform.hpp
         wavelets/transforms/WaveletPacketTransform.cpp

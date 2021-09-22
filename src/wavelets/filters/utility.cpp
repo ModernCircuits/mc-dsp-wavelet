@@ -3,14 +3,14 @@
 * Copyright (C) 2016  Holger Nahrstaedt
 * Daubechies wavelets coefficents Computed by Kazuo Hatano, Aichi Institute of Technology. http://phase.hpcc.jp/phase/wavelet/
 */
-#include "wavefilt.h"
+#include "utility.hpp"
 
-#include "Convolution.hpp"
-#include "filters/coif.hpp"
-#include "filters/daubechies.hpp"
-#include "filters/h.hpp"
-#include "filters/meyer.hpp"
-#include "filters/sym.hpp"
+#include "wavelets/Convolution.hpp"
+#include "wavelets/filters/coif.hpp"
+#include "wavelets/filters/daubechies.hpp"
+#include "wavelets/filters/h.hpp"
+#include "wavelets/filters/meyer.hpp"
+#include "wavelets/filters/sym.hpp"
 
 #define USE_MATH_DEFINES
 #include <cmath>

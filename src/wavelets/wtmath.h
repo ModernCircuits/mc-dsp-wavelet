@@ -3,7 +3,7 @@
 #ifndef WTMATH_H_
 #define WTMATH_H_
 
-#include "wavefilt.h"
+#include "filters/utility.hpp"
 
 auto dwtPerStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen,
     double* cA, int lenCA, double* cD, int istride, int ostride) -> void;

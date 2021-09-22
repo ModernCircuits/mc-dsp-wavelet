@@ -1,6 +1,6 @@
 #include "Wavelet.hpp"
 
-#include "wavefilt.h"
+#include "filters/utility.hpp"
 
 Wavelet::Wavelet(char const* name)
     : name_ { name }
