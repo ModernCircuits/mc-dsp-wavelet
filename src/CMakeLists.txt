@@ -19,8 +19,6 @@ target_sources(${CMAKE_PROJECT_NAME}
         wavelets/Convolution.cpp
         wavelets/Convolution.hpp
         wavelets/ConvolutionMethod.hpp
-        wavelets/cwt.cpp
-        wavelets/cwt.h
         wavelets/cwtmath.cpp
         wavelets/cwtmath.h
         wavelets/denoise.cpp
