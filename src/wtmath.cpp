@@ -2,7 +2,7 @@
 
 #include "wtmath.h"
 
-void dwtPerStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride)
+auto dwtPerStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride) -> void
 {
     int l;
     int l2;
@@ -64,7 +64,7 @@ void dwtPerStride(double const* inp, int n, double const* lpd, double const* hpd
     }
 }
 
-void dwtSymStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride)
+auto dwtSymStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride) -> void
 {
     int i;
     int l;
@@ -97,7 +97,7 @@ void dwtSymStride(double const* inp, int n, double const* lpd, double const* hpd
     }
 }
 
-void modwtPerStride(int m, double const* inp, int /*N*/, double const* filt, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride)
+auto modwtPerStride(int m, double const* inp, int /*N*/, double const* filt, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride) -> void
 {
     int l;
     int i;
@@ -129,7 +129,7 @@ void modwtPerStride(int m, double const* inp, int /*N*/, double const* filt, int
     }
 }
 
-void swtPerStride(int m, double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride)
+auto swtPerStride(int m, double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride) -> void
 {
     int l;
     int l2;
@@ -186,7 +186,7 @@ void swtPerStride(int m, double const* inp, int n, double const* lpd, double con
     }
 }
 
-void idwtPerStride(double const* cA, int lenCA, double const* cD, double const* lpr, double const* hpr, int lprLen, double* x, int istride, int ostride)
+auto idwtPerStride(double const* cA, int lenCA, double const* cD, double const* lpr, double const* hpr, int lprLen, double* x, int istride, int ostride) -> void
 {
     int lenAvg;
     int i;
@@ -230,7 +230,7 @@ void idwtPerStride(double const* cA, int lenCA, double const* cD, double const* 
     }
 }
 
-void idwtSymStride(double const* cA, int lenCA, double const* cD, double const* lpr, double const* hpr, int lprLen, double* x, int istride, int ostride)
+auto idwtSymStride(double const* cA, int lenCA, double const* cD, double const* lpr, double const* hpr, int lprLen, double* x, int istride, int ostride) -> void
 {
     int lenAvg;
     int i;
@@ -265,7 +265,7 @@ void idwtSymStride(double const* cA, int lenCA, double const* cD, double const* 
     }
 }
 
-void imodwtPerStride(int m, double const* cA, int lenCA, double const* cD, double const* filt, int lf, double* x, int istride, int ostride)
+auto imodwtPerStride(int m, double const* cA, int lenCA, double const* cD, double const* filt, int lf, double* x, int istride, int ostride) -> void
 {
     int lenAvg;
     int i;
@@ -295,7 +295,7 @@ void imodwtPerStride(int m, double const* cA, int lenCA, double const* cD, doubl
     }
 }
 
-void idwt2Shift(int shift, int rows, int cols, double const* lpr, double const* hpr, int lf, double* a, double* h, double* v, double* d, double* oup)
+auto idwt2Shift(int shift, int rows, int cols, double const* lpr, double const* hpr, int lf, double* a, double* h, double* v, double* d, double* oup) -> void
 {
     auto const n = rows > cols ? 2 * rows : 2 * cols;
     auto const dim1 = 2 * rows;
@@ -555,7 +555,7 @@ static auto iabs(int n) -> int
     return -n;
 }
 
-void circshift(double* array, int n, int l)
+auto circshift(double* array, int n, int l) -> void
 {
     if (iabs(l) > n) {
         l = isign(l) * (iabs(l) % n);

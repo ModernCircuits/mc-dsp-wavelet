@@ -53,7 +53,7 @@ auto fftInit(int n, int sgn) -> std::unique_ptr<FftSet>
     return obj;
 }
 
-static void mixedRadixDitRec(FftData* op, FftData* ip, const FftSet* obj, int sgn, int n, int l, int inc)
+static auto mixedRadixDitRec(FftData* op, FftData* ip, const FftSet* obj, int sgn, int n, int l, int inc) -> void
 {
 
     auto const radix = n > 1 ? obj->factors[inc] : 0;
@@ -1653,7 +1653,7 @@ static void mixedRadixDitRec(FftData* op, FftData* ip, const FftSet* obj, int sg
     // }
 }
 
-static void bluesteinExp(FftData* hl, FftData* hlt, int len, int m)
+static auto bluesteinExp(FftData* hl, FftData* hlt, int len, int m) -> void
 {
     fft_type pi;
     fft_type theta;
@@ -1689,7 +1689,7 @@ static void bluesteinExp(FftData* hl, FftData* hlt, int len, int m)
     }
 }
 
-static void bluesteinFft(FftData* data, FftData* oup, FftSet* obj, int sgn, int n)
+static auto bluesteinFft(FftData* data, FftData* oup, FftSet* obj, int sgn, int n) -> void
 {
 
     int m;
@@ -1791,7 +1791,7 @@ static void bluesteinFft(FftData* data, FftData* oup, FftSet* obj, int sgn, int 
     }
 }
 
-void fftExec(FftSet& obj, FftData* inp, FftData* oup)
+auto fftExec(FftSet& obj, FftData* inp, FftData* oup) -> void
 {
     if (obj.lt == 0) {
         //fftct_radix3_dit_rec(inp,oup,obj, obj.sgn, obj.N);
@@ -2008,7 +2008,7 @@ auto factors(int m, int* arr) -> int
     return i;
 }
 
-void twiddle(FftData* vec, int n, int radix)
+auto twiddle(FftData* vec, int n, int radix) -> void
 {
     int k;
     int kl;
@@ -2026,7 +2026,7 @@ void twiddle(FftData* vec, int n, int radix)
     }
 }
 
-void longvectorN(FftData* sig, int const* array, int tx)
+auto longvectorN(FftData* sig, int const* array, int tx) -> void
 {
     int l;
     int i;

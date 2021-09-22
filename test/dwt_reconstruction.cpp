@@ -12,7 +12,7 @@
 #include <sstream>
 #include <vector>
 
-void dwtReconstructionTest()
+auto dwtReconstructionTest()
 {
     auto const n = 22'050;
 
@@ -106,7 +106,7 @@ void dwtReconstructionTest()
     }
 }
 
-void dwT2ReconstructionTest()
+auto dwT2ReconstructionTest()
 {
     Wt2Set* wt;
     double epsilon;

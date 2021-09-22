@@ -74,7 +74,7 @@ auto iterableToString(const std::initializer_list<T> c) -> std::string
 // CheckAllEqual(v5.begin(), prev(v5.end()));
 // CheckAllEqual(v5);
 template <typename I>
-void checkAllEqual(I beg, I end, std::string const& message = "CheckAllEqual")
+auto checkAllEqual(I beg, I end, std::string const& message = "CheckAllEqual") -> void
 {
     I it = beg;
     bool allEq = true;
@@ -87,24 +87,24 @@ void checkAllEqual(I beg, I end, std::string const& message = "CheckAllEqual")
     }
 }
 template <typename C>
-void checkAllEqual(const C& c, const std::string message = "CheckAllEqual")
+auto checkAllEqual(const C& c, const std::string message = "CheckAllEqual") -> void
 {
     CheckAllEqual(c.begin(), c.end(), message);
 }
 template <typename T>
-void checkAllEqual(const std::initializer_list<T> c, const std::string message = "CheckAllEqual")
+auto checkAllEqual(const std::initializer_list<T> c, const std::string message = "CheckAllEqual") -> void
 {
     checkAllEqual(c.begin(), c.end(), message);
 }
 
 // Raises an exception if complex_size!=(real_size/2+1), being "/" an integer division.
-void checkRealComplexRatio(std::size_t realSize, std::size_t complexSize,
-    std::string const& funcName = "CheckRealComplexRatio");
+auto checkRealComplexRatio(std::size_t realSize, std::size_t complexSize,
+    std::string const& funcName = "CheckRealComplexRatio") -> void;
 
 // Abstract function that performs a comparation between any 2 elements, and if the comparation
 // returns a truthy value raises an exception with the given message.
 template <typename T, class Functor>
-void checkTwoElements(const T a, const T b, const Functor& binaryPredicate, std::string const& message)
+auto checkTwoElements(const T a, const T b, const Functor& binaryPredicate, std::string const& message) -> void
 {
     if (binaryPredicate(a, b)) {
         throw std::runtime_error(std::string("[ERROR] ") + message + " " + iterableToString({ a, b }));
@@ -112,7 +112,7 @@ void checkTwoElements(const T a, const T b, const Functor& binaryPredicate, std:
 }
 
 // Raises an exception with the given message if a>b.
-void checkALessEqualB(std::size_t a, std::size_t b, std::string const& message = "a was greater than b!");
+auto checkALessEqualB(std::size_t a, std::size_t b, std::string const& message = "a was greater than b!") -> void;
 
 auto pow2Ceil(std::size_t x) -> size_t;
 
@@ -139,7 +139,7 @@ struct Signal {
     [[nodiscard]] auto operator[](std::size_t idx) -> T& { return data_[idx]; }
     [[nodiscard]] auto operator[](std::size_t idx) const -> T& { return data_[idx]; }
 
-    void print(std::string const& name = "signal")
+    auto print(std::string const& name = "signal") -> void
     {
         std::cout << '\n';
         for (std::size_t i = 0; i < size_; ++i) {
@@ -161,9 +161,9 @@ struct DoubleSignal : Signal<double> {
     DoubleSignal(double* data, size_t size, size_t padBef, size_t padAft);
     ~DoubleSignal();
 
-    void operator+=(double x);
-    void operator*=(double x);
-    void operator/=(double x);
+    auto operator+=(double x) -> void;
+    auto operator*=(double x) -> void;
+    auto operator/=(double x) -> void;
 };
 
 /// This class is a Signal that works on aligned complex (double[2]) arrays allocated by FFTW.
@@ -173,11 +173,11 @@ struct ComplexSignal : Signal<fftw_complex> {
     explicit ComplexSignal(std::size_t size);
     ~ComplexSignal();
 
-    void operator*=(double x);
-    void operator+=(double x);
-    void operator+=(const fftw_complex x);
+    auto operator*=(double x) -> void;
+    auto operator+=(double x) -> void;
+    auto operator+=(const fftw_complex x) -> void;
 
-    void print(std::string const& name = "signal");
+    auto print(std::string const& name = "signal") -> void;
 };
 
 /// This free function takes three complex signals a,b,c of the same size and computes the complex
@@ -185,11 +185,11 @@ struct ComplexSignal : Signal<fftw_complex> {
 /// loop isn't sent to OMP because this function itself is already expected to be called by multiple
 /// threads, and it would actually slow down the process.
 /// It throuws an exception if
-void spectralConvolution(ComplexSignal const& a, ComplexSignal const& b, ComplexSignal& result);
+auto spectralConvolution(ComplexSignal const& a, ComplexSignal const& b, ComplexSignal& result) -> void;
 
 /// This function behaves identically to SpectralConvolution, but computes c=a*conj(b) instead
 /// of c=a*b:         a * conj(b) = a+ib * c-id = ac-iad+ibc+bd = ac+bd + i(bc-ad)
-void spectralCorrelation(ComplexSignal const& a, ComplexSignal const& b, ComplexSignal& result);
+auto spectralCorrelation(ComplexSignal const& a, ComplexSignal const& b, ComplexSignal& result) -> void;
 
 /// This class is a simple wrapper for the memory management of the fftw plans, plus a
 /// parameterless execute() method which is also a wrapper for FFTW's execute.
@@ -201,7 +201,7 @@ struct FftPlan {
     {
     }
     ~FftPlan() { fftw_destroy_plan(plan_); }
-    void execute() { fftw_execute(plan_); }
+    auto execute() { fftw_execute(plan_); }
 
 private:
     fftw_plan plan_;
@@ -252,9 +252,9 @@ struct OverlapSaveConvolver {
     /// Note that len(signal) can never be smaller than len(patch), or an exception is thrown.
     OverlapSaveConvolver(DoubleSignal& signal, DoubleSignal& patch, std::string const& wisdomPath = "");
 
-    void executeConv();
-    void executeXcorr();
-    void printChunks(std::string const& name = "convolver");
+    auto executeConv() -> void;
+    auto executeXcorr() -> void;
+    auto printChunks(std::string const& name = "convolver") -> void;
 
     // This method implements step 6 of the overlap-save algorithm. In convolution, the first (P-1)
     // samples of each chunk are discarded, in xcorr the last (P-1) ones. Therefore, depending on the
@@ -280,12 +280,12 @@ struct OverlapSaveConvolver {
 private:
     // This private method throws an exception if _state_ is Uninitialized, because that
     // means that some "getter" has ben called before any computation has been performed.
-    void checkLastExecutedNotNull(std::string const& methodName);
+    auto checkLastExecutedNotNull(std::string const& methodName) -> void;
 
     // This private method implements steps 3,4,5 of the algorithm. If the given flag is false,
     // it will perform a convolution (4a), and a cross-correlation (4b) otherwise.
     // Note the parallelization with OpenMP, which increases performance in supporting CPUs.
-    void execute(bool crossCorrelate);
+    auto execute(bool crossCorrelate) -> void;
 
     // grab input lengths
     std::size_t signalSize_;

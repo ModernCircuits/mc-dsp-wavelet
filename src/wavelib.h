@@ -260,78 +260,78 @@ struct Wt2Set {
 
 auto wt2Init(Wavelet& wave, char const* method, int rows, int cols, int j) -> Wt2Set*;
 
-void dwt(WaveletTransform* wt, double const* inp);
+auto dwt(WaveletTransform* wt, double const* inp) -> void;
 
-void idwt(WaveletTransform* wt, double* dwtop);
+auto idwt(WaveletTransform* wt, double* dwtop) -> void;
 
-void wtree(WtreeSet* wt, double const* inp);
+auto wtree(WtreeSet* wt, double const* inp) -> void;
 
-void dwpt(WptSet* wt, double const* inp);
+auto dwpt(WptSet* wt, double const* inp) -> void;
 
-void idwpt(WptSet* wt, double* dwtop);
+auto idwpt(WptSet* wt, double* dwtop) -> void;
 
-void swt(WaveletTransform* wt, double const* inp);
+auto swt(WaveletTransform* wt, double const* inp) -> void;
 
-void iswt(WaveletTransform* wt, double* swtop);
+auto iswt(WaveletTransform* wt, double* swtop) -> void;
 
-void modwt(WaveletTransform* wt, double const* inp);
+auto modwt(WaveletTransform* wt, double const* inp) -> void;
 
-void imodwt(WaveletTransform* wt, double* oup);
+auto imodwt(WaveletTransform* wt, double* oup) -> void;
 
-void setWTREEExtension(WtreeSet* wt, char const* extension);
+auto setWTREEExtension(WtreeSet* wt, char const* extension) -> void;
 
-void setDWPTExtension(WptSet* wt, char const* extension);
+auto setDWPTExtension(WptSet* wt, char const* extension) -> void;
 
-void setDWT2Extension(Wt2Set* wt, char const* extension);
+auto setDWT2Extension(Wt2Set* wt, char const* extension) -> void;
 
-void setDWPTEntropy(WptSet* wt, char const* entropy, double eparam);
+auto setDWPTEntropy(WptSet* wt, char const* entropy, double eparam) -> void;
 
 auto getWTREENodelength(WtreeSet* wt, int x) -> int;
 
-void getWTREECoeffs(WtreeSet* wt, int x, int y, double* coeffs, int n);
+auto getWTREECoeffs(WtreeSet* wt, int x, int y, double* coeffs, int n) -> void;
 
 auto getDWPTNodelength(WptSet* wt, int x) -> int;
 
-void setCWTScales(CwaveletTransform* wt, double s0, double dj, char const* type, int power);
+auto setCWTScales(CwaveletTransform* wt, double s0, double dj, char const* type, int power) -> void;
 
-void cwt(CwaveletTransform* wt, double const* inp);
+auto cwt(CwaveletTransform* wt, double const* inp) -> void;
 
-void icwt(CwaveletTransform* wt, double* cwtop);
+auto icwt(CwaveletTransform* wt, double* cwtop) -> void;
 
 auto dwt2(Wt2Set* wt, double* inp) -> std::unique_ptr<double[]>;
 
-void idwt2(Wt2Set* wt, double* wavecoeff, double* oup);
+auto idwt2(Wt2Set* wt, double* wavecoeff, double* oup) -> void;
 
 auto swt2(Wt2Set* wt, double* inp) -> std::unique_ptr<double[]>;
 
-void iswt2(Wt2Set* wt, double const* wavecoeffs, double* oup);
+auto iswt2(Wt2Set* wt, double const* wavecoeffs, double* oup) -> void;
 
 auto modwt2(Wt2Set* wt, double* inp) -> std::unique_ptr<double[]>;
 
-void imodwt2(Wt2Set* wt, double* wavecoeff, double* oup);
+auto imodwt2(Wt2Set* wt, double* wavecoeff, double* oup) -> void;
 
 auto getWT2Coeffs(Wt2Set* wt, double* wcoeffs, int level, char const* type, int* rows, int* cols) -> double*;
 
-void dispWT2Coeffs(double* a, int row, int col);
+auto dispWT2Coeffs(double* a, int row, int col) -> void;
 
-void waveSummary(Wavelet const& obj);
+auto waveSummary(Wavelet const& obj) -> void;
 
-void wtSummary(WaveletTransform* wt);
+auto wtSummary(WaveletTransform* wt) -> void;
 
-void wtreeSummary(WtreeSet* wt);
+auto wtreeSummary(WtreeSet* wt) -> void;
 
-void wptSummary(WptSet* wt);
+auto wptSummary(WptSet* wt) -> void;
 
-void cwtSummary(CwaveletTransform* wt);
+auto cwtSummary(CwaveletTransform* wt) -> void;
 
-void wt2Summary(Wt2Set* wt);
+auto wt2Summary(Wt2Set* wt) -> void;
 
-void wtreeFree(WtreeSet* object);
+auto wtreeFree(WtreeSet* object) -> void;
 
-void wptFree(WptSet* object);
+auto wptFree(WptSet* object) -> void;
 
-void cwtFree(CwaveletTransform* object);
+auto cwtFree(CwaveletTransform* object) -> void;
 
-void wt2Free(Wt2Set* wt);
+auto wt2Free(Wt2Set* wt) -> void;
 
 #endif /* WAVELIB_H_ */

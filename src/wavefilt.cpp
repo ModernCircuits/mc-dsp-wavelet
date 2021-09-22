@@ -16,6 +16,43 @@
 
 using namespace std::string_view_literals;
 
+namespace {
+auto copy(double const* in, int n, double* out)
+{
+    int count = 0;
+    for (count = 0; count < n; count++) {
+        out[count] = in[count];
+    }
+}
+
+auto copyReverse(double const* in, int n, double* out)
+{
+    int count = 0;
+    for (count = 0; count < n; count++) {
+        out[count] = in[n - count - 1];
+    }
+}
+
+auto qmfEven(double const* in, int n, double* out)
+{
+    int count = 0;
+    for (count = 0; count < n; count++) {
+        out[count] = in[n - count - 1];
+        if (count % 2 != 0) {
+            out[count] = -1 * out[count];
+        }
+    }
+}
+
+auto qmfWrev(double const* in, int n, double* out)
+{
+    auto sigOutTemp = std::make_unique<double[]>(n);
+
+    qmfEven(in, n, sigOutTemp.get());
+    copyReverse(sigOutTemp.get(), n, out);
+}
+} // namespace
+
 auto filtlength(char const* name) -> int
 {
     int len = strlen(name);
@@ -175,40 +212,6 @@ auto filtlength(char const* name) -> int
     }
     printf("\n Filter Not in Database \n");
     return -1;
-}
-
-void copyReverse(double const* in, int n, double* out)
-{
-    int count = 0;
-    for (count = 0; count < n; count++) {
-        out[count] = in[n - count - 1];
-    }
-}
-
-void qmfWrev(double const* in, int n, double* out)
-{
-    auto sigOutTemp = std::make_unique<double[]>(n);
-
-    qmfEven(in, n, sigOutTemp.get());
-    copyReverse(sigOutTemp.get(), n, out);
-}
-
-void qmfEven(double const* in, int n, double* out)
-{
-    int count = 0;
-    for (count = 0; count < n; count++) {
-        out[count] = in[n - count - 1];
-        if (count % 2 != 0) {
-            out[count] = -1 * out[count];
-        }
-    }
-}
-void copy(double const* in, int n, double* out)
-{
-    int count = 0;
-    for (count = 0; count < n; count++) {
-        out[count] = in[count];
-    }
 }
 
 auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int

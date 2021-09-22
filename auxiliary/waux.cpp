@@ -74,7 +74,7 @@ auto minindex(double const* arr, int n) -> int
     return index;
 }
 
-void autocovar(double const* vec, int n, double* acov, int m)
+auto autocovar(double const* vec, int n, double* acov, int m) -> void
 {
     double temp1;
     double temp2;
@@ -100,7 +100,7 @@ void autocovar(double const* vec, int n, double* acov, int m)
     }
 }
 
-void autocorr(double const* vec, int n, double* acorr, int m)
+auto autocorr(double const* vec, int n, double* acorr, int m) -> void
 {
     double var;
     if (m > n) {

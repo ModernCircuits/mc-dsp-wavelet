@@ -32,7 +32,7 @@ auto denoiseInit(int length, int j, char const* wname) -> DenoiseSet*
     return obj.release();
 }
 
-void visushrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised)
+auto visushrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void
 {
     int dwtLen;
     int sgn;
@@ -134,7 +134,7 @@ void visushrink(double* signal, int n, int j, char const* wname, char const* met
     }
 }
 
-void sureshrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised)
+auto sureshrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void
 {
     int filtLen;
     int it;
@@ -286,7 +286,7 @@ void sureshrink(double* signal, int n, int j, char const* wname, char const* met
     }
 }
 
-void modwtshrink(double* signal, int n, int j, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised)
+auto modwtshrink(double* signal, int n, int j, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised) -> void
 {
     int sgn;
     int it;
@@ -381,7 +381,7 @@ void modwtshrink(double* signal, int n, int j, char const* wname, char const* cm
     imodwt(&wt, denoised);
 }
 
-void denoise(DenoiseSet* obj, double* signal, double* denoised)
+auto denoise(DenoiseSet* obj, double* signal, double* denoised) -> void
 {
     if (obj->dmethod == "sureshrink"sv) {
         if (obj->wmethod == "modwt"sv) {
@@ -407,7 +407,7 @@ void denoise(DenoiseSet* obj, double* signal, double* denoised)
     }
 }
 
-void setDenoiseMethod(DenoiseSet* obj, char const* dmethod)
+auto setDenoiseMethod(DenoiseSet* obj, char const* dmethod) -> void
 {
     if (strcmp(dmethod, "sureshrink") == 0) {
         obj->dmethod = "sureshrink";
@@ -421,7 +421,7 @@ void setDenoiseMethod(DenoiseSet* obj, char const* dmethod)
     }
 }
 
-void setDenoiseWTMethod(DenoiseSet* obj, char const* wmethod)
+auto setDenoiseWTMethod(DenoiseSet* obj, char const* wmethod) -> void
 {
     obj->wmethod = wmethod;
     if (!((wmethod == "dwt"sv) || (wmethod == "swt"sv) || (wmethod == "modwt"sv))) {
@@ -430,7 +430,7 @@ void setDenoiseWTMethod(DenoiseSet* obj, char const* wmethod)
     }
 }
 
-void setDenoiseWTExtension(DenoiseSet* obj, char const* extension)
+auto setDenoiseWTExtension(DenoiseSet* obj, char const* extension) -> void
 {
     if (strcmp(extension, "sym") == 0) {
         obj->ext = "sym";
@@ -442,7 +442,7 @@ void setDenoiseWTExtension(DenoiseSet* obj, char const* extension)
     }
 }
 
-void setDenoiseParameters(DenoiseSet* obj, char const* thresh, char const* level)
+auto setDenoiseParameters(DenoiseSet* obj, char const* thresh, char const* level) -> void
 {
 
     //Set thresholding
@@ -467,7 +467,7 @@ void setDenoiseParameters(DenoiseSet* obj, char const* thresh, char const* level
     }
 }
 
-void denoiseFree(DenoiseSet* object)
+auto denoiseFree(DenoiseSet* object) -> void
 {
     delete object;
 }

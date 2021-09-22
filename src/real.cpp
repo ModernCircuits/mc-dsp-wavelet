@@ -24,7 +24,7 @@ auto fftRealInit(int n, int sgn) -> std::unique_ptr<FftRealSet>
     return obj;
 }
 
-void fftR2cExec(FftRealSet* obj, fft_type const* inp, FftData* oup)
+auto fftR2cExec(FftRealSet* obj, fft_type const* inp, FftData* oup) -> void
 {
     int i;
     int n2;
@@ -63,7 +63,7 @@ void fftR2cExec(FftRealSet* obj, fft_type const* inp, FftData* oup)
     }
 }
 
-void fftC2rExec(FftRealSet* obj, FftData* inp, fft_type* oup)
+auto fftC2rExec(FftRealSet* obj, FftData* inp, fft_type* oup) -> void
 {
     int i;
     int n2;

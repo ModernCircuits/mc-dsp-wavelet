@@ -5,7 +5,7 @@
 #include "wtmath.h"
 
 /// \brief lb -lower bound, ub - upper bound, w - time or frequency grid (Size N)
-void nsfftExec(FftSet* obj, FftData* inp, FftData* oup, double lb, double ub, double* w);
+auto nsfftExec(FftSet* obj, FftData* inp, FftData* oup, double lb, double ub, double* w) -> void;
 
 auto cwtGamma(double x) -> double;
 

@@ -10,7 +10,7 @@
 #include <iostream>
 #include <vector>
 
-void swtReconstructionTest()
+auto swtReconstructionTest()
 {
 
     int i;
@@ -121,7 +121,7 @@ void swtReconstructionTest()
     }
 }
 
-void swT2ReconstructionTest()
+auto swT2ReconstructionTest()
 {
     Wt2Set* wt;
     // int i;

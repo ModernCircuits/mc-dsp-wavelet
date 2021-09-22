@@ -22,23 +22,23 @@ struct DenoiseSet {
 
 auto denoiseInit(int length, int j, char const* wname) -> DenoiseSet*;
 
-void visushrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised);
+auto visushrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void;
 
-void sureshrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised);
+auto sureshrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void;
 
-void modwtshrink(double* signal, int n, int j, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised);
+auto modwtshrink(double* signal, int n, int j, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised) -> void;
 
-void denoise(DenoiseSet* obj, double* signal, double* denoised);
+auto denoise(DenoiseSet* obj, double* signal, double* denoised) -> void;
 
-void setDenoiseMethod(DenoiseSet* obj, char const* dmethod);
+auto setDenoiseMethod(DenoiseSet* obj, char const* dmethod) -> void;
 
-void setDenoiseWTMethod(DenoiseSet* obj, char const* wmethod);
+auto setDenoiseWTMethod(DenoiseSet* obj, char const* wmethod) -> void;
 
-void setDenoiseWTExtension(DenoiseSet* obj, char const* extension);
+auto setDenoiseWTExtension(DenoiseSet* obj, char const* extension) -> void;
 
-void setDenoiseParameters(DenoiseSet* obj, char const* thresh, char const* level);
+auto setDenoiseParameters(DenoiseSet* obj, char const* thresh, char const* level) -> void;
 
-void denoiseFree(DenoiseSet* object);
+auto denoiseFree(DenoiseSet* object) -> void;
 
 auto mad(double* x, int n) -> double;
 

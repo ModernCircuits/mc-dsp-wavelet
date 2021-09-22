@@ -459,7 +459,7 @@ auto wt2Init(Wavelet& wave, char const* method, int rows, int cols, int j) -> Wt
     return obj.release();
 }
 
-static void wconv(WaveletTransform* wt, double* sig, int n, double const* filt, int l, double* oup)
+static auto wconv(WaveletTransform* wt, double* sig, int n, double const* filt, int l, double* oup) -> void
 {
     if (wt->convMethod() == ConvolutionMethod::direct) {
         convDirect(sig, n, filt, l, oup);
@@ -476,13 +476,13 @@ static void wconv(WaveletTransform* wt, double* sig, int n, double const* filt, 
     }
 }
 
-static void dwtPer(WaveletTransform* wt, double* inp, int n, double* cA, int lenCA, double* cD)
+static auto dwtPer(WaveletTransform* wt, double* inp, int n, double* cA, int lenCA, double* cD) -> void
 {
 
     dwtPerStride(inp, n, wt->wave().lpd(), wt->wave().hpd(), wt->wave().lpdLen(), cA, lenCA, cD, 1, 1);
 }
 
-static void wtreePer(WtreeSet* wt, double const* inp, int n, double* cA, int lenCA, double* cD)
+static auto wtreePer(WtreeSet* wt, double const* inp, int n, double* cA, int lenCA, double* cD) -> void
 {
     int l;
     int l2;
@@ -532,7 +532,7 @@ static void wtreePer(WtreeSet* wt, double const* inp, int n, double* cA, int len
     }
 }
 
-static void dwptPer(WptSet* wt, double const* inp, int n, double* cA, int lenCA, double* cD)
+static auto dwptPer(WptSet* wt, double const* inp, int n, double* cA, int lenCA, double* cD) -> void
 {
     int l;
     int l2;
@@ -582,13 +582,13 @@ static void dwptPer(WptSet* wt, double const* inp, int n, double* cA, int lenCA,
     }
 }
 
-static void dwtSym(WaveletTransform* wt, double* inp, int n, double* cA, int lenCA, double* cD)
+static auto dwtSym(WaveletTransform* wt, double* inp, int n, double* cA, int lenCA, double* cD) -> void
 {
 
     dwtSymStride(inp, n, wt->wave().lpd(), wt->wave().hpd(), wt->wave().lpdLen(), cA, lenCA, cD, 1, 1);
 }
 
-static void wtreeSym(WtreeSet* wt, double const* inp, int n, double* cA, int lenCA, double* cD)
+static auto wtreeSym(WtreeSet* wt, double const* inp, int n, double* cA, int lenCA, double* cD) -> void
 {
     int l;
     int t;
@@ -615,7 +615,7 @@ static void wtreeSym(WtreeSet* wt, double const* inp, int n, double* cA, int len
     }
 }
 
-static void dwptSym(WptSet* wt, double const* inp, int n, double* cA, int lenCA, double* cD)
+static auto dwptSym(WptSet* wt, double const* inp, int n, double* cA, int lenCA, double* cD) -> void
 {
     int l;
     int t;
@@ -642,7 +642,7 @@ static void dwptSym(WptSet* wt, double const* inp, int n, double* cA, int lenCA,
     }
 }
 
-static void dwt1(WaveletTransform* wt, double* sig, int lenSig, double* cA, double* cD)
+static auto dwt1(WaveletTransform* wt, double* sig, int lenSig, double* cA, double* cD) -> void
 {
     constexpr auto d = 2;
 
@@ -694,7 +694,7 @@ static void dwt1(WaveletTransform* wt, double* sig, int lenSig, double* cA, doub
     }
 }
 
-void dwt(WaveletTransform* wt, double const* inp)
+auto dwt(WaveletTransform* wt, double const* inp) -> void
 {
 
     auto tempLen = wt->siglength;
@@ -788,7 +788,7 @@ void dwt(WaveletTransform* wt, double const* inp)
     }
 }
 
-void wtree(WtreeSet* wt, double const* inp)
+auto wtree(WtreeSet* wt, double const* inp) -> void
 {
     int iter;
     int n;
@@ -922,7 +922,7 @@ static constexpr auto ipow2(int n) -> int
     return p;
 }
 
-void dwpt(WptSet* wt, double const* inp)
+auto dwpt(WptSet* wt, double const* inp) -> void
 {
     int iter;
     int p2;
@@ -1168,7 +1168,7 @@ auto getDWPTNodelength(WptSet* wt, int x) -> int
     return wt->length[wt->J - x + 1];
 }
 
-void getWTREECoeffs(WtreeSet* wt, int x, int y, double* coeffs, int n)
+auto getWTREECoeffs(WtreeSet* wt, int x, int y, double* coeffs, int n) -> void
 {
     int ymax;
     int t;
@@ -1208,7 +1208,7 @@ void getWTREECoeffs(WtreeSet* wt, int x, int y, double* coeffs, int n)
     }
 }
 
-void setCWTScales(CwaveletTransform* wt, double s0, double dj, char const* type, int power)
+auto setCWTScales(CwaveletTransform* wt, double s0, double dj, char const* type, int power) -> void
 {
     wt->type = type;
     //s0*std::pow(2.0, (double)(j - 1)*dj);
@@ -1232,7 +1232,7 @@ void setCWTScales(CwaveletTransform* wt, double s0, double dj, char const* type,
     wt->dj = dj;
 }
 
-void cwt(CwaveletTransform* wt, double const* inp)
+auto cwt(CwaveletTransform* wt, double const* inp) -> void
 {
     int n;
     int npad;
@@ -1267,7 +1267,7 @@ void cwt(CwaveletTransform* wt, double const* inp)
     cwavelet(inp, n, wt->dt, wt->mother, wt->m, wt->s0, wt->dj, wt->J, npad, wt->params.get(), wt->params.get() + nj2, wt->params.get() + nj2 + j, wt->params.get() + nj2 + j2);
 }
 
-void icwt(CwaveletTransform* wt, double* cwtop)
+auto icwt(CwaveletTransform* wt, double* cwtop) -> void
 {
     double psi;
     double cdel;
@@ -1292,7 +1292,7 @@ void icwt(CwaveletTransform* wt, double* cwtop)
     }
 }
 
-static void idwt1(WaveletTransform* wt, double* temp, double* cAUp, double* cA, int lenCA, double* cD, int lenCD, double* xLp, double* xHp, double* x)
+static auto idwt1(WaveletTransform* wt, double* temp, double* cAUp, double* cA, int lenCA, double* cD, int lenCD, double* xLp, double* xHp, double* x) -> void
 {
     auto lenAvg = (wt->wave().lprLen() + wt->wave().hprLen()) / 2;
     auto n = 2 * lenCD;
@@ -1332,17 +1332,17 @@ static void idwt1(WaveletTransform* wt, double* temp, double* cAUp, double* cA, 
     }
 }
 
-static void idwtPer(WaveletTransform* wt, double* cA, int lenCA, double* cD, double* x)
+static auto idwtPer(WaveletTransform* wt, double* cA, int lenCA, double* cD, double* x) -> void
 {
     idwtPerStride(cA, lenCA, cD, wt->wave().lpr(), wt->wave().hpr(), wt->wave().lprLen(), x, 1, 1);
 }
 
-static void idwtSym(WaveletTransform* wt, double* cA, int lenCA, double* cD, double* x)
+static auto idwtSym(WaveletTransform* wt, double* cA, int lenCA, double* cD, double* x) -> void
 {
     idwtSymStride(cA, lenCA, cD, wt->wave().lpr(), wt->wave().hpr(), wt->wave().lprLen(), x, 1, 1);
 }
 
-void idwt(WaveletTransform* wt, double* dwtop)
+auto idwt(WaveletTransform* wt, double* dwtop) -> void
 {
 
     int lf;
@@ -1482,7 +1482,7 @@ void idwt(WaveletTransform* wt, double* dwtop)
     }
 }
 
-static void idwptPer(WptSet* wt, double const* cA, int lenCA, double const* cD, double* x)
+static auto idwptPer(WptSet* wt, double const* cA, int lenCA, double const* cD, double* x) -> void
 {
     int lenAvg;
     int l;
@@ -1517,7 +1517,7 @@ static void idwptPer(WptSet* wt, double const* cA, int lenCA, double const* cD, 
     }
 }
 
-static void idwptSym(WptSet* wt, double const* cA, int lenCA, double const* cD, double* x)
+static auto idwptSym(WptSet* wt, double const* cA, int lenCA, double const* cD, double* x) -> void
 {
     auto lenAvg = (wt->wave->lprLen() + wt->wave->hprLen()) / 2;
     auto m = -2;
@@ -1539,7 +1539,7 @@ static void idwptSym(WptSet* wt, double const* cA, int lenCA, double const* cD, 
     }
 }
 
-void idwpt(WptSet* wt, double* dwtop)
+auto idwpt(WptSet* wt, double* dwtop) -> void
 {
     int k;
     int l;
@@ -1767,13 +1767,13 @@ void idwpt(WptSet* wt, double* dwtop)
     }
 }
 
-static void swtPer(WaveletTransform* wt, int m, double* inp, int n, double* cA, int lenCA, double* cD)
+static auto swtPer(WaveletTransform* wt, int m, double* inp, int n, double* cA, int lenCA, double* cD) -> void
 {
 
     swtPerStride(m, inp, n, wt->wave().lpd(), wt->wave().hpd(), wt->wave().lpdLen(), cA, lenCA, cD, 1, 1);
 }
 
-static void swtFft(WaveletTransform* wt, double const* inp)
+static auto swtFft(WaveletTransform* wt, double const* inp) -> void
 {
     int n { 0 };
 
@@ -1846,7 +1846,7 @@ static void swtFft(WaveletTransform* wt, double const* inp)
     }
 }
 
-static void swtDirect(WaveletTransform* wt, double const* inp)
+static auto swtDirect(WaveletTransform* wt, double const* inp) -> void
 {
     int j;
     int tempLen;
@@ -1890,7 +1890,7 @@ static void swtDirect(WaveletTransform* wt, double const* inp)
     }
 }
 
-void swt(WaveletTransform* wt, double const* inp)
+auto swt(WaveletTransform* wt, double const* inp) -> void
 {
     if ((wt->method() == "swt"sv) && (wt->convMethod() == ConvolutionMethod::direct)) {
         swtDirect(wt, inp);
@@ -1902,7 +1902,7 @@ void swt(WaveletTransform* wt, double const* inp)
     }
 }
 
-void iswt(WaveletTransform* wt, double* swtop)
+auto iswt(WaveletTransform* wt, double* swtop) -> void
 {
     int n;
     int lf;
@@ -2034,7 +2034,7 @@ void iswt(WaveletTransform* wt, double* swtop)
     }
 }
 
-static void modwtPer(WaveletTransform* wt, int m, double const* inp, double* cA, int lenCA, double* cD)
+static auto modwtPer(WaveletTransform* wt, int m, double const* inp, double* cA, int lenCA, double* cD) -> void
 {
     auto const lenAvg = wt->wave().lpdLen();
     auto filt = std::make_unique<double[]>(2 * lenAvg);
@@ -2064,7 +2064,7 @@ static void modwtPer(WaveletTransform* wt, int m, double const* inp, double* cA,
     }
 }
 
-static void modwtDirect(WaveletTransform* wt, double const* inp)
+static auto modwtDirect(WaveletTransform* wt, double const* inp) -> void
 {
     if (wt->extension() != SignalExtension::periodic) {
         printf("MODWT direct method only uses periodic extension per. \n");
@@ -2108,7 +2108,7 @@ static void modwtDirect(WaveletTransform* wt, double const* inp)
     }
 }
 
-static void modwtFft(WaveletTransform* wt, double const* inp)
+static auto modwtFft(WaveletTransform* wt, double const* inp) -> void
 {
     int j;
     int iter;
@@ -2225,7 +2225,7 @@ static void modwtFft(WaveletTransform* wt, double const* inp)
     }
 }
 
-void modwt(WaveletTransform* wt, double const* inp)
+auto modwt(WaveletTransform* wt, double const* inp) -> void
 {
     if (wt->convMethod() == ConvolutionMethod::direct) {
         modwtDirect(wt, inp);
@@ -2235,14 +2235,14 @@ void modwt(WaveletTransform* wt, double const* inp)
     modwtFft(wt, inp);
 }
 
-static void conjComplex(FftData* x, int n)
+static auto conjComplex(FftData* x, int n) -> void
 {
     for (auto i = 0; i < n; ++i) {
         x[i].im *= (-1.0);
     }
 }
 
-void imodwtFft(WaveletTransform* wt, double* oup)
+auto imodwtFft(WaveletTransform* wt, double* oup) -> void
 {
     auto n = wt->modwtsiglength;
     auto lenAvg = wt->wave().lpdLen();
@@ -2335,7 +2335,7 @@ void imodwtFft(WaveletTransform* wt, double* oup)
     }
 }
 
-static void imodwtPer(WaveletTransform* wt, int m, double const* cA, int lenCA, double const* cD, double* x)
+static auto imodwtPer(WaveletTransform* wt, int m, double const* cA, int lenCA, double const* cD, double* x) -> void
 {
     auto const lenAvg = wt->wave().lpdLen();
     auto filt = std::make_unique<double[]>(2 * lenAvg);
@@ -2363,7 +2363,7 @@ static void imodwtPer(WaveletTransform* wt, int m, double const* cA, int lenCA, 
     }
 }
 
-static void imodwtDirect(WaveletTransform* wt, double* dwtop)
+static auto imodwtDirect(WaveletTransform* wt, double* dwtop) -> void
 {
     auto n = wt->siglength;
     auto lenacc = n;
@@ -2398,7 +2398,7 @@ static void imodwtDirect(WaveletTransform* wt, double* dwtop)
     }
 }
 
-void imodwt(WaveletTransform* wt, double* oup)
+auto imodwt(WaveletTransform* wt, double* oup) -> void
 {
     if (wt->convMethod() == ConvolutionMethod::direct) {
         imodwtDirect(wt, oup);
@@ -2407,7 +2407,7 @@ void imodwt(WaveletTransform* wt, double* oup)
     imodwtFft(wt, oup);
 }
 
-void setWTREEExtension(WtreeSet* wt, char const* extension)
+auto setWTREEExtension(WtreeSet* wt, char const* extension) -> void
 {
     if (extension == "sym"sv) {
         wt->ext = "sym";
@@ -2419,7 +2419,7 @@ void setWTREEExtension(WtreeSet* wt, char const* extension)
     }
 }
 
-void setDWPTExtension(WptSet* wt, char const* extension)
+auto setDWPTExtension(WptSet* wt, char const* extension) -> void
 {
     if (extension == "sym"sv) {
         wt->ext = "sym";
@@ -2431,7 +2431,7 @@ void setDWPTExtension(WptSet* wt, char const* extension)
     }
 }
 
-void setDWT2Extension(Wt2Set* wt, char const* extension)
+auto setDWT2Extension(Wt2Set* wt, char const* extension) -> void
 {
     if (wt->method == "dwt"sv) {
         if (extension == "sym"sv) {
@@ -2452,7 +2452,7 @@ void setDWT2Extension(Wt2Set* wt, char const* extension)
     }
 }
 
-void setDWPTEntropy(WptSet* wt, char const* entropy, double eparam)
+auto setDWPTEntropy(WptSet* wt, char const* entropy, double eparam) -> void
 {
     if (strcmp(entropy, "shannon") == 0) {
         wt->entropy = "shannon";
@@ -2626,7 +2626,7 @@ auto dwt2(Wt2Set* wt, double* inp) -> std::unique_ptr<double[]>
     return wavecoeff;
 }
 
-void idwt2(Wt2Set* wt, double* wavecoeff, double* oup)
+auto idwt2(Wt2Set* wt, double* wavecoeff, double* oup) -> void
 {
 
     int ir;
@@ -2889,7 +2889,7 @@ auto swt2(Wt2Set* wt, double* inp) -> std::unique_ptr<double[]>
     return wavecoeff;
 }
 
-void iswt2(Wt2Set* wt, double const* wavecoeffs, double* oup)
+auto iswt2(Wt2Set* wt, double const* wavecoeffs, double* oup) -> void
 {
     int k;
     int iter;
@@ -3087,7 +3087,7 @@ auto modwt2(Wt2Set* wt, double* inp) -> std::unique_ptr<double[]>
     return wavecoeff;
 }
 
-void imodwt2(Wt2Set* wt, double* wavecoeff, double* oup)
+auto imodwt2(Wt2Set* wt, double* wavecoeff, double* oup) -> void
 {
     int rows;
     int cols;
@@ -3198,7 +3198,7 @@ auto getWT2Coeffs(Wt2Set* wt, double* wcoeffs, int level, char const* type, int*
     return ptr;
 }
 
-void dispWT2Coeffs(double* a, int row, int col)
+auto dispWT2Coeffs(double* a, int row, int col) -> void
 {
     printf("\n MATRIX Order : %d X %d \n \n", row, col);
 
@@ -3211,7 +3211,7 @@ void dispWT2Coeffs(double* a, int row, int col)
     }
 }
 
-void waveSummary(Wavelet const& obj)
+auto waveSummary(Wavelet const& obj) -> void
 {
     auto const n = obj.size();
     printf("\n");
@@ -3244,7 +3244,7 @@ void waveSummary(Wavelet const& obj)
     printf("] \n");
 }
 
-void wtSummary(WaveletTransform* wt)
+auto wtSummary(WaveletTransform* wt) -> void
 {
     int j;
     int t;
@@ -3269,7 +3269,7 @@ void wtSummary(WaveletTransform* wt)
     printf("\n");
 }
 
-void wtreeSummary(WtreeSet* wt)
+auto wtreeSummary(WtreeSet* wt) -> void
 {
     int k;
     int p2;
@@ -3303,7 +3303,7 @@ void wtreeSummary(WtreeSet* wt)
     printf("\n");
 }
 
-void wptSummary(WptSet* wt)
+auto wptSummary(WptSet* wt) -> void
 {
     int k;
     int p2;
@@ -3347,7 +3347,7 @@ void wptSummary(WptSet* wt)
     printf("\n");
 }
 
-void cwtSummary(CwaveletTransform* wt)
+auto cwtSummary(CwaveletTransform* wt) -> void
 {
 
     printf("\n");
@@ -3371,7 +3371,7 @@ void cwtSummary(CwaveletTransform* wt)
     printf("\n");
 }
 
-void wt2Summary(Wt2Set* wt)
+auto wt2Summary(Wt2Set* wt) -> void
 {
     int j;
     int t;
@@ -3415,22 +3415,22 @@ void wt2Summary(Wt2Set* wt)
     }
 }
 
-void wtreeFree(WtreeSet* object)
+auto wtreeFree(WtreeSet* object) -> void
 {
     delete object;
 }
 
-void wptFree(WptSet* object)
+auto wptFree(WptSet* object) -> void
 {
     delete object;
 }
 
-void cwtFree(CwaveletTransform* object)
+auto cwtFree(CwaveletTransform* object) -> void
 {
     delete object;
 }
 
-void wt2Free(Wt2Set* wt)
+auto wt2Free(Wt2Set* wt) -> void
 {
     delete wt;
 }

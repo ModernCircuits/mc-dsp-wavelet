@@ -6,7 +6,7 @@
 #define IMAG 1
 
 // Raises an exception if complex_size!=(real_size/2+1), being "/" an integer division.
-void checkRealComplexRatio(std::size_t const realSize, std::size_t const complexSize, std::string const& funcName)
+auto checkRealComplexRatio(std::size_t const realSize, std::size_t const complexSize, std::string const& funcName) -> void
 {
     if (complexSize != (realSize / 2 + 1)) {
         throw std::runtime_error(std::string("[ERROR] ") + funcName
@@ -16,7 +16,7 @@ void checkRealComplexRatio(std::size_t const realSize, std::size_t const complex
 }
 
 // Raises an exception with the given message if a>b.
-void checkALessEqualB(std::size_t const a, std::size_t const b, std::string const& message)
+auto checkALessEqualB(std::size_t const a, std::size_t const b, std::string const& message) -> void
 {
     checkTwoElements(
         a, b, [](auto ax, auto bx) { return ax > bx; }, message);
@@ -44,21 +44,21 @@ DoubleSignal::DoubleSignal(double* data, size_t size, size_t padBef, size_t padA
 }
 // the destructor frees the only resource allocated
 DoubleSignal::~DoubleSignal() { fftw_free(data_); }
-void DoubleSignal::operator+=(double const x)
+auto DoubleSignal::operator+=(double const x) -> void
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i] += x;
     }
     COZ_PROGRESS;
 }
-void DoubleSignal::operator*=(double const x)
+auto DoubleSignal::operator*=(double const x) -> void
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i] *= x;
     }
     COZ_PROGRESS;
 }
-void DoubleSignal::operator/=(double const x)
+auto DoubleSignal::operator/=(double const x) -> void
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i] /= x;
@@ -73,7 +73,7 @@ ComplexSignal::ComplexSignal(std::size_t size)
 
 ComplexSignal::~ComplexSignal() { fftw_free(data_); }
 
-void ComplexSignal::operator*=(double const x)
+auto ComplexSignal::operator*=(double const x) -> void
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i][REAL] *= x;
@@ -82,7 +82,7 @@ void ComplexSignal::operator*=(double const x)
     COZ_PROGRESS;
 }
 
-void ComplexSignal::operator+=(double const x)
+auto ComplexSignal::operator+=(double const x) -> void
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i][REAL] += x;
@@ -90,7 +90,7 @@ void ComplexSignal::operator+=(double const x)
     COZ_PROGRESS;
 }
 
-void ComplexSignal::operator+=(const fftw_complex x)
+auto ComplexSignal::operator+=(const fftw_complex x) -> void
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i][REAL] += x[REAL];
@@ -100,14 +100,14 @@ void ComplexSignal::operator+=(const fftw_complex x)
     COZ_PROGRESS;
 }
 
-void ComplexSignal::print(std::string const& /*name*/)
+auto ComplexSignal::print(std::string const& /*name*/) -> void
 {
     for (std::size_t i = 0; i < size_; ++i) {
         // printf("%s[%zu]\t=\t(%f, i%f)\n", name.c_str(), i, data_[i][REAL], data_[i][IMAG]);
     }
 }
 
-void spectralConvolution(ComplexSignal const& a, ComplexSignal const& b, ComplexSignal& result)
+auto spectralConvolution(ComplexSignal const& a, ComplexSignal const& b, ComplexSignal& result) -> void
 {
     std::size_t const kSizeA = a.size();
     std::size_t const kSizeB = b.size();
@@ -122,7 +122,7 @@ void spectralConvolution(ComplexSignal const& a, ComplexSignal const& b, Complex
     COZ_PROGRESS;
 }
 
-void spectralCorrelation(ComplexSignal const& a, ComplexSignal const& b, ComplexSignal& result)
+auto spectralCorrelation(ComplexSignal const& a, ComplexSignal const& b, ComplexSignal& result) -> void
 {
     std::size_t const kSizeA = a.size();
     std::size_t const kSizeB = b.size();
@@ -184,18 +184,18 @@ OverlapSaveConvolver::OverlapSaveConvolver(DoubleSignal& signal, DoubleSignal& p
     COZ_PROGRESS;
 }
 
-void OverlapSaveConvolver::executeConv()
+auto OverlapSaveConvolver::executeConv() -> void
 {
     execute(false);
     state_ = State::Conv;
 }
-void OverlapSaveConvolver::executeXcorr()
+auto OverlapSaveConvolver::executeXcorr() -> void
 {
     execute(true);
     state_ = State::Xcorr;
 }
 
-void OverlapSaveConvolver::printChunks(std::string const& name)
+auto OverlapSaveConvolver::printChunks(std::string const& name) -> void
 {
     checkLastExecutedNotNull("printChunks");
     for (std::size_t i = 0; i < resultChunks_.size(); i++) {
@@ -251,7 +251,7 @@ auto OverlapSaveConvolver::extractResult() -> DoubleSignal
 
 // This private method throws an exception if _state_ is Uninitialized, because that
 // means that some "getter" has ben called before any computation has been performed.
-void OverlapSaveConvolver::checkLastExecutedNotNull(std::string const& methodName)
+auto OverlapSaveConvolver::checkLastExecutedNotNull(std::string const& methodName) -> void
 {
     if (state_ == State::Uninitialized) {
         throw std::runtime_error(std::string("[ERROR] OverlapSaveConvolver.") + methodName
@@ -263,7 +263,7 @@ void OverlapSaveConvolver::checkLastExecutedNotNull(std::string const& methodNam
 // This private method implements steps 3,4,5 of the algorithm. If the given flag is false,
 // it will perform a convolution (4a), and a cross-correlation (4b) otherwise.
 // Note the parallelization with OpenMP, which increases performance in supporting CPUs.
-void OverlapSaveConvolver::execute(const bool crossCorrelate)
+auto OverlapSaveConvolver::execute(const bool crossCorrelate) -> void
 {
     auto operation = (crossCorrelate) ? spectralCorrelation : spectralConvolution;
     // do ffts

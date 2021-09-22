@@ -59,7 +59,7 @@ auto convInit(int n, int l) -> std::unique_ptr<ConvSet>
     return obj;
 }
 
-void convDirect(fft_type const* inp1, int n, fft_type const* inp2, int l, fft_type* oup)
+auto convDirect(fft_type const* inp1, int n, fft_type const* inp2, int l, fft_type* oup) -> void
 {
 
     int k;
@@ -109,7 +109,7 @@ void convDirect(fft_type const* inp1, int n, fft_type const* inp2, int l, fft_ty
     }
 }
 
-void convFft(ConvSet const& obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup)
+auto convFft(ConvSet const& obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup) -> void
 {
 
     auto n = obj.clen;

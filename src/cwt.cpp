@@ -64,8 +64,8 @@ static auto factorial(int n) -> double
     return fact[n];
 }
 
-static void waveFunction(int nk, double dt, int mother, double param, double scale1, double const* kwave, double pi, double* period1,
-    double* coi1, FftData* daughter)
+static auto waveFunction(int nk, double dt, int mother, double param, double scale1, double const* kwave, double pi, double* period1,
+    double* coi1, FftData* daughter) -> void
 {
 
     double norm;
@@ -155,8 +155,8 @@ static void waveFunction(int nk, double dt, int mother, double param, double sca
     }
 }
 
-void cwavelet(double const* y, int n, double dt, int mother, double param, double s0, double dj, int jtot, int npad,
-    double* wave, double const* scale, double* period, double* coi)
+auto cwavelet(double const* y, int n, double dt, int mother, double param, double s0, double dj, int jtot, int npad,
+    double* wave, double const* scale, double* period, double* coi) -> void
 {
 
     int j;
@@ -253,7 +253,7 @@ void cwavelet(double const* y, int n, double dt, int mother, double param, doubl
     }
 }
 
-void psi0(int mother, double param, double* val, int* real)
+auto psi0(int mother, double param, double* val, int* real) -> void
 {
     double pi;
     double coeff;
@@ -382,7 +382,7 @@ auto cdelta(int mother, double param, double psi0) -> double
     return cdel;
 }
 
-void icwavelet(double const* wave, int n, double* scale, int jtot, double dt, double dj, double cdelta, double psi0, double* oup)
+auto icwavelet(double const* wave, int n, double* scale, int jtot, double dt, double dj, double cdelta, double psi0, double* oup) -> void
 {
 
     int j;

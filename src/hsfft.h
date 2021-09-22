@@ -20,7 +20,7 @@
 #define fft_type double
 #endif
 
-void fftExec(FftSet& obj, FftData* inp, FftData* oup);
+auto fftExec(FftSet& obj, FftData* inp, FftData* oup) -> void;
 
 auto divideby(int m, int d) -> int;
 
@@ -28,8 +28,8 @@ auto dividebyN(int n) -> int;
 
 auto factors(int m, int* arr) -> int;
 
-void twiddle(FftData* vec, int n, int radix);
+auto twiddle(FftData* vec, int n, int radix) -> void;
 
-void longvectorN(FftData* sig, int const* array, int tx);
+auto longvectorN(FftData* sig, int const* array, int tx) -> void;
 
 #endif /* HSFFT_H_ */

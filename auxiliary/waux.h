@@ -23,8 +23,8 @@ auto median(double* x, int N) -> double;
 
 auto minindex(double const* arr, int N) -> int;
 
-void autocovar(double const* vec, int N, double* acov, int M);
+auto autocovar(double const* vec, int N, double* acov, int M) -> void;
 
-void autocorr(double const* vec, int N, double* acorr, int M);
+auto autocorr(double const* vec, int N, double* acorr, int M) -> void;
 
 #endif /* AUXILIARY_WAUX_H_ */

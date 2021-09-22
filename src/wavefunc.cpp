@@ -2,7 +2,7 @@
 
 #include <memory>
 
-void meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
+auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid) -> void
 {
     auto const m = divideby(n, 2);
     if (m == 0) {
@@ -78,7 +78,7 @@ void meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
     }
 }
 
-void gauss(int n, int p, double lb, double ub, double* psi, double* t)
+auto gauss(int n, int p, double lb, double ub, double* psi, double* t) -> void
 {
     double delta;
     double num;
@@ -169,12 +169,12 @@ void gauss(int n, int p, double lb, double ub, double* psi, double* t)
     }
 }
 
-void mexhat(int n, double lb, double ub, double* psi, double* t)
+auto mexhat(int n, double lb, double ub, double* psi, double* t) -> void
 {
     gauss(n, 2, lb, ub, psi, t);
 }
 
-void morlet(int n, double lb, double ub, double* psi, double* t)
+auto morlet(int n, double lb, double ub, double* psi, double* t) -> void
 {
     int i;
     double delta;

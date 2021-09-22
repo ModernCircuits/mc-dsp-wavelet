@@ -16,7 +16,7 @@
 #include <sstream>
 #include <vector>
 
-void modwtReconstructionTest()
+auto modwtReconstructionTest()
 {
     auto const n = 4096;
     auto epsilon = 1e-15;
@@ -78,7 +78,7 @@ void modwtReconstructionTest()
     }
 }
 
-void modwT2ReconstructionTest()
+auto modwT2ReconstructionTest()
 {
     Wt2Set* wt;
     int i;
@@ -146,7 +146,7 @@ void modwT2ReconstructionTest()
     }
 }
 
-void dwptReconstructionTest()
+auto dwptReconstructionTest()
 {
 
     WptSet* wt;
@@ -254,7 +254,7 @@ void dwptReconstructionTest()
     }
 }
 
-void cwtReconstructionTest()
+auto cwtReconstructionTest()
 {
     int i;
     int n;
@@ -355,7 +355,7 @@ void cwtReconstructionTest()
     }
 }
 
-void dbCoefTests()
+auto dbCoefTests()
 {
     constexpr auto epsilon = 1e-15;
     auto waveletNames = std::vector<std::string>(38);
@@ -386,7 +386,7 @@ void dbCoefTests()
     }
 }
 
-void coifCoefTests()
+auto coifCoefTests()
 {
     double epsilon = 1e-15;
     double t1;
@@ -422,7 +422,7 @@ void coifCoefTests()
     }
 }
 
-void symCoefTests()
+auto symCoefTests()
 {
     double epsilon = 1e-10;
     double t1;
@@ -457,7 +457,7 @@ void symCoefTests()
     }
 }
 
-void biorCoefTests()
+auto biorCoefTests()
 {
     double epsilon = 1e-10;
     double t1;
@@ -502,7 +502,7 @@ void biorCoefTests()
     }
 }
 
-void rBiorCoefTests()
+auto rBiorCoefTests()
 {
     double epsilon = 1e-10;
     double t1;
