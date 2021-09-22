@@ -1,4 +1,4 @@
-#include "OverlapSaveConvolver.hpp"
+#include "convolution/OverlapSave.hpp"
 
 #include <iostream>
 #include <string>
@@ -44,7 +44,7 @@ auto main() -> int
 
     auto s = DoubleSignal { si.data(), si.size() };
     auto p = DoubleSignal { pi.data(), pi.size() };
-    auto x = OverlapSaveConvolver { s, p };
+    auto x = OverlapSave { s, p };
 
     x.convolute();
     REQUIRE(approxEqual(x.extractResult(), std::array { 0.0, 1.0, 1.5, 2.5, 3.5, 3.5, 2.5, 2.0, 1.0 }));

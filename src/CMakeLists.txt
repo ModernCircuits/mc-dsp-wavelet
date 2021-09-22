@@ -12,8 +12,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 target_sources(${CMAKE_PROJECT_NAME}
     PRIVATE
         AudioFile.h
-        OverlapSaveConvolver.cpp
-        OverlapSaveConvolver.hpp
+
+        convolution/OverlapSave.cpp
+        convolution/OverlapSave.hpp
 
         wavelets.hpp
         wavelets/Convolution.cpp

@@ -129,13 +129,13 @@ struct FftBackwardPlan : FftPlan {
 ///   6. Concatenate the resulting chunks, ignoring (P-1) samples per chunk
 /// Note that steps 3,4,5 may be parallelized with some significant gain in performance.
 /// In this class: X = result_chunksize, L = result_stride
-struct OverlapSaveConvolver {
+struct OverlapSave {
     /// The only constructor for the class, receives two signals and performs steps 1 and 2 of the
     /// algorithm on them. The signals are passed by reference but the class works with padded copies
     /// of them, so no care has to be taken regarding memory management.
     /// The wisdomPath may be empty, or a path to a valid wisdom file.
     /// Note that len(signal) can never be smaller than len(patch), or an exception is thrown.
-    OverlapSaveConvolver(DoubleSignal& signal, DoubleSignal& patch, std::string const& wisdomPath = "");
+    OverlapSave(DoubleSignal& signal, DoubleSignal& patch, std::string const& wisdomPath = "");
 
     auto convolute() -> void;
     auto crossCorrelate() -> void;

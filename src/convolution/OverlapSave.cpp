@@ -1,4 +1,4 @@
-#include "OverlapSaveConvolver.hpp"
+#include "OverlapSave.hpp"
 
 #include <cassert>
 
@@ -70,7 +70,7 @@ FftBackwardPlan::FftBackwardPlan(ComplexSignal& cs, DoubleSignal& fs)
     assert(cs.size() == (fs.size() / 2U + 1U));
 }
 
-OverlapSaveConvolver::OverlapSaveConvolver(DoubleSignal& signal, DoubleSignal& patch, std::string const& /*wisdomPath*/)
+OverlapSave::OverlapSave(DoubleSignal& signal, DoubleSignal& patch, std::string const& /*wisdomPath*/)
     : signalSize_(signal.size())
     , patchSize_(patch.size())
     , resultSize_(signalSize_ + patchSize_ - 1)
@@ -101,12 +101,12 @@ OverlapSaveConvolver::OverlapSaveConvolver(DoubleSignal& signal, DoubleSignal& p
     }
 }
 
-auto OverlapSaveConvolver::convolute() -> void
+auto OverlapSave::convolute() -> void
 {
     execute(false);
     state_ = State::Conv;
 }
-auto OverlapSaveConvolver::crossCorrelate() -> void
+auto OverlapSave::crossCorrelate() -> void
 {
     execute(true);
     state_ = State::Xcorr;
@@ -131,7 +131,7 @@ auto OverlapSaveConvolver::crossCorrelate() -> void
 //   ...
 // Result[8] =                  [1 1 1]        => 1*7         = 7  // LAST ENTRY
 // Note that the returned signal object takes care of its own memory, so no management is needed.
-auto OverlapSaveConvolver::extractResult() -> DoubleSignal
+auto OverlapSave::extractResult() -> DoubleSignal
 {
     assert(state_ != State::Uninitialized);
 
@@ -158,7 +158,7 @@ auto OverlapSaveConvolver::extractResult() -> DoubleSignal
 // This private method implements steps 3,4,5 of the algorithm. If the given flag is false,
 // it will perform a convolution (4a), and a cross-correlation (4b) otherwise.
 // Note the parallelization with OpenMP, which increases performance in supporting CPUs.
-auto OverlapSaveConvolver::execute(const bool crossCorrelate) -> void
+auto OverlapSave::execute(const bool crossCorrelate) -> void
 {
     auto operation = (crossCorrelate) ? spectralCorrelation : spectralConvolution;
     // do ffts

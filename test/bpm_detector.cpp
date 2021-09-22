@@ -1,7 +1,7 @@
 #include "wavelets.hpp"
 
 #include "AudioFile.h"
-#include "OverlapSaveConvolver.hpp"
+#include "convolution/OverlapSave.hpp"
 #include "helper.hpp"
 #include "readFileToVector.hpp"
 
@@ -131,7 +131,7 @@ struct BpmDetect {
         // std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [m](auto v) { return v - m; });
 
         auto s = DoubleSignal(cDSum.data(), cDSum.size());
-        auto x = OverlapSaveConvolver(s, s);
+        auto x = OverlapSave(s, s);
         x.crossCorrelate();
         auto correl = x.extractResult();
 

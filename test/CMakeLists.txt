@@ -29,7 +29,7 @@ wavelib_add_test(dwt_reconstruction)
 wavelib_add_test(swt_reconstruction)
 wavelib_add_test(denoisetest)
 wavelib_add_test(modwtdenoisetest)
-wavelib_add_test(OverlapSaveConvolverTest)
+wavelib_add_test(OverlapSaveTest)
 
 add_executable(bpm_detector "bpm_detector.cpp")
 target_link_libraries(bpm_detector PRIVATE wavelib wavelib_testdata lt::CodeCoverage)
