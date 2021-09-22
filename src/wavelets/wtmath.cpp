@@ -554,18 +554,10 @@ static auto isign(int n) -> int
     return m;
 }
 
-static auto iabs(int n) -> int
-{
-    if (n >= 0) {
-        return n;
-    }
-    return -n;
-}
-
 auto circshift(double* array, int n, int l) -> void
 {
-    if (iabs(l) > n) {
-        l = isign(l) * (iabs(l) % n);
+    if (std::abs(l) > n) {
+        l = isign(l) * (std::abs(l) % n);
     }
     if (l < 0) {
         l = (n + l) % n;

@@ -654,24 +654,10 @@ auto swt(WaveletTransform& wt, double const* inp) -> void
 
 auto iswt(WaveletTransform& wt, double* swtop) -> void
 {
-    int n;
-    int lf;
-    int iter;
-    int j;
-    int index;
-    int value;
-    int count;
-    int len;
-    int indexShift;
-    int len0;
-    int u;
-    int n1;
-    int index2;
-
-    n = wt.siglength;
-    j = wt.levels();
-    u = 2;
-    lf = wt.wave().lprLen();
+    auto n = wt.siglength;
+    auto j = wt.levels();
+    auto u = 2;
+    auto lf = wt.wave().lprLen();
 
     auto appxSig = std::make_unique<double[]>(n);
     auto detSig = std::make_unique<double[]>(n);
@@ -687,7 +673,7 @@ auto iswt(WaveletTransform& wt, double* swtop) -> void
     auto oup00 = std::make_unique<double[]>(n);
     auto oup01 = std::make_unique<double[]>(n);
 
-    for (iter = 0; iter < j; ++iter) {
+    for (auto iter = 0; iter < j; ++iter) {
         for (auto i = 0; i < n; ++i) {
             swtop[i] = 0.0;
         }
@@ -702,20 +688,20 @@ auto iswt(WaveletTransform& wt, double* swtop) -> void
             }
         }
 
-        value = (int)std::pow(2.0, (double)(j - 1 - iter));
+        auto const value = (int)std::pow(2.0, (double)(j - 1 - iter));
 
-        for (count = 0; count < value; count++) {
-            len = 0;
-            for (index = count; index < n; index += value) {
+        for (auto count = 0; count < value; count++) {
+            auto len = 0;
+            for (auto index = count; index < n; index += value) {
                 appx1[len] = appxSig[index];
                 det1[len] = detSig[index];
                 len++;
             }
 
             //SHIFT 0
-            len0 = 0;
+            auto len0 = 0;
 
-            for (indexShift = 0; indexShift < len; indexShift += 2) {
+            for (auto indexShift = 0; indexShift < len; indexShift += 2) {
                 appx2[len0] = appx1[indexShift];
                 det2[len0] = det1[indexShift];
                 len0++;
@@ -726,7 +712,7 @@ auto iswt(WaveletTransform& wt, double* swtop) -> void
             upsamp2(det2.get(), len0, u, tempx.get());
             perExt(tempx.get(), 2 * len0, lf / 2, cH0.get());
 
-            n1 = 2 * len0 + lf;
+            auto n1 = 2 * len0 + lf;
 
             if (wt.wave().lprLen() == wt.wave().hprLen() && (wt.convMethod() == ConvolutionMethod::fft)) {
                 wt.cobj = convInit(n1, lf);
@@ -748,7 +734,7 @@ auto iswt(WaveletTransform& wt, double* swtop) -> void
 
             len0 = 0;
 
-            for (indexShift = 1; indexShift < len; indexShift += 2) {
+            for (auto indexShift = 1; indexShift < len; indexShift += 2) {
                 appx2[len0] = appx1[indexShift];
                 det2[len0] = det1[indexShift];
                 len0++;
@@ -771,9 +757,9 @@ auto iswt(WaveletTransform& wt, double* swtop) -> void
 
             circshift(oup01.get(), 2 * len0, -1);
 
-            index2 = 0;
+            auto index2 = 0;
 
-            for (index = count; index < n; index += value) {
+            for (auto index = count; index < n; index += value) {
                 swtop[index] = (oup00[index2] + oup01[index2]) / 2.0;
                 index2++;
             }

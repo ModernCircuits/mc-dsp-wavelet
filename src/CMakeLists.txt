@@ -24,8 +24,6 @@ target_sources(${CMAKE_PROJECT_NAME}
         wavelets/denoise.cpp
         wavelets/FFT.hpp
         wavelets/FFT.cpp
-        wavelets/real.cpp
-        wavelets/real.h
         wavelets/SignalExtension.hpp
         wavelets/waux.cpp
         wavelets/waux.h
