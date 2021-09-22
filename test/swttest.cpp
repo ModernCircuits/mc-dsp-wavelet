@@ -18,7 +18,6 @@ auto main() -> int
 
     auto out = std::make_unique<double[]>(n);
     auto diff = std::make_unique<double[]>(n);
-    //wmean = mean(temp, N);
 
     auto const j = 1;
 

@@ -21,13 +21,11 @@ target_sources(${CMAKE_PROJECT_NAME}
         wavelets/ConvolutionMethod.hpp
         wavelets/cwtmath.cpp
         wavelets/cwtmath.h
-        wavelets/denoise.cpp
+        wavelets/Denoise.hpp
+        wavelets/Denoise.cpp
         wavelets/FFT.hpp
         wavelets/FFT.cpp
         wavelets/SignalExtension.hpp
-        wavelets/waux.cpp
-        wavelets/waux.h
-        wavelets/wauxlib.h
         wavelets/wavefilt.cpp
         wavelets/wavefilt.h
         wavelets/wavefunc.cpp
@@ -47,8 +45,3 @@ target_sources(${CMAKE_PROJECT_NAME}
         wavelets/wtmath.cpp
         wavelets/wtmath.h
 )
-
-add_library(wauxlib)
-target_sources(wauxlib PRIVATE wavelets/denoise.cpp wavelets/waux.h wavelets/waux.cpp)
-target_link_libraries(wauxlib PRIVATE wavelib)
-target_include_directories(wauxlib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

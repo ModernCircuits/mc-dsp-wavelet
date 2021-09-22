@@ -1,5 +1,4 @@
-#include "waux.h"
-#include "wauxlib.h"
+#include "Denoise.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -7,6 +6,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <memory>
+#include <numeric>
 #include <string_view>
 
 using namespace std::string_view_literals;
@@ -470,4 +470,35 @@ auto setDenoiseParameters(DenoiseSet* obj, char const* thresh, char const* level
 auto denoiseFree(DenoiseSet* object) -> void
 {
     delete object;
+}
+
+auto median(double* const x, int n) -> double
+{
+    std::sort(x, x + n, std::less<double> {});
+
+    double sigma;
+    if ((n % 2) == 0) {
+        sigma = (x[n / 2 - 1] + x[n / 2]) / 2.0;
+    } else {
+        sigma = x[n / 2];
+    }
+
+    return sigma;
+}
+
+auto minindex(double const* arr, int n) -> int
+{
+    double min;
+    int index;
+
+    min = DBL_MAX;
+    index = 0;
+    for (auto i = 0; i < n; ++i) {
+        if (arr[i] < min) {
+            min = arr[i];
+            index = i;
+        }
+    }
+
+    return index;
 }

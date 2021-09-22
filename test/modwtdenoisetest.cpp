@@ -1,4 +1,4 @@
-#include "wavelets/wauxlib.h"
+#include "wavelets/Denoise.hpp"
 
 #include "readFileToVector.hpp"
 

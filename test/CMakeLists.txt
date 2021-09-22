@@ -27,12 +27,8 @@ wavelib_add_test(modwt2test)
 wavelib_add_test(tst_dwt)
 wavelib_add_test(dwt_reconstruction)
 wavelib_add_test(swt_reconstruction)
-
 wavelib_add_test(denoisetest)
-target_link_libraries(denoisetest PRIVATE wauxlib)
-
 wavelib_add_test(modwtdenoisetest)
-target_link_libraries(modwtdenoisetest PRIVATE wauxlib)
 
 add_executable(bpm_detector "bpm_detector.cpp")
 target_link_libraries(bpm_detector PRIVATE wavelib wavelib_testdata lt::CodeCoverage)

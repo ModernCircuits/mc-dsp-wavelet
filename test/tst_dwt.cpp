@@ -156,17 +156,13 @@ auto dwptReconstructionTest()
 
     WaveletPacketTransform* wt;
 
-    int n;
     int i;
     double epsilon = 1e-8;
 
-    n = 8096;
-
-    // N = 256;
+    auto n = 8096;
 
     auto inp = std::make_unique<double[]>(n);
     auto out = std::make_unique<double[]>(n);
-    // wmean = mean(temp, N);
 
     auto rd = std::random_device {};
     auto gen = std::mt19937 { rd() };

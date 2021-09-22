@@ -5,6 +5,11 @@
 
 #include "wavelets.hpp"
 
+#include <cfloat>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <string>
 
 struct DenoiseSet {
@@ -40,6 +45,8 @@ auto setDenoiseParameters(DenoiseSet* obj, char const* thresh, char const* level
 
 auto denoiseFree(DenoiseSet* object) -> void;
 
-auto mad(double* x, int n) -> double;
+auto median(double* x, int n) -> double;
+
+auto minindex(double const* arr, int n) -> int;
 
 #endif /* WAUXLIB_H_ */
