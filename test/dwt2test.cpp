@@ -44,7 +44,7 @@ auto main() -> int
         diff[i] = oup[i] - inp[i];
     }
 
-    wt2Summary(wt);
+    summary(*wt);
     std::printf("Abs Max %g \n", absmax(diff.get(), rows * cols));
 
     wt2Free(wt);

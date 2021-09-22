@@ -58,7 +58,7 @@ auto main() -> int
         mn += std::sqrt(wt->output[i].re * wt->output[i].re + wt->output[i].im * wt->output[i].im);
     }
 
-    cwtSummary(wt);
+    summary(*wt);
 
     std::printf("\n abs mean %g \n", mn / n);
 

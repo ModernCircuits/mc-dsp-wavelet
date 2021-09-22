@@ -12,7 +12,7 @@
 auto main() -> int
 {
     auto obj = Wavelet { "db4" };
-    waveSummary(obj);
+    summary(obj);
 
     auto n = 177;
     auto j = 2;
@@ -41,7 +41,7 @@ auto main() -> int
     // If Reconstruction succeeded then the output should be a small value.
     printf("\n MAX %g \n", absmax(diff.get(), wt.siglength));
 
-    wtSummary(wt); // Prints the full summary.
+    summary(wt); // Prints the full summary.
 
     return 0;
 }

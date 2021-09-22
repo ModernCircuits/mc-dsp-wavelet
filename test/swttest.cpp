@@ -41,7 +41,7 @@ auto main() -> int
 
     std::printf("\n MAX %g \n", absmax(diff.get(), wt.siglength)); // If Reconstruction succeeded then the output should be a small value.
 
-    wtSummary(wt); // Prints the full summary.
+    summary(wt); // Prints the full summary.
 
     return EXIT_SUCCESS;
 }

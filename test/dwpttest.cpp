@@ -34,7 +34,7 @@ auto main() -> int
         diff[i] = (inp[i] - oup[i]) / inp[i];
     }
 
-    wptSummary(wt);
+    summary(*wt);
 
     // If Reconstruction succeeded then the output should be a small value.
     printf("\n MAX %g \n", absmax(diff.get(), wt->siglength));

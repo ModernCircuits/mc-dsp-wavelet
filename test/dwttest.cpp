@@ -39,7 +39,7 @@ auto main() -> int
     printf("\n MAX %g \n", absmax(diff.get(), wt.siglength));
 
     // Prints the full summary.
-    wtSummary(wt);
+    summary(wt);
 
     return 0;
 }

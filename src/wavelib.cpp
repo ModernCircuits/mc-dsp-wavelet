@@ -3196,7 +3196,7 @@ auto dispWT2Coeffs(double* a, int row, int col) -> void
     }
 }
 
-auto waveSummary(Wavelet const& obj) -> void
+auto summary(Wavelet const& obj) -> void
 {
     auto const n = obj.size();
     printf("\n");
@@ -3229,12 +3229,12 @@ auto waveSummary(Wavelet const& obj) -> void
     printf("] \n");
 }
 
-auto wtSummary(WaveletTransform const& wt) -> void
+auto summary(WaveletTransform const& wt) -> void
 {
     int j;
     int t;
     j = wt.levels();
-    waveSummary(wt.wave());
+    summary(wt.wave());
     printf("\n");
     printf("Wavelet Transform : %s \n", wt.method().c_str());
     printf("Signal Extension : %s \n", toString(wt.extension()).c_str());
@@ -3254,24 +3254,24 @@ auto wtSummary(WaveletTransform const& wt) -> void
     printf("\n");
 }
 
-auto wtreeSummary(WaveletTree* wt) -> void
+auto summary(WaveletTree const& wt) -> void
 {
     int k;
     int p2;
     int j;
     int t;
-    j = wt->J;
-    waveSummary(*wt->wave);
+    j = wt.J;
+    summary(*wt.wave);
     printf("\n");
-    printf("Wavelet Transform : %s \n", wt->method.c_str());
+    printf("Wavelet Transform : %s \n", wt.method.c_str());
     printf("\n");
-    printf("Signal Extension : %s \n", wt->ext.c_str());
+    printf("Signal Extension : %s \n", wt.ext.c_str());
     printf("\n");
-    printf("Number of Decomposition Levels %d \n", wt->J);
+    printf("Number of Decomposition Levels %d \n", wt.J);
     printf("\n");
-    printf("Length of Input Signal %d \n", wt->siglength);
+    printf("Length of Input Signal %d \n", wt.siglength);
     printf("\n");
-    printf("Length of WT Output Vector %d \n", wt->outlength);
+    printf("Length of WT Output Vector %d \n", wt.outlength);
     printf("\n");
     printf("Wavelet Coefficients are contained in vector : %s \n", "output");
     printf("\n");
@@ -3280,7 +3280,7 @@ auto wtreeSummary(WaveletTree* wt) -> void
     p2 = 2;
     for (auto i = 0; i < j; ++i) {
         for (k = 0; k < p2; ++k) {
-            printf("Node %d %d Access : output[%d] Length : %d \n", i + 1, k, wt->nodelength[t], wt->length[j - i]);
+            printf("Node %d %d Access : output[%d] Length : %d \n", i + 1, k, wt.nodelength[t], wt.length[j - i]);
             t++;
         }
         p2 *= 2;
@@ -3288,27 +3288,27 @@ auto wtreeSummary(WaveletTree* wt) -> void
     printf("\n");
 }
 
-auto wptSummary(WaveletPacketTransform* wt) -> void
+auto summary(WaveletPacketTransform const& wt) -> void
 {
     int k;
     int p2;
     int j;
     int it1;
     int it2;
-    j = wt->J;
-    waveSummary(*wt->wave);
+    j = wt.J;
+    summary(*wt.wave);
     printf("\n");
-    printf("Signal Extension : %s \n", wt->ext.c_str());
+    printf("Signal Extension : %s \n", wt.ext.c_str());
     printf("\n");
-    printf("Entropy : %s \n", wt->entropy.c_str());
+    printf("Entropy : %s \n", wt.entropy.c_str());
     printf("\n");
-    printf("Number of Decomposition Levels %d \n", wt->J);
+    printf("Number of Decomposition Levels %d \n", wt.J);
     printf("\n");
-    printf("Number of Active Nodes %d \n", wt->nodes);
+    printf("Number of Active Nodes %d \n", wt.nodes);
     printf("\n");
-    printf("Length of Input Signal %d \n", wt->siglength);
+    printf("Length of Input Signal %d \n", wt.siglength);
     printf("\n");
-    printf("Length of WT Output Vector %d \n", wt->outlength);
+    printf("Length of WT Output Vector %d \n", wt.outlength);
     printf("\n");
     printf("Wavelet Coefficients are contained in vector : %s \n", "output");
     printf("\n");
@@ -3322,9 +3322,9 @@ auto wptSummary(WaveletPacketTransform* wt) -> void
         p2 = ipow2(i);
         it1 -= p2;
         for (k = 0; k < p2; ++k) {
-            if (wt->basisvector[it1 + k] == 1) {
-                printf("Node %d %d Access : output[%d] Length : %d \n", i, k, it2, wt->length[j - i + 1]);
-                it2 += wt->length[j - i + 1];
+            if (wt.basisvector[it1 + k] == 1) {
+                printf("Node %d %d Access : output[%d] Length : %d \n", i, k, it2, wt.length[j - i + 1]);
+                it2 += wt.length[j - i + 1];
             }
         }
     }
@@ -3332,71 +3332,71 @@ auto wptSummary(WaveletPacketTransform* wt) -> void
     printf("\n");
 }
 
-auto cwtSummary(ComplexWaveletTransform* wt) -> void
+auto summary(ComplexWaveletTransform const& wt) -> void
 {
 
     printf("\n");
-    printf("Wavelet : %s Parameter %lf \n", wt->wave.c_str(), wt->m);
+    printf("Wavelet : %s Parameter %lf \n", wt.wave.c_str(), wt.m);
     printf("\n");
-    printf("Length of Input Signal : %d \n", wt->siglength);
+    printf("Length of Input Signal : %d \n", wt.siglength);
     printf("\n");
-    printf("Sampling Rate : %g \n", wt->dt);
+    printf("Sampling Rate : %g \n", wt.dt);
     printf("\n");
-    printf("Total Number of Scales : %d \n", wt->J);
+    printf("Total Number of Scales : %d \n", wt.J);
     printf("\n");
-    printf("Smallest Scale (s0) : %lf \n", wt->s0);
+    printf("Smallest Scale (s0) : %lf \n", wt.s0);
     printf("\n");
-    printf("Separation Between Scales (dj) %lf \n", wt->dj);
+    printf("Separation Between Scales (dj) %lf \n", wt.dj);
     printf("\n");
-    printf("Scale Type %s \n", wt->type.c_str());
+    printf("Scale Type %s \n", wt.type.c_str());
     printf("\n");
-    printf("Complex CWT Output Vector is of size %d * %d stored in Row Major format \n", wt->J, wt->siglength);
+    printf("Complex CWT Output Vector is of size %d  const& %d stored in Row Major format \n", wt.J, wt.siglength);
     printf("\n");
-    printf("The ith real value can be accessed using wt->output()[i].re and imaginary value by wt->output()[i].im \n");
+    printf("The ith real value can be accessed using wt.output()[i].re and imaginary value by wt.output()[i].im \n");
     printf("\n");
 }
 
-auto wt2Summary(WaveletTransform2D* wt) -> void
+auto summary(WaveletTransform2D const& wt) -> void
 {
     int j;
     int t;
     int rows;
     int cols;
     int vsize;
-    j = wt->J;
-    waveSummary(*wt->wave);
+    j = wt.J;
+    summary(*wt.wave);
     printf("\n");
-    printf("Wavelet Transform : %s \n", wt->method.c_str());
+    printf("Wavelet Transform : %s \n", wt.method.c_str());
     printf("\n");
-    printf("Signal Extension : %s \n", wt->ext.c_str());
+    printf("Signal Extension : %s \n", wt.ext.c_str());
     printf("\n");
-    printf("Number of Decomposition Levels %d \n", wt->J);
+    printf("Number of Decomposition Levels %d \n", wt.J);
     printf("\n");
-    printf("Input Signal Rows %d \n", wt->rows);
+    printf("Input Signal Rows %d \n", wt.rows);
     printf("\n");
-    printf("Input Signal Cols %d \n", wt->cols);
+    printf("Input Signal Cols %d \n", wt.cols);
     printf("\n");
-    printf("Length of Wavelet Coefficients Vector %d \n", wt->outlength);
+    printf("Length of Wavelet Coefficients Vector %d \n", wt.outlength);
     printf("\n");
     t = 0;
     for (auto i = j; i > 0; --i) {
-        rows = wt->dimensions[2 * (j - i)];
-        cols = wt->dimensions[2 * (j - i) + 1];
+        rows = wt.dimensions[2 * (j - i)];
+        cols = wt.dimensions[2 * (j - i) + 1];
         vsize = rows * cols;
         printf("Level %d Decomposition Rows :%d Columns:%d Vector Size (Rows*Cols):%d \n", i, rows, cols, vsize);
-        printf("Access Row values stored at wt->dimensions[%d]\n", 2 * (j - i));
-        printf("Access Column values stored at wt->dimensions[%d]\n\n", 2 * (j - i) + 1);
+        printf("Access Row values stored at wt.dimensions[%d]\n", 2 * (j - i));
+        printf("Access Column values stored at wt.dimensions[%d]\n\n", 2 * (j - i) + 1);
 
         if (i == j) {
-            printf("Approximation Coefficients access at wt->coeffaccess[%d]=%d, Vector size:%d \n", t, wt->coeffaccess[t], vsize);
+            printf("Approximation Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n", t, wt.coeffaccess[t], vsize);
         }
 
         t += 1;
-        printf("Horizontal Coefficients access at wt->coeffaccess[%d]=%d, Vector size:%d \n", t, wt->coeffaccess[t], vsize);
+        printf("Horizontal Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n", t, wt.coeffaccess[t], vsize);
         t += 1;
-        printf("Vertical Coefficients access at wt->coeffaccess[%d]=%d, Vector size:%d \n", t, wt->coeffaccess[t], vsize);
+        printf("Vertical Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n", t, wt.coeffaccess[t], vsize);
         t += 1;
-        printf("Diagonal Coefficients access at wt->coeffaccess[%d]=%d, Vector size:%d \n\n", t, wt->coeffaccess[t], vsize);
+        printf("Diagonal Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n\n", t, wt.coeffaccess[t], vsize);
     }
 }
 

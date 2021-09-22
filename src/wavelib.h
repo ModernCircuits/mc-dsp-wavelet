@@ -262,17 +262,12 @@ auto getWT2Coeffs(WaveletTransform2D* wt, double* wcoeffs, int level, char const
 
 auto dispWT2Coeffs(double* a, int row, int col) -> void;
 
-auto waveSummary(Wavelet const& obj) -> void;
-
-auto wtSummary(WaveletTransform const& wt) -> void;
-
-auto wtreeSummary(WaveletTree* wt) -> void;
-
-auto wptSummary(WaveletPacketTransform* wt) -> void;
-
-auto cwtSummary(ComplexWaveletTransform* wt) -> void;
-
-auto wt2Summary(WaveletTransform2D* wt) -> void;
+auto summary(Wavelet const& obj) -> void;
+auto summary(WaveletTransform const& wt) -> void;
+auto summary(WaveletTree const& wt) -> void;
+auto summary(WaveletPacketTransform const& wt) -> void;
+auto summary(ComplexWaveletTransform const& wt) -> void;
+auto summary(WaveletTransform2D const& wt) -> void;
 
 auto wtreeFree(WaveletTree* object) -> void;
 

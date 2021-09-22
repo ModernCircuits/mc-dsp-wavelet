@@ -20,7 +20,7 @@ auto main() -> int
     setWTREEExtension(wt, "sym");
 
     wtree(wt, inp.get());
-    wtreeSummary(wt);
+    summary(*wt);
     auto const x = 3;
     auto const y = 5;
     auto const len = getWTREENodelength(wt, x);
