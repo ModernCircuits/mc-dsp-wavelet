@@ -1,11 +1,4 @@
-/*
- * conv.c
- *
- *  Created on: May 1, 2013
- *      Author: Rafat Hussain
- */
-
-#include "conv.h"
+#include "Convolution.hpp"
 
 #include <algorithm>
 #include <memory>

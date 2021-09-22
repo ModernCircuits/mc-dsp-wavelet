@@ -16,8 +16,7 @@ target_sources(${CMAKE_PROJECT_NAME}
         OverlapSaveConvolver.hpp
 
         wavelets.hpp
-        wavelets/conv.cpp
-        wavelets/conv.h
+        wavelets/Convolution.cpp
         wavelets/Convolution.hpp
         wavelets/ConvolutionMethod.hpp
         wavelets/cwt.cpp
@@ -26,8 +25,7 @@ target_sources(${CMAKE_PROJECT_NAME}
         wavelets/cwtmath.h
         wavelets/denoise.cpp
         wavelets/FFT.hpp
-        wavelets/hsfft.cpp
-        wavelets/hsfft.h
+        wavelets/FFT.cpp
         wavelets/real.cpp
         wavelets/real.h
         wavelets/SignalExtension.hpp

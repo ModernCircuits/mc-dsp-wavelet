@@ -11,6 +11,8 @@
 #define cplx_type double
 #endif
 
+#define PI2 6.28318530717958647692528676655900577
+
 template <typename T>
 auto makeZeros(std::size_t length) -> std::unique_ptr<T[]>
 {
@@ -46,3 +48,7 @@ struct FftRealSet {
 };
 
 auto fftRealInit(int n, int sgn) -> std::unique_ptr<FftRealSet>;
+
+auto fftExec(FftSet& obj, FftData* inp, FftData* oup) -> void;
+auto divideby(int m, int d) -> int;
+auto dividebyN(int n) -> int;

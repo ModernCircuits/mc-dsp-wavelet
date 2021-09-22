@@ -1,8 +1,8 @@
 #include "ComplexWaveletTransform.hpp"
 
-#include "wavelets/conv.h"
+#include "wavelets/Convolution.hpp"
+#include "wavelets/FFT.hpp"
 #include "wavelets/cwt.h"
-#include "wavelets/hsfft.h"
 #include "wavelets/wtmath.h"
 
 #include <cassert>

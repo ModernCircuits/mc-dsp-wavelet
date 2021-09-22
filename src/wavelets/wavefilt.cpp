@@ -5,19 +5,19 @@
 */
 #include "wavefilt.h"
 
-#include "conv.h"
+#include "Convolution.hpp"
 #include "filters/coif.hpp"
 #include "filters/daubechies.hpp"
 #include "filters/h.hpp"
 #include "filters/meyer.hpp"
 #include "filters/sym.hpp"
 
+#define USE_MATH_DEFINES
+#include <cmath>
+#include <cstdio>
+#include <cstring>
 #include <memory>
 #include <string_view>
-
-// #include <cstdio>
-// #define USE_MATH_DEFINES
-// #include <cmath>
 
 using namespace std::string_view_literals;
 

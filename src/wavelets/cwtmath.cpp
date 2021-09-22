@@ -1,6 +1,10 @@
 #include "cwtmath.h"
 
+#include <cmath>
+#include <cstdio>
+#include <cstring>
 #include <memory>
+
 
 static auto nsfftFd(FftSet* obj, FftData* inp, FftData* oup, double lb, double ub, double* w) -> void
 {

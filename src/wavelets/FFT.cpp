@@ -1,13 +1,9 @@
-/*
- * hsfft.c
- *
- *  Created on: Apr 14, 2013
- *      Author: Rafat Hussain
- */
+#include "FFT.hpp"
 
-#include "hsfft.h"
-
+#include <cassert>
+#include <cmath>
 #include <cstdio>
+#include <cstring>
 #include <memory>
 
 auto factors(int m, int* arr) -> int;

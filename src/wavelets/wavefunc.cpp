@@ -1,5 +1,7 @@
 #include "wavefunc.h"
 
+#include <cmath>
+#include <cstdio>
 #include <memory>
 
 auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid) -> void

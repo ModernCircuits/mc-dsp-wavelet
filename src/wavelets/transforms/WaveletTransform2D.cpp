@@ -1,10 +1,12 @@
 #include "WaveletTransform2D.hpp"
 
-#include "wavelets/conv.h"
-#include "wavelets/hsfft.h"
+#include "wavelets/Convolution.hpp"
+#include "wavelets/FFT.hpp"
 #include "wavelets/wtmath.h"
 
 #include <cassert>
+#include <cmath>
+#include <cstring>
 #include <string_view>
 
 using namespace std::string_view_literals;

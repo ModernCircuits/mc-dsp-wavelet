@@ -6,7 +6,9 @@
  */
 #include "real.h"
 
+#include <cmath>
 #include <cstdio>
+#include <cstring>
 #include <memory>
 
 auto fftRealInit(int n, int sgn) -> std::unique_ptr<FftRealSet>

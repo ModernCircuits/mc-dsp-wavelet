@@ -8,7 +8,11 @@ C. Torrence and G. Compo, and is available at URL: http://atoc.colorado.edu/rese
 
 #include "cwt.h"
 
+#include <cmath>
+#include <cstdio>
+#include <cstring>
 #include <memory>
+
 
 static auto factorial(int n) -> double
 {
