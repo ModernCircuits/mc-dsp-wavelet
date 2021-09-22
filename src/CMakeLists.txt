@@ -31,3 +31,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         wtmath.h
         wtmath.cpp
 )
+
+add_library(wauxlib)
+target_sources(wauxlib PRIVATE denoise.cpp waux.h waux.cpp)
+target_link_libraries(wauxlib PRIVATE wavelib)
+target_include_directories(wauxlib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

@@ -76,5 +76,4 @@ find_package(coz-profiler REQUIRED)
 add_subdirectory(3rd_party/span)
 
 add_subdirectory(src)
-add_subdirectory(auxiliary)
 add_subdirectory(test)
