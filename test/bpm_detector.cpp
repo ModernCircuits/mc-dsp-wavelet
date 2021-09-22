@@ -71,17 +71,17 @@ struct BpmDetect {
 
         auto cDMinlen = 0.0;
         auto cDSum = std::vector<double> {};
-        dwt(&wt_, input.data());
+        dwt(wt_, input.data());
         for (auto loop { 0 }; loop < levels; ++loop) {
             if (loop == 0) {
-                // dwt(&wt_, input.data());
+                // dwt(wt_, input.data());
                 cA = wt_.approx();
                 cD = wt_.detail(loop + 1);
                 cDMinlen = static_cast<double>(std::size(cD)) / maxDecimation + 1.0;
                 cDSum.resize(static_cast<std::size_t>(std::floor(cDMinlen)));
                 std::fill(begin(cDSum), end(cDSum), 0.0);
             } else {
-                // dwt(&wt_, cA.data());
+                // dwt(wt_, cA.data());
                 cA = wt_.approx();
                 cD = wt_.detail(loop + 1);
             }

@@ -260,9 +260,9 @@ struct Wt2Set {
 
 auto wt2Init(Wavelet& wave, char const* method, int rows, int cols, int j) -> Wt2Set*;
 
-auto dwt(WaveletTransform* wt, double const* inp) -> void;
+auto dwt(WaveletTransform& wt, double const* inp) -> void;
 
-auto idwt(WaveletTransform* wt, double* dwtop) -> void;
+auto idwt(WaveletTransform& wt, double* dwtop) -> void;
 
 auto wtree(WtreeSet* wt, double const* inp) -> void;
 
@@ -270,13 +270,13 @@ auto dwpt(WptSet* wt, double const* inp) -> void;
 
 auto idwpt(WptSet* wt, double* dwtop) -> void;
 
-auto swt(WaveletTransform* wt, double const* inp) -> void;
+auto swt(WaveletTransform& wt, double const* inp) -> void;
 
-auto iswt(WaveletTransform* wt, double* swtop) -> void;
+auto iswt(WaveletTransform& wt, double* swtop) -> void;
 
-auto modwt(WaveletTransform* wt, double const* inp) -> void;
+auto modwt(WaveletTransform& wt, double const* inp) -> void;
 
-auto imodwt(WaveletTransform* wt, double* oup) -> void;
+auto imodwt(WaveletTransform& wt, double* oup) -> void;
 
 auto setWTREEExtension(WtreeSet* wt, char const* extension) -> void;
 
@@ -316,7 +316,7 @@ auto dispWT2Coeffs(double* a, int row, int col) -> void;
 
 auto waveSummary(Wavelet const& obj) -> void;
 
-auto wtSummary(WaveletTransform* wt) -> void;
+auto wtSummary(WaveletTransform const& wt) -> void;
 
 auto wtreeSummary(WtreeSet* wt) -> void;
 

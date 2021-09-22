@@ -63,8 +63,8 @@ auto modwtReconstructionTest()
                         break;
                     }
 
-                    modwt(&wt, inp.get());
-                    imodwt(&wt, out.get());
+                    modwt(wt, inp.get());
+                    imodwt(wt, out.get());
 
                     if (directFft == 0) {
                         epsilon = 1e-8;

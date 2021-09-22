@@ -21,14 +21,14 @@ auto main() -> int
 
     // DWT output can be accessed using wt.output vector.
     // Use wt_summary to find out how to extract appx and detail coefficients
-    dwt(&wt, input.data());
+    dwt(wt, input.data());
 
     for (auto i = 0; i < wt.outlength; ++i) {
         printf("%g ", wt.output()[i]);
     }
 
     auto out = std::make_unique<double[]>(n);
-    idwt(&wt, out.get());
+    idwt(wt, out.get());
 
     auto diff = std::make_unique<double[]>(n);
     for (auto i = 0; i < wt.siglength; ++i) {
@@ -39,7 +39,7 @@ auto main() -> int
     printf("\n MAX %g \n", absmax(diff.get(), wt.siglength));
 
     // Prints the full summary.
-    wtSummary(&wt);
+    wtSummary(wt);
 
     return 0;
 }

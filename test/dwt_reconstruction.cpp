@@ -88,9 +88,9 @@ auto dwtReconstructionTest()
                         wt.convMethod(ConvolutionMethod::fft);
                     }
 
-                    dwt(&wt, inp.get()); // Perform DWT
+                    dwt(wt, inp.get()); // Perform DWT
 
-                    idwt(&wt, out.get()); // Perform IDWT (if needed)
+                    idwt(wt, out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
                     auto epsilon = 1e-15;

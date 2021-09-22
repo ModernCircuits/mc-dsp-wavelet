@@ -53,9 +53,9 @@ auto visushrink(double* signal, int n, int j, char const* wname, char const* met
     auto wt = WaveletTransform { wave, method, n, j };
     if (method == "dwt"sv) {
         wt.extension(ext == "per"sv ? SignalExtension::periodic : SignalExtension::symmetric);
-        dwt(&wt, signal);
+        dwt(wt, signal);
     } else if (method == "swt"sv) {
-        swt(&wt, signal);
+        swt(wt, signal);
     } else {
         std::printf("Acceptable WT methods are - dwt,swt and modwt\n");
         std::exit(-1);
@@ -128,9 +128,9 @@ auto visushrink(double* signal, int n, int j, char const* wname, char const* met
     }
 
     if (method == "dwt"sv) {
-        idwt(&wt, denoised);
+        idwt(wt, denoised);
     } else if (method == "swt"sv) {
-        iswt(&wt, denoised);
+        iswt(wt, denoised);
     }
 }
 
@@ -169,9 +169,9 @@ auto sureshrink(double* signal, int n, int j, char const* wname, char const* met
 
     if (method == "dwt"sv) {
         wt.extension(ext == "per"sv ? SignalExtension::periodic : SignalExtension::symmetric);
-        dwt(&wt, signal);
+        dwt(wt, signal);
     } else if (method == "swt"sv) {
-        swt(&wt, signal);
+        swt(wt, signal);
     } else {
         std::printf("Acceptable WT methods are - dwt and swt\n");
         std::exit(-1);
@@ -280,9 +280,9 @@ auto sureshrink(double* signal, int n, int j, char const* wname, char const* met
     }
 
     if (method == "dwt"sv) {
-        idwt(&wt, denoised);
+        idwt(wt, denoised);
     } else if (method == "swt"sv) {
-        iswt(&wt, denoised);
+        iswt(wt, denoised);
     }
 }
 
@@ -325,7 +325,7 @@ auto modwtshrink(double* signal, int n, int j, char const* wname, char const* cm
         std::exit(-1);
     }
 
-    modwt(&wt, signal);
+    modwt(wt, signal);
 
     auto lnoise = std::make_unique<double[]>(j);
 
@@ -378,7 +378,7 @@ auto modwtshrink(double* signal, int n, int j, char const* wname, char const* cm
         m /= 2.0;
     }
 
-    imodwt(&wt, denoised);
+    imodwt(wt, denoised);
 }
 
 auto denoise(DenoiseSet* obj, double* signal, double* denoised) -> void

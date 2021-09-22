@@ -25,14 +25,14 @@ auto main() -> int
     auto wt = WaveletTransform(obj, "swt", n, j); // Initialize the wavelet transform object
     wt.convMethod(ConvolutionMethod::direct);
 
-    swt(&wt, inp.data()); // Perform SWT
+    swt(wt, inp.data()); // Perform SWT
     //SWT output can be accessed using wt.output vector. Use wt_summary to find out how to extract appx and detail coefficients
 
     for (auto i = 0; i < wt.outlength; ++i) {
         std::printf("%g ", wt.output()[i]);
     }
 
-    iswt(&wt, out.get()); // Perform ISWT (if needed)
+    iswt(wt, out.get()); // Perform ISWT (if needed)
     // Test Reconstruction
 
     for (auto i = 0; i < wt.siglength; ++i) {
@@ -41,7 +41,7 @@ auto main() -> int
 
     std::printf("\n MAX %g \n", absmax(diff.get(), wt.siglength)); // If Reconstruction succeeded then the output should be a small value.
 
-    wtSummary(&wt); // Prints the full summary.
+    wtSummary(wt); // Prints the full summary.
 
     return EXIT_SUCCESS;
 }

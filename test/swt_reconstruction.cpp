@@ -97,9 +97,9 @@ auto swtReconstructionTest()
                         break;
                     }
 
-                    swt(&wt, inp.get()); // Perform DWT
+                    swt(wt, inp.get()); // Perform DWT
 
-                    iswt(&wt, out.get()); // Perform IDWT (if needed)
+                    iswt(wt, out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
                     if (directFft == 0) {
