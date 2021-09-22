@@ -5,8 +5,8 @@
 #include "wtmath.h"
 
 /// \brief lb -lower bound, ub - upper bound, w - time or frequency grid (Size N)
-void nsfft_exec(fft_set* obj, fft_data* inp, fft_data* oup, double lb, double ub, double* w);
+void nsfftExec(FftSet* obj, FftData* inp, FftData* oup, double lb, double ub, double* w);
 
-auto cwt_gamma(double x) -> double;
+auto cwtGamma(double x) -> double;
 
 #endif /* WAVELIB_H_ */

@@ -12,14 +12,14 @@
 #include <sstream>
 #include <vector>
 
-void DWTReconstructionTest()
+void dwtReconstructionTest()
 {
-    auto const N = 22'050;
+    auto const n = 22'050;
 
-    auto inp = std::make_unique<double[]>(N);
-    auto out = std::make_unique<double[]>(N);
+    auto inp = std::make_unique<double[]>(n);
+    auto out = std::make_unique<double[]>(n);
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         inp[i] = (rand() / (double)(RAND_MAX));
     }
     std::vector<std::string> waveletNames;
@@ -66,21 +66,21 @@ void DWTReconstructionTest()
     waveletNames.emplace_back("rbior5.5");
     waveletNames.emplace_back("rbior6.8");
 
-    for (unsigned int direct_fft = 0; direct_fft < 2; direct_fft++) {
-        for (unsigned int sym_per = 0; sym_per < 2; sym_per++) {
+    for (unsigned int directFft = 0; directFft < 2; directFft++) {
+        for (unsigned int symPer = 0; symPer < 2; symPer++) {
             for (auto& waveletName : waveletNames) {
-                auto obj = wavelet { waveletName.c_str() };
-                for (auto J = 1; J < 3; J++) {
-                    auto wt = wavelet_transform(obj, "dwt", N, J);
-                    if (sym_per == 0) {
-                        wt.extension(signal_extension::symmetric);
+                auto obj = Wavelet { waveletName.c_str() };
+                for (auto j = 1; j < 3; j++) {
+                    auto wt = WaveletTransform(obj, "dwt", n, j);
+                    if (symPer == 0) {
+                        wt.extension(SignalExtension::symmetric);
                     } else {
-                        wt.extension(signal_extension::periodic);
+                        wt.extension(SignalExtension::periodic);
                     }
-                    if (direct_fft == 0) {
-                        wt.conv_method(convolution_method::direct);
+                    if (directFft == 0) {
+                        wt.convMethod(ConvolutionMethod::direct);
                     } else {
-                        wt.conv_method(convolution_method::fft);
+                        wt.convMethod(ConvolutionMethod::fft);
                     }
 
                     dwt(&wt, inp.get()); // Perform DWT
@@ -89,14 +89,14 @@ void DWTReconstructionTest()
                     // Test Reconstruction
 
                     auto epsilon = 1e-15;
-                    if (direct_fft == 0) {
+                    if (directFft == 0) {
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
                     }
 
                     // std::printf("%g ",RMS_Error(out.get(), inp.get(), wt.siglength));
-                    if (RMS_Error(out.get(), inp.get(), wt.siglength) > epsilon) {
+                    if (rmsError(out.get(), inp.get(), wt.siglength) > epsilon) {
                         std::printf("\n ERROR : DWT Reconstruction Unit Test Failed. Exiting. \n");
                         std::exit(-1);
                     }
@@ -106,19 +106,18 @@ void DWTReconstructionTest()
     }
 }
 
-void DWT2ReconstructionTest()
+void dwT2ReconstructionTest()
 {
-    wt2_set* wt;
-    int J;
+    Wt2Set* wt;
     double epsilon;
 
     auto const rows = 256;
     auto const cols = 200;
 
-    auto const N = rows * cols;
+    auto const n = rows * cols;
 
-    auto inp = std::make_unique<double[]>(N);
-    auto out = std::make_unique<double[]>(N);
+    auto inp = std::make_unique<double[]>(n);
+    auto out = std::make_unique<double[]>(n);
 
     std::vector<std::string> waveletNames;
 
@@ -167,21 +166,21 @@ void DWT2ReconstructionTest()
     for (auto i = 0; i < rows; ++i) {
         for (auto k = 0; k < cols; ++k) {
             // inp[i*cols + k] = i*cols + k;
-            inp[i * cols + k] = generate_rnd();
+            inp[i * cols + k] = generateRnd();
             out[i * cols + k] = 0.0;
         }
     }
 
-    for (unsigned int direct_fft = 0; direct_fft < 1; direct_fft++) {
-        for (unsigned int sym_per = 0; sym_per < 2; sym_per++) {
+    for (unsigned int directFft = 0; directFft < 1; directFft++) {
+        for (unsigned int symPer = 0; symPer < 2; symPer++) {
             for (auto& waveletName : waveletNames) {
-                auto obj = wavelet { waveletName.c_str() };
-                for (J = 1; J < 3; J++) {
+                auto obj = Wavelet { waveletName.c_str() };
+                for (auto j = 1; j < 3; j++) {
                     // J = 3;
 
-                    wt = wt2_init(obj, "dwt", rows, cols,
-                        J); // Initialize the wavelet transform object
-                    if (sym_per == 0) {
+                    wt = wt2Init(obj, "dwt", rows, cols,
+                        j); // Initialize the wavelet transform object
+                    if (symPer == 0) {
                         setDWT2Extension(wt,
                             "sym"); // Options are "per" and "sym".
                         // Symmetric is the default option
@@ -194,17 +193,17 @@ void DWT2ReconstructionTest()
                     idwt2(wt, wavecoeffs.get(), out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
-                    if (direct_fft == 0) {
+                    if (directFft == 0) {
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
                     }
 
-                    if (RMS_Error(out.get(), inp.get(), N) > epsilon) {
+                    if (rmsError(out.get(), inp.get(), n) > epsilon) {
                         std::printf("\n ERROR : DWT2 Reconstruction Unit Test Failed. Exiting. \n");
                         std::exit(-1);
                     }
-                    wt2_free(wt);
+                    wt2Free(wt);
                 }
             }
         }
@@ -214,10 +213,10 @@ void DWT2ReconstructionTest()
 auto main() -> int
 {
     std::printf("Running DWT ReconstructionTests ... ");
-    DWTReconstructionTest();
+    dwtReconstructionTest();
     std::printf("DONE \n");
     std::printf("Running DWT2 ReconstructionTests ... ");
-    DWT2ReconstructionTest();
+    dwT2ReconstructionTest();
     std::printf("DONE \n");
     return 0;
 }

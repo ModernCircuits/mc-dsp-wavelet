@@ -2,43 +2,43 @@
 
 #include <memory>
 
-static void nsfft_fd(fft_set* obj, fft_data* inp, fft_data* oup, double lb, double ub, double* w)
+static void nsfftFd(FftSet* obj, FftData* inp, FftData* oup, double lb, double ub, double* w)
 {
-    auto const N = obj->N;
-    auto const L = N / 2;
+    auto const n = obj->N;
+    auto const l = n / 2;
 
-    auto temp1 = std::make_unique<double[]>(L);
-    auto temp2 = std::make_unique<double[]>(L);
+    auto temp1 = std::make_unique<double[]>(l);
+    auto temp2 = std::make_unique<double[]>(l);
 
-    auto const delta = (ub - lb) / N;
+    auto const delta = (ub - lb) / n;
     auto const den = 2 * (ub - lb);
-    auto j = -N;
+    auto j = -n;
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         w[i] = (double)j / den;
         j += 2;
     }
 
-    fft_exec(*obj, inp, oup);
+    fftExec(*obj, inp, oup);
 
-    for (auto i = 0; i < L; ++i) {
+    for (auto i = 0; i < l; ++i) {
         temp1[i] = oup[i].re;
         temp2[i] = oup[i].im;
     }
 
-    for (auto i = 0; i < N - L; ++i) {
-        oup[i].re = oup[i + L].re;
-        oup[i].im = oup[i + L].im;
+    for (auto i = 0; i < n - l; ++i) {
+        oup[i].re = oup[i + l].re;
+        oup[i].im = oup[i + l].im;
     }
 
-    for (auto i = 0; i < L; ++i) {
-        oup[N - L + i].re = temp1[i];
-        oup[N - L + i].im = temp2[i];
+    for (auto i = 0; i < l; ++i) {
+        oup[n - l + i].re = temp1[i];
+        oup[n - l + i].im = temp2[i];
     }
 
     auto const plb = PI2 * lb;
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         auto const tempr = oup[i].re;
         auto const tempi = oup[i].im;
         auto const theta = w[i] * plb;
@@ -48,69 +48,69 @@ static void nsfft_fd(fft_set* obj, fft_data* inp, fft_data* oup, double lb, doub
     }
 }
 
-static void nsfft_bk(fft_set* obj, fft_data* inp, fft_data* oup, double lb, double ub, double* t)
+static void nsfftBk(FftSet* obj, FftData* inp, FftData* oup, double lb, double ub, double* t)
 {
 
-    auto const N = obj->N;
-    auto const L = N / 2;
+    auto const n = obj->N;
+    auto const l = n / 2;
 
-    auto const M = divideby(N, 2);
+    auto const m = divideby(n, 2);
 
-    if (M == 0) {
+    if (m == 0) {
         printf("The Non-Standard FFT Length must be a power of 2");
         exit(1);
     }
 
-    auto temp1 = std::make_unique<double[]>(L);
-    auto temp2 = std::make_unique<double[]>(L);
-    auto w = std::make_unique<double[]>(N);
-    auto inpt = std::make_unique<fft_data[]>(N);
+    auto temp1 = std::make_unique<double[]>(l);
+    auto temp2 = std::make_unique<double[]>(l);
+    auto w = std::make_unique<double[]>(n);
+    auto inpt = std::make_unique<FftData[]>(n);
 
-    auto const delta = (ub - lb) / N;
+    auto const delta = (ub - lb) / n;
     auto const den = 2 * (ub - lb);
-    auto j = -N;
+    auto j = -n;
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         w[i] = (double)j / den;
         j += 2;
     }
 
     auto const plb = PI2 * lb;
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         auto const theta = w[i] * plb;
         inpt[i].re = (inp[i].re * cos(theta) - inp[i].im * sin(theta)) / delta;
         inpt[i].im = (inp[i].im * cos(theta) + inp[i].re * sin(theta)) / delta;
     }
 
-    for (auto i = 0; i < L; ++i) {
+    for (auto i = 0; i < l; ++i) {
         temp1[i] = inpt[i].re;
         temp2[i] = inpt[i].im;
     }
 
-    for (auto i = 0; i < N - L; ++i) {
-        inpt[i].re = inpt[i + L].re;
-        inpt[i].im = inpt[i + L].im;
+    for (auto i = 0; i < n - l; ++i) {
+        inpt[i].re = inpt[i + l].re;
+        inpt[i].im = inpt[i + l].im;
     }
 
-    for (auto i = 0; i < L; ++i) {
-        inpt[N - L + i].re = temp1[i];
-        inpt[N - L + i].im = temp2[i];
+    for (auto i = 0; i < l; ++i) {
+        inpt[n - l + i].re = temp1[i];
+        inpt[n - l + i].im = temp2[i];
     }
 
-    fft_exec(*obj, inpt.get(), oup);
+    fftExec(*obj, inpt.get(), oup);
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         t[i] = lb + i * delta;
     }
 }
 
-void nsfft_exec(fft_set* obj, fft_data* inp, fft_data* oup, double lb, double ub, double* w)
+void nsfftExec(FftSet* obj, FftData* inp, FftData* oup, double lb, double ub, double* w)
 {
     if (obj->sgn == 1) {
-        nsfft_fd(obj, inp, oup, lb, ub, w);
+        nsfftFd(obj, inp, oup, lb, ub, w);
     } else if (obj->sgn == -1) {
-        nsfft_bk(obj, inp, oup, lb, ub, w);
+        nsfftBk(obj, inp, oup, lb, ub, w);
     }
 }
 
@@ -119,7 +119,7 @@ static auto roundTowardsZero(double x) -> double
     return x >= 0.0 ? std::floor(x) : std::ceil(x);
 }
 
-auto cwt_gamma(double x) -> double
+auto cwtGamma(double x) -> double
 {
     /*
 	 * This C program code is based on  W J Cody's fortran code.

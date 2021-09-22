@@ -6,7 +6,7 @@
 #include "wavefilt.h"
 
 #include "filters/coif.hpp"
-#include "filters/db.hpp"
+#include "filters/daubechies.hpp"
 #include "filters/h.hpp"
 #include "filters/meyer.hpp"
 #include "filters/sym.hpp"
@@ -20,23 +20,23 @@ auto filtlength(char const* name) -> int
 {
     int len = strlen(name);
     int i = 0;
-    int N = 0;
+    int n = 0;
     if (name == "haar"sv || name == "db1"sv) {
         return 2;
     }
     if (len > 2 && strstr(name, "db") != nullptr) {
-        auto new_str = std::make_unique<char[]>((len - 2 + 1));
+        auto newStr = std::make_unique<char[]>((len - 2 + 1));
         for (i = 2; i < len + 1; i++) {
-            new_str[i - 2] = name[i];
+            newStr[i - 2] = name[i];
         }
 
-        N = atoi(new_str.get());
-        if (N > 38) {
+        n = atoi(newStr.get());
+        if (n > 38) {
             printf("\n Filter Not in Database \n");
             return -1;
         }
 
-        return N * 2;
+        return n * 2;
     }
     if (name == "bior1.1"sv) {
         return 2;
@@ -143,32 +143,32 @@ auto filtlength(char const* name) -> int
         return 18;
     }
     if (len > 4 && strstr(name, "coif") != nullptr) {
-        auto new_str = std::make_unique<char[]>((len - 4 + 1));
+        auto newStr = std::make_unique<char[]>((len - 4 + 1));
         for (i = 4; i < len + 1; i++) {
-            new_str[i - 4] = name[i];
+            newStr[i - 4] = name[i];
         }
 
-        N = atoi(new_str.get());
-        if (N > 17) {
+        n = atoi(newStr.get());
+        if (n > 17) {
             printf("\n Filter Not in Database \n");
             return -1;
         }
 
-        return N * 6;
+        return n * 6;
     }
     if (len > 3 && strstr(name, "sym") != nullptr) {
-        auto new_str = std::make_unique<char[]>((len - 3 + 1));
+        auto newStr = std::make_unique<char[]>((len - 3 + 1));
         for (i = 3; i < len + 1; i++) {
-            new_str[i - 3] = name[i];
+            newStr[i - 3] = name[i];
         }
 
-        N = atoi(new_str.get());
-        if (N > 20 || N < 2) {
+        n = atoi(newStr.get());
+        if (n > 20 || n < 2) {
             printf("\n Filter Not in Database \n");
             return -1;
         }
 
-        return N * 2;
+        return n * 2;
     }
     if (strcmp(name, "meyer") == 0) {
         return 102;
@@ -177,36 +177,36 @@ auto filtlength(char const* name) -> int
     return -1;
 }
 
-void copy_reverse(double const* in, int N, double* out)
+void copyReverse(double const* in, int n, double* out)
 {
     int count = 0;
-    for (count = 0; count < N; count++) {
-        out[count] = in[N - count - 1];
+    for (count = 0; count < n; count++) {
+        out[count] = in[n - count - 1];
     }
 }
 
-void qmf_wrev(double const* in, int N, double* out)
+void qmfWrev(double const* in, int n, double* out)
 {
-    auto sigOutTemp = std::make_unique<double[]>(N);
+    auto sigOutTemp = std::make_unique<double[]>(n);
 
-    qmf_even(in, N, sigOutTemp.get());
-    copy_reverse(sigOutTemp.get(), N, out);
+    qmfEven(in, n, sigOutTemp.get());
+    copyReverse(sigOutTemp.get(), n, out);
 }
 
-void qmf_even(double const* in, int N, double* out)
+void qmfEven(double const* in, int n, double* out)
 {
     int count = 0;
-    for (count = 0; count < N; count++) {
-        out[count] = in[N - count - 1];
+    for (count = 0; count < n; count++) {
+        out[count] = in[n - count - 1];
         if (count % 2 != 0) {
             out[count] = -1 * out[count];
         }
     }
 }
-void copy(double const* in, int N, double* out)
+void copy(double const* in, int n, double* out)
 {
     int count = 0;
-    for (count = 0; count < N; count++) {
+    for (count = 0; count < n; count++) {
         out[count] = in[count];
     }
 }
@@ -214,990 +214,990 @@ void copy(double const* in, int N, double* out)
 auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int
 {
     int i = 0;
-    int N = filtlength(name);
+    int n = filtlength(name);
     if ((strcmp(name, "haar") == 0) || (strcmp(name, "db1") == 0)) {
-        copy_reverse(db1, N, lp1);
-        qmf_wrev(db1, N, hp1);
-        copy(db1, N, lp2);
-        qmf_even(db1, N, hp2);
+        copyReverse(daubechies1, n, lp1);
+        qmfWrev(daubechies1, n, hp1);
+        copy(daubechies1, n, lp2);
+        qmfEven(daubechies1, n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "db2"sv) {
-        copy_reverse(db2, N, lp1);
-        qmf_wrev(db2, N, hp1);
-        copy(db2, N, lp2);
-        qmf_even(db2, N, hp2);
+        copyReverse(daubechies2, n, lp1);
+        qmfWrev(daubechies2, n, hp1);
+        copy(daubechies2, n, lp2);
+        qmfEven(daubechies2, n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "db3"sv) {
-        copy_reverse(db3, N, lp1);
-        qmf_wrev(db3, N, hp1);
-        copy(db3, N, lp2);
-        qmf_even(db3, N, hp2);
+        copyReverse(daubechies3, n, lp1);
+        qmfWrev(daubechies3, n, hp1);
+        copy(daubechies3, n, lp2);
+        qmfEven(daubechies3, n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "db4"sv) {
-        copy_reverse(db4, N, lp1);
-        qmf_wrev(db4, N, hp1);
-        copy(db4, N, lp2);
-        qmf_even(db4, N, hp2);
+        copyReverse(daubechies4, n, lp1);
+        qmfWrev(daubechies4, n, hp1);
+        copy(daubechies4, n, lp2);
+        qmfEven(daubechies4, n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "db5"sv) {
-        copy_reverse(db5, N, lp1);
-        qmf_wrev(db5, N, hp1);
-        copy(db5, N, lp2);
-        qmf_even(db5, N, hp2);
+        copyReverse(daubechies5, n, lp1);
+        qmfWrev(daubechies5, n, hp1);
+        copy(daubechies5, n, lp2);
+        qmfEven(daubechies5, n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "db6"sv) {
-        copy_reverse(db6, N, lp1);
-        qmf_wrev(db6, N, hp1);
-        copy(db6, N, lp2);
-        qmf_even(db6, N, hp2);
+        copyReverse(daubechies6, n, lp1);
+        qmfWrev(daubechies6, n, hp1);
+        copy(daubechies6, n, lp2);
+        qmfEven(daubechies6, n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "db7"sv) {
-        copy_reverse(db7, N, lp1);
-        qmf_wrev(db7, N, hp1);
-        copy(db7, N, lp2);
-        qmf_even(db7, N, hp2);
+        copyReverse(daubechies7, n, lp1);
+        qmfWrev(daubechies7, n, hp1);
+        copy(daubechies7, n, lp2);
+        qmfEven(daubechies7, n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "db8"sv) {
-        copy_reverse(db8, N, lp1);
-        qmf_wrev(db8, N, hp1);
-        copy(db8, N, lp2);
-        qmf_even(db8, N, hp2);
+        copyReverse(daubechies8, n, lp1);
+        qmfWrev(daubechies8, n, hp1);
+        copy(daubechies8, n, lp2);
+        qmfEven(daubechies8, n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "db9"sv) {
-        copy_reverse(db9, N, lp1);
-        qmf_wrev(db9, N, hp1);
-        copy(db9, N, lp2);
-        qmf_even(db9, N, hp2);
+        copyReverse(daubechies9, n, lp1);
+        qmfWrev(daubechies9, n, hp1);
+        copy(daubechies9, n, lp2);
+        qmfEven(daubechies9, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db10"sv) {
-        copy_reverse(db10, N, lp1);
-        qmf_wrev(db10, N, hp1);
-        copy(db10, N, lp2);
-        qmf_even(db10, N, hp2);
+        copyReverse(daubechies10, n, lp1);
+        qmfWrev(daubechies10, n, hp1);
+        copy(daubechies10, n, lp2);
+        qmfEven(daubechies10, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db11"sv) {
-        copy_reverse(db11, N, lp1);
-        qmf_wrev(db11, N, hp1);
-        copy(db11, N, lp2);
-        qmf_even(db11, N, hp2);
+        copyReverse(daubechies11, n, lp1);
+        qmfWrev(daubechies11, n, hp1);
+        copy(daubechies11, n, lp2);
+        qmfEven(daubechies11, n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "db12"sv) {
-        copy_reverse(db12, N, lp1);
-        qmf_wrev(db12, N, hp1);
-        copy(db12, N, lp2);
-        qmf_even(db12, N, hp2);
+        copyReverse(daubechies12, n, lp1);
+        qmfWrev(daubechies12, n, hp1);
+        copy(daubechies12, n, lp2);
+        qmfEven(daubechies12, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db13"sv) {
-        copy_reverse(db13, N, lp1);
-        qmf_wrev(db13, N, hp1);
-        copy(db13, N, lp2);
-        qmf_even(db13, N, hp2);
+        copyReverse(daubechies13, n, lp1);
+        qmfWrev(daubechies13, n, hp1);
+        copy(daubechies13, n, lp2);
+        qmfEven(daubechies13, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db14"sv) {
-        copy_reverse(db14, N, lp1);
-        qmf_wrev(db14, N, hp1);
-        copy(db14, N, lp2);
-        qmf_even(db14, N, hp2);
+        copyReverse(daubechies14, n, lp1);
+        qmfWrev(daubechies14, n, hp1);
+        copy(daubechies14, n, lp2);
+        qmfEven(daubechies14, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db15"sv) {
-        copy_reverse(db15, N, lp1);
-        qmf_wrev(db15, N, hp1);
-        copy(db15, N, lp2);
-        qmf_even(db15, N, hp2);
+        copyReverse(daubechies15, n, lp1);
+        qmfWrev(daubechies15, n, hp1);
+        copy(daubechies15, n, lp2);
+        qmfEven(daubechies15, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db16"sv) {
-        copy_reverse(db16, N, lp1);
-        qmf_wrev(db16, N, hp1);
-        copy(db16, N, lp2);
-        qmf_even(db16, N, hp2);
+        copyReverse(daubechies16, n, lp1);
+        qmfWrev(daubechies16, n, hp1);
+        copy(daubechies16, n, lp2);
+        qmfEven(daubechies16, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db17"sv) {
-        copy_reverse(db17, N, lp1);
-        qmf_wrev(db17, N, hp1);
-        copy(db17, N, lp2);
-        qmf_even(db17, N, hp2);
+        copyReverse(daubechies17, n, lp1);
+        qmfWrev(daubechies17, n, hp1);
+        copy(daubechies17, n, lp2);
+        qmfEven(daubechies17, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db18"sv) {
-        copy_reverse(db18, N, lp1);
-        qmf_wrev(db18, N, hp1);
-        copy(db18, N, lp2);
-        qmf_even(db18, N, hp2);
+        copyReverse(daubechies18, n, lp1);
+        qmfWrev(daubechies18, n, hp1);
+        copy(daubechies18, n, lp2);
+        qmfEven(daubechies18, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db19"sv) {
-        copy_reverse(db19, N, lp1);
-        qmf_wrev(db19, N, hp1);
-        copy(db19, N, lp2);
-        qmf_even(db19, N, hp2);
+        copyReverse(daubechies19, n, lp1);
+        qmfWrev(daubechies19, n, hp1);
+        copy(daubechies19, n, lp2);
+        qmfEven(daubechies19, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db20"sv) {
-        copy_reverse(db20, N, lp1);
-        qmf_wrev(db20, N, hp1);
-        copy(db20, N, lp2);
-        qmf_even(db20, N, hp2);
+        copyReverse(daubechies20, n, lp1);
+        qmfWrev(daubechies20, n, hp1);
+        copy(daubechies20, n, lp2);
+        qmfEven(daubechies20, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db21"sv) {
-        copy_reverse(db21, N, lp1);
-        qmf_wrev(db21, N, hp1);
-        copy(db21, N, lp2);
-        qmf_even(db21, N, hp2);
+        copyReverse(daubechies21, n, lp1);
+        qmfWrev(daubechies21, n, hp1);
+        copy(daubechies21, n, lp2);
+        qmfEven(daubechies21, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db22"sv) {
-        copy_reverse(db22, N, lp1);
-        qmf_wrev(db22, N, hp1);
-        copy(db22, N, lp2);
-        qmf_even(db22, N, hp2);
+        copyReverse(daubechies22, n, lp1);
+        qmfWrev(daubechies22, n, hp1);
+        copy(daubechies22, n, lp2);
+        qmfEven(daubechies22, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db23"sv) {
-        copy_reverse(db23, N, lp1);
-        qmf_wrev(db23, N, hp1);
-        copy(db23, N, lp2);
-        qmf_even(db23, N, hp2);
+        copyReverse(daubechies23, n, lp1);
+        qmfWrev(daubechies23, n, hp1);
+        copy(daubechies23, n, lp2);
+        qmfEven(daubechies23, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db24"sv) {
-        copy_reverse(db24, N, lp1);
-        qmf_wrev(db24, N, hp1);
-        copy(db24, N, lp2);
-        qmf_even(db24, N, hp2);
+        copyReverse(daubechies24, n, lp1);
+        qmfWrev(daubechies24, n, hp1);
+        copy(daubechies24, n, lp2);
+        qmfEven(daubechies24, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db25"sv) {
-        copy_reverse(db25, N, lp1);
-        qmf_wrev(db25, N, hp1);
-        copy(db25, N, lp2);
-        qmf_even(db25, N, hp2);
+        copyReverse(daubechies25, n, lp1);
+        qmfWrev(daubechies25, n, hp1);
+        copy(daubechies25, n, lp2);
+        qmfEven(daubechies25, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db26"sv) {
-        copy_reverse(db26, N, lp1);
-        qmf_wrev(db26, N, hp1);
-        copy(db26, N, lp2);
-        qmf_even(db26, N, hp2);
-        return N;
+        copyReverse(daubechies26, n, lp1);
+        qmfWrev(daubechies26, n, hp1);
+        copy(daubechies26, n, lp2);
+        qmfEven(daubechies26, n, hp2);
+        return n;
     }
 
     if (name == "db27"sv) {
-        copy_reverse(db27, N, lp1);
-        qmf_wrev(db27, N, hp1);
-        copy(db27, N, lp2);
-        qmf_even(db27, N, hp2);
+        copyReverse(daubechies27, n, lp1);
+        qmfWrev(daubechies27, n, hp1);
+        copy(daubechies27, n, lp2);
+        qmfEven(daubechies27, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db28"sv) {
-        copy_reverse(db28, N, lp1);
-        qmf_wrev(db28, N, hp1);
-        copy(db28, N, lp2);
-        qmf_even(db28, N, hp2);
+        copyReverse(daubechies28, n, lp1);
+        qmfWrev(daubechies28, n, hp1);
+        copy(daubechies28, n, lp2);
+        qmfEven(daubechies28, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db29"sv) {
-        copy_reverse(db29, N, lp1);
-        qmf_wrev(db29, N, hp1);
-        copy(db29, N, lp2);
-        qmf_even(db29, N, hp2);
+        copyReverse(daubechies29, n, lp1);
+        qmfWrev(daubechies29, n, hp1);
+        copy(daubechies29, n, lp2);
+        qmfEven(daubechies29, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db30"sv) {
-        copy_reverse(db30, N, lp1);
-        qmf_wrev(db30, N, hp1);
-        copy(db30, N, lp2);
-        qmf_even(db30, N, hp2);
+        copyReverse(daubechies30, n, lp1);
+        qmfWrev(daubechies30, n, hp1);
+        copy(daubechies30, n, lp2);
+        qmfEven(daubechies30, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db31"sv) {
-        copy_reverse(db31, N, lp1);
-        qmf_wrev(db31, N, hp1);
-        copy(db31, N, lp2);
-        qmf_even(db31, N, hp2);
+        copyReverse(daubechies31, n, lp1);
+        qmfWrev(daubechies31, n, hp1);
+        copy(daubechies31, n, lp2);
+        qmfEven(daubechies31, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db32"sv) {
-        copy_reverse(db32, N, lp1);
-        qmf_wrev(db32, N, hp1);
-        copy(db32, N, lp2);
-        qmf_even(db32, N, hp2);
+        copyReverse(daubechies32, n, lp1);
+        qmfWrev(daubechies32, n, hp1);
+        copy(daubechies32, n, lp2);
+        qmfEven(daubechies32, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db33"sv) {
-        copy_reverse(db33, N, lp1);
-        qmf_wrev(db33, N, hp1);
-        copy(db33, N, lp2);
-        qmf_even(db33, N, hp2);
+        copyReverse(daubechies33, n, lp1);
+        qmfWrev(daubechies33, n, hp1);
+        copy(daubechies33, n, lp2);
+        qmfEven(daubechies33, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db34"sv) {
-        copy_reverse(db34, N, lp1);
-        qmf_wrev(db34, N, hp1);
-        copy(db34, N, lp2);
-        qmf_even(db34, N, hp2);
+        copyReverse(daubechies34, n, lp1);
+        qmfWrev(daubechies34, n, hp1);
+        copy(daubechies34, n, lp2);
+        qmfEven(daubechies34, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db35"sv) {
-        copy_reverse(db35, N, lp1);
-        qmf_wrev(db35, N, hp1);
-        copy(db35, N, lp2);
-        qmf_even(db35, N, hp2);
+        copyReverse(daubechies35, n, lp1);
+        qmfWrev(daubechies35, n, hp1);
+        copy(daubechies35, n, lp2);
+        qmfEven(daubechies35, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db36"sv) {
-        copy_reverse(db36, N, lp1);
-        qmf_wrev(db36, N, hp1);
-        copy(db36, N, lp2);
-        qmf_even(db36, N, hp2);
+        copyReverse(daubechies36, n, lp1);
+        qmfWrev(daubechies36, n, hp1);
+        copy(daubechies36, n, lp2);
+        qmfEven(daubechies36, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db37"sv) {
-        copy_reverse(db37, N, lp1);
-        qmf_wrev(db37, N, hp1);
-        copy(db37, N, lp2);
-        qmf_even(db37, N, hp2);
+        copyReverse(daubechies37, n, lp1);
+        qmfWrev(daubechies37, n, hp1);
+        copy(daubechies37, n, lp2);
+        qmfEven(daubechies37, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "db38"sv) {
-        copy_reverse(db38, N, lp1);
-        qmf_wrev(db38, N, hp1);
-        copy(db38, N, lp2);
-        qmf_even(db38, N, hp2);
+        copyReverse(daubechies38, n, lp1);
+        qmfWrev(daubechies38, n, hp1);
+        copy(daubechies38, n, lp2);
+        qmfEven(daubechies38, n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "bior1.1"sv) {
-        copy_reverse(hm1_11, N, lp1);
-        qmf_wrev(h1 + 4, N, hp1);
-        copy(h1 + 4, N, lp2);
-        qmf_even(hm1_11, N, hp2);
-        return N;
+        copyReverse(hm111, n, lp1);
+        qmfWrev(h1 + 4, n, hp1);
+        copy(h1 + 4, n, lp2);
+        qmfEven(hm111, n, hp2);
+        return n;
     }
 
     if (name == "bior1.3"sv) {
-        copy_reverse(hm1_13, N, lp1);
-        qmf_wrev(h1 + 2, N, hp1);
-        copy(h1 + 2, N, lp2);
-        qmf_even(hm1_13, N, hp2);
-        return N;
+        copyReverse(hm113, n, lp1);
+        qmfWrev(h1 + 2, n, hp1);
+        copy(h1 + 2, n, lp2);
+        qmfEven(hm113, n, hp2);
+        return n;
     }
 
     if (name == "bior1.5"sv) {
-        copy_reverse(hm1_15, N, lp1);
-        qmf_wrev(h1, N, hp1);
-        copy(h1, N, lp2);
-        qmf_even(hm1_15, N, hp2);
-        return N;
+        copyReverse(hm115, n, lp1);
+        qmfWrev(h1, n, hp1);
+        copy(h1, n, lp2);
+        qmfEven(hm115, n, hp2);
+        return n;
     }
 
     if (name == "bior2.2"sv) {
-        copy_reverse(hm2_22, N, lp1);
-        qmf_wrev(h2 + 6, N, hp1);
-        copy(h2 + 6, N, lp2);
-        qmf_even(hm2_22, N, hp2);
-        return N;
+        copyReverse(hm222, n, lp1);
+        qmfWrev(h2 + 6, n, hp1);
+        copy(h2 + 6, n, lp2);
+        qmfEven(hm222, n, hp2);
+        return n;
     }
 
     if (name == "bior2.4"sv) {
-        copy_reverse(hm2_24, N, lp1);
-        qmf_wrev(h2 + 4, N, hp1);
-        copy(h2 + 4, N, lp2);
-        qmf_even(hm2_24, N, hp2);
-        return N;
+        copyReverse(hm224, n, lp1);
+        qmfWrev(h2 + 4, n, hp1);
+        copy(h2 + 4, n, lp2);
+        qmfEven(hm224, n, hp2);
+        return n;
     }
 
     if (name == "bior2.6"sv) {
-        copy_reverse(hm2_26, N, lp1);
-        qmf_wrev(h2 + 2, N, hp1);
-        copy(h2 + 2, N, lp2);
-        qmf_even(hm2_26, N, hp2);
-        return N;
+        copyReverse(hm226, n, lp1);
+        qmfWrev(h2 + 2, n, hp1);
+        copy(h2 + 2, n, lp2);
+        qmfEven(hm226, n, hp2);
+        return n;
     }
 
     if (name == "bior2.8"sv) {
-        copy_reverse(hm2_28, N, lp1);
-        qmf_wrev(h2, N, hp1);
-        copy(h2, N, lp2);
-        qmf_even(hm2_28, N, hp2);
-        return N;
+        copyReverse(hm228, n, lp1);
+        qmfWrev(h2, n, hp1);
+        copy(h2, n, lp2);
+        qmfEven(hm228, n, hp2);
+        return n;
     }
 
     if (name == "bior3.1"sv) {
-        copy_reverse(hm3_31, N, lp1);
-        qmf_wrev(h3 + 8, N, hp1);
-        copy(h3 + 8, N, lp2);
-        qmf_even(hm3_31, N, hp2);
-        return N;
+        copyReverse(hm331, n, lp1);
+        qmfWrev(h3 + 8, n, hp1);
+        copy(h3 + 8, n, lp2);
+        qmfEven(hm331, n, hp2);
+        return n;
     }
 
     if (name == "bior3.3"sv) {
-        copy_reverse(hm3_33, N, lp1);
-        qmf_wrev(h3 + 6, N, hp1);
-        copy(h3 + 6, N, lp2);
-        qmf_even(hm3_33, N, hp2);
-        return N;
+        copyReverse(hm333, n, lp1);
+        qmfWrev(h3 + 6, n, hp1);
+        copy(h3 + 6, n, lp2);
+        qmfEven(hm333, n, hp2);
+        return n;
     }
 
     if (name == "bior3.5"sv) {
-        copy_reverse(hm3_35, N, lp1);
-        qmf_wrev(h3 + 4, N, hp1);
-        copy(h3 + 4, N, lp2);
-        qmf_even(hm3_35, N, hp2);
-        return N;
+        copyReverse(hm335, n, lp1);
+        qmfWrev(h3 + 4, n, hp1);
+        copy(h3 + 4, n, lp2);
+        qmfEven(hm335, n, hp2);
+        return n;
     }
 
     if (name == "bior3.7"sv) {
-        copy_reverse(hm3_37, N, lp1);
-        qmf_wrev(h3 + 2, N, hp1);
-        copy(h3 + 2, N, lp2);
-        qmf_even(hm3_37, N, hp2);
-        return N;
+        copyReverse(hm337, n, lp1);
+        qmfWrev(h3 + 2, n, hp1);
+        copy(h3 + 2, n, lp2);
+        qmfEven(hm337, n, hp2);
+        return n;
     }
 
     if (name == "bior3.9"sv) {
-        copy_reverse(hm3_39, N, lp1);
-        qmf_wrev(h3, N, hp1);
-        copy(h3, N, lp2);
-        qmf_even(hm3_39, N, hp2);
-        return N;
+        copyReverse(hm339, n, lp1);
+        qmfWrev(h3, n, hp1);
+        copy(h3, n, lp2);
+        qmfEven(hm339, n, hp2);
+        return n;
     }
 
     if (name == "bior4.4"sv) {
-        copy_reverse(hm4_44, N, lp1);
-        qmf_wrev(h4, N, hp1);
-        copy(h4, N, lp2);
-        qmf_even(hm4_44, N, hp2);
-        return N;
+        copyReverse(hm444, n, lp1);
+        qmfWrev(h4, n, hp1);
+        copy(h4, n, lp2);
+        qmfEven(hm444, n, hp2);
+        return n;
     }
 
     if (name == "bior5.5"sv) {
-        copy_reverse(hm5_55, N, lp1);
-        qmf_wrev(h5, N, hp1);
-        copy(h5, N, lp2);
-        qmf_even(hm5_55, N, hp2);
-        return N;
+        copyReverse(hm555, n, lp1);
+        qmfWrev(h5, n, hp1);
+        copy(h5, n, lp2);
+        qmfEven(hm555, n, hp2);
+        return n;
     }
 
     if (name == "bior6.8"sv) {
-        copy_reverse(hm6_68, N, lp1);
-        qmf_wrev(h6, N, hp1);
-        copy(h6, N, lp2);
-        qmf_even(hm6_68, N, hp2);
-        return N;
+        copyReverse(hm668, n, lp1);
+        qmfWrev(h6, n, hp1);
+        copy(h6, n, lp2);
+        qmfEven(hm668, n, hp2);
+        return n;
     }
 
     if (name == "rbior1.1"sv) {
-        copy_reverse(h1 + 4, N, lp1);
-        qmf_wrev(hm1_11, N, hp1);
-        copy(hm1_11, N, lp2);
-        qmf_even(h1 + 4, N, hp2);
-        return N;
+        copyReverse(h1 + 4, n, lp1);
+        qmfWrev(hm111, n, hp1);
+        copy(hm111, n, lp2);
+        qmfEven(h1 + 4, n, hp2);
+        return n;
     }
 
     if (name == "rbior1.3"sv) {
-        copy_reverse(h1 + 2, N, lp1);
-        qmf_wrev(hm1_13, N, hp1);
-        copy(hm1_13, N, lp2);
-        qmf_even(h1 + 2, N, hp2);
-        return N;
+        copyReverse(h1 + 2, n, lp1);
+        qmfWrev(hm113, n, hp1);
+        copy(hm113, n, lp2);
+        qmfEven(h1 + 2, n, hp2);
+        return n;
     }
 
     if (name == "rbior1.5"sv) {
-        copy_reverse(h1, N, lp1);
-        qmf_wrev(hm1_15, N, hp1);
-        copy(hm1_15, N, lp2);
-        qmf_even(h1, N, hp2);
-        return N;
+        copyReverse(h1, n, lp1);
+        qmfWrev(hm115, n, hp1);
+        copy(hm115, n, lp2);
+        qmfEven(h1, n, hp2);
+        return n;
     }
 
     if (name == "rbior2.2"sv) {
-        copy_reverse(h2 + 6, N, lp1);
-        qmf_wrev(hm2_22, N, hp1);
-        copy(hm2_22, N, lp2);
-        qmf_even(h2 + 6, N, hp2);
-        return N;
+        copyReverse(h2 + 6, n, lp1);
+        qmfWrev(hm222, n, hp1);
+        copy(hm222, n, lp2);
+        qmfEven(h2 + 6, n, hp2);
+        return n;
     }
 
     if (name == "rbior2.4"sv) {
-        copy_reverse(h2 + 4, N, lp1);
-        qmf_wrev(hm2_24, N, hp1);
-        copy(hm2_24, N, lp2);
-        qmf_even(h2 + 4, N, hp2);
-        return N;
+        copyReverse(h2 + 4, n, lp1);
+        qmfWrev(hm224, n, hp1);
+        copy(hm224, n, lp2);
+        qmfEven(h2 + 4, n, hp2);
+        return n;
     }
 
     if (name == "rbior2.6"sv) {
-        copy_reverse(h2 + 2, N, lp1);
-        qmf_wrev(hm2_26, N, hp1);
-        copy(hm2_26, N, lp2);
-        qmf_even(h2 + 2, N, hp2);
-        return N;
+        copyReverse(h2 + 2, n, lp1);
+        qmfWrev(hm226, n, hp1);
+        copy(hm226, n, lp2);
+        qmfEven(h2 + 2, n, hp2);
+        return n;
     }
 
     if (name == "rbior2.8"sv) {
-        copy_reverse(h2, N, lp1);
-        qmf_wrev(hm2_28, N, hp1);
-        copy(hm2_28, N, lp2);
-        qmf_even(h2, N, hp2);
-        return N;
+        copyReverse(h2, n, lp1);
+        qmfWrev(hm228, n, hp1);
+        copy(hm228, n, lp2);
+        qmfEven(h2, n, hp2);
+        return n;
     }
 
     if (name == "rbior3.1"sv) {
-        copy_reverse(h3 + 8, N, lp1);
-        qmf_wrev(hm3_31, N, hp1);
-        copy(hm3_31, N, lp2);
-        qmf_even(h3 + 8, N, hp2);
-        return N;
+        copyReverse(h3 + 8, n, lp1);
+        qmfWrev(hm331, n, hp1);
+        copy(hm331, n, lp2);
+        qmfEven(h3 + 8, n, hp2);
+        return n;
     }
 
     if (name == "rbior3.3"sv) {
-        copy_reverse(h3 + 6, N, lp1);
-        qmf_wrev(hm3_33, N, hp1);
-        copy(hm3_33, N, lp2);
-        qmf_even(h3 + 6, N, hp2);
-        return N;
+        copyReverse(h3 + 6, n, lp1);
+        qmfWrev(hm333, n, hp1);
+        copy(hm333, n, lp2);
+        qmfEven(h3 + 6, n, hp2);
+        return n;
     }
 
     if (name == "rbior3.5"sv) {
-        copy_reverse(h3 + 4, N, lp1);
-        qmf_wrev(hm3_35, N, hp1);
-        copy(hm3_35, N, lp2);
-        qmf_even(h3 + 4, N, hp2);
-        return N;
+        copyReverse(h3 + 4, n, lp1);
+        qmfWrev(hm335, n, hp1);
+        copy(hm335, n, lp2);
+        qmfEven(h3 + 4, n, hp2);
+        return n;
     }
 
     if (name == "rbior3.7"sv) {
-        copy_reverse(h3 + 2, N, lp1);
-        qmf_wrev(hm3_37, N, hp1);
-        copy(hm3_37, N, lp2);
-        qmf_even(h3 + 2, N, hp2);
-        return N;
+        copyReverse(h3 + 2, n, lp1);
+        qmfWrev(hm337, n, hp1);
+        copy(hm337, n, lp2);
+        qmfEven(h3 + 2, n, hp2);
+        return n;
     }
 
     if (name == "rbior3.9"sv) {
-        copy_reverse(h3, N, lp1);
-        qmf_wrev(hm3_39, N, hp1);
-        copy(hm3_39, N, lp2);
-        qmf_even(h3, N, hp2);
-        return N;
+        copyReverse(h3, n, lp1);
+        qmfWrev(hm339, n, hp1);
+        copy(hm339, n, lp2);
+        qmfEven(h3, n, hp2);
+        return n;
     }
 
     if (name == "rbior4.4"sv) {
-        copy_reverse(h4, N, lp1);
-        qmf_wrev(hm4_44, N, hp1);
-        copy(hm4_44, N, lp2);
-        qmf_even(h4, N, hp2);
-        return N;
+        copyReverse(h4, n, lp1);
+        qmfWrev(hm444, n, hp1);
+        copy(hm444, n, lp2);
+        qmfEven(h4, n, hp2);
+        return n;
     }
 
     if (name == "rbior5.5"sv) {
-        copy_reverse(h5, N, lp1);
-        qmf_wrev(hm5_55, N, hp1);
-        copy(hm5_55, N, lp2);
-        qmf_even(h5, N, hp2);
-        return N;
+        copyReverse(h5, n, lp1);
+        qmfWrev(hm555, n, hp1);
+        copy(hm555, n, lp2);
+        qmfEven(h5, n, hp2);
+        return n;
     }
 
     if (name == "rbior6.8"sv) {
-        copy_reverse(h6, N, lp1);
-        qmf_wrev(hm6_68, N, hp1);
-        copy(hm6_68, N, lp2);
-        qmf_even(h6, N, hp2);
-        return N;
+        copyReverse(h6, n, lp1);
+        qmfWrev(hm668, n, hp1);
+        copy(hm668, n, lp2);
+        qmfEven(h6, n, hp2);
+        return n;
     }
 
     if (name == "coif1"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif1, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif1, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "coif2"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif2, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif2, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "coif3"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif3, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif3, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "coif4"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif4, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif4, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "coif5"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif5, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif5, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "coif6"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif6, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif6, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "coif7"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif7, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif7, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "coif8"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif8, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif8, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "coif9"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif9, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif9, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
 
     if (name == "coif10"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif10, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif10, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "coif11"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif11, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif11, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "coif12"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif12, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif12, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "coif13"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif13, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif13, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "coif14"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif14, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif14, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "coif15"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif15, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif15, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "coif16"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif16, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif16, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "coif17"sv) {
-        auto coeffTemp = std::make_unique<double[]>(N);
+        auto coeffTemp = std::make_unique<double[]>(n);
 
-        copy(coif17, N, coeffTemp.get());
-        for (i = 0; i < N; ++i) {
+        copy(coif17, n, coeffTemp.get());
+        for (i = 0; i < n; ++i) {
             coeffTemp[i] *= M_SQRT2;
         }
 
-        copy_reverse(coeffTemp.get(), N, lp1);
-        qmf_wrev(coeffTemp.get(), N, hp1);
-        copy(coeffTemp.get(), N, lp2);
-        qmf_even(coeffTemp.get(), N, hp2);
+        copyReverse(coeffTemp.get(), n, lp1);
+        qmfWrev(coeffTemp.get(), n, hp1);
+        copy(coeffTemp.get(), n, lp2);
+        qmfEven(coeffTemp.get(), n, hp2);
 
-        return N;
+        return n;
     }
     if (name == "sym2"sv) {
-        copy_reverse(sym2, N, lp1);
-        qmf_wrev(sym2, N, hp1);
-        copy(sym2, N, lp2);
-        qmf_even(sym2, N, hp2);
-        return N;
+        copyReverse(sym2, n, lp1);
+        qmfWrev(sym2, n, hp1);
+        copy(sym2, n, lp2);
+        qmfEven(sym2, n, hp2);
+        return n;
     }
 
     if (name == "sym3"sv) {
-        copy_reverse(sym3, N, lp1);
-        qmf_wrev(sym3, N, hp1);
-        copy(sym3, N, lp2);
-        qmf_even(sym3, N, hp2);
-        return N;
+        copyReverse(sym3, n, lp1);
+        qmfWrev(sym3, n, hp1);
+        copy(sym3, n, lp2);
+        qmfEven(sym3, n, hp2);
+        return n;
     }
 
     if (name == "sym4"sv) {
-        copy_reverse(sym4, N, lp1);
-        qmf_wrev(sym4, N, hp1);
-        copy(sym4, N, lp2);
-        qmf_even(sym4, N, hp2);
-        return N;
+        copyReverse(sym4, n, lp1);
+        qmfWrev(sym4, n, hp1);
+        copy(sym4, n, lp2);
+        qmfEven(sym4, n, hp2);
+        return n;
     }
 
     if (name == "sym5"sv) {
-        copy_reverse(sym5, N, lp1);
-        qmf_wrev(sym5, N, hp1);
-        copy(sym5, N, lp2);
-        qmf_even(sym5, N, hp2);
-        return N;
+        copyReverse(sym5, n, lp1);
+        qmfWrev(sym5, n, hp1);
+        copy(sym5, n, lp2);
+        qmfEven(sym5, n, hp2);
+        return n;
     }
 
     if (name == "sym6"sv) {
-        copy_reverse(sym6, N, lp1);
-        qmf_wrev(sym6, N, hp1);
-        copy(sym6, N, lp2);
-        qmf_even(sym6, N, hp2);
-        return N;
+        copyReverse(sym6, n, lp1);
+        qmfWrev(sym6, n, hp1);
+        copy(sym6, n, lp2);
+        qmfEven(sym6, n, hp2);
+        return n;
     }
 
     if (name == "sym7"sv) {
-        copy_reverse(sym7, N, lp1);
-        qmf_wrev(sym7, N, hp1);
-        copy(sym7, N, lp2);
-        qmf_even(sym7, N, hp2);
-        return N;
+        copyReverse(sym7, n, lp1);
+        qmfWrev(sym7, n, hp1);
+        copy(sym7, n, lp2);
+        qmfEven(sym7, n, hp2);
+        return n;
     }
 
     if (name == "sym8"sv) {
-        copy_reverse(sym8, N, lp1);
-        qmf_wrev(sym8, N, hp1);
-        copy(sym8, N, lp2);
-        qmf_even(sym8, N, hp2);
-        return N;
+        copyReverse(sym8, n, lp1);
+        qmfWrev(sym8, n, hp1);
+        copy(sym8, n, lp2);
+        qmfEven(sym8, n, hp2);
+        return n;
     }
 
     if (name == "sym9"sv) {
-        copy_reverse(sym9, N, lp1);
-        qmf_wrev(sym9, N, hp1);
-        copy(sym9, N, lp2);
-        qmf_even(sym9, N, hp2);
-        return N;
+        copyReverse(sym9, n, lp1);
+        qmfWrev(sym9, n, hp1);
+        copy(sym9, n, lp2);
+        qmfEven(sym9, n, hp2);
+        return n;
     }
 
     if (name == "sym10"sv) {
-        copy_reverse(sym10, N, lp1);
-        qmf_wrev(sym10, N, hp1);
-        copy(sym10, N, lp2);
-        qmf_even(sym10, N, hp2);
-        return N;
+        copyReverse(sym10, n, lp1);
+        qmfWrev(sym10, n, hp1);
+        copy(sym10, n, lp2);
+        qmfEven(sym10, n, hp2);
+        return n;
     }
     if (name == "sym11"sv) {
-        copy_reverse(sym11, N, lp1);
-        qmf_wrev(sym11, N, hp1);
-        copy(sym11, N, lp2);
-        qmf_even(sym11, N, hp2);
-        return N;
+        copyReverse(sym11, n, lp1);
+        qmfWrev(sym11, n, hp1);
+        copy(sym11, n, lp2);
+        qmfEven(sym11, n, hp2);
+        return n;
     }
     if (name == "sym12"sv) {
-        copy_reverse(sym12, N, lp1);
-        qmf_wrev(sym12, N, hp1);
-        copy(sym12, N, lp2);
-        qmf_even(sym12, N, hp2);
-        return N;
+        copyReverse(sym12, n, lp1);
+        qmfWrev(sym12, n, hp1);
+        copy(sym12, n, lp2);
+        qmfEven(sym12, n, hp2);
+        return n;
     }
     if (name == "sym13"sv) {
-        copy_reverse(sym13, N, lp1);
-        qmf_wrev(sym13, N, hp1);
-        copy(sym13, N, lp2);
-        qmf_even(sym13, N, hp2);
-        return N;
+        copyReverse(sym13, n, lp1);
+        qmfWrev(sym13, n, hp1);
+        copy(sym13, n, lp2);
+        qmfEven(sym13, n, hp2);
+        return n;
     }
     if (name == "sym14"sv) {
-        copy_reverse(sym14, N, lp1);
-        qmf_wrev(sym14, N, hp1);
-        copy(sym14, N, lp2);
-        qmf_even(sym14, N, hp2);
-        return N;
+        copyReverse(sym14, n, lp1);
+        qmfWrev(sym14, n, hp1);
+        copy(sym14, n, lp2);
+        qmfEven(sym14, n, hp2);
+        return n;
     }
     if (name == "sym15"sv) {
-        copy_reverse(sym15, N, lp1);
-        qmf_wrev(sym15, N, hp1);
-        copy(sym15, N, lp2);
-        qmf_even(sym15, N, hp2);
-        return N;
+        copyReverse(sym15, n, lp1);
+        qmfWrev(sym15, n, hp1);
+        copy(sym15, n, lp2);
+        qmfEven(sym15, n, hp2);
+        return n;
     }
     if (name == "sym16"sv) {
-        copy_reverse(sym16, N, lp1);
-        qmf_wrev(sym16, N, hp1);
-        copy(sym16, N, lp2);
-        qmf_even(sym16, N, hp2);
-        return N;
+        copyReverse(sym16, n, lp1);
+        qmfWrev(sym16, n, hp1);
+        copy(sym16, n, lp2);
+        qmfEven(sym16, n, hp2);
+        return n;
     }
     if (name == "sym17"sv) {
-        copy_reverse(sym17, N, lp1);
-        qmf_wrev(sym17, N, hp1);
-        copy(sym17, N, lp2);
-        qmf_even(sym17, N, hp2);
-        return N;
+        copyReverse(sym17, n, lp1);
+        qmfWrev(sym17, n, hp1);
+        copy(sym17, n, lp2);
+        qmfEven(sym17, n, hp2);
+        return n;
     }
     if (name == "sym18"sv) {
-        copy_reverse(sym18, N, lp1);
-        qmf_wrev(sym18, N, hp1);
-        copy(sym18, N, lp2);
-        qmf_even(sym18, N, hp2);
-        return N;
+        copyReverse(sym18, n, lp1);
+        qmfWrev(sym18, n, hp1);
+        copy(sym18, n, lp2);
+        qmfEven(sym18, n, hp2);
+        return n;
     }
     if (name == "sym19"sv) {
-        copy_reverse(sym19, N, lp1);
-        qmf_wrev(sym19, N, hp1);
-        copy(sym19, N, lp2);
-        qmf_even(sym19, N, hp2);
-        return N;
+        copyReverse(sym19, n, lp1);
+        qmfWrev(sym19, n, hp1);
+        copy(sym19, n, lp2);
+        qmfEven(sym19, n, hp2);
+        return n;
     }
     if (name == "sym20"sv) {
-        copy_reverse(sym20, N, lp1);
-        qmf_wrev(sym20, N, hp1);
-        copy(sym20, N, lp2);
-        qmf_even(sym20, N, hp2);
-        return N;
+        copyReverse(sym20, n, lp1);
+        qmfWrev(sym20, n, hp1);
+        copy(sym20, n, lp2);
+        qmfEven(sym20, n, hp2);
+        return n;
     }
     if (name == "meyer"sv) {
-        copy_reverse(meyer, N, lp1);
-        qmf_wrev(meyer, N, hp1);
-        copy(meyer, N, lp2);
-        qmf_even(meyer, N, hp2);
-        return N;
+        copyReverse(meyer, n, lp1);
+        qmfWrev(meyer, n, hp1);
+        copy(meyer, n, lp2);
+        qmfEven(meyer, n, hp2);
+        return n;
     }
 
     printf("\n Filter Not in Database \n");

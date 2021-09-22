@@ -16,14 +16,14 @@
 #include <sstream>
 #include <vector>
 
-void MODWTReconstructionTest()
+void modwtReconstructionTest()
 {
-    auto const N = 4096;
+    auto const n = 4096;
     auto epsilon = 1e-15;
 
-    auto out = std::make_unique<double[]>(N);
-    auto inp = std::make_unique<double[]>(N);
-    std::generate_n(inp.get(), N, [] { return (rand() / (double)(RAND_MAX)); });
+    auto out = std::make_unique<double[]>(n);
+    auto inp = std::make_unique<double[]>(n);
+    std::generate_n(inp.get(), n, [] { return (rand() / (double)(RAND_MAX)); });
 
     auto waveletNames = std::vector<std::string> {};
 
@@ -37,23 +37,23 @@ void MODWTReconstructionTest()
         waveletNames.push_back(std::string("sym") + std::to_string(j + 1));
     }
 
-    for (std::size_t direct_fft = 0; direct_fft < 2; direct_fft++) {
-        for (std::size_t sym_per = 0; sym_per < 1; sym_per++) {
+    for (std::size_t directFft = 0; directFft < 2; directFft++) {
+        for (std::size_t symPer = 0; symPer < 1; symPer++) {
             for (auto const& name : waveletNames) {
-                auto obj = wavelet { name.c_str() };
-                for (auto J = 1; J < 3; J++) {
-                    auto wt = wavelet_transform(obj, "modwt", N, J);
+                auto obj = Wavelet { name.c_str() };
+                for (auto j = 1; j < 3; j++) {
+                    auto wt = WaveletTransform(obj, "modwt", n, j);
 
-                    if (direct_fft == 0) {
-                        wt.conv_method(convolution_method::direct);
+                    if (directFft == 0) {
+                        wt.convMethod(ConvolutionMethod::direct);
                     } else {
-                        wt.conv_method(convolution_method::fft);
+                        wt.convMethod(ConvolutionMethod::fft);
                     }
 
-                    if (sym_per == 0) {
-                        wt.extension(signal_extension::periodic);
-                    } else if (sym_per == 1 && direct_fft == 1) {
-                        wt.extension(signal_extension::symmetric);
+                    if (symPer == 0) {
+                        wt.extension(SignalExtension::periodic);
+                    } else if (symPer == 1 && directFft == 1) {
+                        wt.extension(SignalExtension::symmetric);
                     } else {
                         break;
                     }
@@ -61,13 +61,13 @@ void MODWTReconstructionTest()
                     modwt(&wt, inp.get());
                     imodwt(&wt, out.get());
 
-                    if (direct_fft == 0) {
+                    if (directFft == 0) {
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
                     }
 
-                    auto const err = RMS_Error(out.get(), inp.get(), wt.siglength);
+                    auto const err = rmsError(out.get(), inp.get(), wt.siglength);
                     if (err > epsilon) {
                         printf("\n ERROR : DWT Reconstruction Unit Test Failed. Exiting. \n");
                         exit(-1);
@@ -78,13 +78,11 @@ void MODWTReconstructionTest()
     }
 }
 
-void MODWT2ReconstructionTest()
+void modwT2ReconstructionTest()
 {
-    wt2_set* wt;
+    Wt2Set* wt;
     int i;
     int k;
-    int J;
-    int N;
     int rows;
     int cols;
 
@@ -93,10 +91,10 @@ void MODWT2ReconstructionTest()
     rows = 512;
     cols = 500;
 
-    N = rows * cols;
+    auto n = rows * cols;
 
-    auto inp = std::make_unique<double[]>(N);
-    auto out = std::make_unique<double[]>(N);
+    auto inp = std::make_unique<double[]>(n);
+    auto out = std::make_unique<double[]>(n);
 
     std::vector<std::string> waveletNames;
 
@@ -113,60 +111,59 @@ void MODWT2ReconstructionTest()
     for (i = 0; i < rows; ++i) {
         for (k = 0; k < cols; ++k) {
             // inp[i*cols + k] = i*cols + k;
-            inp[i * cols + k] = generate_rnd();
+            inp[i * cols + k] = generateRnd();
             out[i * cols + k] = 0.0;
         }
     }
 
-    for (std::size_t direct_fft = 0; direct_fft < 1; direct_fft++) {
-        for (std::size_t sym_per = 0; sym_per < 1; sym_per++) {
+    for (std::size_t directFft = 0; directFft < 1; directFft++) {
+        for (std::size_t symPer = 0; symPer < 1; symPer++) {
             for (auto const& name : waveletNames) {
-                auto obj = wavelet { name.c_str() };
-                for (J = 1; J < 3; J++) {
-                    wt = wt2_init(obj, "modwt", rows, cols, J);
-                    if (sym_per == 0) {
+                auto obj = Wavelet { name.c_str() };
+                for (auto j = 1; j < 3; j++) {
+                    wt = wt2Init(obj, "modwt", rows, cols, j);
+                    if (symPer == 0) {
                         setDWT2Extension(wt, "per");
                     }
 
                     auto wavecoeffs = modwt2(wt, inp.get());
                     imodwt2(wt, wavecoeffs.get(), out.get());
 
-                    if (direct_fft == 0) {
+                    if (directFft == 0) {
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
                     }
-                    if (RMS_Error(out.get(), inp.get(), N) > epsilon) {
+                    if (rmsError(out.get(), inp.get(), n) > epsilon) {
                         printf("\n ERROR : MODWT2 Reconstruction Unit Test Failed. "
                                "Exiting. \n");
                         exit(-1);
                     }
-                    wt2_free(wt);
+                    wt2Free(wt);
                 }
             }
         }
     }
 }
 
-void DWPTReconstructionTest()
+void dwptReconstructionTest()
 {
 
-    wpt_set* wt;
+    WptSet* wt;
 
-    int N;
+    int n;
     int i;
-    int J;
     double epsilon = 1e-8;
 
-    N = 8096;
+    n = 8096;
 
     // N = 256;
 
-    auto inp = std::make_unique<double[]>(N);
-    auto out = std::make_unique<double[]>(N);
+    auto inp = std::make_unique<double[]>(n);
+    auto out = std::make_unique<double[]>(n);
     // wmean = mean(temp, N);
 
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         inp[i] = (rand() / (double)(RAND_MAX));
     }
     std::vector<std::string> waveletNames;
@@ -214,14 +211,14 @@ void DWPTReconstructionTest()
     waveletNames.emplace_back("rbior6.8");
 
     for (std::size_t ent = 0; ent < 2; ent++) {
-        for (std::size_t sym_per = 0; sym_per < 2; sym_per++) {
+        for (std::size_t symPer = 0; symPer < 2; symPer++) {
             for (auto const& name : waveletNames) {
-                auto obj = wavelet { name.c_str() };
-                for (J = 1; J < 3; J++) {
+                auto obj = Wavelet { name.c_str() };
+                for (auto j = 1; j < 3; j++) {
                     // J = 3;
 
-                    wt = wpt_init(&obj, N, J); // Initialize the wavelet transform object
-                    if (sym_per == 0) {
+                    wt = wptInit(&obj, n, j); // Initialize the wavelet transform object
+                    if (symPer == 0) {
                         setDWPTExtension(wt,
                             "sym"); // Options are "per" and "sym".
                         // Symmetric is the default option
@@ -245,23 +242,23 @@ void DWPTReconstructionTest()
 
                     // printf("%s %g \n",name,RMS_Error(out.get(), inp.get(), wt->siglength));
 
-                    if (RMS_Error(out.get(), inp.get(), wt->siglength) > epsilon) {
+                    if (rmsError(out.get(), inp.get(), wt->siglength) > epsilon) {
                         printf(
                             "\n ERROR : DWPT Reconstruction Unit Test Failed. Exiting. \n");
                         exit(-1);
                     }
-                    wpt_free(wt);
+                    wptFree(wt);
                 }
             }
         }
     }
 }
 
-void CWTReconstructionTest()
+void cwtReconstructionTest()
 {
     int i;
-    int N;
-    int J;
+    int n;
+    int j;
     int subscale;
     int a0;
     double dt;
@@ -272,7 +269,7 @@ void CWTReconstructionTest()
     double epsilon;
     int it1;
     int it2;
-    cwavelet_transform* wt;
+    CwaveletTransform* wt;
 
     char const* wave[3] {
         "morl",
@@ -314,20 +311,20 @@ void CWTReconstructionTest()
     char const* type = "pow";
 
     epsilon = 0.01;
-    N = 2048;
+    n = 2048;
     dt = 0.000125;
     subscale = 20;
     dj = 1.0 / (double)subscale;
     s0 = dt / 32;
-    J = 32 * subscale;
+    j = 32 * subscale;
     a0 = 2; // power
 
-    auto inp = std::make_unique<double[]>(N);
-    auto oup = std::make_unique<double[]>(N);
+    auto inp = std::make_unique<double[]>(n);
+    auto oup = std::make_unique<double[]>(n);
 
     pi = 4.0 * atan(1.0);
 
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         t = dt * i;
         inp[i] = sin(2 * pi * 500 * t) + sin(2 * pi * 1000 * t) + 0.1 * sin(2 * pi * 8 * t);
         if (i == 1200 || i == 1232) {
@@ -338,7 +335,7 @@ void CWTReconstructionTest()
     for (it1 = 0; it1 < 3; ++it1) {
         for (it2 = 0; it2 < 10; ++it2) {
 
-            wt = cwt_init(wave[it1], param[it1 * 10 + it2], N, dt, J);
+            wt = cwtInit(wave[it1], param[it1 * 10 + it2], n, dt, j);
 
             setCWTScales(wt, s0, dj, type, a0);
 
@@ -348,17 +345,17 @@ void CWTReconstructionTest()
 
             // printf("\nWavelet : %s Parameter %g Error %g \n",
             // wave[it1],param[it1*10+it2],REL_Error(inp.get(),oup.get(), wt->siglength));
-            if (REL_Error(inp.get(), oup.get(), wt->siglength) > epsilon) {
+            if (relError(inp.get(), oup.get(), wt->siglength) > epsilon) {
                 printf("\n ERROR : DWPT Reconstruction Unit Test Failed. Exiting. \n");
                 exit(-1);
             }
 
-            cwt_free(wt);
+            cwtFree(wt);
         }
     }
 }
 
-void DBCoefTests()
+void dbCoefTests()
 {
     constexpr auto epsilon = 1e-15;
     auto waveletNames = std::vector<std::string>(38);
@@ -368,19 +365,19 @@ void DBCoefTests()
     });
 
     for (auto const& name : waveletNames) {
-        auto obj = wavelet { name.c_str() };
-        auto t1 = sum1(obj.lpr(), obj.lpr_len()) - std::sqrt(2.0);
-        auto t2 = sum2(obj.lpr(), obj.lpr_len()) - 1.0 / std::sqrt(2.0);
-        auto t3 = sum3(obj.lpr(), obj.lpr_len()) - 1.0 / std::sqrt(2.0);
-        auto t4 = sum4(obj.lpr(), obj.lpr_len()) - 1.0;
+        auto obj = Wavelet { name.c_str() };
+        auto t1 = sum1(obj.lpr(), obj.lprLen()) - std::sqrt(2.0);
+        auto t2 = sum2(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
+        auto t3 = sum3(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
+        auto t4 = sum4(obj.lpr(), obj.lprLen()) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
             printf("\n ERROR : DB Coefficients Unit Test Failed. Exiting. \n");
             exit(-1);
         }
 
-        for (int m = 1; m < (obj.lpr_len() / 2) - 1; m++) {
-            auto t5 = sum5(obj.lpr(), obj.lpr_len(), m);
+        for (int m = 1; m < (obj.lprLen() / 2) - 1; m++) {
+            auto t5 = sum5(obj.lpr(), obj.lprLen(), m);
             if (fabs(t5) > epsilon) {
                 printf("\n ERROR : DB Coefficients Unit Test Failed. Exiting. \n");
                 exit(-1);
@@ -389,7 +386,7 @@ void DBCoefTests()
     }
 }
 
-void CoifCoefTests()
+void coifCoefTests()
 {
     double epsilon = 1e-15;
     double t1;
@@ -404,19 +401,19 @@ void CoifCoefTests()
     }
 
     for (auto const& name : waveletNames) {
-        auto obj = wavelet { name.c_str() };
-        t1 = sum1(obj.lpr(), obj.lpr_len()) - std::sqrt(2.0);
-        t2 = sum2(obj.lpr(), obj.lpr_len()) - 1.0 / std::sqrt(2.0);
-        t3 = sum3(obj.lpr(), obj.lpr_len()) - 1.0 / std::sqrt(2.0);
-        t4 = sum4(obj.lpr(), obj.lpr_len()) - 1.0;
+        auto obj = Wavelet { name.c_str() };
+        t1 = sum1(obj.lpr(), obj.lprLen()) - std::sqrt(2.0);
+        t2 = sum2(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
+        t3 = sum3(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
+        t4 = sum4(obj.lpr(), obj.lprLen()) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
             printf("\n ERROR : Coif Coefficients Unit Test Failed. Exiting. \n");
             exit(-1);
         }
 
-        for (int m = 1; m < (obj.lpr_len() / 2) - 1; m++) {
-            t5 = sum5(obj.lpr(), obj.lpr_len(), m);
+        for (int m = 1; m < (obj.lprLen() / 2) - 1; m++) {
+            t5 = sum5(obj.lpr(), obj.lprLen(), m);
             if (fabs(t5) > epsilon) {
                 printf("\n ERROR : Coif Coefficients Unit Test Failed. Exiting. \n");
                 exit(-1);
@@ -425,7 +422,7 @@ void CoifCoefTests()
     }
 }
 
-void SymCoefTests()
+void symCoefTests()
 {
     double epsilon = 1e-10;
     double t1;
@@ -439,19 +436,19 @@ void SymCoefTests()
     }
 
     for (auto const& name : waveletNames) {
-        auto obj = wavelet { name.c_str() };
-        t1 = sum1(obj.lpr(), obj.lpr_len()) - std::sqrt(2.0);
-        t2 = sum2(obj.lpr(), obj.lpr_len()) - 1.0 / std::sqrt(2.0);
-        t3 = sum3(obj.lpr(), obj.lpr_len()) - 1.0 / std::sqrt(2.0);
-        t4 = sum4(obj.lpr(), obj.lpr_len()) - 1.0;
+        auto obj = Wavelet { name.c_str() };
+        t1 = sum1(obj.lpr(), obj.lprLen()) - std::sqrt(2.0);
+        t2 = sum2(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
+        t3 = sum3(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
+        t4 = sum4(obj.lpr(), obj.lprLen()) - 1.0;
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
             printf("\n ERROR : Sym Coefficients Unit Test Failed. Exiting. \n");
             exit(-1);
         }
 
-        for (int m = 1; m < (obj.lpr_len() / 2) - 1; m++) {
-            t5 = sum5(obj.lpr(), obj.lpr_len(), m);
+        for (int m = 1; m < (obj.lprLen() / 2) - 1; m++) {
+            t5 = sum5(obj.lpr(), obj.lprLen(), m);
             if (fabs(t5) > epsilon) {
                 printf("\n ERROR : Sym Coefficients Unit Test Failed. Exiting. \n");
                 exit(-1);
@@ -460,7 +457,7 @@ void SymCoefTests()
     }
 }
 
-void BiorCoefTests()
+void biorCoefTests()
 {
     double epsilon = 1e-10;
     double t1;
@@ -487,16 +484,16 @@ void BiorCoefTests()
     waveletNames.emplace_back("bior6.8");
 
     for (auto const& name : waveletNames) {
-        auto obj = wavelet { name.c_str() };
+        auto obj = Wavelet { name.c_str() };
 
-        t1 = sum1(obj.lpr(), obj.lpr_len()) - std::sqrt(2.0);
-        t2 = sum1(obj.lpd(), obj.lpd_len()) - std::sqrt(2.0);
+        t1 = sum1(obj.lpr(), obj.lprLen()) - std::sqrt(2.0);
+        t2 = sum1(obj.lpd(), obj.lpdLen()) - std::sqrt(2.0);
 
-        t3 = sum2(obj.lpr(), obj.lpr_len()) - 1.0 / std::sqrt(2.0);
-        t4 = sum2(obj.lpd(), obj.lpd_len()) - 1.0 / std::sqrt(2.0);
+        t3 = sum2(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
+        t4 = sum2(obj.lpd(), obj.lpdLen()) - 1.0 / std::sqrt(2.0);
 
-        t5 = sum3(obj.lpr(), obj.lpr_len()) - 1.0 / std::sqrt(2.0);
-        t6 = sum3(obj.lpd(), obj.lpd_len()) - 1.0 / std::sqrt(2.0);
+        t5 = sum3(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
+        t6 = sum3(obj.lpd(), obj.lpdLen()) - 1.0 / std::sqrt(2.0);
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon || fabs(t5) > epsilon || fabs(t6) > epsilon) {
             printf("\n ERROR : Bior Coefficients Unit Test Failed. Exiting. \n");
@@ -505,7 +502,7 @@ void BiorCoefTests()
     }
 }
 
-void RBiorCoefTests()
+void rBiorCoefTests()
 {
     double epsilon = 1e-10;
     double t1;
@@ -532,16 +529,16 @@ void RBiorCoefTests()
     waveletNames.emplace_back("rbior6.8");
 
     for (auto const& name : waveletNames) {
-        auto obj = wavelet { name.c_str() };
+        auto obj = Wavelet { name.c_str() };
 
-        t1 = sum1(obj.lpr(), obj.lpr_len()) - std::sqrt(2.0);
-        t2 = sum1(obj.lpd(), obj.lpd_len()) - std::sqrt(2.0);
+        t1 = sum1(obj.lpr(), obj.lprLen()) - std::sqrt(2.0);
+        t2 = sum1(obj.lpd(), obj.lpdLen()) - std::sqrt(2.0);
 
-        t3 = sum2(obj.lpr(), obj.lpr_len()) - 1.0 / std::sqrt(2.0);
-        t4 = sum2(obj.lpd(), obj.lpd_len()) - 1.0 / std::sqrt(2.0);
+        t3 = sum2(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
+        t4 = sum2(obj.lpd(), obj.lpdLen()) - 1.0 / std::sqrt(2.0);
 
-        t5 = sum3(obj.lpr(), obj.lpr_len()) - 1.0 / std::sqrt(2.0);
-        t6 = sum3(obj.lpd(), obj.lpd_len()) - 1.0 / std::sqrt(2.0);
+        t5 = sum3(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
+        t6 = sum3(obj.lpd(), obj.lpdLen()) - 1.0 / std::sqrt(2.0);
 
         if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon || fabs(t5) > epsilon || fabs(t6) > epsilon) {
             printf("\n ERROR : RBior Coefficients Unit Test Failed. Exiting. \n");
@@ -554,31 +551,31 @@ auto main() -> int
 {
     printf("Running Unit Tests : \n \n");
     printf("Running DBCoefTests ... ");
-    DBCoefTests();
+    dbCoefTests();
     printf("DONE \n");
     printf("Running CoifCoefTests ... ");
-    CoifCoefTests();
+    coifCoefTests();
     printf("DONE \n");
     printf("Running SymCoefTests ... ");
-    SymCoefTests();
+    symCoefTests();
     printf("DONE \n");
     printf("Running BiorCoefTests ... ");
-    BiorCoefTests();
+    biorCoefTests();
     printf("DONE \n");
     printf("Running RBiorCoefTests ... ");
-    RBiorCoefTests();
+    rBiorCoefTests();
     printf("DONE \n");
     printf("Running MODWT ReconstructionTests ... ");
-    MODWTReconstructionTest();
+    modwtReconstructionTest();
     printf("DONE \n");
     printf("Running DWPT ReconstructionTests ... ");
-    DWPTReconstructionTest();
+    dwptReconstructionTest();
     printf("DONE \n");
     printf("Running CWT ReconstructionTests ... ");
-    CWTReconstructionTest();
+    cwtReconstructionTest();
     printf("DONE \n");
     printf("Running MODWT2 ReconstructionTests ... ");
-    MODWT2ReconstructionTest();
+    modwT2ReconstructionTest();
     printf("DONE \n");
     printf("\n\nUnit Tests Successful\n\n");
     return 0;

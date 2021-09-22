@@ -11,19 +11,19 @@
 
 auto main() -> int
 {
-    auto obj = wavelet { "bior3.5" };
-    auto const N = 256;
+    auto obj = Wavelet { "bior3.5" };
+    auto const n = 256;
 
     auto const inp = readFileToVector("testData/signal.txt");
 
-    auto out = std::make_unique<double[]>(N);
-    auto diff = std::make_unique<double[]>(N);
+    auto out = std::make_unique<double[]>(n);
+    auto diff = std::make_unique<double[]>(n);
     //wmean = mean(temp, N);
 
-    auto const J = 1;
+    auto const j = 1;
 
-    auto wt = wavelet_transform(obj, "swt", N, J); // Initialize the wavelet transform object
-    wt.conv_method(convolution_method::direct);
+    auto wt = WaveletTransform(obj, "swt", n, j); // Initialize the wavelet transform object
+    wt.convMethod(ConvolutionMethod::direct);
 
     swt(&wt, inp.data()); // Perform SWT
     //SWT output can be accessed using wt.output vector. Use wt_summary to find out how to extract appx and detail coefficients
@@ -41,7 +41,7 @@ auto main() -> int
 
     std::printf("\n MAX %g \n", absmax(diff.get(), wt.siglength)); // If Reconstruction succeeded then the output should be a small value.
 
-    wt_summary(&wt); // Prints the full summary.
+    wtSummary(&wt); // Prints the full summary.
 
     return EXIT_SUCCESS;
 }

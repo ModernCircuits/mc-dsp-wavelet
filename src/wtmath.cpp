@@ -2,28 +2,28 @@
 
 #include "wtmath.h"
 
-void dwt_per_stride(double const* inp, int N, double const* lpd, double const* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
+void dwtPerStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride)
 {
     int l;
     int l2;
     int isodd;
     int i;
     int t;
-    int len_avg;
+    int lenAvg;
     int is;
     int os;
 
-    len_avg = lpd_len;
-    l2 = len_avg / 2;
-    isodd = N % 2;
+    lenAvg = lpdLen;
+    l2 = lenAvg / 2;
+    isodd = n % 2;
 
-    for (i = 0; i < len_cA; ++i) {
+    for (i = 0; i < lenCA; ++i) {
         t = 2 * i + l2;
         os = i * ostride;
         cA[os] = 0.0;
         cD[os] = 0.0;
-        for (l = 0; l < len_avg; ++l) {
-            if ((t - l) >= l2 && (t - l) < N) {
+        for (l = 0; l < lenAvg; ++l) {
+            if ((t - l) >= l2 && (t - l) < n) {
                 is = (t - l) * istride;
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
@@ -32,30 +32,30 @@ void dwt_per_stride(double const* inp, int N, double const* lpd, double const* h
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
             } else if ((t - l) < 0 && isodd == 0) {
-                is = (t - l + N) * istride;
+                is = (t - l + n) * istride;
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
             } else if ((t - l) < 0 && isodd == 1) {
                 if ((t - l) != -1) {
-                    is = (t - l + N + 1) * istride;
+                    is = (t - l + n + 1) * istride;
                     cA[os] += lpd[l] * inp[is];
                     cD[os] += hpd[l] * inp[is];
                 } else {
-                    is = (N - 1) * istride;
+                    is = (n - 1) * istride;
                     cA[os] += lpd[l] * inp[is];
                     cD[os] += hpd[l] * inp[is];
                 }
-            } else if ((t - l) >= N && isodd == 0) {
-                is = (t - l - N) * istride;
+            } else if ((t - l) >= n && isodd == 0) {
+                is = (t - l - n) * istride;
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
-            } else if ((t - l) >= N && isodd == 1) {
-                is = (t - l - (N + 1)) * istride;
-                if (t - l != N) {
+            } else if ((t - l) >= n && isodd == 1) {
+                is = (t - l - (n + 1)) * istride;
+                if (t - l != n) {
                     cA[os] += lpd[l] * inp[is];
                     cD[os] += hpd[l] * inp[is];
                 } else {
-                    is = (N - 1) * istride;
+                    is = (n - 1) * istride;
                     cA[os] += lpd[l] * inp[is];
                     cD[os] += hpd[l] * inp[is];
                 }
@@ -64,23 +64,23 @@ void dwt_per_stride(double const* inp, int N, double const* lpd, double const* h
     }
 }
 
-void dwt_sym_stride(double const* inp, int N, double const* lpd, double const* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
+void dwtSymStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride)
 {
     int i;
     int l;
     int t;
-    int len_avg;
+    int lenAvg;
     int is;
     int os;
-    len_avg = lpd_len;
+    lenAvg = lpdLen;
 
-    for (i = 0; i < len_cA; ++i) {
+    for (i = 0; i < lenCA; ++i) {
         t = 2 * i + 1;
         os = i * ostride;
         cA[os] = 0.0;
         cD[os] = 0.0;
-        for (l = 0; l < len_avg; ++l) {
-            if ((t - l) >= 0 && (t - l) < N) {
+        for (l = 0; l < lenAvg; ++l) {
+            if ((t - l) >= 0 && (t - l) < n) {
                 is = (t - l) * istride;
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
@@ -88,8 +88,8 @@ void dwt_sym_stride(double const* inp, int N, double const* lpd, double const* h
                 is = (-t + l - 1) * istride;
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
-            } else if ((t - l) >= N) {
-                is = (2 * N - t + l - 1) * istride;
+            } else if ((t - l) >= n) {
+                is = (2 * n - t + l - 1) * istride;
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
             }
@@ -97,65 +97,65 @@ void dwt_sym_stride(double const* inp, int N, double const* lpd, double const* h
     }
 }
 
-void modwt_per_stride(int M, double const* inp, int /*N*/, double const* filt, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
+void modwtPerStride(int m, double const* inp, int /*N*/, double const* filt, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride)
 {
     int l;
     int i;
     int t;
-    int len_avg;
+    int lenAvg;
     int is;
     int os;
-    len_avg = lpd_len;
+    lenAvg = lpdLen;
 
-    for (i = 0; i < len_cA; ++i) {
+    for (i = 0; i < lenCA; ++i) {
         t = i;
         os = i * ostride;
         is = t * istride;
         cA[os] = filt[0] * inp[is];
-        cD[os] = filt[len_avg] * inp[is];
-        for (l = 1; l < len_avg; l++) {
-            t -= M;
-            while (t >= len_cA) {
-                t -= len_cA;
+        cD[os] = filt[lenAvg] * inp[is];
+        for (l = 1; l < lenAvg; l++) {
+            t -= m;
+            while (t >= lenCA) {
+                t -= lenCA;
             }
             while (t < 0) {
-                t += len_cA;
+                t += lenCA;
             }
             os = i * ostride;
             is = t * istride;
             cA[os] += filt[l] * inp[is];
-            cD[os] += filt[len_avg + l] * inp[is];
+            cD[os] += filt[lenAvg + l] * inp[is];
         }
     }
 }
 
-void swt_per_stride(int M, double const* inp, int N, double const* lpd, double const* hpd, int lpd_len, double* cA, int len_cA, double* cD, int istride, int ostride)
+void swtPerStride(int m, double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride)
 {
     int l;
     int l2;
     int isodd;
     int i;
     int t;
-    int len_avg;
+    int lenAvg;
     int j;
     int is;
     int os;
-    len_avg = M * lpd_len;
-    l2 = len_avg / 2;
-    isodd = N % 2;
+    lenAvg = m * lpdLen;
+    l2 = lenAvg / 2;
+    isodd = n % 2;
 
-    for (i = 0; i < len_cA; ++i) {
+    for (i = 0; i < lenCA; ++i) {
         t = i + l2;
         os = i * ostride;
         cA[os] = 0.0;
         cD[os] = 0.0;
         l = -1;
-        for (j = 0; j < len_avg; j += M) {
+        for (j = 0; j < lenAvg; j += m) {
             l++;
-            while (j >= len_cA) {
-                j -= len_cA;
+            while (j >= lenCA) {
+                j -= lenCA;
             }
-            if ((t - j) >= l2 && (t - j) < N) {
+            if ((t - j) >= l2 && (t - j) < n) {
                 is = (t - j) * istride;
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
@@ -164,31 +164,31 @@ void swt_per_stride(int M, double const* inp, int N, double const* lpd, double c
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
             } else if ((t - j) < 0) {
-                is = (t - j + N) * istride;
+                is = (t - j + n) * istride;
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
-            } else if ((t - j) >= N && isodd == 0) {
-                is = (t - j - N) * istride;
+            } else if ((t - j) >= n && isodd == 0) {
+                is = (t - j - n) * istride;
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
-            } else if ((t - j) >= N && isodd == 1) {
-                if (t - l != N) {
-                    is = (t - j - (N + 1)) * istride;
+            } else if ((t - j) >= n && isodd == 1) {
+                if (t - l != n) {
+                    is = (t - j - (n + 1)) * istride;
                     cA[os] += lpd[l] * inp[is];
                     cD[os] += hpd[l] * inp[is];
                 } else {
-                    is = (N - 1) * istride;
+                    is = (n - 1) * istride;
                     cA[os] += lpd[l] * inp[is];
-                    cD[os] += hpd[l] * inp[N - 1];
+                    cD[os] += hpd[l] * inp[n - 1];
                 }
             }
         }
     }
 }
 
-void idwt_per_stride(double const* cA, int len_cA, double const* cD, double const* lpr, double const* hpr, int lpr_len, double* X, int istride, int ostride)
+void idwtPerStride(double const* cA, int lenCA, double const* cD, double const* lpr, double const* hpr, int lprLen, double* x, int istride, int ostride)
 {
-    int len_avg;
+    int lenAvg;
     int i;
     int l;
     int m;
@@ -199,40 +199,40 @@ void idwt_per_stride(double const* cA, int len_cA, double const* cD, double cons
     int ms;
     int ns;
 
-    len_avg = lpr_len;
-    l2 = len_avg / 2;
+    lenAvg = lprLen;
+    l2 = lenAvg / 2;
     m = -2;
     n = -1;
 
-    for (i = 0; i < len_cA + l2 - 1; ++i) {
+    for (i = 0; i < lenCA + l2 - 1; ++i) {
         m += 2;
         n += 2;
         ms = m * ostride;
         ns = n * ostride;
-        X[ms] = 0.0;
-        X[ns] = 0.0;
+        x[ms] = 0.0;
+        x[ns] = 0.0;
         for (l = 0; l < l2; ++l) {
             t = 2 * l;
-            if ((i - l) >= 0 && (i - l) < len_cA) {
+            if ((i - l) >= 0 && (i - l) < lenCA) {
                 is = (i - l) * istride;
-                X[ms] += lpr[t] * cA[is] + hpr[t] * cD[is];
-                X[ns] += lpr[t + 1] * cA[is] + hpr[t + 1] * cD[is];
-            } else if ((i - l) >= len_cA && (i - l) < len_cA + len_avg - 1) {
-                is = (i - l - len_cA) * istride;
-                X[ms] += lpr[t] * cA[is] + hpr[t] * cD[is];
-                X[ns] += lpr[t + 1] * cA[is] + hpr[t + 1] * cD[is];
+                x[ms] += lpr[t] * cA[is] + hpr[t] * cD[is];
+                x[ns] += lpr[t + 1] * cA[is] + hpr[t + 1] * cD[is];
+            } else if ((i - l) >= lenCA && (i - l) < lenCA + lenAvg - 1) {
+                is = (i - l - lenCA) * istride;
+                x[ms] += lpr[t] * cA[is] + hpr[t] * cD[is];
+                x[ns] += lpr[t + 1] * cA[is] + hpr[t + 1] * cD[is];
             } else if ((i - l) < 0 && (i - l) > -l2) {
-                is = (len_cA + i - l) * istride;
-                X[ms] += lpr[t] * cA[is] + hpr[t] * cD[is];
-                X[ns] += lpr[t + 1] * cA[is] + hpr[t + 1] * cD[is];
+                is = (lenCA + i - l) * istride;
+                x[ms] += lpr[t] * cA[is] + hpr[t] * cD[is];
+                x[ns] += lpr[t + 1] * cA[is] + hpr[t + 1] * cD[is];
             }
         }
     }
 }
 
-void idwt_sym_stride(double const* cA, int len_cA, double const* cD, double const* lpr, double const* hpr, int lpr_len, double* X, int istride, int ostride)
+void idwtSymStride(double const* cA, int lenCA, double const* cD, double const* lpr, double const* hpr, int lprLen, double* x, int istride, int ostride)
 {
-    int len_avg;
+    int lenAvg;
     int i;
     int l;
     int m;
@@ -242,66 +242,66 @@ void idwt_sym_stride(double const* cA, int len_cA, double const* cD, double cons
     int ms;
     int ns;
     int is;
-    len_avg = lpr_len;
+    lenAvg = lprLen;
     m = -2;
     n = -1;
 
-    for (v = 0; v < len_cA; ++v) {
+    for (v = 0; v < lenCA; ++v) {
         i = v;
         m += 2;
         n += 2;
         ms = m * ostride;
         ns = n * ostride;
-        X[ms] = 0.0;
-        X[ns] = 0.0;
-        for (l = 0; l < len_avg / 2; ++l) {
+        x[ms] = 0.0;
+        x[ns] = 0.0;
+        for (l = 0; l < lenAvg / 2; ++l) {
             t = 2 * l;
-            if ((i - l) >= 0 && (i - l) < len_cA) {
+            if ((i - l) >= 0 && (i - l) < lenCA) {
                 is = (i - l) * istride;
-                X[ms] += lpr[t] * cA[is] + hpr[t] * cD[is];
-                X[ns] += lpr[t + 1] * cA[is] + hpr[t + 1] * cD[is];
+                x[ms] += lpr[t] * cA[is] + hpr[t] * cD[is];
+                x[ns] += lpr[t + 1] * cA[is] + hpr[t + 1] * cD[is];
             }
         }
     }
 }
 
-void imodwt_per_stride(int M, double const* cA, int len_cA, double const* cD, double const* filt, int lf, double* X, int istride, int ostride)
+void imodwtPerStride(int m, double const* cA, int lenCA, double const* cD, double const* filt, int lf, double* x, int istride, int ostride)
 {
-    int len_avg;
+    int lenAvg;
     int i;
     int l;
     int t;
     int is;
     int os;
 
-    len_avg = lf;
+    lenAvg = lf;
 
-    for (i = 0; i < len_cA; ++i) {
+    for (i = 0; i < lenCA; ++i) {
         t = i;
         os = i * ostride;
         is = t * istride;
-        X[os] = (filt[0] * cA[is]) + (filt[len_avg] * cD[is]);
-        for (l = 1; l < len_avg; l++) {
-            t += M;
-            while (t >= len_cA) {
-                t -= len_cA;
+        x[os] = (filt[0] * cA[is]) + (filt[lenAvg] * cD[is]);
+        for (l = 1; l < lenAvg; l++) {
+            t += m;
+            while (t >= lenCA) {
+                t -= lenCA;
             }
             while (t < 0) {
-                t += len_cA;
+                t += lenCA;
             }
             is = t * istride;
-            X[os] += (filt[l] * cA[is]) + (filt[len_avg + l] * cD[is]);
+            x[os] += (filt[l] * cA[is]) + (filt[lenAvg + l] * cD[is]);
         }
     }
 }
 
-void idwt2_shift(int shift, int rows, int cols, double const* lpr, double const* hpr, int lf, double* A, double* H, double* V, double* D, double* oup)
+void idwt2Shift(int shift, int rows, int cols, double const* lpr, double const* hpr, int lf, double* a, double* h, double* v, double* d, double* oup)
 {
-    auto const N = rows > cols ? 2 * rows : 2 * cols;
+    auto const n = rows > cols ? 2 * rows : 2 * cols;
     auto const dim1 = 2 * rows;
     auto const dim2 = 2 * cols;
 
-    auto X_lp = makeZeros<double>(N + 2 * lf - 1);
+    auto xLp = makeZeros<double>(n + 2 * lf - 1);
     auto cL = makeZeros<double>(dim1 * dim2);
     auto cH = makeZeros<double>(dim1 * dim2);
 
@@ -311,16 +311,16 @@ void idwt2_shift(int shift, int rows, int cols, double const* lpr, double const*
     auto ostride = 1;
 
     for (auto i = 0; i < ic; ++i) {
-        idwt_per_stride(A + i, ir, H + i, lpr, hpr, lf, X_lp.get(), istride, ostride);
+        idwtPerStride(a + i, ir, h + i, lpr, hpr, lf, xLp.get(), istride, ostride);
 
         for (auto k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
-            cL[(k - lf / 2 + 1) * ic + i] = X_lp[k];
+            cL[(k - lf / 2 + 1) * ic + i] = xLp[k];
         }
 
-        idwt_per_stride(V + i, ir, D + i, lpr, hpr, lf, X_lp.get(), istride, ostride);
+        idwtPerStride(v + i, ir, d + i, lpr, hpr, lf, xLp.get(), istride, ostride);
 
         for (auto k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
-            cH[(k - lf / 2 + 1) * ic + i] = X_lp[k];
+            cH[(k - lf / 2 + 1) * ic + i] = xLp[k];
         }
     }
 
@@ -329,10 +329,10 @@ void idwt2_shift(int shift, int rows, int cols, double const* lpr, double const*
     ostride = 1;
 
     for (auto i = 0; i < ir; ++i) {
-        idwt_per_stride(cL.get() + i * ic, ic, cH.get() + i * ic, lpr, hpr, lf, X_lp.get(), istride, ostride);
+        idwtPerStride(cL.get() + i * ic, ic, cH.get() + i * ic, lpr, hpr, lf, xLp.get(), istride, ostride);
 
         for (auto k = lf / 2 - 1; k < 2 * ic + lf / 2 - 1; ++k) {
-            oup[(k - lf / 2 + 1) + i * ic * 2] = X_lp[k];
+            oup[(k - lf / 2 + 1) + i * ic * 2] = xLp[k];
         }
     }
 
@@ -359,98 +359,98 @@ void idwt2_shift(int shift, int rows, int cols, double const* lpr, double const*
     }
 }
 
-auto upsamp(double const* x, int lenx, int M, double* y) -> int
+auto upsamp(double const* x, int lenx, int m, double* y) -> int
 {
-    int N;
+    int n;
     int i;
     int j;
     int k;
 
-    if (M < 0) {
+    if (m < 0) {
         return -1;
     }
 
-    if (M == 0) {
+    if (m == 0) {
         for (i = 0; i < lenx; ++i) {
             y[i] = x[i];
         }
         return lenx;
     }
 
-    N = M * (lenx - 1) + 1;
+    n = m * (lenx - 1) + 1;
     j = 1;
     k = 0;
 
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         j--;
         y[i] = 0.0;
         if (j == 0) {
             y[i] = x[k];
             k++;
-            j = M;
+            j = m;
         }
     }
 
-    return N;
+    return n;
 }
 
-auto upsamp2(double const* x, int lenx, int M, double* y) -> int
+auto upsamp2(double const* x, int lenx, int m, double* y) -> int
 {
-    int N;
+    int n;
     int i;
     int j;
     int k;
     // upsamp2 returns even numbered output. Last value is set to zero
-    if (M < 0) {
+    if (m < 0) {
         return -1;
     }
 
-    if (M == 0) {
+    if (m == 0) {
         for (i = 0; i < lenx; ++i) {
             y[i] = x[i];
         }
         return lenx;
     }
 
-    N = M * lenx;
+    n = m * lenx;
     j = 1;
     k = 0;
 
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         j--;
         y[i] = 0.0;
         if (j == 0) {
             y[i] = x[k];
             k++;
-            j = M;
+            j = m;
         }
     }
 
-    return N;
+    return n;
 }
 
-auto downsamp(double const* x, int lenx, int M, double* y) -> int
+auto downsamp(double const* x, int lenx, int m, double* y) -> int
 {
-    int N;
+    int n;
     int i;
 
-    if (M < 0) {
+    if (m < 0) {
         return -1;
     }
-    if (M == 0) {
+    if (m == 0) {
         for (i = 0; i < lenx; ++i) {
             y[i] = x[i];
         }
         return lenx;
     }
 
-    N = (lenx - 1) / M + 1;
+    n = (lenx - 1) / m + 1;
 
-    for (i = 0; i < N; ++i) {
-        y[i] = x[i * M];
+    for (i = 0; i < n; ++i) {
+        y[i] = x[i * m];
     }
 
-    return N;
+    return n;
 }
 /*
 int per_ext(double *sig, int len, int a,double *oup) {
@@ -474,7 +474,7 @@ int per_ext(double *sig, int len, int a,double *oup) {
 }
 */
 
-auto per_ext(double const* sig, int len, int a, double* oup) -> int
+auto perExt(double const* sig, int len, int a, double* oup) -> int
 {
     int i;
     int len2;
@@ -514,7 +514,7 @@ int symm_ext(double *sig, int len, int a, double *oup) {
 }
 */
 
-auto symm_ext(double const* sig, int len, int a, double* oup) -> int
+auto symmExt(double const* sig, int len, int a, double* oup) -> int
 {
     int i;
     int len2;
@@ -535,48 +535,48 @@ auto symm_ext(double const* sig, int len, int a, double* oup) -> int
     return len2;
 }
 
-static auto isign(int N) -> int
+static auto isign(int n) -> int
 {
-    int M;
-    if (N >= 0) {
-        M = 1;
+    int m;
+    if (n >= 0) {
+        m = 1;
     } else {
-        M = -1;
+        m = -1;
     }
 
-    return M;
+    return m;
 }
 
-static auto iabs(int N) -> int
+static auto iabs(int n) -> int
 {
-    if (N >= 0) {
-        return N;
+    if (n >= 0) {
+        return n;
     }
-    return -N;
+    return -n;
 }
 
-void circshift(double* array, int N, int L)
+void circshift(double* array, int n, int l)
 {
-    if (iabs(L) > N) {
-        L = isign(L) * (iabs(L) % N);
+    if (iabs(l) > n) {
+        l = isign(l) * (iabs(l) % n);
     }
-    if (L < 0) {
-        L = (N + L) % N;
+    if (l < 0) {
+        l = (n + l) % n;
     }
 
-    auto temp = makeZeros<double>(L);
-    for (auto i = 0; i < L; ++i) {
+    auto temp = makeZeros<double>(l);
+    for (auto i = 0; i < l; ++i) {
         temp[i] = array[i];
     }
-    for (auto i = 0; i < N - L; ++i) {
-        array[i] = array[i + L];
+    for (auto i = 0; i < n - l; ++i) {
+        array[i] = array[i + l];
     }
-    for (auto i = 0; i < L; ++i) {
-        array[N - L + i] = temp[i];
+    for (auto i = 0; i < l; ++i) {
+        array[n - l + i] = temp[i];
     }
 }
 
-auto testSWTlength(int N, int J) -> int
+auto testSWTlength(int n, int j) -> int
 {
     int ret;
     int div;
@@ -584,29 +584,29 @@ auto testSWTlength(int N, int J) -> int
     ret = 1;
 
     div = 1;
-    for (i = 0; i < J; ++i) {
+    for (i = 0; i < j; ++i) {
         div *= 2;
     }
 
-    if ((N % div) != 0) {
+    if ((n % div) != 0) {
         ret = 0;
     }
 
     return ret;
 }
 
-auto wmaxiter(int sig_len, int filt_len) -> int
+auto wmaxiter(int sigLen, int filtLen) -> int
 {
     int lev;
     double temp;
 
-    temp = std::log((double)sig_len / ((double)filt_len - 1.0)) / std::log(2.0);
+    temp = std::log((double)sigLen / ((double)filtLen - 1.0)) / std::log(2.0);
     lev = (int)temp;
 
     return lev;
 }
 
-static auto entropy_s(double const* x, int N) -> double
+static auto entropyS(double const* x, int n) -> double
 {
     int i;
     double val;
@@ -614,7 +614,7 @@ static auto entropy_s(double const* x, int N) -> double
 
     val = 0.0;
 
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         if (x[i] != 0) {
             x2 = x[i] * x[i];
             val -= x2 * std::log(x2);
@@ -623,7 +623,7 @@ static auto entropy_s(double const* x, int N) -> double
     return val;
 }
 
-static auto entropy_t(double* x, int N, double t) -> double
+static auto entropyT(double* x, int n, double t) -> double
 {
     int i;
     double val;
@@ -634,7 +634,7 @@ static auto entropy_t(double* x, int N, double t) -> double
     }
     val = 0.0;
 
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         x2 = fabs(x[i]);
         if (x2 > t) {
             val += 1;
@@ -644,7 +644,7 @@ static auto entropy_t(double* x, int N, double t) -> double
     return val;
 }
 
-static auto entropy_n(double* x, int N, double p) -> double
+static auto entropyN(double* x, int n, double p) -> double
 {
     int i;
     double val;
@@ -654,7 +654,7 @@ static auto entropy_n(double* x, int N, double p) -> double
         std::exit(1);
     }
     val = 0.0;
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         x2 = fabs(x[i]);
         val += std::pow(x2, (double)p);
     }
@@ -662,7 +662,7 @@ static auto entropy_n(double* x, int N, double p) -> double
     return val;
 }
 
-static auto entropy_l(double const* x, int N) -> double
+static auto entropyL(double const* x, int n) -> double
 {
     int i;
     double val;
@@ -670,7 +670,7 @@ static auto entropy_l(double const* x, int N) -> double
 
     val = 0.0;
 
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         if (x[i] != 0) {
             x2 = x[i] * x[i];
             val += std::log(x2);
@@ -679,18 +679,18 @@ static auto entropy_l(double const* x, int N) -> double
     return val;
 }
 
-auto costfunc(double* x, int N, char const* entropy, double p) -> double
+auto costfunc(double* x, int n, char const* entropy, double p) -> double
 {
     double val;
 
     if (strcmp(entropy, "shannon") == 0) {
-        val = entropy_s(x, N);
+        val = entropyS(x, n);
     } else if (strcmp(entropy, "threshold") == 0) {
-        val = entropy_t(x, N, p);
+        val = entropyT(x, n, p);
     } else if (strcmp(entropy, "norm") == 0) {
-        val = entropy_n(x, N, p);
+        val = entropyN(x, n, p);
     } else if ((strcmp(entropy, "logenergy") == 0) || (strcmp(entropy, "log energy") == 0) || (strcmp(entropy, "energy") == 0)) {
-        val = entropy_l(x, N);
+        val = entropyL(x, n);
     } else {
         std::printf("Entropy must be one of shannon, threshold, norm or energy");
         std::exit(-1);

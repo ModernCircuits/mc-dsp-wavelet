@@ -10,7 +10,7 @@
 #include <numeric>
 #include <utility>
 
-auto approx_coeffs(wavelet_transform const& wt) -> std::vector<double>
+auto approxCoeffs(WaveletTransform const& wt) -> std::vector<double>
 {
     auto size = static_cast<std::size_t>(wt.length[0]);
     auto result = std::vector<double>(size);
@@ -18,7 +18,7 @@ auto approx_coeffs(wavelet_transform const& wt) -> std::vector<double>
     return result;
 }
 
-auto detail_coeffs(wavelet_transform const& wt) -> std::vector<double>
+auto detailCoeffs(WaveletTransform const& wt) -> std::vector<double>
 {
     auto const* first = std::begin(wt.output()) + wt.length[0];
     auto size = static_cast<std::size_t>(wt.length[1]);
@@ -40,7 +40,7 @@ auto mean(It f, It l) -> double
     return sum / static_cast<double>(std::distance(f, l));
 }
 
-auto peak_detect(lt::span<double> data) -> std::size_t
+auto peakDetect(lt::span<double> data) -> std::size_t
 {
     auto peaks = std::minmax_element(data.begin(), data.end());
     if (fabs(*peaks.first) >= fabs(*peaks.second)) {
@@ -49,13 +49,13 @@ auto peak_detect(lt::span<double> data) -> std::size_t
     return std::distance(data.begin(), peaks.second);
 }
 
-struct bpm_detect {
-    bpm_detect(std::size_t N, std::size_t levels)
+struct BpmDetect {
+    BpmDetect(std::size_t n, std::size_t levels)
         : wave_ { "db4" }
-        , wt_ { wave_, "dwt", static_cast<int>(N), static_cast<int>(levels) }
+        , wt_ { wave_, "dwt", static_cast<int>(n), static_cast<int>(levels) }
     {
-        wt_.extension(signal_extension::symmetric);
-        wt_.conv_method(convolution_method::fft);
+        wt_.extension(SignalExtension::symmetric);
+        wt_.convMethod(ConvolutionMethod::fft);
     }
 
     [[nodiscard]] auto perform(lt::span<double> input, double sampleRate) -> double
@@ -69,17 +69,17 @@ struct bpm_detect {
         auto cA = lt::span<double> {};
         auto cD = lt::span<double> {};
 
-        auto cD_minlen = 0.0;
-        auto cD_sum = std::vector<double> {};
+        auto cDMinlen = 0.0;
+        auto cDSum = std::vector<double> {};
         dwt(&wt_, input.data());
         for (auto loop { 0 }; loop < levels; ++loop) {
             if (loop == 0) {
                 // dwt(&wt_, input.data());
                 cA = wt_.approx();
                 cD = wt_.detail(loop + 1);
-                cD_minlen = static_cast<double>(std::size(cD)) / maxDecimation + 1.0;
-                cD_sum.resize(static_cast<std::size_t>(std::floor(cD_minlen)));
-                std::fill(begin(cD_sum), end(cD_sum), 0.0);
+                cDMinlen = static_cast<double>(std::size(cD)) / maxDecimation + 1.0;
+                cDSum.resize(static_cast<std::size_t>(std::floor(cDMinlen)));
+                std::fill(begin(cDSum), end(cDSum), 0.0);
             } else {
                 // dwt(&wt_, cA.data());
                 cA = wt_.approx();
@@ -103,7 +103,7 @@ struct bpm_detect {
             //    Essentially, each level the detail coefs (i.e. the HPF values)
             //    are concatenated to the beginning of the array
             // cD_sum = cD[0: math.floor(cD_minlen)] + cD_sum
-            cD_sum.insert(begin(cD_sum), std::begin(cD), std::next(std::begin(cD), static_cast<size_t>(std::floor(cD_minlen))));
+            cDSum.insert(begin(cDSum), std::begin(cD), std::next(std::begin(cD), static_cast<size_t>(std::floor(cDMinlen))));
         }
 
         // if [b for b in cA if b != 0.0] == []:
@@ -120,33 +120,33 @@ struct bpm_detect {
         std::transform(std::begin(cA), std::end(cA), std::begin(cA), [](auto v) { return std::fabs(v); });
         auto const m = mean(std::begin(cA), std::end(cA));
         std::transform(std::begin(cA), std::end(cA), std::begin(cA), [m](auto v) { return v - m; });
-        cD_sum.insert(begin(cD_sum), std::begin(cA), std::next(std::begin(cA), static_cast<size_t>(std::floor(cD_minlen))));
+        cDSum.insert(begin(cDSum), std::begin(cA), std::next(std::begin(cA), static_cast<size_t>(std::floor(cDMinlen))));
 
         // # ACF
         // correl = np.correlate(cD_sum, cD_sum, "full")
         // cD_sum.clear();
-        std::copy(std::begin(wt_.output()), std::begin(wt_.output()) + wt_.outlength, std::back_inserter(cD_sum));
+        std::copy(std::begin(wt_.output()), std::begin(wt_.output()) + wt_.outlength, std::back_inserter(cDSum));
         // std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [](auto v) { return std::fabs(v); });
         // auto const m = mean(begin(cD_sumf_), end(cD_sumf_));
         // std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [m](auto v) { return v - m; });
 
-        auto s = DoubleSignal(cD_sum.data(), cD_sum.size());
+        auto s = DoubleSignal(cDSum.data(), cDSum.size());
         auto x = OverlapSaveConvolver(s, s);
         x.executeXcorr();
         auto correl = x.extractResult();
 
         auto midpoint = static_cast<std::size_t>(std::floor(correl.size() / 2.0));
-        auto correl_midpoint_tmp = lt::span<double> { correl.data(), correl.size() }.subspan(midpoint);
-        auto const peak_ndx = peak_detect(correl_midpoint_tmp.subspan(minNdx, maxNdx - minNdx));
+        auto correlMidpointTmp = lt::span<double> { correl.data(), correl.size() }.subspan(midpoint);
+        auto const peakNdx = peakDetect(correlMidpointTmp.subspan(minNdx, maxNdx - minNdx));
 
-        auto const peak_ndx_adjusted = peak_ndx + minNdx;
-        auto const bpm = 60.0 / peak_ndx_adjusted * (sampleRate / maxDecimation);
+        auto const peakNdxAdjusted = peakNdx + minNdx;
+        auto const bpm = 60.0 / peakNdxAdjusted * (sampleRate / maxDecimation);
         return bpm;
     }
 
 private:
-    wavelet wave_;
-    wavelet_transform wt_;
+    Wavelet wave_;
+    WaveletTransform wt_;
 };
 
 auto median(lt::span<double> data) -> double
@@ -175,7 +175,6 @@ auto mode(lt::span<double> arr) -> double
             countmax = count;
             count = 1;
             moda = arr[i - 1];
-            current = arr[i];
         }
         current = arr[i];
     }
@@ -203,16 +202,16 @@ auto main(int argc, char** argv) -> int
     auto const windowSize = static_cast<std::size_t>(std::floor(3.0 * fs));
     auto const maxWindowIndex = std::size(channel) / windowSize;
 
-    auto samps_ndx = 0U;
+    auto sampsNdx = 0U;
     auto bpms = std::vector<double> {};
-    for (auto window_ndx { 0U }; window_ndx < maxWindowIndex; ++window_ndx) {
-        if (samps_ndx + windowSize >= std::size(channel)) {
+    for (auto windowNdx { 0U }; windowNdx < maxWindowIndex; ++windowNdx) {
+        if (sampsNdx + windowSize >= std::size(channel)) {
             std::puts("ERROR");
             continue;
         }
 
-        auto detector = bpm_detect { windowSize, 4 };
-        auto subBuffer = channel.subspan(samps_ndx, windowSize);
+        auto detector = BpmDetect { windowSize, 4 };
+        auto subBuffer = channel.subspan(sampsNdx, windowSize);
         auto bpm = detector.perform(subBuffer, fs);
 
         printf("BPM:%.1f\n", std::round(bpm));
@@ -221,7 +220,7 @@ auto main(int argc, char** argv) -> int
         }
 
         bpms.push_back(bpm);
-        samps_ndx += windowSize;
+        sampsNdx += windowSize;
     }
 
     auto outOfRange = [](auto b) { return b < 100.0 || b > 200.0; };

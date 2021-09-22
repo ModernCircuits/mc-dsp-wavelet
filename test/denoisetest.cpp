@@ -6,23 +6,23 @@
 #include <cstring>
 #include <memory>
 
-static auto rmse(int N, double const* x, double const* y) -> double
+static auto rmse(int n, double const* x, double const* y) -> double
 {
     double rms;
     int i;
 
     rms = 0.0;
 
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         rms += (x[i] - y[i]) * (x[i] - y[i]);
     }
 
-    rms = std::sqrt(rms / (double)N);
+    rms = std::sqrt(rms / (double)n);
 
     return rms;
 }
 
-static auto corrcoef(int N, double const* x, double const* y) -> double
+static auto corrcoef(int n, double const* x, double const* y) -> double
 {
     double cc;
     double xm;
@@ -34,16 +34,16 @@ static auto corrcoef(int N, double const* x, double const* y) -> double
     double den2;
     int i;
     xm = ym = 0.0;
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         xm += x[i];
         ym += y[i];
     }
 
-    xm = xm / N;
-    ym = ym / N;
+    xm = xm / n;
+    ym = ym / n;
     num = den1 = den2 = 0.0;
 
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         tx = x[i] - xm;
         ty = y[i] - ym;
         num += (tx * ty);
@@ -60,11 +60,11 @@ auto main() -> int
 {
 
     int i;
-    int N;
-    int J;
+    int n;
+    int j;
     FILE* ifp;
 
-    denoise_set* obj;
+    DenoiseSet* obj;
     double temp[2400];
 
     char const* wname = "db5";
@@ -89,14 +89,14 @@ auto main() -> int
 
     fclose(ifp);
 
-    N = i;
-    J = 4;
+    n = i;
+    j = 4;
 
-    auto inp = std::make_unique<double[]>(N);
-    auto oup = std::make_unique<double[]>(N);
-    auto sig = std::make_unique<double[]>(N);
+    auto inp = std::make_unique<double[]>(n);
+    auto oup = std::make_unique<double[]>(n);
+    auto sig = std::make_unique<double[]>(n);
 
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         sig[i] = temp[i];
     }
 
@@ -114,10 +114,10 @@ auto main() -> int
 
     fclose(ifp);
 
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         inp[i] = temp[i];
     }
-    obj = denoise_init(N, J, wname);
+    obj = denoiseInit(n, j, wname);
     setDenoiseMethod(obj, "visushrink"); // sureshrink is also the default. The other option with dwt and swt is visushrink.
     // modwt works only with modwtshrink method
     setDenoiseWTMethod(obj, method); // Default is dwt. the other options are swt and modwt
@@ -135,13 +135,13 @@ auto main() -> int
     //ofp = fopen("testData/denoiseds.txt", "w");
 
     printf("Signal - Noisy Signal Stats \n");
-    printf("RMSE %g\n", rmse(N, sig.get(), inp.get()));
-    printf("Corr Coeff %g\n", corrcoef(N, sig.get(), inp.get()));
+    printf("RMSE %g\n", rmse(n, sig.get(), inp.get()));
+    printf("Corr Coeff %g\n", corrcoef(n, sig.get(), inp.get()));
 
     printf("Signal - DeNoised Signal Stats \n");
-    printf("RMSE %g\n", rmse(N, sig.get(), oup.get()));
-    printf("Corr Coeff %g\n", corrcoef(N, sig.get(), oup.get()));
+    printf("RMSE %g\n", rmse(n, sig.get(), oup.get()));
+    printf("Corr Coeff %g\n", corrcoef(n, sig.get(), oup.get()));
 
-    denoise_free(obj);
+    denoiseFree(obj);
     return 0;
 }

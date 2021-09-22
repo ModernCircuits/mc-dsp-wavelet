@@ -15,7 +15,7 @@
 
 using namespace std::string_view_literals;
 
-wavelet::wavelet(char const* name)
+Wavelet::Wavelet(char const* name)
     : name_ { name }
     , size_ { static_cast<std::size_t>(::filtlength(name)) }
     , params_ { std::make_unique<double[]>(4 * size_) }
@@ -30,9 +30,9 @@ wavelet::wavelet(char const* name)
     }
 }
 
-wavelet_transform::wavelet_transform(wavelet& w, char const* method, int siglength, int J)
+WaveletTransform::WaveletTransform(Wavelet& w, char const* method, int siglength, int j)
     : wave_ { &w }
-    , levels_ { J }
+    , levels_ { j }
 
 {
     auto const size = w.size();
@@ -51,11 +51,11 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
     if (method == nullptr) {
         this->params = std::make_unique<double[]>(siglength + 2 * levels_ * (size + 1));
         this->outlength = siglength + 2 * levels_ * (size + 1);
-        ext_ = signal_extension::symmetric;
+        ext_ = SignalExtension::symmetric;
     } else if ((method == "dwt"sv) || (method == "DWT"sv)) {
         this->params = std::make_unique<double[]>(siglength + 2 * levels_ * (size + 1));
         this->outlength = siglength + 2 * levels_ * (size + 1);
-        ext_ = signal_extension::symmetric;
+        ext_ = SignalExtension::symmetric;
     } else if ((method == "swt"sv) || (method == "SWT"sv)) {
         if (testSWTlength(siglength, levels_) == 0) {
             printf("\n For SWT the signal length must be a multiple of 2^levels_. \n");
@@ -64,7 +64,7 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
 
         this->params = std::make_unique<double[]>(siglength * (levels_ + 1));
         this->outlength = siglength * (levels_ + 1);
-        ext_ = signal_extension::periodic;
+        ext_ = SignalExtension::periodic;
     } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
 
         if (strstr(w.name().c_str(), "haar") == nullptr) {
@@ -80,7 +80,7 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
 
         this->params = std::make_unique<double[]>(siglength * 2 * (levels_ + 1));
         this->outlength = siglength * (levels_ + 1);
-        ext_ = signal_extension::periodic;
+        ext_ = SignalExtension::periodic;
     }
 
     this->siglength = siglength;
@@ -96,7 +96,7 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
 
     this->cobj = nullptr;
 
-    this->cmethod_ = convolution_method::direct;
+    this->cmethod_ = ConvolutionMethod::direct;
     this->cfftset = 0;
     this->lenlength = levels_ + 2;
     this->output_ = &this->params[0];
@@ -115,23 +115,23 @@ wavelet_transform::wavelet_transform(wavelet& w, char const* method, int sigleng
     }
 }
 
-auto wavelet_transform::conv_method(convolution_method method) -> void
+auto WaveletTransform::convMethod(ConvolutionMethod method) -> void
 {
     cmethod_ = method;
 }
 
-auto wavelet_transform::extension(signal_extension ext) -> void
+auto WaveletTransform::extension(SignalExtension ext) -> void
 {
     assert((ext == signal_extension::periodic) || (ext == signal_extension::symmetric));
     ext_ = ext;
 }
 
-auto wavelet_transform::output() const noexcept -> lt::span<double>
+auto WaveletTransform::output() const noexcept -> lt::span<double>
 {
     return lt::span<double> { output_, static_cast<std::size_t>(outlength) };
 }
 
-auto wavelet_transform::approx() const noexcept -> lt::span<double>
+auto WaveletTransform::approx() const noexcept -> lt::span<double>
 {
     /*
 	Wavelet decomposition is stored as
@@ -143,7 +143,7 @@ auto wavelet_transform::approx() const noexcept -> lt::span<double>
     return lt::span<double>(output_, static_cast<size_t>(length[0]));
 }
 
-auto wavelet_transform::detail(std::size_t level) const noexcept -> lt::span<double>
+auto WaveletTransform::detail(std::size_t level) const noexcept -> lt::span<double>
 {
     /*
 	returns Detail coefficents at the jth level where j = J,J-1,...,1
@@ -169,38 +169,38 @@ auto wavelet_transform::detail(std::size_t level) const noexcept -> lt::span<dou
     return lt::span<double>(&output_[iter], static_cast<size_t>(length[level]));
 }
 
-auto wtree_init(wavelet* wave, int siglength, int J) -> wtree_set*
+auto wtreeInit(Wavelet* wave, int siglength, int j) -> WtreeSet*
 {
     auto const size = wave->size();
-    auto const MaxIter = wmaxiter(siglength, size);
-    if (J > 100) {
+    auto const maxIter = wmaxiter(siglength, size);
+    if (j > 100) {
         printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
         exit(-1);
     }
-    if (J > MaxIter) {
-        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
+    if (j > maxIter) {
+        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", maxIter);
         exit(-1);
     }
 
     auto temp = 1;
     auto elength = 0;
     auto nodes = 0;
-    for (auto i = 0; i < J; ++i) {
+    for (auto i = 0; i < j; ++i) {
         temp *= 2;
         nodes += temp;
         auto const temp2 = (size - 2) * (temp - 1);
         elength += temp2;
     }
 
-    auto obj = std::make_unique<wtree_set>();
-    obj->params = std::make_unique<double[]>(siglength * (J + 1) + elength + nodes + J + 1);
-    obj->outlength = siglength * (J + 1) + elength;
+    auto obj = std::make_unique<WtreeSet>();
+    obj->params = std::make_unique<double[]>(siglength * (j + 1) + elength + nodes + j + 1);
+    obj->outlength = siglength * (j + 1) + elength;
     obj->ext = "sym";
 
     obj->wave = wave;
     obj->siglength = siglength;
-    obj->J = J;
-    obj->MaxIter = MaxIter;
+    obj->J = j;
+    obj->MaxIter = maxIter;
     obj->method = "dwt";
 
     if (siglength % 2 == 0) {
@@ -213,63 +213,63 @@ auto wtree_init(wavelet* wave, int siglength, int J) -> wtree_set*
     obj->nodes = nodes;
 
     obj->cfftset = 0;
-    obj->lenlength = J + 2;
+    obj->lenlength = j + 2;
     obj->output = &obj->params[0];
-    obj->nodelength = (int*)&obj->params[siglength * (J + 1) + elength];
-    obj->coeflength = (int*)&obj->params[siglength * (J + 1) + elength + nodes];
+    obj->nodelength = (int*)&obj->params[siglength * (j + 1) + elength];
+    obj->coeflength = (int*)&obj->params[siglength * (j + 1) + elength + nodes];
 
-    for (auto i = 0; i < siglength * (J + 1) + elength + nodes + J + 1; ++i) {
+    for (auto i = 0; i < siglength * (j + 1) + elength + nodes + j + 1; ++i) {
         obj->params[i] = 0.0;
     }
 
     return obj.release();
 }
 
-auto wpt_init(wavelet* wave, int siglength, int J) -> wpt_set*
+auto wptInit(Wavelet* wave, int siglength, int j) -> WptSet*
 {
     auto const size = wave->size();
 
-    if (J > 100) {
+    if (j > 100) {
         printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
         exit(-1);
     }
 
-    auto const MaxIter = wmaxiter(siglength, size);
-    if (J > MaxIter) {
-        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
+    auto const maxIter = wmaxiter(siglength, size);
+    if (j > maxIter) {
+        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", maxIter);
         exit(-1);
     }
     auto temp = 1;
     auto nodes = 0;
-    for (auto i = 0; i < J; ++i) {
+    for (auto i = 0; i < j; ++i) {
         temp *= 2;
         nodes += temp;
     }
 
-    auto idx = J;
+    auto idx = j;
     auto p2 = 2;
-    auto N = siglength;
+    auto n = siglength;
     auto lp = size;
     auto elength = 0;
     while (idx > 0) {
-        N = N + lp - 2;
-        N = (int)ceil((double)N / 2.0);
-        elength = p2 * N;
+        n = n + lp - 2;
+        n = (int)ceil((double)n / 2.0);
+        elength = p2 * n;
         idx--;
         p2 *= 2;
     }
 
-    auto obj = std::make_unique<wpt_set>();
-    obj->params = std::make_unique<double[]>(elength + 4 * nodes + 2 * J + 6);
-    obj->outlength = siglength + 2 * (J + 1) * (size + 1);
+    auto obj = std::make_unique<WptSet>();
+    obj->params = std::make_unique<double[]>(elength + 4 * nodes + 2 * j + 6);
+    obj->outlength = siglength + 2 * (j + 1) * (size + 1);
     obj->ext = "sym";
     obj->entropy = "shannon";
     obj->eparam = 0.0;
 
     obj->wave = wave;
     obj->siglength = siglength;
-    obj->J = J;
-    obj->MaxIter = MaxIter;
+    obj->J = j;
+    obj->MaxIter = maxIter;
 
     if (siglength % 2 == 0) {
         obj->even = 1;
@@ -280,24 +280,24 @@ auto wpt_init(wavelet* wave, int siglength, int J) -> wpt_set*
     obj->cobj = nullptr;
     obj->nodes = nodes;
 
-    obj->lenlength = J + 2;
+    obj->lenlength = j + 2;
     obj->output = &obj->params[0];
     obj->costvalues = &obj->params[elength];
     obj->basisvector = &obj->params[elength + nodes + 1];
     obj->nodeindex = (int*)&obj->params[elength + 2 * nodes + 2];
     obj->numnodeslevel = (int*)&obj->params[elength + 4 * nodes + 4];
-    obj->coeflength = (int*)&obj->params[elength + 4 * nodes + J + 5];
+    obj->coeflength = (int*)&obj->params[elength + 4 * nodes + j + 5];
 
-    for (auto i = 0; i < elength + 4 * nodes + 2 * J + 6; ++i) {
+    for (auto i = 0; i < elength + 4 * nodes + 2 * j + 6; ++i) {
         obj->params[i] = 0.0;
     }
 
     return obj.release();
 }
 
-auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -> cwavelet_transform*
+auto cwtInit(char const* wave, double param, int siglength, double dt, int j) -> CwaveletTransform*
 {
-    int N;
+    int n;
     int nj2;
     int ibase2;
     double s0 {};
@@ -313,10 +313,10 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
         odd = 0;
     }
 
-    N = siglength;
-    nj2 = 2 * N * J;
-    auto obj = std::make_unique<cwavelet_transform>();
-    obj->params = std::make_unique<double[]>(nj2 + 2 * J + N);
+    n = siglength;
+    nj2 = 2 * n * j;
+    auto obj = std::make_unique<CwaveletTransform>();
+    obj->params = std::make_unique<double[]>(nj2 + 2 * j + n);
 
     int mother { 0 };
     if ((wave == "morlet"sv) || (wave == "morl"sv)) {
@@ -365,64 +365,64 @@ auto cwt_init(char const* wave, double param, int siglength, double dt, int J) -
     obj->s0 = s0;
     obj->dj = dj;
     obj->dt = dt;
-    obj->J = J;
+    obj->J = j;
     obj->siglength = siglength;
     obj->sflag = 0;
     obj->pflag = 1;
     obj->mother = mother;
     obj->m = param;
 
-    t1 = 0.499999 + std::log((double)N) / std::log(2.0);
+    t1 = 0.499999 + std::log((double)n) / std::log(2.0);
     ibase2 = 1 + (int)t1;
 
     obj->npad = (int)std::pow(2.0, (double)ibase2);
 
-    obj->output = (cplx_data*)&obj->params[0];
+    obj->output = (CplxData*)&obj->params[0];
     obj->scale = &obj->params[nj2];
-    obj->period = &obj->params[nj2 + J];
-    obj->coi = &obj->params[nj2 + 2 * J];
+    obj->period = &obj->params[nj2 + j];
+    obj->coi = &obj->params[nj2 + 2 * j];
 
-    for (auto i = 0; i < nj2 + 2 * J + N; ++i) {
+    for (auto i = 0; i < nj2 + 2 * j + n; ++i) {
         obj->params[i] = 0.0;
     }
 
     return obj.release();
 }
 
-auto wt2_init(wavelet& wave, char const* method, int rows, int cols, int J) -> wt2_set*
+auto wt2Init(Wavelet& wave, char const* method, int rows, int cols, int j) -> Wt2Set*
 {
 
     auto const size = wave.size();
 
-    auto const MaxRows = wmaxiter(rows, size);
-    auto const MaxCols = wmaxiter(cols, size);
+    auto const maxRows = wmaxiter(rows, size);
+    auto const maxCols = wmaxiter(cols, size);
 
-    auto const MaxIter = (MaxRows < MaxCols) ? MaxRows : MaxCols;
+    auto const maxIter = (maxRows < maxCols) ? maxRows : maxCols;
 
-    if (J > MaxIter) {
-        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
+    if (j > maxIter) {
+        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", maxIter);
         exit(-1);
     }
 
     int sumacc { 0 };
-    if (J == 1) {
+    if (j == 1) {
         sumacc = 4;
-    } else if (J > 1) {
-        sumacc = J * 3 + 1;
+    } else if (j > 1) {
+        sumacc = j * 3 + 1;
     } else {
         printf("Error : J should be >= 1 \n");
         exit(-1);
     }
 
-    auto obj = std::make_unique<wt2_set>();
-    obj->params = std::make_unique<int[]>(2 * J + sumacc);
+    auto obj = std::make_unique<Wt2Set>();
+    obj->params = std::make_unique<int[]>(2 * j + sumacc);
     obj->outlength = 0;
     if (method == nullptr) {
         obj->ext = "per";
     } else if ((method == "dwt"sv) || (method == "DWT"sv)) {
         obj->ext = "per";
     } else if ((method == "swt"sv) || (method == "SWT"sv)) {
-        if ((testSWTlength(rows, J) == 0) || (testSWTlength(cols, J) == 0)) {
+        if ((testSWTlength(rows, j) == 0) || (testSWTlength(cols, j) == 0)) {
             printf("\n For SWT data rows and columns must be a multiple of 2^J. \n");
             exit(-1);
         }
@@ -445,30 +445,30 @@ auto wt2_init(wavelet& wave, char const* method, int rows, int cols, int J) -> w
     obj->wave = &wave;
     obj->rows = rows;
     obj->cols = cols;
-    obj->J = J;
-    obj->MaxIter = MaxIter;
+    obj->J = j;
+    obj->MaxIter = maxIter;
     obj->method = method;
     obj->coeffaccesslength = sumacc;
 
     obj->dimensions = &obj->params[0];
-    obj->coeffaccess = &obj->params[2 * J];
-    for (auto i = 0; i < (2 * J + sumacc); ++i) {
+    obj->coeffaccess = &obj->params[2 * j];
+    for (auto i = 0; i < (2 * j + sumacc); ++i) {
         obj->params[i] = 0;
     }
 
     return obj.release();
 }
 
-static void wconv(wavelet_transform* wt, double* sig, int N, double const* filt, int L, double* oup)
+static void wconv(WaveletTransform* wt, double* sig, int n, double const* filt, int l, double* oup)
 {
-    if (wt->conv_method() == convolution_method::direct) {
-        conv_direct(sig, N, filt, L, oup);
-    } else if (wt->conv_method() == convolution_method::fft) {
+    if (wt->convMethod() == ConvolutionMethod::direct) {
+        convDirect(sig, n, filt, l, oup);
+    } else if (wt->convMethod() == ConvolutionMethod::fft) {
         if (wt->cfftset == 0) {
-            wt->cobj = conv_init(N, L);
-            conv_fft(*wt->cobj, sig, filt, oup);
+            wt->cobj = convInit(n, l);
+            convFft(*wt->cobj, sig, filt, oup);
         } else {
-            conv_fft(*wt->cobj, sig, filt, oup);
+            convFft(*wt->cobj, sig, filt, oup);
         }
     } else {
         printf("Convolution Only accepts two methods - direct and fft");
@@ -476,308 +476,308 @@ static void wconv(wavelet_transform* wt, double* sig, int N, double const* filt,
     }
 }
 
-static void dwt_per(wavelet_transform* wt, double* inp, int N, double* cA, int len_cA, double* cD)
+static void dwtPer(WaveletTransform* wt, double* inp, int n, double* cA, int lenCA, double* cD)
 {
 
-    dwt_per_stride(inp, N, wt->wave().lpd(), wt->wave().hpd(), wt->wave().lpd_len(), cA, len_cA, cD, 1, 1);
+    dwtPerStride(inp, n, wt->wave().lpd(), wt->wave().hpd(), wt->wave().lpdLen(), cA, lenCA, cD, 1, 1);
 }
 
-static void wtree_per(wtree_set* wt, double const* inp, int N, double* cA, int len_cA, double* cD)
+static void wtreePer(WtreeSet* wt, double const* inp, int n, double* cA, int lenCA, double* cD)
 {
     int l;
     int l2;
     int isodd;
     int t;
-    int len_avg;
+    int lenAvg;
 
-    len_avg = wt->wave->lpd_len();
-    l2 = len_avg / 2;
-    isodd = N % 2;
+    lenAvg = wt->wave->lpdLen();
+    l2 = lenAvg / 2;
+    isodd = n % 2;
 
-    for (auto i = 0; i < len_cA; ++i) {
+    for (auto i = 0; i < lenCA; ++i) {
         t = 2 * i + l2;
         cA[i] = 0.0;
         cD[i] = 0.0;
-        for (l = 0; l < len_avg; ++l) {
-            if ((t - l) >= l2 && (t - l) < N) {
+        for (l = 0; l < lenAvg; ++l) {
+            if ((t - l) >= l2 && (t - l) < n) {
                 cA[i] += wt->wave->lpd()[l] * inp[t - l];
                 cD[i] += wt->wave->hpd()[l] * inp[t - l];
             } else if ((t - l) < l2 && (t - l) >= 0) {
                 cA[i] += wt->wave->lpd()[l] * inp[t - l];
                 cD[i] += wt->wave->hpd()[l] * inp[t - l];
             } else if ((t - l) < 0 && isodd == 0) {
-                cA[i] += wt->wave->lpd()[l] * inp[t - l + N];
-                cD[i] += wt->wave->hpd()[l] * inp[t - l + N];
+                cA[i] += wt->wave->lpd()[l] * inp[t - l + n];
+                cD[i] += wt->wave->hpd()[l] * inp[t - l + n];
             } else if ((t - l) < 0 && isodd == 1) {
                 if ((t - l) != -1) {
-                    cA[i] += wt->wave->lpd()[l] * inp[t - l + N + 1];
-                    cD[i] += wt->wave->hpd()[l] * inp[t - l + N + 1];
+                    cA[i] += wt->wave->lpd()[l] * inp[t - l + n + 1];
+                    cD[i] += wt->wave->hpd()[l] * inp[t - l + n + 1];
                 } else {
-                    cA[i] += wt->wave->lpd()[l] * inp[N - 1];
-                    cD[i] += wt->wave->hpd()[l] * inp[N - 1];
+                    cA[i] += wt->wave->lpd()[l] * inp[n - 1];
+                    cD[i] += wt->wave->hpd()[l] * inp[n - 1];
                 }
-            } else if ((t - l) >= N && isodd == 0) {
-                cA[i] += wt->wave->lpd()[l] * inp[t - l - N];
-                cD[i] += wt->wave->hpd()[l] * inp[t - l - N];
-            } else if ((t - l) >= N && isodd == 1) {
-                if (t - l != N) {
-                    cA[i] += wt->wave->lpd()[l] * inp[t - l - (N + 1)];
-                    cD[i] += wt->wave->hpd()[l] * inp[t - l - (N + 1)];
+            } else if ((t - l) >= n && isodd == 0) {
+                cA[i] += wt->wave->lpd()[l] * inp[t - l - n];
+                cD[i] += wt->wave->hpd()[l] * inp[t - l - n];
+            } else if ((t - l) >= n && isodd == 1) {
+                if (t - l != n) {
+                    cA[i] += wt->wave->lpd()[l] * inp[t - l - (n + 1)];
+                    cD[i] += wt->wave->hpd()[l] * inp[t - l - (n + 1)];
                 } else {
-                    cA[i] += wt->wave->lpd()[l] * inp[N - 1];
-                    cD[i] += wt->wave->hpd()[l] * inp[N - 1];
+                    cA[i] += wt->wave->lpd()[l] * inp[n - 1];
+                    cD[i] += wt->wave->hpd()[l] * inp[n - 1];
                 }
             }
         }
     }
 }
 
-static void dwpt_per(wpt_set* wt, double const* inp, int N, double* cA, int len_cA, double* cD)
+static void dwptPer(WptSet* wt, double const* inp, int n, double* cA, int lenCA, double* cD)
 {
     int l;
     int l2;
     int isodd;
     int t;
-    int len_avg;
+    int lenAvg;
 
-    len_avg = wt->wave->lpd_len();
-    l2 = len_avg / 2;
-    isodd = N % 2;
+    lenAvg = wt->wave->lpdLen();
+    l2 = lenAvg / 2;
+    isodd = n % 2;
 
-    for (auto i = 0; i < len_cA; ++i) {
+    for (auto i = 0; i < lenCA; ++i) {
         t = 2 * i + l2;
         cA[i] = 0.0;
         cD[i] = 0.0;
-        for (l = 0; l < len_avg; ++l) {
-            if ((t - l) >= l2 && (t - l) < N) {
+        for (l = 0; l < lenAvg; ++l) {
+            if ((t - l) >= l2 && (t - l) < n) {
                 cA[i] += wt->wave->lpd()[l] * inp[t - l];
                 cD[i] += wt->wave->hpd()[l] * inp[t - l];
             } else if ((t - l) < l2 && (t - l) >= 0) {
                 cA[i] += wt->wave->lpd()[l] * inp[t - l];
                 cD[i] += wt->wave->hpd()[l] * inp[t - l];
             } else if ((t - l) < 0 && isodd == 0) {
-                cA[i] += wt->wave->lpd()[l] * inp[t - l + N];
-                cD[i] += wt->wave->hpd()[l] * inp[t - l + N];
+                cA[i] += wt->wave->lpd()[l] * inp[t - l + n];
+                cD[i] += wt->wave->hpd()[l] * inp[t - l + n];
             } else if ((t - l) < 0 && isodd == 1) {
                 if ((t - l) != -1) {
-                    cA[i] += wt->wave->lpd()[l] * inp[t - l + N + 1];
-                    cD[i] += wt->wave->hpd()[l] * inp[t - l + N + 1];
+                    cA[i] += wt->wave->lpd()[l] * inp[t - l + n + 1];
+                    cD[i] += wt->wave->hpd()[l] * inp[t - l + n + 1];
                 } else {
-                    cA[i] += wt->wave->lpd()[l] * inp[N - 1];
-                    cD[i] += wt->wave->hpd()[l] * inp[N - 1];
+                    cA[i] += wt->wave->lpd()[l] * inp[n - 1];
+                    cD[i] += wt->wave->hpd()[l] * inp[n - 1];
                 }
-            } else if ((t - l) >= N && isodd == 0) {
-                cA[i] += wt->wave->lpd()[l] * inp[t - l - N];
-                cD[i] += wt->wave->hpd()[l] * inp[t - l - N];
-            } else if ((t - l) >= N && isodd == 1) {
-                if (t - l != N) {
-                    cA[i] += wt->wave->lpd()[l] * inp[t - l - (N + 1)];
-                    cD[i] += wt->wave->hpd()[l] * inp[t - l - (N + 1)];
+            } else if ((t - l) >= n && isodd == 0) {
+                cA[i] += wt->wave->lpd()[l] * inp[t - l - n];
+                cD[i] += wt->wave->hpd()[l] * inp[t - l - n];
+            } else if ((t - l) >= n && isodd == 1) {
+                if (t - l != n) {
+                    cA[i] += wt->wave->lpd()[l] * inp[t - l - (n + 1)];
+                    cD[i] += wt->wave->hpd()[l] * inp[t - l - (n + 1)];
                 } else {
-                    cA[i] += wt->wave->lpd()[l] * inp[N - 1];
-                    cD[i] += wt->wave->hpd()[l] * inp[N - 1];
+                    cA[i] += wt->wave->lpd()[l] * inp[n - 1];
+                    cD[i] += wt->wave->hpd()[l] * inp[n - 1];
                 }
             }
         }
     }
 }
 
-static void dwt_sym(wavelet_transform* wt, double* inp, int N, double* cA, int len_cA, double* cD)
+static void dwtSym(WaveletTransform* wt, double* inp, int n, double* cA, int lenCA, double* cD)
 {
 
-    dwt_sym_stride(inp, N, wt->wave().lpd(), wt->wave().hpd(), wt->wave().lpd_len(), cA, len_cA, cD, 1, 1);
+    dwtSymStride(inp, n, wt->wave().lpd(), wt->wave().hpd(), wt->wave().lpdLen(), cA, lenCA, cD, 1, 1);
 }
 
-static void wtree_sym(wtree_set* wt, double const* inp, int N, double* cA, int len_cA, double* cD)
+static void wtreeSym(WtreeSet* wt, double const* inp, int n, double* cA, int lenCA, double* cD)
 {
     int l;
     int t;
-    int len_avg;
+    int lenAvg;
 
-    len_avg = wt->wave->lpd_len();
+    lenAvg = wt->wave->lpdLen();
 
-    for (auto i = 0; i < len_cA; ++i) {
+    for (auto i = 0; i < lenCA; ++i) {
         t = 2 * i + 1;
         cA[i] = 0.0;
         cD[i] = 0.0;
-        for (l = 0; l < len_avg; ++l) {
-            if ((t - l) >= 0 && (t - l) < N) {
+        for (l = 0; l < lenAvg; ++l) {
+            if ((t - l) >= 0 && (t - l) < n) {
                 cA[i] += wt->wave->lpd()[l] * inp[t - l];
                 cD[i] += wt->wave->hpd()[l] * inp[t - l];
             } else if ((t - l) < 0) {
                 cA[i] += wt->wave->lpd()[l] * inp[-t + l - 1];
                 cD[i] += wt->wave->hpd()[l] * inp[-t + l - 1];
-            } else if ((t - l) >= N) {
-                cA[i] += wt->wave->lpd()[l] * inp[2 * N - t + l - 1];
-                cD[i] += wt->wave->hpd()[l] * inp[2 * N - t + l - 1];
+            } else if ((t - l) >= n) {
+                cA[i] += wt->wave->lpd()[l] * inp[2 * n - t + l - 1];
+                cD[i] += wt->wave->hpd()[l] * inp[2 * n - t + l - 1];
             }
         }
     }
 }
 
-static void dwpt_sym(wpt_set* wt, double const* inp, int N, double* cA, int len_cA, double* cD)
+static void dwptSym(WptSet* wt, double const* inp, int n, double* cA, int lenCA, double* cD)
 {
     int l;
     int t;
-    int len_avg;
+    int lenAvg;
 
-    len_avg = wt->wave->lpd_len();
+    lenAvg = wt->wave->lpdLen();
 
-    for (auto i = 0; i < len_cA; ++i) {
+    for (auto i = 0; i < lenCA; ++i) {
         t = 2 * i + 1;
         cA[i] = 0.0;
         cD[i] = 0.0;
-        for (l = 0; l < len_avg; ++l) {
-            if ((t - l) >= 0 && (t - l) < N) {
+        for (l = 0; l < lenAvg; ++l) {
+            if ((t - l) >= 0 && (t - l) < n) {
                 cA[i] += wt->wave->lpd()[l] * inp[t - l];
                 cD[i] += wt->wave->hpd()[l] * inp[t - l];
             } else if ((t - l) < 0) {
                 cA[i] += wt->wave->lpd()[l] * inp[-t + l - 1];
                 cD[i] += wt->wave->hpd()[l] * inp[-t + l - 1];
-            } else if ((t - l) >= N) {
-                cA[i] += wt->wave->lpd()[l] * inp[2 * N - t + l - 1];
-                cD[i] += wt->wave->hpd()[l] * inp[2 * N - t + l - 1];
+            } else if ((t - l) >= n) {
+                cA[i] += wt->wave->lpd()[l] * inp[2 * n - t + l - 1];
+                cD[i] += wt->wave->hpd()[l] * inp[2 * n - t + l - 1];
             }
         }
     }
 }
 
-static void dwt1(wavelet_transform* wt, double* sig, int len_sig, double* cA, double* cD)
+static void dwt1(WaveletTransform* wt, double* sig, int lenSig, double* cA, double* cD)
 {
-    constexpr auto D = 2;
+    constexpr auto d = 2;
 
-    if (wt->extension() == signal_extension::periodic) {
-        auto len_avg = (wt->wave().lpd_len() + wt->wave().hpd_len()) / 2;
-        auto signal = std::make_unique<double[]>(len_sig + len_avg + (len_sig % 2));
-        len_sig = per_ext(sig, len_sig, len_avg / 2, signal.get());
-        auto cA_undec = std::make_unique<double[]>(len_sig + len_avg + wt->wave().lpd_len() - 1);
+    if (wt->extension() == SignalExtension::periodic) {
+        auto lenAvg = (wt->wave().lpdLen() + wt->wave().hpdLen()) / 2;
+        auto signal = std::make_unique<double[]>(lenSig + lenAvg + (lenSig % 2));
+        lenSig = perExt(sig, lenSig, lenAvg / 2, signal.get());
+        auto cAUndec = std::make_unique<double[]>(lenSig + lenAvg + wt->wave().lpdLen() - 1);
 
-        if (wt->wave().lpd_len() == wt->wave().hpd_len() && (wt->conv_method() == convolution_method::fft)) {
-            wt->cobj = conv_init(len_sig + len_avg, wt->wave().lpd_len());
+        if (wt->wave().lpdLen() == wt->wave().hpdLen() && (wt->convMethod() == ConvolutionMethod::fft)) {
+            wt->cobj = convInit(lenSig + lenAvg, wt->wave().lpdLen());
             wt->cfftset = 1;
-        } else if (!(wt->wave().lpd_len() == wt->wave().hpd_len())) {
+        } else if (!(wt->wave().lpdLen() == wt->wave().hpdLen())) {
             printf("Decomposition Filters must have the same length.");
             exit(-1);
         }
 
-        wconv(wt, signal.get(), len_sig + len_avg, wt->wave().lpd(), wt->wave().lpd_len(), cA_undec.get());
-        downsamp(cA_undec.get() + len_avg, len_sig, D, cA);
-        wconv(wt, signal.get(), len_sig + len_avg, wt->wave().hpd(), wt->wave().hpd_len(), cA_undec.get());
-        downsamp(cA_undec.get() + len_avg, len_sig, D, cD);
+        wconv(wt, signal.get(), lenSig + lenAvg, wt->wave().lpd(), wt->wave().lpdLen(), cAUndec.get());
+        downsamp(cAUndec.get() + lenAvg, lenSig, d, cA);
+        wconv(wt, signal.get(), lenSig + lenAvg, wt->wave().hpd(), wt->wave().hpdLen(), cAUndec.get());
+        downsamp(cAUndec.get() + lenAvg, lenSig, d, cD);
 
-    } else if (wt->extension() == signal_extension::symmetric) {
-        auto lf = wt->wave().lpd_len(); // lpd and hpd have the same length
-        auto signal = std::make_unique<double[]>(len_sig + 2 * (lf - 1));
-        len_sig = symm_ext(sig, len_sig, lf - 1, signal.get());
-        auto cA_undec = std::make_unique<double[]>(len_sig + 3 * (lf - 1));
+    } else if (wt->extension() == SignalExtension::symmetric) {
+        auto lf = wt->wave().lpdLen(); // lpd and hpd have the same length
+        auto signal = std::make_unique<double[]>(lenSig + 2 * (lf - 1));
+        lenSig = symmExt(sig, lenSig, lf - 1, signal.get());
+        auto cAUndec = std::make_unique<double[]>(lenSig + 3 * (lf - 1));
 
-        if (wt->wave().lpd_len() == wt->wave().hpd_len() && (wt->conv_method() == convolution_method::fft)) {
-            wt->cobj = conv_init(len_sig + 2 * (lf - 1), lf);
+        if (wt->wave().lpdLen() == wt->wave().hpdLen() && (wt->convMethod() == ConvolutionMethod::fft)) {
+            wt->cobj = convInit(lenSig + 2 * (lf - 1), lf);
             wt->cfftset = 1;
-        } else if (!(wt->wave().lpd_len() == wt->wave().hpd_len())) {
+        } else if (!(wt->wave().lpdLen() == wt->wave().hpdLen())) {
             printf("Decomposition Filters must have the same length.");
             exit(-1);
         }
 
-        wconv(wt, signal.get(), len_sig + 2 * (lf - 1), wt->wave().lpd(), wt->wave().lpd_len(), cA_undec.get());
-        downsamp(cA_undec.get() + lf, len_sig + lf - 2, D, cA);
-        wconv(wt, signal.get(), len_sig + 2 * (lf - 1), wt->wave().hpd(), wt->wave().hpd_len(), cA_undec.get());
-        downsamp(cA_undec.get() + lf, len_sig + lf - 2, D, cD);
+        wconv(wt, signal.get(), lenSig + 2 * (lf - 1), wt->wave().lpd(), wt->wave().lpdLen(), cAUndec.get());
+        downsamp(cAUndec.get() + lf, lenSig + lf - 2, d, cA);
+        wconv(wt, signal.get(), lenSig + 2 * (lf - 1), wt->wave().hpd(), wt->wave().hpdLen(), cAUndec.get());
+        downsamp(cAUndec.get() + lf, lenSig + lf - 2, d, cD);
     } else {
         printf("Signal extension can be either per or sym");
         exit(-1);
     }
 
-    if (wt->wave().lpd_len() == wt->wave().hpd_len() && (wt->conv_method() == convolution_method::fft)) {
+    if (wt->wave().lpdLen() == wt->wave().hpdLen() && (wt->convMethod() == ConvolutionMethod::fft)) {
 
         wt->cfftset = 0;
     }
 }
 
-void dwt(wavelet_transform* wt, double const* inp)
+void dwt(WaveletTransform* wt, double const* inp)
 {
 
-    auto temp_len = wt->siglength;
-    auto const J = wt->levels();
+    auto tempLen = wt->siglength;
+    auto const j = wt->levels();
 
-    wt->length[J + 1] = temp_len;
+    wt->length[j + 1] = tempLen;
     wt->outlength = 0;
     wt->zpad = 0;
 
-    auto orig2 = std::make_unique<double[]>(temp_len);
-    auto orig = std::make_unique<double[]>(temp_len);
+    auto orig2 = std::make_unique<double[]>(tempLen);
+    auto orig = std::make_unique<double[]>(tempLen);
 
     for (auto i = 0; i < wt->siglength; ++i) {
         orig[i] = inp[i];
     }
 
     if (wt->zpad == 1) {
-        orig[temp_len - 1] = orig[temp_len - 2];
+        orig[tempLen - 1] = orig[tempLen - 2];
     }
 
-    auto N = temp_len;
-    auto lp = wt->wave().lpd_len();
+    auto n = tempLen;
+    auto lp = wt->wave().lpdLen();
 
-    if (wt->extension() == signal_extension::periodic) {
-        auto idx = J;
+    if (wt->extension() == SignalExtension::periodic) {
+        auto idx = j;
         while (idx > 0) {
-            N = (int)ceil((double)N / 2.0);
-            wt->length[idx] = N;
+            n = (int)ceil((double)n / 2.0);
+            wt->length[idx] = n;
             wt->outlength += wt->length[idx];
             idx--;
         }
         wt->length[0] = wt->length[1];
         wt->outlength += wt->length[0];
-        N = wt->outlength;
+        n = wt->outlength;
 
-        for (auto iter = 0; iter < J; ++iter) {
-            auto const len_cA = wt->length[J - iter];
-            N -= len_cA;
-            if (wt->conv_method() == convolution_method::fft) {
-                dwt1(wt, orig.get(), temp_len, orig2.get(), wt->params.get() + N);
+        for (auto iter = 0; iter < j; ++iter) {
+            auto const lenCA = wt->length[j - iter];
+            n -= lenCA;
+            if (wt->convMethod() == ConvolutionMethod::fft) {
+                dwt1(wt, orig.get(), tempLen, orig2.get(), wt->params.get() + n);
             } else {
-                dwt_per(wt, orig.get(), temp_len, orig2.get(), len_cA, wt->params.get() + N);
+                dwtPer(wt, orig.get(), tempLen, orig2.get(), lenCA, wt->params.get() + n);
             }
-            temp_len = wt->length[J - iter];
-            if (iter == J - 1) {
-                for (auto i = 0; i < len_cA; ++i) {
+            tempLen = wt->length[j - iter];
+            if (iter == j - 1) {
+                for (auto i = 0; i < lenCA; ++i) {
                     wt->params[i] = orig2[i];
                 }
             } else {
-                for (auto i = 0; i < len_cA; ++i) {
+                for (auto i = 0; i < lenCA; ++i) {
                     orig[i] = orig2[i];
                 }
             }
         }
-    } else if (wt->extension() == signal_extension::symmetric) {
-        auto idx = J;
+    } else if (wt->extension() == SignalExtension::symmetric) {
+        auto idx = j;
         while (idx > 0) {
-            N = N + lp - 2;
-            N = (int)ceil((double)N / 2.0);
-            wt->length[idx] = N;
+            n = n + lp - 2;
+            n = (int)ceil((double)n / 2.0);
+            wt->length[idx] = n;
             wt->outlength += wt->length[idx];
             idx--;
         }
         wt->length[0] = wt->length[1];
         wt->outlength += wt->length[0];
-        N = wt->outlength;
+        n = wt->outlength;
 
-        for (auto iter = 0; iter < J; ++iter) {
-            auto const len_cA = wt->length[J - iter];
-            N -= len_cA;
-            if (wt->conv_method() == convolution_method::fft) {
-                dwt1(wt, orig.get(), temp_len, orig2.get(), wt->params.get() + N);
+        for (auto iter = 0; iter < j; ++iter) {
+            auto const lenCA = wt->length[j - iter];
+            n -= lenCA;
+            if (wt->convMethod() == ConvolutionMethod::fft) {
+                dwt1(wt, orig.get(), tempLen, orig2.get(), wt->params.get() + n);
             } else {
-                dwt_sym(wt, orig.get(), temp_len, orig2.get(), len_cA, wt->params.get() + N);
+                dwtSym(wt, orig.get(), tempLen, orig2.get(), lenCA, wt->params.get() + n);
             }
-            temp_len = wt->length[J - iter];
+            tempLen = wt->length[j - iter];
 
-            if (iter == J - 1) {
-                for (auto i = 0; i < len_cA; ++i) {
+            if (iter == j - 1) {
+                for (auto i = 0; i < lenCA; ++i) {
                     wt->params[i] = orig2[i];
                 }
             } else {
-                for (auto i = 0; i < len_cA; ++i) {
+                for (auto i = 0; i < lenCA; ++i) {
                     orig[i] = orig2[i];
                 }
             }
@@ -788,102 +788,102 @@ void dwt(wavelet_transform* wt, double const* inp)
     }
 }
 
-void wtree(wtree_set* wt, double const* inp)
+void wtree(WtreeSet* wt, double const* inp)
 {
     int iter;
-    int N;
+    int n;
     int lp;
     int p2;
     int k;
-    int N2;
-    int Np;
-    int len_cA;
+    int n2;
+    int np;
+    int lenCA;
     int t;
     int t2;
     int it1;
 
-    auto temp_len = wt->siglength;
-    auto J = wt->J;
-    wt->length[J + 1] = temp_len;
+    auto tempLen = wt->siglength;
+    auto j = wt->J;
+    wt->length[j + 1] = tempLen;
     wt->outlength = 0;
     wt->zpad = 0;
 
-    auto orig = std::make_unique<double[]>(temp_len);
+    auto orig = std::make_unique<double[]>(tempLen);
 
     for (auto i = 0; i < wt->siglength; ++i) {
         orig[i] = inp[i];
     }
 
     if (wt->zpad == 1) {
-        orig[temp_len - 1] = orig[temp_len - 2];
+        orig[tempLen - 1] = orig[tempLen - 2];
     }
 
-    N = temp_len;
-    lp = wt->wave->lpd_len();
+    n = tempLen;
+    lp = wt->wave->lpdLen();
 
     if (wt->ext == "per"sv) {
-        auto i = J;
+        auto i = j;
         p2 = 2;
         while (i > 0) {
-            N = (int)ceil((double)N / 2.0);
-            wt->length[i] = N;
+            n = (int)ceil((double)n / 2.0);
+            wt->length[i] = n;
             wt->outlength += p2 * (wt->length[i]);
             i--;
             p2 *= 2;
         }
         wt->length[0] = wt->length[1];
 
-        N2 = wt->outlength;
+        n2 = wt->outlength;
         p2 = 1;
-        for (iter = 0; iter < J; ++iter) {
-            len_cA = wt->length[J - iter];
-            N2 -= 2 * p2 * len_cA;
-            N = N2;
+        for (iter = 0; iter < j; ++iter) {
+            lenCA = wt->length[j - iter];
+            n2 -= 2 * p2 * lenCA;
+            n = n2;
             for (k = 0; k < p2; ++k) {
                 if (iter == 0) {
-                    wtree_per(wt, orig.get(), temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
+                    wtreePer(wt, orig.get(), tempLen, wt->params.get() + n, lenCA, wt->params.get() + n + lenCA);
                 } else {
-                    wtree_per(wt, wt->params.get() + Np + k * temp_len, temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
+                    wtreePer(wt, wt->params.get() + np + k * tempLen, tempLen, wt->params.get() + n, lenCA, wt->params.get() + n + lenCA);
                 }
-                N += 2 * len_cA;
+                n += 2 * lenCA;
             }
 
-            temp_len = wt->length[J - iter];
+            tempLen = wt->length[j - iter];
             p2 = 2 * p2;
-            Np = N2;
+            np = n2;
         }
     } else if (wt->ext == "sym"sv) {
-        auto i = J;
+        auto i = j;
         p2 = 2;
         while (i > 0) {
-            N = N + lp - 2;
-            N = (int)ceil((double)N / 2.0);
-            wt->length[i] = N;
+            n = n + lp - 2;
+            n = (int)ceil((double)n / 2.0);
+            wt->length[i] = n;
             wt->outlength += p2 * (wt->length[i]);
             i--;
             p2 *= 2;
         }
         wt->length[0] = wt->length[1];
 
-        N2 = wt->outlength;
+        n2 = wt->outlength;
         p2 = 1;
 
-        for (iter = 0; iter < J; ++iter) {
-            len_cA = wt->length[J - iter];
-            N2 -= 2 * p2 * len_cA;
-            N = N2;
+        for (iter = 0; iter < j; ++iter) {
+            lenCA = wt->length[j - iter];
+            n2 -= 2 * p2 * lenCA;
+            n = n2;
             for (k = 0; k < p2; ++k) {
                 if (iter == 0) {
-                    wtree_sym(wt, orig.get(), temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
+                    wtreeSym(wt, orig.get(), tempLen, wt->params.get() + n, lenCA, wt->params.get() + n + lenCA);
                 } else {
-                    wtree_sym(wt, wt->params.get() + Np + k * temp_len, temp_len, wt->params.get() + N, len_cA, wt->params.get() + N + len_cA);
+                    wtreeSym(wt, wt->params.get() + np + k * tempLen, tempLen, wt->params.get() + n, lenCA, wt->params.get() + n + lenCA);
                 }
-                N += 2 * len_cA;
+                n += 2 * lenCA;
             }
 
-            temp_len = wt->length[J - iter];
+            tempLen = wt->length[j - iter];
             p2 = 2 * p2;
-            Np = N2;
+            np = n2;
         }
 
     } else {
@@ -891,25 +891,25 @@ void wtree(wtree_set* wt, double const* inp)
         exit(-1);
     }
 
-    J = wt->J;
-    t2 = wt->outlength - 2 * wt->length[J];
+    j = wt->J;
+    t2 = wt->outlength - 2 * wt->length[j];
     p2 = 2;
     it1 = 0;
-    for (auto i = 0; i < J; ++i) {
+    for (auto i = 0; i < j; ++i) {
         t = t2;
         for (k = 0; k < p2; ++k) {
             wt->nodelength[it1] = t;
             it1++;
-            t += wt->length[J - i];
+            t += wt->length[j - i];
         }
         p2 *= 2;
-        t2 = t2 - p2 * wt->length[J - i - 1];
+        t2 = t2 - p2 * wt->length[j - i - 1];
     }
 
     wt->coeflength[0] = wt->siglength;
 
-    for (auto i = 1; i < J + 1; ++i) {
-        wt->coeflength[i] = wt->length[J - i + 1];
+    for (auto i = 1; i < j + 1; ++i) {
+        wt->coeflength[i] = wt->length[j - i + 1];
     }
 }
 
@@ -922,44 +922,44 @@ static constexpr auto ipow2(int n) -> int
     return p;
 }
 
-void dwpt(wpt_set* wt, double const* inp)
+void dwpt(WptSet* wt, double const* inp)
 {
     int iter;
     int p2;
     int k;
-    int N2;
-    int Np;
+    int n2;
+    int np;
     int llb;
     double v1;
     double v2;
-    int len_cA;
+    int lenCA;
     int t;
 
-    auto temp_len = wt->siglength;
-    auto J = wt->J;
-    wt->length[J + 1] = temp_len;
+    auto tempLen = wt->siglength;
+    auto jj = wt->J;
+    wt->length[jj + 1] = tempLen;
     wt->outlength = 0;
     auto temp = 1;
     auto elength = 0;
     auto size = wt->wave->size();
     auto nodes = wt->nodes;
     auto n1 = nodes + 1;
-    for (auto i = 0; i < J; ++i) {
+    for (auto i = 0; i < jj; ++i) {
         temp *= 2;
         auto const temp2 = (size - 2) * (temp - 1);
         elength += temp2;
     }
 
     auto eparam = wt->eparam;
-    auto orig = std::make_unique<double[]>(temp_len);
-    auto tree = std::make_unique<double[]>((temp_len * (J + 1) + elength));
+    auto orig = std::make_unique<double[]>(tempLen);
+    auto tree = std::make_unique<double[]>((tempLen * (jj + 1) + elength));
     auto nodelength = std::make_unique<int[]>(nodes);
 
     for (auto i = 0; i < wt->siglength; ++i) {
         orig[i] = inp[i];
     }
 
-    for (auto i = 0; i < temp_len * (J + 1) + elength; ++i) {
+    for (auto i = 0; i < tempLen * (jj + 1) + elength; ++i) {
         tree[i] = 0.0;
     }
 
@@ -968,84 +968,84 @@ void dwpt(wpt_set* wt, double const* inp)
         wt->costvalues[i] = 0.0;
     }
 
-    auto N = temp_len;
-    auto lp = wt->wave->lpd_len();
+    auto n = tempLen;
+    auto lp = wt->wave->lpdLen();
     // p2 = 1;
 
     //set eparam value here
     wt->costvalues[0] = costfunc(orig.get(), wt->siglength, wt->entropy.c_str(), eparam);
     auto it2 = 1;
     if (wt->ext == "per"sv) {
-        auto i = J;
+        auto i = jj;
         p2 = 2;
         while (i > 0) {
-            N = (int)ceil((double)N / 2.0);
-            wt->length[i] = N;
+            n = (int)ceil((double)n / 2.0);
+            wt->length[i] = n;
             wt->outlength += p2 * (wt->length[i]);
             i--;
             p2 *= 2;
         }
         wt->length[0] = wt->length[1];
 
-        N2 = wt->outlength;
+        n2 = wt->outlength;
         p2 = 1;
-        for (iter = 0; iter < J; ++iter) {
-            len_cA = wt->length[J - iter];
-            N2 -= 2 * p2 * len_cA;
-            N = N2;
+        for (iter = 0; iter < jj; ++iter) {
+            lenCA = wt->length[jj - iter];
+            n2 -= 2 * p2 * lenCA;
+            n = n2;
             for (k = 0; k < p2; ++k) {
                 if (iter == 0) {
-                    dwpt_per(wt, orig.get(), temp_len, tree.get() + N, len_cA, tree.get() + N + len_cA);
+                    dwptPer(wt, orig.get(), tempLen, tree.get() + n, lenCA, tree.get() + n + lenCA);
                 } else {
-                    dwpt_per(wt, tree.get() + Np + k * temp_len, temp_len, tree.get() + N, len_cA, tree.get() + N + len_cA);
+                    dwptPer(wt, tree.get() + np + k * tempLen, tempLen, tree.get() + n, lenCA, tree.get() + n + lenCA);
                 }
-                wt->costvalues[it2] = costfunc(tree.get() + N, len_cA, wt->entropy.c_str(), eparam);
+                wt->costvalues[it2] = costfunc(tree.get() + n, lenCA, wt->entropy.c_str(), eparam);
                 it2++;
-                wt->costvalues[it2] = costfunc(tree.get() + N + len_cA, len_cA, wt->entropy.c_str(), eparam);
+                wt->costvalues[it2] = costfunc(tree.get() + n + lenCA, lenCA, wt->entropy.c_str(), eparam);
                 it2++;
-                N += 2 * len_cA;
+                n += 2 * lenCA;
             }
 
-            temp_len = wt->length[J - iter];
+            tempLen = wt->length[jj - iter];
             p2 = 2 * p2;
-            Np = N2;
+            np = n2;
         }
     } else if (wt->ext == "sym"sv) {
-        auto i = J;
+        auto i = jj;
         p2 = 2;
         while (i > 0) {
-            N = N + lp - 2;
-            N = (int)ceil((double)N / 2.0);
-            wt->length[i] = N;
+            n = n + lp - 2;
+            n = (int)ceil((double)n / 2.0);
+            wt->length[i] = n;
             wt->outlength += p2 * (wt->length[i]);
             i--;
             p2 *= 2;
         }
         wt->length[0] = wt->length[1];
 
-        N2 = wt->outlength;
+        n2 = wt->outlength;
         p2 = 1;
 
-        for (iter = 0; iter < J; ++iter) {
-            len_cA = wt->length[J - iter];
-            N2 -= 2 * p2 * len_cA;
-            N = N2;
+        for (iter = 0; iter < jj; ++iter) {
+            lenCA = wt->length[jj - iter];
+            n2 -= 2 * p2 * lenCA;
+            n = n2;
             for (k = 0; k < p2; ++k) {
                 if (iter == 0) {
-                    dwpt_sym(wt, orig.get(), temp_len, tree.get() + N, len_cA, tree.get() + N + len_cA);
+                    dwptSym(wt, orig.get(), tempLen, tree.get() + n, lenCA, tree.get() + n + lenCA);
                 } else {
-                    dwpt_sym(wt, tree.get() + Np + k * temp_len, temp_len, tree.get() + N, len_cA, tree.get() + N + len_cA);
+                    dwptSym(wt, tree.get() + np + k * tempLen, tempLen, tree.get() + n, lenCA, tree.get() + n + lenCA);
                 }
-                wt->costvalues[it2] = costfunc(tree.get() + N, len_cA, wt->entropy.c_str(), eparam);
+                wt->costvalues[it2] = costfunc(tree.get() + n, lenCA, wt->entropy.c_str(), eparam);
                 it2++;
-                wt->costvalues[it2] = costfunc(tree.get() + N + len_cA, len_cA, wt->entropy.c_str(), eparam);
+                wt->costvalues[it2] = costfunc(tree.get() + n + lenCA, lenCA, wt->entropy.c_str(), eparam);
                 it2++;
-                N += 2 * len_cA;
+                n += 2 * lenCA;
             }
 
-            temp_len = wt->length[J - iter];
+            tempLen = wt->length[jj - iter];
             p2 = 2 * p2;
-            Np = N2;
+            np = n2;
         }
 
     } else {
@@ -1053,24 +1053,24 @@ void dwpt(wpt_set* wt, double const* inp)
         exit(-1);
     }
 
-    J = wt->J;
-    auto t2 = wt->outlength - 2 * wt->length[J];
+    jj = wt->J;
+    auto t2 = wt->outlength - 2 * wt->length[jj];
     p2 = 2;
     auto it1 = 0;
-    for (auto i = 0; i < J; ++i) {
+    for (auto i = 0; i < jj; ++i) {
         t = t2;
         for (k = 0; k < p2; ++k) {
             nodelength[it1] = t;
             it1++;
-            t += wt->length[J - i];
+            t += wt->length[jj - i];
         }
         p2 *= 2;
-        t2 = t2 - p2 * wt->length[J - i - 1];
+        t2 = t2 - p2 * wt->length[jj - i - 1];
     }
 
-    J = wt->J;
+    jj = wt->J;
     llb = 1;
-    for (auto i = 0; i < J; ++i) {
+    for (auto i = 0; i < jj; ++i) {
         llb *= 2;
     }
 
@@ -1078,7 +1078,7 @@ void dwpt(wpt_set* wt, double const* inp)
         wt->basisvector[i] = 1;
     }
 
-    for (auto j = J - 1; j >= 0; --j) {
+    for (auto j = jj - 1; j >= 0; --j) {
         for (k = ipow2(j) - 1; k < ipow2(j + 1) - 1; ++k) {
             v1 = wt->costvalues[k];
             v2 = wt->costvalues[2 * k + 1] + wt->costvalues[2 * k + 2];
@@ -1119,7 +1119,7 @@ void dwpt(wpt_set* wt, double const* inp)
         wt->nodeindex[1] = 0;
         wt->numnodeslevel[0] = 1;
     } else {
-        for (auto i = J; i > 0; --i) {
+        for (auto i = jj; i > 0; --i) {
             llb = ipow2(i);
             it1 -= llb;
             wt->numnodeslevel[i] = 0;
@@ -1129,10 +1129,10 @@ void dwpt(wpt_set* wt, double const* inp)
                     wt->nodeindex[2 * wt->nodes + 1] = j;
                     wt->nodes += 1;
                     wt->numnodeslevel[i] += 1;
-                    for (k = 0; k < wt->length[J - i + 1]; ++k) {
+                    for (k = 0; k < wt->length[jj - i + 1]; ++k) {
                         wt->output[it2 + k] = tree[nodelength[it1 - 1 + j] + k]; // access tree
                     }
-                    it2 += wt->length[J - i + 1];
+                    it2 += wt->length[jj - i + 1];
                 }
             }
         }
@@ -1141,74 +1141,74 @@ void dwpt(wpt_set* wt, double const* inp)
 
     wt->coeflength[0] = wt->siglength;
 
-    for (auto i = 1; i < J + 1; ++i) {
-        wt->coeflength[i] = wt->length[J - i + 1];
+    for (auto i = 1; i < jj + 1; ++i) {
+        wt->coeflength[i] = wt->length[jj - i + 1];
     }
 }
 
 /// X - Level. All Nodes at any level have the same length
-auto getWTREENodelength(wtree_set* wt, int X) -> int
+auto getWTREENodelength(WtreeSet* wt, int x) -> int
 {
-    if (X <= 0 || X > wt->J) {
+    if (x <= 0 || x > wt->J) {
         printf("X co-ordinate must be >= 1 and <= %d", wt->J);
         exit(-1);
     }
 
-    return wt->length[wt->J - X + 1];
+    return wt->length[wt->J - x + 1];
 }
 
 /// X - Level. All Nodes at any level have the same length
-auto getDWPTNodelength(wpt_set* wt, int X) -> int
+auto getDWPTNodelength(WptSet* wt, int x) -> int
 {
-    if (X <= 0 || X > wt->J) {
+    if (x <= 0 || x > wt->J) {
         printf("X co-ordinate must be >= 1 and <= %d", wt->J);
         exit(-1);
     }
 
-    return wt->length[wt->J - X + 1];
+    return wt->length[wt->J - x + 1];
 }
 
-void getWTREECoeffs(wtree_set* wt, int X, int Y, double* coeffs, int N)
+void getWTREECoeffs(WtreeSet* wt, int x, int y, double* coeffs, int n)
 {
     int ymax;
     int t;
     int t2;
 
-    if (X <= 0 || X > wt->J) {
+    if (x <= 0 || x > wt->J) {
         printf("X co-ordinate must be >= 1 and <= %d", wt->J);
         exit(-1);
     }
     ymax = 1;
-    for (auto i = 0; i < X; ++i) {
+    for (auto i = 0; i < x; ++i) {
         ymax *= 2;
     }
 
     ymax -= 1;
 
-    if (Y < 0 || Y > ymax) {
+    if (y < 0 || y > ymax) {
         printf("Y co-ordinate must be >= 0 and <= %d", ymax);
         exit(-1);
     }
 
-    if (X == 1) {
+    if (x == 1) {
         t = 0;
     } else {
         t = 0;
         t2 = 1;
-        for (auto i = 0; i < X - 1; ++i) {
+        for (auto i = 0; i < x - 1; ++i) {
             t2 *= 2;
             t += t2;
         }
     }
 
-    t += Y;
+    t += y;
     t2 = wt->nodelength[t];
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         coeffs[i] = wt->output[t2 + i];
     }
 }
 
-void setCWTScales(cwavelet_transform* wt, double s0, double dj, char const* type, int power)
+void setCWTScales(CwaveletTransform* wt, double s0, double dj, char const* type, int power)
 {
     wt->type = type;
     //s0*std::pow(2.0, (double)(j - 1)*dj);
@@ -1232,14 +1232,14 @@ void setCWTScales(cwavelet_transform* wt, double s0, double dj, char const* type
     wt->dj = dj;
 }
 
-void cwt(cwavelet_transform* wt, double const* inp)
+void cwt(CwaveletTransform* wt, double const* inp)
 {
-    int N;
+    int n;
     int npad;
     int nj2;
     int j;
     int j2;
-    N = wt->siglength;
+    n = wt->siglength;
     if (wt->sflag == 0) {
         for (auto i = 0; i < wt->J; ++i) {
             wt->scale[i] = wt->s0 * std::pow(2.0, (double)(i)*wt->dj);
@@ -1248,225 +1248,225 @@ void cwt(cwavelet_transform* wt, double const* inp)
     }
 
     if (wt->pflag == 0) {
-        npad = N;
+        npad = n;
     } else {
         npad = wt->npad;
     }
 
-    nj2 = 2 * N * wt->J;
+    nj2 = 2 * n * wt->J;
     j = wt->J;
     j2 = 2 * j;
 
     wt->smean = 0.0;
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         wt->smean += inp[i];
     }
-    wt->smean /= N;
+    wt->smean /= n;
 
-    cwavelet(inp, N, wt->dt, wt->mother, wt->m, wt->s0, wt->dj, wt->J, npad, wt->params.get(), wt->params.get() + nj2, wt->params.get() + nj2 + j, wt->params.get() + nj2 + j2);
+    cwavelet(inp, n, wt->dt, wt->mother, wt->m, wt->s0, wt->dj, wt->J, npad, wt->params.get(), wt->params.get() + nj2, wt->params.get() + nj2 + j, wt->params.get() + nj2 + j2);
 }
 
-void icwt(cwavelet_transform* wt, double* cwtop)
+void icwt(CwaveletTransform* wt, double* cwtop)
 {
     double psi;
     double cdel;
     int real;
-    int N;
+    int n;
     int nj2;
 
-    N = wt->siglength;
-    nj2 = N * 2 * wt->J;
+    n = wt->siglength;
+    nj2 = n * 2 * wt->J;
 
     psi0(wt->mother, wt->m, &psi, &real);
     cdel = cdelta(wt->mother, wt->m, psi);
 
     if (((wt->type == "pow"sv) || (wt->type == "power"sv)) && wt->pow == 2) {
-        icwavelet(wt->params.get(), N, wt->params.get() + nj2, wt->J, wt->dt, wt->dj, cdel, psi, cwtop);
+        icwavelet(wt->params.get(), n, wt->params.get() + nj2, wt->J, wt->dt, wt->dj, cdel, psi, cwtop);
     } else {
         printf("Inverse CWT is only available for power of 2.0 scales \n");
         exit(-1);
     }
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         cwtop[i] += wt->smean;
     }
 }
 
-static void idwt1(wavelet_transform* wt, double* temp, double* cA_up, double* cA, int len_cA, double* cD, int len_cD, double* X_lp, double* X_hp, double* X)
+static void idwt1(WaveletTransform* wt, double* temp, double* cAUp, double* cA, int lenCA, double* cD, int lenCD, double* xLp, double* xHp, double* x)
 {
-    auto len_avg = (wt->wave().lpr_len() + wt->wave().hpr_len()) / 2;
-    auto N = 2 * len_cD;
-    auto U = 2;
+    auto lenAvg = (wt->wave().lprLen() + wt->wave().hprLen()) / 2;
+    auto n = 2 * lenCD;
+    auto u = 2;
 
-    upsamp2(cA, len_cA, U, cA_up);
+    upsamp2(cA, lenCA, u, cAUp);
 
-    per_ext(cA_up, 2 * len_cA, len_avg / 2, temp);
+    perExt(cAUp, 2 * lenCA, lenAvg / 2, temp);
 
-    auto N2 = 2 * len_cA + len_avg;
+    auto n2 = 2 * lenCA + lenAvg;
 
-    if (wt->wave().lpr_len() == wt->wave().hpr_len() && (wt->conv_method() == convolution_method::fft)) {
-        wt->cobj = conv_init(N2, len_avg);
+    if (wt->wave().lprLen() == wt->wave().hprLen() && (wt->convMethod() == ConvolutionMethod::fft)) {
+        wt->cobj = convInit(n2, lenAvg);
         wt->cfftset = 1;
-    } else if (!(wt->wave().lpr_len() == wt->wave().hpr_len())) {
+    } else if (!(wt->wave().lprLen() == wt->wave().hprLen())) {
         printf("Decomposition Filters must have the same length.");
         exit(-1);
     }
 
-    wconv(wt, temp, N2, wt->wave().lpr(), len_avg, X_lp);
+    wconv(wt, temp, n2, wt->wave().lpr(), lenAvg, xLp);
 
-    upsamp2(cD, len_cD, U, cA_up);
+    upsamp2(cD, lenCD, u, cAUp);
 
-    per_ext(cA_up, 2 * len_cD, len_avg / 2, temp);
+    perExt(cAUp, 2 * lenCD, lenAvg / 2, temp);
 
-    N2 = 2 * len_cD + len_avg;
+    n2 = 2 * lenCD + lenAvg;
 
-    wconv(wt, temp, N2, wt->wave().hpr(), len_avg, X_hp);
+    wconv(wt, temp, n2, wt->wave().hpr(), lenAvg, xHp);
 
-    for (auto i = len_avg - 1; i < N + len_avg - 1; ++i) {
-        X[i - len_avg + 1] = X_lp[i] + X_hp[i];
+    for (auto i = lenAvg - 1; i < n + lenAvg - 1; ++i) {
+        x[i - lenAvg + 1] = xLp[i] + xHp[i];
     }
 
-    if (wt->wave().lpr_len() == wt->wave().hpr_len() && (wt->conv_method() == convolution_method::fft)) {
+    if (wt->wave().lprLen() == wt->wave().hprLen() && (wt->convMethod() == ConvolutionMethod::fft)) {
 
         wt->cfftset = 0;
     }
 }
 
-static void idwt_per(wavelet_transform* wt, double* cA, int len_cA, double* cD, double* X)
+static void idwtPer(WaveletTransform* wt, double* cA, int lenCA, double* cD, double* x)
 {
-    idwt_per_stride(cA, len_cA, cD, wt->wave().lpr(), wt->wave().hpr(), wt->wave().lpr_len(), X, 1, 1);
+    idwtPerStride(cA, lenCA, cD, wt->wave().lpr(), wt->wave().hpr(), wt->wave().lprLen(), x, 1, 1);
 }
 
-static void idwt_sym(wavelet_transform* wt, double* cA, int len_cA, double* cD, double* X)
+static void idwtSym(WaveletTransform* wt, double* cA, int lenCA, double* cD, double* x)
 {
-    idwt_sym_stride(cA, len_cA, cD, wt->wave().lpr(), wt->wave().hpr(), wt->wave().lpr_len(), X, 1, 1);
+    idwtSymStride(cA, lenCA, cD, wt->wave().lpr(), wt->wave().hpr(), wt->wave().lprLen(), x, 1, 1);
 }
 
-void idwt(wavelet_transform* wt, double* dwtop)
+void idwt(WaveletTransform* wt, double* dwtop)
 {
 
     int lf;
-    int N;
-    int N2;
+    int n;
+    int n2;
     int iter;
     int k;
-    int det_len;
+    int detLen;
 
-    auto J = wt->levels();
-    auto U = 2;
-    auto app_len = wt->length[0];
+    auto j = wt->levels();
+    auto u = 2;
+    auto appLen = wt->length[0];
     auto out = std::make_unique<double[]>(wt->siglength + 1);
-    if ((wt->extension() == signal_extension::periodic) && (wt->conv_method() == convolution_method::fft)) {
-        app_len = wt->length[0];
-        det_len = wt->length[1];
-        N = 2 * wt->length[J];
-        lf = (wt->wave().lpr_len() + wt->wave().hpr_len()) / 2;
+    if ((wt->extension() == SignalExtension::periodic) && (wt->convMethod() == ConvolutionMethod::fft)) {
+        appLen = wt->length[0];
+        detLen = wt->length[1];
+        n = 2 * wt->length[j];
+        lf = (wt->wave().lprLen() + wt->wave().hprLen()) / 2;
 
-        auto cA_up = std::make_unique<double[]>(N);
-        auto temp = std::make_unique<double[]>((N + lf));
-        auto X_lp = std::make_unique<double[]>((N + 2 * lf - 1));
-        auto X_hp = std::make_unique<double[]>((N + 2 * lf - 1));
-        iter = app_len;
+        auto cAUp = std::make_unique<double[]>(n);
+        auto temp = std::make_unique<double[]>((n + lf));
+        auto xLp = std::make_unique<double[]>((n + 2 * lf - 1));
+        auto xHp = std::make_unique<double[]>((n + 2 * lf - 1));
+        iter = appLen;
 
-        for (auto i = 0; i < app_len; ++i) {
+        for (auto i = 0; i < appLen; ++i) {
             out[i] = wt->output()[i];
         }
 
-        for (auto i = 0; i < J; ++i) {
+        for (auto i = 0; i < j; ++i) {
 
-            idwt1(wt, temp.get(), cA_up.get(), out.get(), det_len, wt->output().data() + iter, det_len, X_lp.get(), X_hp.get(), out.get());
+            idwt1(wt, temp.get(), cAUp.get(), out.get(), detLen, wt->output().data() + iter, detLen, xLp.get(), xHp.get(), out.get());
             /*
 			idwt_per(wt,out.get(), det_len, wt->output().data() + iter, det_len, X_lp);
 			for (k = lf/2 - 1; k < 2 * det_len + lf/2 - 1; ++k) {
 				out[k - lf/2 + 1] = X_lp[k];
 			}
 			*/
-            iter += det_len;
-            det_len = wt->length[i + 2];
+            iter += detLen;
+            detLen = wt->length[i + 2];
         }
 
-    } else if ((wt->extension() == signal_extension::periodic) && (wt->conv_method() == convolution_method::direct)) {
-        app_len = wt->length[0];
-        det_len = wt->length[1];
-        N = 2 * wt->length[J];
-        lf = (wt->wave().lpr_len() + wt->wave().hpr_len()) / 2;
+    } else if ((wt->extension() == SignalExtension::periodic) && (wt->convMethod() == ConvolutionMethod::direct)) {
+        appLen = wt->length[0];
+        detLen = wt->length[1];
+        n = 2 * wt->length[j];
+        lf = (wt->wave().lprLen() + wt->wave().hprLen()) / 2;
 
-        auto X_lp = std::make_unique<double[]>((N + 2 * lf - 1));
-        iter = app_len;
+        auto xLp = std::make_unique<double[]>((n + 2 * lf - 1));
+        iter = appLen;
 
-        for (auto i = 0; i < app_len; ++i) {
+        for (auto i = 0; i < appLen; ++i) {
             out[i] = wt->output()[i];
         }
 
-        for (auto i = 0; i < J; ++i) {
-            idwt_per(wt, out.get(), det_len, wt->output().data() + iter, X_lp.get());
-            for (k = lf / 2 - 1; k < 2 * det_len + lf / 2 - 1; ++k) {
-                out[k - lf / 2 + 1] = X_lp[k];
+        for (auto i = 0; i < j; ++i) {
+            idwtPer(wt, out.get(), detLen, wt->output().data() + iter, xLp.get());
+            for (k = lf / 2 - 1; k < 2 * detLen + lf / 2 - 1; ++k) {
+                out[k - lf / 2 + 1] = xLp[k];
             }
 
-            iter += det_len;
-            det_len = wt->length[i + 2];
+            iter += detLen;
+            detLen = wt->length[i + 2];
         }
 
-    } else if ((wt->extension() == signal_extension::symmetric) && (wt->conv_method() == convolution_method::direct)) {
-        app_len = wt->length[0];
-        det_len = wt->length[1];
-        N = 2 * wt->length[J] - 1;
-        lf = (wt->wave().lpr_len() + wt->wave().hpr_len()) / 2;
+    } else if ((wt->extension() == SignalExtension::symmetric) && (wt->convMethod() == ConvolutionMethod::direct)) {
+        appLen = wt->length[0];
+        detLen = wt->length[1];
+        n = 2 * wt->length[j] - 1;
+        lf = (wt->wave().lprLen() + wt->wave().hprLen()) / 2;
 
-        auto X_lp = std::make_unique<double[]>((N + 2 * lf - 1));
-        iter = app_len;
+        auto xLp = std::make_unique<double[]>((n + 2 * lf - 1));
+        iter = appLen;
 
-        for (auto i = 0; i < app_len; ++i) {
+        for (auto i = 0; i < appLen; ++i) {
             out[i] = wt->output()[i];
         }
 
-        for (auto i = 0; i < J; ++i) {
-            idwt_sym(wt, out.get(), det_len, wt->output().data() + iter, X_lp.get());
-            for (k = lf - 2; k < 2 * det_len; ++k) {
-                out[k - lf + 2] = X_lp[k];
+        for (auto i = 0; i < j; ++i) {
+            idwtSym(wt, out.get(), detLen, wt->output().data() + iter, xLp.get());
+            for (k = lf - 2; k < 2 * detLen; ++k) {
+                out[k - lf + 2] = xLp[k];
             }
 
-            iter += det_len;
-            det_len = wt->length[i + 2];
+            iter += detLen;
+            detLen = wt->length[i + 2];
         }
 
-    } else if ((wt->extension() == signal_extension::symmetric) && (wt->conv_method() == convolution_method::fft)) {
-        lf = wt->wave().lpd_len(); // lpd and hpd have the same length
+    } else if ((wt->extension() == SignalExtension::symmetric) && (wt->convMethod() == ConvolutionMethod::fft)) {
+        lf = wt->wave().lpdLen(); // lpd and hpd have the same length
 
-        N = 2 * wt->length[J] - 1;
-        auto cA_up = std::make_unique<double[]>(N);
-        auto X_lp = std::make_unique<double[]>((N + lf - 1));
-        auto X_hp = std::make_unique<double[]>((N + lf - 1));
+        n = 2 * wt->length[j] - 1;
+        auto cAUp = std::make_unique<double[]>(n);
+        auto xLp = std::make_unique<double[]>((n + lf - 1));
+        auto xHp = std::make_unique<double[]>((n + lf - 1));
 
-        for (auto i = 0; i < app_len; ++i) {
+        for (auto i = 0; i < appLen; ++i) {
             out[i] = wt->output()[i];
         }
 
-        iter = app_len;
+        iter = appLen;
 
-        for (auto i = 0; i < J; ++i) {
-            det_len = wt->length[i + 1];
-            upsamp(out.get(), det_len, U, cA_up.get());
-            N2 = 2 * wt->length[i + 1] - 1;
+        for (auto i = 0; i < j; ++i) {
+            detLen = wt->length[i + 1];
+            upsamp(out.get(), detLen, u, cAUp.get());
+            n2 = 2 * wt->length[i + 1] - 1;
 
-            if (wt->wave().lpr_len() == wt->wave().hpr_len() && (wt->conv_method() == convolution_method::fft)) {
-                wt->cobj = conv_init(N2, lf);
+            if (wt->wave().lprLen() == wt->wave().hprLen() && (wt->convMethod() == ConvolutionMethod::fft)) {
+                wt->cobj = convInit(n2, lf);
                 wt->cfftset = 1;
-            } else if (!(wt->wave().lpr_len() == wt->wave().hpr_len())) {
+            } else if (!(wt->wave().lprLen() == wt->wave().hprLen())) {
                 printf("Decomposition Filters must have the same length.");
                 exit(-1);
             }
 
-            wconv(wt, cA_up.get(), N2, wt->wave().lpr(), lf, X_lp.get());
-            upsamp(wt->output().data() + iter, det_len, U, cA_up.get());
-            wconv(wt, cA_up.get(), N2, wt->wave().hpr(), lf, X_hp.get());
+            wconv(wt, cAUp.get(), n2, wt->wave().lpr(), lf, xLp.get());
+            upsamp(wt->output().data() + iter, detLen, u, cAUp.get());
+            wconv(wt, cAUp.get(), n2, wt->wave().hpr(), lf, xHp.get());
 
-            for (k = lf - 2; k < N2 + 1; ++k) {
-                out[k - lf + 2] = X_lp[k] + X_hp[k];
+            for (k = lf - 2; k < n2 + 1; ++k) {
+                out[k - lf + 2] = xLp[k] + xHp[k];
             }
-            iter += det_len;
-            if (wt->wave().lpr_len() == wt->wave().hpr_len() && (wt->conv_method() == convolution_method::fft)) {
+            iter += detLen;
+            if (wt->wave().lprLen() == wt->wave().hprLen() && (wt->convMethod() == ConvolutionMethod::fft)) {
 
                 wt->cfftset = 0;
             }
@@ -1482,79 +1482,79 @@ void idwt(wavelet_transform* wt, double* dwtop)
     }
 }
 
-static void idwpt_per(wpt_set* wt, double const* cA, int len_cA, double const* cD, double* X)
+static void idwptPer(WptSet* wt, double const* cA, int lenCA, double const* cD, double* x)
 {
-    int len_avg;
+    int lenAvg;
     int l;
     int m;
     int n;
     int t;
     int l2;
 
-    len_avg = (wt->wave->lpr_len() + wt->wave->hpr_len()) / 2;
-    l2 = len_avg / 2;
+    lenAvg = (wt->wave->lprLen() + wt->wave->hprLen()) / 2;
+    l2 = lenAvg / 2;
     m = -2;
     n = -1;
 
-    for (auto i = 0; i < len_cA + l2 - 1; ++i) {
+    for (auto i = 0; i < lenCA + l2 - 1; ++i) {
         m += 2;
         n += 2;
-        X[m] = 0.0;
-        X[n] = 0.0;
+        x[m] = 0.0;
+        x[n] = 0.0;
         for (l = 0; l < l2; ++l) {
             t = 2 * l;
-            if ((i - l) >= 0 && (i - l) < len_cA) {
-                X[m] += wt->wave->lpr()[t] * cA[i - l] + wt->wave->hpr()[t] * cD[i - l];
-                X[n] += wt->wave->lpr()[t + 1] * cA[i - l] + wt->wave->hpr()[t + 1] * cD[i - l];
-            } else if ((i - l) >= len_cA && (i - l) < len_cA + len_avg - 1) {
-                X[m] += wt->wave->lpr()[t] * cA[i - l - len_cA] + wt->wave->hpr()[t] * cD[i - l - len_cA];
-                X[n] += wt->wave->lpr()[t + 1] * cA[i - l - len_cA] + wt->wave->hpr()[t + 1] * cD[i - l - len_cA];
+            if ((i - l) >= 0 && (i - l) < lenCA) {
+                x[m] += wt->wave->lpr()[t] * cA[i - l] + wt->wave->hpr()[t] * cD[i - l];
+                x[n] += wt->wave->lpr()[t + 1] * cA[i - l] + wt->wave->hpr()[t + 1] * cD[i - l];
+            } else if ((i - l) >= lenCA && (i - l) < lenCA + lenAvg - 1) {
+                x[m] += wt->wave->lpr()[t] * cA[i - l - lenCA] + wt->wave->hpr()[t] * cD[i - l - lenCA];
+                x[n] += wt->wave->lpr()[t + 1] * cA[i - l - lenCA] + wt->wave->hpr()[t + 1] * cD[i - l - lenCA];
             } else if ((i - l) < 0 && (i - l) > -l2) {
-                X[m] += wt->wave->lpr()[t] * cA[len_cA + i - l] + wt->wave->hpr()[t] * cD[len_cA + i - l];
-                X[n] += wt->wave->lpr()[t + 1] * cA[len_cA + i - l] + wt->wave->hpr()[t + 1] * cD[len_cA + i - l];
+                x[m] += wt->wave->lpr()[t] * cA[lenCA + i - l] + wt->wave->hpr()[t] * cD[lenCA + i - l];
+                x[n] += wt->wave->lpr()[t + 1] * cA[lenCA + i - l] + wt->wave->hpr()[t + 1] * cD[lenCA + i - l];
             }
         }
     }
 }
 
-static void idwpt_sym(wpt_set* wt, double const* cA, int len_cA, double const* cD, double* X)
+static void idwptSym(WptSet* wt, double const* cA, int lenCA, double const* cD, double* x)
 {
-    auto len_avg = (wt->wave->lpr_len() + wt->wave->hpr_len()) / 2;
+    auto lenAvg = (wt->wave->lprLen() + wt->wave->hprLen()) / 2;
     auto m = -2;
     auto n = -1;
 
-    for (auto v = 0; v < len_cA; ++v) {
+    for (auto v = 0; v < lenCA; ++v) {
         auto i = v;
         m += 2;
         n += 2;
-        X[m] = 0.0;
-        X[n] = 0.0;
-        for (auto l = 0; l < len_avg / 2; ++l) {
+        x[m] = 0.0;
+        x[n] = 0.0;
+        for (auto l = 0; l < lenAvg / 2; ++l) {
             auto const t = 2 * l;
-            if ((i - l) >= 0 && (i - l) < len_cA) {
-                X[m] += wt->wave->lpr()[t] * cA[i - l] + wt->wave->hpr()[t] * cD[i - l];
-                X[n] += wt->wave->lpr()[t + 1] * cA[i - l] + wt->wave->hpr()[t + 1] * cD[i - l];
+            if ((i - l) >= 0 && (i - l) < lenCA) {
+                x[m] += wt->wave->lpr()[t] * cA[i - l] + wt->wave->hpr()[t] * cD[i - l];
+                x[n] += wt->wave->lpr()[t + 1] * cA[i - l] + wt->wave->hpr()[t + 1] * cD[i - l];
             }
         }
     }
 }
 
-void idwpt(wpt_set* wt, double* dwtop)
+void idwpt(WptSet* wt, double* dwtop)
 {
     int k;
     int l;
     int index;
 
-    auto J = wt->J;
-    auto app_len = wt->length[0];
-    auto powJ = ipow2(J);
-    auto lf = (wt->wave->lpr_len() + wt->wave->hpr_len()) / 2;
-    auto xlen = powJ * (app_len + 2 * lf);
+    auto j = wt->J;
+    auto appLen = wt->length[0];
+    auto powJ = ipow2(j);
+    auto lf = (wt->wave->lprLen() + wt->wave->hprLen()) / 2;
+    auto xlen = powJ * (appLen + 2 * lf);
 
-    auto X_lp = std::make_unique<double[]>(2 * (wt->length[J] + lf));
-    auto X = std::make_unique<double[]>(xlen);
-    auto out = std::make_unique<double[]>(wt->length[J]);
-    auto out2 = std::make_unique<double[]>(wt->length[J]);
+    auto xLp = std::make_unique<double[]>(2 * (wt->length[j] + lf));
+    auto x = std::make_unique<double[]>(xlen);
+    auto out = std::make_unique<double[]>(wt->length[j]);
+    auto out2 = std::make_unique<double[]>(wt->length[j]);
     auto prep = makeZeros<int>(powJ);
     auto ptemp = makeZeros<int>(powJ);
     auto n1 = 1;
@@ -1567,13 +1567,13 @@ void idwpt(wpt_set* wt, double* dwtop)
         }
 
     } else {
-        for (auto i = 0; i < J; ++i) {
+        for (auto i = 0; i < j; ++i) {
             llb *= 2;
             n1 += llb;
         }
 
         for (auto i = 0; i < xlen; ++i) {
-            X[i] = 0.0;
+            x[i] = 0.0;
         }
 
         for (auto i = 0; i < llb; ++i) {
@@ -1583,9 +1583,9 @@ void idwpt(wpt_set* wt, double* dwtop)
 
         if (wt->ext == "per"sv) {
             index = 0;
-            for (auto i = 0; i < J; ++i) {
-                auto p = ipow2(J - i - 1);
-                auto det_len = wt->length[i + 1];
+            for (auto i = 0; i < j; ++i) {
+                auto p = ipow2(j - i - 1);
+                auto detLen = wt->length[i + 1];
                 index2 *= 2;
                 auto index3 = 0;
                 auto index4 = 0;
@@ -1601,53 +1601,53 @@ void idwpt(wpt_set* wt, double* dwtop)
 
                 for (l = 0; l < p; ++l) {
                     if (prep[2 * l] == 1 && prep[2 * l + 1] == 1) {
-                        for (k = 0; k < det_len; ++k) {
+                        for (k = 0; k < detLen; ++k) {
                             out[k] = wt->output[index + k];
-                            out2[k] = wt->output[index + det_len + k];
+                            out2[k] = wt->output[index + detLen + k];
                         }
-                        idwpt_per(wt, out.get(), det_len, out2.get(), X_lp.get());
-                        for (k = lf / 2 - 1; k < 2 * det_len + lf / 2 - 1; ++k) {
-                            X[index3 + k - lf / 2 + 1] = X_lp[k];
+                        idwptPer(wt, out.get(), detLen, out2.get(), xLp.get());
+                        for (k = lf / 2 - 1; k < 2 * detLen + lf / 2 - 1; ++k) {
+                            x[index3 + k - lf / 2 + 1] = xLp[k];
                         }
-                        index += 2 * det_len;
+                        index += 2 * detLen;
                         index3 += index2;
                         index4 += 2 * indexp;
                         ptemp[l] = 2;
                     } else if (prep[2 * l] == 1 && prep[2 * l + 1] == 2) {
                         index4 += indexp;
-                        for (k = 0; k < det_len; ++k) {
+                        for (k = 0; k < detLen; ++k) {
                             out[k] = wt->output[index + k];
-                            out2[k] = X[index4 + k];
+                            out2[k] = x[index4 + k];
                         }
-                        idwpt_per(wt, out.get(), det_len, out2.get(), X_lp.get());
-                        for (k = lf / 2 - 1; k < 2 * det_len + lf / 2 - 1; ++k) {
-                            X[index3 + k - lf / 2 + 1] = X_lp[k];
+                        idwptPer(wt, out.get(), detLen, out2.get(), xLp.get());
+                        for (k = lf / 2 - 1; k < 2 * detLen + lf / 2 - 1; ++k) {
+                            x[index3 + k - lf / 2 + 1] = xLp[k];
                         }
-                        index += det_len;
+                        index += detLen;
                         index3 += index2;
                         index4 += indexp;
                         ptemp[l] = 2;
                     } else if (prep[2 * l] == 2 && prep[2 * l + 1] == 1) {
-                        for (k = 0; k < det_len; ++k) {
-                            out[k] = X[index4 + k];
+                        for (k = 0; k < detLen; ++k) {
+                            out[k] = x[index4 + k];
                             out2[k] = wt->output[index + k];
                         }
-                        idwpt_per(wt, out.get(), det_len, out2.get(), X_lp.get());
-                        for (k = lf / 2 - 1; k < 2 * det_len + lf / 2 - 1; ++k) {
-                            X[index3 + k - lf / 2 + 1] = X_lp[k];
+                        idwptPer(wt, out.get(), detLen, out2.get(), xLp.get());
+                        for (k = lf / 2 - 1; k < 2 * detLen + lf / 2 - 1; ++k) {
+                            x[index3 + k - lf / 2 + 1] = xLp[k];
                         }
-                        index += det_len;
+                        index += detLen;
                         index3 += index2;
                         index4 += 2 * indexp;
                         ptemp[l] = 2;
                     } else if (prep[2 * l] == 2 && prep[2 * l + 1] == 2) {
-                        for (k = 0; k < det_len; ++k) {
-                            out[k] = X[index4 + k];
-                            out2[k] = X[index4 + indexp + k];
+                        for (k = 0; k < detLen; ++k) {
+                            out[k] = x[index4 + k];
+                            out2[k] = x[index4 + indexp + k];
                         }
-                        idwpt_per(wt, out.get(), det_len, out2.get(), X_lp.get());
-                        for (k = lf / 2 - 1; k < 2 * det_len + lf / 2 - 1; ++k) {
-                            X[index3 + k - lf / 2 + 1] = X_lp[k];
+                        idwptPer(wt, out.get(), detLen, out2.get(), xLp.get());
+                        for (k = lf / 2 - 1; k < 2 * detLen + lf / 2 - 1; ++k) {
+                            x[index3 + k - lf / 2 + 1] = xLp[k];
                         }
                         index4 += 2 * indexp;
                         index3 += index2;
@@ -1665,9 +1665,9 @@ void idwpt(wpt_set* wt, double* dwtop)
         } else if (wt->ext == "sym"sv) {
             index = 0;
 
-            for (auto i = 0; i < J; ++i) {
-                auto p = ipow2(J - i - 1);
-                auto det_len = wt->length[i + 1];
+            for (auto i = 0; i < j; ++i) {
+                auto p = ipow2(j - i - 1);
+                auto detLen = wt->length[i + 1];
                 index2 *= 2;
                 auto index3 = 0;
                 auto index4 = 0;
@@ -1683,53 +1683,53 @@ void idwpt(wpt_set* wt, double* dwtop)
 
                 for (l = 0; l < p; ++l) {
                     if (prep[2 * l] == 1 && prep[2 * l + 1] == 1) {
-                        for (k = 0; k < det_len; ++k) {
+                        for (k = 0; k < detLen; ++k) {
                             out[k] = wt->output[index + k];
-                            out2[k] = wt->output[index + det_len + k];
+                            out2[k] = wt->output[index + detLen + k];
                         }
-                        idwpt_sym(wt, out.get(), det_len, out2.get(), X_lp.get());
-                        for (k = lf - 2; k < 2 * det_len; ++k) {
-                            X[index3 + k - lf + 2] = X_lp[k];
+                        idwptSym(wt, out.get(), detLen, out2.get(), xLp.get());
+                        for (k = lf - 2; k < 2 * detLen; ++k) {
+                            x[index3 + k - lf + 2] = xLp[k];
                         }
-                        index += 2 * det_len;
+                        index += 2 * detLen;
                         index3 += index2;
                         index4 += 2 * indexp;
                         ptemp[l] = 2;
                     } else if (prep[2 * l] == 1 && prep[2 * l + 1] == 2) {
                         index4 += indexp;
-                        for (k = 0; k < det_len; ++k) {
+                        for (k = 0; k < detLen; ++k) {
                             out[k] = wt->output[index + k];
-                            out2[k] = X[index4 + k];
+                            out2[k] = x[index4 + k];
                         }
-                        idwpt_sym(wt, out.get(), det_len, out2.get(), X_lp.get());
-                        for (k = lf - 2; k < 2 * det_len; ++k) {
-                            X[index3 + k - lf + 2] = X_lp[k];
+                        idwptSym(wt, out.get(), detLen, out2.get(), xLp.get());
+                        for (k = lf - 2; k < 2 * detLen; ++k) {
+                            x[index3 + k - lf + 2] = xLp[k];
                         }
-                        index += det_len;
+                        index += detLen;
                         index3 += index2;
                         index4 += indexp;
                         ptemp[l] = 2;
                     } else if (prep[2 * l] == 2 && prep[2 * l + 1] == 1) {
-                        for (k = 0; k < det_len; ++k) {
-                            out[k] = X[index4 + k];
+                        for (k = 0; k < detLen; ++k) {
+                            out[k] = x[index4 + k];
                             out2[k] = wt->output[index + k];
                         }
-                        idwpt_sym(wt, out.get(), det_len, out2.get(), X_lp.get());
-                        for (k = lf - 2; k < 2 * det_len; ++k) {
-                            X[index3 + k - lf + 2] = X_lp[k];
+                        idwptSym(wt, out.get(), detLen, out2.get(), xLp.get());
+                        for (k = lf - 2; k < 2 * detLen; ++k) {
+                            x[index3 + k - lf + 2] = xLp[k];
                         }
-                        index += det_len;
+                        index += detLen;
                         index3 += index2;
                         index4 += 2 * indexp;
                         ptemp[l] = 2;
                     } else if (prep[2 * l] == 2 && prep[2 * l + 1] == 2) {
-                        for (k = 0; k < det_len; ++k) {
-                            out[k] = X[index4 + k];
-                            out2[k] = X[index4 + indexp + k];
+                        for (k = 0; k < detLen; ++k) {
+                            out[k] = x[index4 + k];
+                            out2[k] = x[index4 + indexp + k];
                         }
-                        idwpt_sym(wt, out.get(), det_len, out2.get(), X_lp.get());
-                        for (k = lf - 2; k < 2 * det_len; ++k) {
-                            X[index3 + k - lf + 2] = X_lp[k];
+                        idwptSym(wt, out.get(), detLen, out2.get(), xLp.get());
+                        for (k = lf - 2; k < 2 * detLen; ++k) {
+                            x[index3 + k - lf + 2] = xLp[k];
                         }
                         index4 += 2 * indexp;
                         index3 += index2;
@@ -1762,233 +1762,233 @@ void idwpt(wpt_set* wt, double* dwtop)
         }
 
         for (auto i = 0; i < wt->siglength; ++i) {
-            dwtop[i] = X[i];
+            dwtop[i] = x[i];
         }
     }
 }
 
-static void swt_per(wavelet_transform* wt, int M, double* inp, int N, double* cA, int len_cA, double* cD)
+static void swtPer(WaveletTransform* wt, int m, double* inp, int n, double* cA, int lenCA, double* cD)
 {
 
-    swt_per_stride(M, inp, N, wt->wave().lpd(), wt->wave().hpd(), wt->wave().lpd_len(), cA, len_cA, cD, 1, 1);
+    swtPerStride(m, inp, n, wt->wave().lpd(), wt->wave().hpd(), wt->wave().lpdLen(), cA, lenCA, cD, 1, 1);
 }
 
-static void swt_fft(wavelet_transform* wt, double const* inp)
+static void swtFft(WaveletTransform* wt, double const* inp)
 {
-    int N { 0 };
+    int n { 0 };
 
-    auto temp_len = wt->siglength;
-    auto J = wt->levels();
-    wt->length[0] = wt->length[J] = temp_len;
-    wt->outlength = wt->length[J + 1] = (J + 1) * temp_len;
-    auto M = 1;
-    for (auto iter = 1; iter < J; ++iter) {
-        M = 2 * M;
-        wt->length[iter] = temp_len;
+    auto tempLen = wt->siglength;
+    auto j = wt->levels();
+    wt->length[0] = wt->length[j] = tempLen;
+    wt->outlength = wt->length[j + 1] = (j + 1) * tempLen;
+    auto m = 1;
+    for (auto iter = 1; iter < j; ++iter) {
+        m = 2 * m;
+        wt->length[iter] = tempLen;
     }
 
-    auto const len_filt = wt->wave().size();
+    auto const lenFilt = wt->wave().size();
 
-    auto low_pass = std::make_unique<double[]>(M * len_filt);
-    auto high_pass = std::make_unique<double[]>(M * len_filt);
-    auto sig = std::make_unique<double[]>((M * len_filt + temp_len + (temp_len % 2)));
-    auto cA = std::make_unique<double[]>((2 * M * len_filt + temp_len + (temp_len % 2)) - 1);
-    auto cD = std::make_unique<double[]>((2 * M * len_filt + temp_len + (temp_len % 2)) - 1);
+    auto lowPass = std::make_unique<double[]>(m * lenFilt);
+    auto highPass = std::make_unique<double[]>(m * lenFilt);
+    auto sig = std::make_unique<double[]>((m * lenFilt + tempLen + (tempLen % 2)));
+    auto cA = std::make_unique<double[]>((2 * m * lenFilt + tempLen + (tempLen % 2)) - 1);
+    auto cD = std::make_unique<double[]>((2 * m * lenFilt + tempLen + (tempLen % 2)) - 1);
 
-    M = 1;
+    m = 1;
 
-    for (auto i = 0; i < temp_len; ++i) {
+    for (auto i = 0; i < tempLen; ++i) {
         wt->params[i] = inp[i];
     }
 
     auto lenacc = wt->outlength;
 
-    for (auto iter = 0; iter < J; ++iter) {
-        lenacc -= temp_len;
+    for (auto iter = 0; iter < j; ++iter) {
+        lenacc -= tempLen;
         if (iter > 0) {
-            M = 2 * M;
-            N = M * len_filt;
-            upsamp2(wt->wave().lpd(), wt->wave().lpd_len(), M, low_pass.get());
-            upsamp2(wt->wave().hpd(), wt->wave().hpd_len(), M, high_pass.get());
+            m = 2 * m;
+            n = m * lenFilt;
+            upsamp2(wt->wave().lpd(), wt->wave().lpdLen(), m, lowPass.get());
+            upsamp2(wt->wave().hpd(), wt->wave().hpdLen(), m, highPass.get());
         } else {
-            N = len_filt;
-            for (auto i = 0; i < N; ++i) {
-                low_pass[i] = wt->wave().lpd()[i];
-                high_pass[i] = wt->wave().hpd()[i];
+            n = lenFilt;
+            for (auto i = 0; i < n; ++i) {
+                lowPass[i] = wt->wave().lpd()[i];
+                highPass[i] = wt->wave().hpd()[i];
             }
         }
 
         //swt_per(wt,M, wt->params.get(), temp_len, cA, temp_len, cD,temp_len);
 
-        per_ext(wt->params.get(), temp_len, N / 2, sig.get());
+        perExt(wt->params.get(), tempLen, n / 2, sig.get());
 
-        if (wt->wave().lpd_len() == wt->wave().hpd_len() && (wt->conv_method() == convolution_method::fft)) {
-            wt->cobj = conv_init(N + temp_len + (temp_len % 2), N);
+        if (wt->wave().lpdLen() == wt->wave().hpdLen() && (wt->convMethod() == ConvolutionMethod::fft)) {
+            wt->cobj = convInit(n + tempLen + (tempLen % 2), n);
             wt->cfftset = 1;
-        } else if (!(wt->wave().lpd_len() == wt->wave().hpd_len())) {
+        } else if (!(wt->wave().lpdLen() == wt->wave().hpdLen())) {
             printf("Decomposition Filters must have the same length.");
             exit(-1);
         }
 
-        wconv(wt, sig.get(), N + temp_len + (temp_len % 2), low_pass.get(), N, cA.get());
+        wconv(wt, sig.get(), n + tempLen + (tempLen % 2), lowPass.get(), n, cA.get());
 
-        wconv(wt, sig.get(), N + temp_len + (temp_len % 2), high_pass.get(), N, cD.get());
+        wconv(wt, sig.get(), n + tempLen + (tempLen % 2), highPass.get(), n, cD.get());
 
-        if (wt->wave().lpd_len() == wt->wave().hpd_len() && (wt->conv_method() == convolution_method::fft)) {
+        if (wt->wave().lpdLen() == wt->wave().hpdLen() && (wt->convMethod() == ConvolutionMethod::fft)) {
 
             wt->cfftset = 0;
         }
 
-        for (auto i = 0; i < temp_len; ++i) {
-            wt->params[i] = cA[N + i];
-            wt->params[lenacc + i] = cD[N + i];
+        for (auto i = 0; i < tempLen; ++i) {
+            wt->params[i] = cA[n + i];
+            wt->params[lenacc + i] = cD[n + i];
         }
     }
 }
 
-static void swt_direct(wavelet_transform* wt, double const* inp)
+static void swtDirect(WaveletTransform* wt, double const* inp)
 {
-    int J;
-    int temp_len;
+    int j;
+    int tempLen;
     int iter;
-    int M;
+    int m;
     int lenacc;
 
-    temp_len = wt->siglength;
-    J = wt->levels();
-    wt->length[0] = wt->length[J] = temp_len;
-    wt->outlength = wt->length[J + 1] = (J + 1) * temp_len;
-    M = 1;
-    for (iter = 1; iter < J; ++iter) {
-        M = 2 * M;
-        wt->length[iter] = temp_len;
+    tempLen = wt->siglength;
+    j = wt->levels();
+    wt->length[0] = wt->length[j] = tempLen;
+    wt->outlength = wt->length[j + 1] = (j + 1) * tempLen;
+    m = 1;
+    for (iter = 1; iter < j; ++iter) {
+        m = 2 * m;
+        wt->length[iter] = tempLen;
     }
 
-    auto cA = std::make_unique<double[]>(temp_len);
-    auto cD = std::make_unique<double[]>(temp_len);
+    auto cA = std::make_unique<double[]>(tempLen);
+    auto cD = std::make_unique<double[]>(tempLen);
 
-    M = 1;
+    m = 1;
 
-    for (auto i = 0; i < temp_len; ++i) {
+    for (auto i = 0; i < tempLen; ++i) {
         wt->params[i] = inp[i];
     }
 
     lenacc = wt->outlength;
 
-    for (iter = 0; iter < J; ++iter) {
-        lenacc -= temp_len;
+    for (iter = 0; iter < j; ++iter) {
+        lenacc -= tempLen;
         if (iter > 0) {
-            M = 2 * M;
+            m = 2 * m;
         }
 
-        swt_per(wt, M, wt->params.get(), temp_len, cA.get(), temp_len, cD.get());
+        swtPer(wt, m, wt->params.get(), tempLen, cA.get(), tempLen, cD.get());
 
-        for (auto i = 0; i < temp_len; ++i) {
+        for (auto i = 0; i < tempLen; ++i) {
             wt->params[i] = cA[i];
             wt->params[lenacc + i] = cD[i];
         }
     }
 }
 
-void swt(wavelet_transform* wt, double const* inp)
+void swt(WaveletTransform* wt, double const* inp)
 {
-    if ((wt->method() == "swt"sv) && (wt->conv_method() == convolution_method::direct)) {
-        swt_direct(wt, inp);
-    } else if ((wt->method() == "swt"sv) && (wt->conv_method() == convolution_method::fft)) {
-        swt_fft(wt, inp);
+    if ((wt->method() == "swt"sv) && (wt->convMethod() == ConvolutionMethod::direct)) {
+        swtDirect(wt, inp);
+    } else if ((wt->method() == "swt"sv) && (wt->convMethod() == ConvolutionMethod::fft)) {
+        swtFft(wt, inp);
     } else {
         printf("SWT Only accepts two methods - direct and fft");
         exit(-1);
     }
 }
 
-void iswt(wavelet_transform* wt, double* swtop)
+void iswt(WaveletTransform* wt, double* swtop)
 {
-    int N;
+    int n;
     int lf;
     int iter;
-    int J;
+    int j;
     int index;
     int value;
     int count;
     int len;
-    int index_shift;
+    int indexShift;
     int len0;
-    int U;
-    int N1;
+    int u;
+    int n1;
     int index2;
 
-    N = wt->siglength;
-    J = wt->levels();
-    U = 2;
-    lf = wt->wave().lpr_len();
+    n = wt->siglength;
+    j = wt->levels();
+    u = 2;
+    lf = wt->wave().lprLen();
 
-    auto appx_sig = std::make_unique<double[]>(N);
-    auto det_sig = std::make_unique<double[]>(N);
-    auto appx1 = std::make_unique<double[]>(N);
-    auto det1 = std::make_unique<double[]>(N);
-    auto appx2 = std::make_unique<double[]>(N);
-    auto det2 = std::make_unique<double[]>(N);
-    auto tempx = std::make_unique<double[]>(N);
-    auto cL0 = std::make_unique<double[]>((N + (N % 2) + lf));
-    auto cH0 = std::make_unique<double[]>((N + (N % 2) + lf));
-    auto oup00L = std::make_unique<double[]>((N + 2 * lf));
-    auto oup00H = std::make_unique<double[]>((N + 2 * lf));
-    auto oup00 = std::make_unique<double[]>(N);
-    auto oup01 = std::make_unique<double[]>(N);
+    auto appxSig = std::make_unique<double[]>(n);
+    auto detSig = std::make_unique<double[]>(n);
+    auto appx1 = std::make_unique<double[]>(n);
+    auto det1 = std::make_unique<double[]>(n);
+    auto appx2 = std::make_unique<double[]>(n);
+    auto det2 = std::make_unique<double[]>(n);
+    auto tempx = std::make_unique<double[]>(n);
+    auto cL0 = std::make_unique<double[]>((n + (n % 2) + lf));
+    auto cH0 = std::make_unique<double[]>((n + (n % 2) + lf));
+    auto oup00L = std::make_unique<double[]>((n + 2 * lf));
+    auto oup00H = std::make_unique<double[]>((n + 2 * lf));
+    auto oup00 = std::make_unique<double[]>(n);
+    auto oup01 = std::make_unique<double[]>(n);
 
-    for (iter = 0; iter < J; ++iter) {
-        for (auto i = 0; i < N; ++i) {
+    for (iter = 0; iter < j; ++iter) {
+        for (auto i = 0; i < n; ++i) {
             swtop[i] = 0.0;
         }
         if (iter == 0) {
-            for (auto i = 0; i < N; ++i) {
-                appx_sig[i] = wt->output()[i];
-                det_sig[i] = wt->output()[N + i];
+            for (auto i = 0; i < n; ++i) {
+                appxSig[i] = wt->output()[i];
+                detSig[i] = wt->output()[n + i];
             }
         } else {
-            for (auto i = 0; i < N; ++i) {
-                det_sig[i] = wt->output()[(iter + 1) * N + i];
+            for (auto i = 0; i < n; ++i) {
+                detSig[i] = wt->output()[(iter + 1) * n + i];
             }
         }
 
-        value = (int)std::pow(2.0, (double)(J - 1 - iter));
+        value = (int)std::pow(2.0, (double)(j - 1 - iter));
 
         for (count = 0; count < value; count++) {
             len = 0;
-            for (index = count; index < N; index += value) {
-                appx1[len] = appx_sig[index];
-                det1[len] = det_sig[index];
+            for (index = count; index < n; index += value) {
+                appx1[len] = appxSig[index];
+                det1[len] = detSig[index];
                 len++;
             }
 
             //SHIFT 0
             len0 = 0;
 
-            for (index_shift = 0; index_shift < len; index_shift += 2) {
-                appx2[len0] = appx1[index_shift];
-                det2[len0] = det1[index_shift];
+            for (indexShift = 0; indexShift < len; indexShift += 2) {
+                appx2[len0] = appx1[indexShift];
+                det2[len0] = det1[indexShift];
                 len0++;
             }
-            upsamp2(appx2.get(), len0, U, tempx.get());
-            per_ext(tempx.get(), 2 * len0, lf / 2, cL0.get());
+            upsamp2(appx2.get(), len0, u, tempx.get());
+            perExt(tempx.get(), 2 * len0, lf / 2, cL0.get());
 
-            upsamp2(det2.get(), len0, U, tempx.get());
-            per_ext(tempx.get(), 2 * len0, lf / 2, cH0.get());
+            upsamp2(det2.get(), len0, u, tempx.get());
+            perExt(tempx.get(), 2 * len0, lf / 2, cH0.get());
 
-            N1 = 2 * len0 + lf;
+            n1 = 2 * len0 + lf;
 
-            if (wt->wave().lpr_len() == wt->wave().hpr_len() && (wt->conv_method() == convolution_method::fft)) {
-                wt->cobj = conv_init(N1, lf);
+            if (wt->wave().lprLen() == wt->wave().hprLen() && (wt->convMethod() == ConvolutionMethod::fft)) {
+                wt->cobj = convInit(n1, lf);
                 wt->cfftset = 1;
-            } else if (!(wt->wave().lpd_len() == wt->wave().hpd_len())) {
+            } else if (!(wt->wave().lpdLen() == wt->wave().hpdLen())) {
                 printf("Decomposition Filters must have the same length.");
                 exit(-1);
             }
 
-            wconv(wt, cL0.get(), N1, wt->wave().lpr(), lf, oup00L.get());
+            wconv(wt, cL0.get(), n1, wt->wave().lpr(), lf, oup00L.get());
 
-            wconv(wt, cH0.get(), N1, wt->wave().hpr(), lf, oup00H.get());
+            wconv(wt, cH0.get(), n1, wt->wave().hpr(), lf, oup00H.get());
 
             for (auto i = lf - 1; i < 2 * len0 + lf - 1; ++i) {
                 oup00[i - lf + 1] = oup00L[i] + oup00H[i];
@@ -1998,22 +1998,22 @@ void iswt(wavelet_transform* wt, double* swtop)
 
             len0 = 0;
 
-            for (index_shift = 1; index_shift < len; index_shift += 2) {
-                appx2[len0] = appx1[index_shift];
-                det2[len0] = det1[index_shift];
+            for (indexShift = 1; indexShift < len; indexShift += 2) {
+                appx2[len0] = appx1[indexShift];
+                det2[len0] = det1[indexShift];
                 len0++;
             }
 
-            upsamp2(appx2.get(), len0, U, tempx.get());
-            per_ext(tempx.get(), 2 * len0, lf / 2, cL0.get());
+            upsamp2(appx2.get(), len0, u, tempx.get());
+            perExt(tempx.get(), 2 * len0, lf / 2, cL0.get());
 
-            upsamp2(det2.get(), len0, U, tempx.get());
-            per_ext(tempx.get(), 2 * len0, lf / 2, cH0.get());
+            upsamp2(det2.get(), len0, u, tempx.get());
+            perExt(tempx.get(), 2 * len0, lf / 2, cH0.get());
 
-            N1 = 2 * len0 + lf;
+            n1 = 2 * len0 + lf;
 
-            wconv(wt, cL0.get(), N1, wt->wave().lpr(), lf, oup00L.get());
-            wconv(wt, cH0.get(), N1, wt->wave().hpr(), lf, oup00H.get());
+            wconv(wt, cL0.get(), n1, wt->wave().lpr(), lf, oup00L.get());
+            wconv(wt, cH0.get(), n1, wt->wave().hpr(), lf, oup00H.get());
 
             for (auto i = lf - 1; i < 2 * len0 + lf - 1; ++i) {
                 oup01[i - lf + 1] = oup00L[i] + oup00H[i];
@@ -2023,311 +2023,311 @@ void iswt(wavelet_transform* wt, double* swtop)
 
             index2 = 0;
 
-            for (index = count; index < N; index += value) {
+            for (index = count; index < n; index += value) {
                 swtop[index] = (oup00[index2] + oup01[index2]) / 2.0;
                 index2++;
             }
         }
-        for (auto i = 0; i < N; ++i) {
-            appx_sig[i] = swtop[i];
+        for (auto i = 0; i < n; ++i) {
+            appxSig[i] = swtop[i];
         }
     }
 }
 
-static void modwt_per(wavelet_transform* wt, int M, double const* inp, double* cA, int len_cA, double* cD)
+static void modwtPer(WaveletTransform* wt, int m, double const* inp, double* cA, int lenCA, double* cD)
 {
-    auto const len_avg = wt->wave().lpd_len();
-    auto filt = std::make_unique<double[]>(2 * len_avg);
+    auto const lenAvg = wt->wave().lpdLen();
+    auto filt = std::make_unique<double[]>(2 * lenAvg);
     auto s = std::sqrt(2.0);
 
-    for (auto i = 0; i < len_avg; ++i) {
+    for (auto i = 0; i < lenAvg; ++i) {
         filt[i] = wt->wave().lpd()[i] / s;
-        filt[len_avg + i] = wt->wave().hpd()[i] / s;
+        filt[lenAvg + i] = wt->wave().hpd()[i] / s;
     }
 
-    for (auto i = 0; i < len_cA; ++i) {
+    for (auto i = 0; i < lenCA; ++i) {
         auto t = i;
         cA[i] = filt[0] * inp[t];
-        cD[i] = filt[len_avg] * inp[t];
-        for (auto l = 1; l < len_avg; l++) {
-            t -= M;
-            while (t >= len_cA) {
-                t -= len_cA;
+        cD[i] = filt[lenAvg] * inp[t];
+        for (auto l = 1; l < lenAvg; l++) {
+            t -= m;
+            while (t >= lenCA) {
+                t -= lenCA;
             }
             while (t < 0) {
-                t += len_cA;
+                t += lenCA;
             }
 
             cA[i] += filt[l] * inp[t];
-            cD[i] += filt[len_avg + l] * inp[t];
+            cD[i] += filt[lenAvg + l] * inp[t];
         }
     }
 }
 
-static void modwt_direct(wavelet_transform* wt, double const* inp)
+static void modwtDirect(WaveletTransform* wt, double const* inp)
 {
-    if (wt->extension() != signal_extension::periodic) {
+    if (wt->extension() != SignalExtension::periodic) {
         printf("MODWT direct method only uses periodic extension per. \n");
         printf(" Use MODWT fft method for symmetric extension sym \n");
         exit(-1);
     }
 
-    auto temp_len = wt->siglength;
-    auto J = wt->levels();
-    wt->length[0] = wt->length[J] = temp_len;
-    wt->outlength = wt->length[J + 1] = (J + 1) * temp_len;
-    auto M = 1;
-    for (auto iter = 1; iter < J; ++iter) {
-        M = 2 * M;
-        wt->length[iter] = temp_len;
+    auto tempLen = wt->siglength;
+    auto j = wt->levels();
+    wt->length[0] = wt->length[j] = tempLen;
+    wt->outlength = wt->length[j + 1] = (j + 1) * tempLen;
+    auto m = 1;
+    for (auto iter = 1; iter < j; ++iter) {
+        m = 2 * m;
+        wt->length[iter] = tempLen;
     }
 
-    auto cA = std::make_unique<double[]>(temp_len);
-    auto cD = std::make_unique<double[]>(temp_len);
+    auto cA = std::make_unique<double[]>(tempLen);
+    auto cD = std::make_unique<double[]>(tempLen);
 
-    M = 1;
+    m = 1;
 
-    for (auto i = 0; i < temp_len; ++i) {
+    for (auto i = 0; i < tempLen; ++i) {
         wt->params[i] = inp[i];
     }
 
     auto lenacc = wt->outlength;
 
-    for (auto iter = 0; iter < J; ++iter) {
-        lenacc -= temp_len;
+    for (auto iter = 0; iter < j; ++iter) {
+        lenacc -= tempLen;
         if (iter > 0) {
-            M = 2 * M;
+            m = 2 * m;
         }
 
-        modwt_per(wt, M, wt->params.get(), cA.get(), temp_len, cD.get());
+        modwtPer(wt, m, wt->params.get(), cA.get(), tempLen, cD.get());
 
-        for (auto i = 0; i < temp_len; ++i) {
+        for (auto i = 0; i < tempLen; ++i) {
             wt->params[i] = cA[i];
             wt->params[lenacc + i] = cD[i];
         }
     }
 }
 
-static void modwt_fft(wavelet_transform* wt, double const* inp)
+static void modwtFft(WaveletTransform* wt, double const* inp)
 {
-    int J;
+    int j;
     int iter;
-    int M;
+    int m;
     int lenacc;
     double s;
     double tmp1;
     double tmp2;
 
-    auto temp_len = wt->siglength;
-    auto len_avg = wt->wave().lpd_len();
-    int N { 0 };
-    if (wt->extension() == signal_extension::symmetric) {
-        N = 2 * temp_len;
-    } else if (wt->extension() == signal_extension::periodic) {
-        N = temp_len;
+    auto tempLen = wt->siglength;
+    auto lenAvg = wt->wave().lpdLen();
+    int n { 0 };
+    if (wt->extension() == SignalExtension::symmetric) {
+        n = 2 * tempLen;
+    } else if (wt->extension() == SignalExtension::periodic) {
+        n = tempLen;
     }
-    J = wt->levels();
-    wt->modwtsiglength = N;
-    wt->length[0] = wt->length[J] = N;
-    wt->outlength = wt->length[J + 1] = (J + 1) * N;
+    j = wt->levels();
+    wt->modwtsiglength = n;
+    wt->length[0] = wt->length[j] = n;
+    wt->outlength = wt->length[j + 1] = (j + 1) * n;
 
     s = std::sqrt(2.0);
-    for (iter = 1; iter < J; ++iter) {
-        wt->length[iter] = N;
+    for (iter = 1; iter < j; ++iter) {
+        wt->length[iter] = n;
     }
 
-    auto fft_fd = fft_init(N, 1);
-    auto fft_bd = fft_init(N, -1);
+    auto fftFd = fftInit(n, 1);
+    auto fftBd = fftInit(n, -1);
 
-    auto sig = std::make_unique<fft_data[]>(N);
-    auto cA = std::make_unique<fft_data[]>(N);
-    auto cD = std::make_unique<fft_data[]>(N);
-    auto low_pass = std::make_unique<fft_data[]>(N);
-    auto high_pass = std::make_unique<fft_data[]>(N);
-    auto index = std::make_unique<int[]>(N);
+    auto sig = std::make_unique<FftData[]>(n);
+    auto cA = std::make_unique<FftData[]>(n);
+    auto cD = std::make_unique<FftData[]>(n);
+    auto lowPass = std::make_unique<FftData[]>(n);
+    auto highPass = std::make_unique<FftData[]>(n);
+    auto index = std::make_unique<int[]>(n);
 
     // N-point FFT of low pass and high pass filters
 
     // Low Pass Filter
 
-    for (auto i = 0; i < len_avg; ++i) {
+    for (auto i = 0; i < lenAvg; ++i) {
         sig[i].re = (fft_type)wt->wave().lpd()[i] / s;
         sig[i].im = 0.0;
     }
-    for (auto i = len_avg; i < N; ++i) {
+    for (auto i = lenAvg; i < n; ++i) {
         sig[i].re = 0.0;
         sig[i].im = 0.0;
     }
 
-    fft_exec(*fft_fd, sig.get(), low_pass.get());
+    fftExec(*fftFd, sig.get(), lowPass.get());
 
     // High Pass Filter
 
-    for (auto i = 0; i < len_avg; ++i) {
+    for (auto i = 0; i < lenAvg; ++i) {
         sig[i].re = (fft_type)wt->wave().hpd()[i] / s;
         sig[i].im = 0.0;
     }
-    for (auto i = len_avg; i < N; ++i) {
+    for (auto i = lenAvg; i < n; ++i) {
         sig[i].re = 0.0;
         sig[i].im = 0.0;
     }
 
-    fft_exec(*fft_fd, sig.get(), high_pass.get());
+    fftExec(*fftFd, sig.get(), highPass.get());
 
     // symmetric extension
-    for (auto i = 0; i < temp_len; ++i) {
+    for (auto i = 0; i < tempLen; ++i) {
         sig[i].re = (fft_type)inp[i];
         sig[i].im = 0.0;
     }
-    for (auto i = temp_len; i < N; ++i) {
-        sig[i].re = (fft_type)inp[N - i - 1];
+    for (auto i = tempLen; i < n; ++i) {
+        sig[i].re = (fft_type)inp[n - i - 1];
         sig[i].im = 0.0;
     }
 
     // FFT of data
 
-    fft_exec(*fft_fd, sig.get(), cA.get());
+    fftExec(*fftFd, sig.get(), cA.get());
 
     lenacc = wt->outlength;
 
-    M = 1;
+    m = 1;
 
-    for (iter = 0; iter < J; ++iter) {
-        lenacc -= N;
+    for (iter = 0; iter < j; ++iter) {
+        lenacc -= n;
 
-        for (auto i = 0; i < N; ++i) {
-            index[i] = (M * i) % N;
+        for (auto i = 0; i < n; ++i) {
+            index[i] = (m * i) % n;
         }
 
-        for (auto i = 0; i < N; ++i) {
+        for (auto i = 0; i < n; ++i) {
             tmp1 = cA[i].re;
             tmp2 = cA[i].im;
-            cA[i].re = low_pass[index[i]].re * tmp1 - low_pass[index[i]].im * tmp2;
-            cA[i].im = low_pass[index[i]].re * tmp2 + low_pass[index[i]].im * tmp1;
+            cA[i].re = lowPass[index[i]].re * tmp1 - lowPass[index[i]].im * tmp2;
+            cA[i].im = lowPass[index[i]].re * tmp2 + lowPass[index[i]].im * tmp1;
 
-            cD[i].re = high_pass[index[i]].re * tmp1 - high_pass[index[i]].im * tmp2;
-            cD[i].im = high_pass[index[i]].re * tmp2 + high_pass[index[i]].im * tmp1;
+            cD[i].re = highPass[index[i]].re * tmp1 - highPass[index[i]].im * tmp2;
+            cD[i].im = highPass[index[i]].re * tmp2 + highPass[index[i]].im * tmp1;
         }
 
-        fft_exec(*fft_bd, cD.get(), sig.get());
+        fftExec(*fftBd, cD.get(), sig.get());
 
-        for (auto i = 0; i < N; ++i) {
-            wt->params[lenacc + i] = sig[i].re / N;
+        for (auto i = 0; i < n; ++i) {
+            wt->params[lenacc + i] = sig[i].re / n;
         }
 
-        M *= 2;
+        m *= 2;
     }
 
-    fft_exec(*fft_bd, cA.get(), sig.get());
+    fftExec(*fftBd, cA.get(), sig.get());
 
-    for (auto i = 0; i < N; ++i) {
-        wt->params[i] = sig[i].re / N;
+    for (auto i = 0; i < n; ++i) {
+        wt->params[i] = sig[i].re / n;
     }
 }
 
-void modwt(wavelet_transform* wt, double const* inp)
+void modwt(WaveletTransform* wt, double const* inp)
 {
-    if (wt->conv_method() == convolution_method::direct) {
-        modwt_direct(wt, inp);
+    if (wt->convMethod() == ConvolutionMethod::direct) {
+        modwtDirect(wt, inp);
         return;
     }
 
-    modwt_fft(wt, inp);
+    modwtFft(wt, inp);
 }
 
-static void conj_complex(fft_data* x, int N)
+static void conjComplex(FftData* x, int n)
 {
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         x[i].im *= (-1.0);
     }
 }
 
-void imodwt_fft(wavelet_transform* wt, double* oup)
+void imodwtFft(WaveletTransform* wt, double* oup)
 {
-    auto N = wt->modwtsiglength;
-    auto len_avg = wt->wave().lpd_len();
-    auto J = wt->levels();
+    auto n = wt->modwtsiglength;
+    auto lenAvg = wt->wave().lpdLen();
+    auto j = wt->levels();
 
     auto s = std::sqrt(2.0);
-    auto fft_fd = fft_init(N, 1);
-    auto fft_bd = fft_init(N, -1);
+    auto fftFd = fftInit(n, 1);
+    auto fftBd = fftInit(n, -1);
 
-    auto sig = std::make_unique<fft_data[]>(N);
-    auto cA = std::make_unique<fft_data[]>(N);
-    auto cD = std::make_unique<fft_data[]>(N);
-    auto low_pass = std::make_unique<fft_data[]>(N);
-    auto high_pass = std::make_unique<fft_data[]>(N);
-    auto index = std::make_unique<int[]>(N);
+    auto sig = std::make_unique<FftData[]>(n);
+    auto cA = std::make_unique<FftData[]>(n);
+    auto cD = std::make_unique<FftData[]>(n);
+    auto lowPass = std::make_unique<FftData[]>(n);
+    auto highPass = std::make_unique<FftData[]>(n);
+    auto index = std::make_unique<int[]>(n);
 
     // N-point FFT of low pass and high pass filters
 
     // Low Pass Filter
 
-    for (auto i = 0; i < len_avg; ++i) {
+    for (auto i = 0; i < lenAvg; ++i) {
         sig[i].re = (fft_type)wt->wave().lpd()[i] / s;
         sig[i].im = 0.0;
     }
-    for (auto i = len_avg; i < N; ++i) {
+    for (auto i = lenAvg; i < n; ++i) {
         sig[i].re = 0.0;
         sig[i].im = 0.0;
     }
 
-    fft_exec(*fft_fd, sig.get(), low_pass.get());
+    fftExec(*fftFd, sig.get(), lowPass.get());
 
     // High Pass Filter
 
-    for (auto i = 0; i < len_avg; ++i) {
+    for (auto i = 0; i < lenAvg; ++i) {
         sig[i].re = (fft_type)wt->wave().hpd()[i] / s;
         sig[i].im = 0.0;
     }
-    for (auto i = len_avg; i < N; ++i) {
+    for (auto i = lenAvg; i < n; ++i) {
         sig[i].re = 0.0;
         sig[i].im = 0.0;
     }
 
-    fft_exec(*fft_fd, sig.get(), high_pass.get());
+    fftExec(*fftFd, sig.get(), highPass.get());
 
     // Complex conjugate of the two filters
 
-    conj_complex(low_pass.get(), N);
-    conj_complex(high_pass.get(), N);
+    conjComplex(lowPass.get(), n);
+    conjComplex(highPass.get(), n);
 
-    auto M = (int)std::pow(2.0, (double)J - 1.0);
-    auto lenacc = N;
+    auto m = (int)std::pow(2.0, (double)j - 1.0);
+    auto lenacc = n;
 
     //
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         sig[i].re = (fft_type)wt->output()[i];
         sig[i].im = 0.0;
     }
 
-    for (auto iter = 0; iter < J; ++iter) {
-        fft_exec(*fft_fd, sig.get(), cA.get());
-        for (auto i = 0; i < N; ++i) {
+    for (auto iter = 0; iter < j; ++iter) {
+        fftExec(*fftFd, sig.get(), cA.get());
+        for (auto i = 0; i < n; ++i) {
             sig[i].re = wt->output()[lenacc + i];
             sig[i].im = 0.0;
         }
-        fft_exec(*fft_fd, sig.get(), cD.get());
+        fftExec(*fftFd, sig.get(), cD.get());
 
-        for (auto i = 0; i < N; ++i) {
-            index[i] = (M * i) % N;
+        for (auto i = 0; i < n; ++i) {
+            index[i] = (m * i) % n;
         }
 
-        for (auto i = 0; i < N; ++i) {
+        for (auto i = 0; i < n; ++i) {
             auto const tmp1 = cA[i].re;
             auto const tmp2 = cA[i].im;
-            cA[i].re = low_pass[index[i]].re * tmp1 - low_pass[index[i]].im * tmp2 + high_pass[index[i]].re * cD[i].re - high_pass[index[i]].im * cD[i].im;
-            cA[i].im = low_pass[index[i]].re * tmp2 + low_pass[index[i]].im * tmp1 + high_pass[index[i]].re * cD[i].im + high_pass[index[i]].im * cD[i].re;
+            cA[i].re = lowPass[index[i]].re * tmp1 - lowPass[index[i]].im * tmp2 + highPass[index[i]].re * cD[i].re - highPass[index[i]].im * cD[i].im;
+            cA[i].im = lowPass[index[i]].re * tmp2 + lowPass[index[i]].im * tmp1 + highPass[index[i]].re * cD[i].im + highPass[index[i]].im * cD[i].re;
         }
 
-        fft_exec(*fft_bd, cA.get(), sig.get());
+        fftExec(*fftBd, cA.get(), sig.get());
 
-        for (auto i = 0; i < N; ++i) {
-            sig[i].re /= N;
-            sig[i].im /= N;
+        for (auto i = 0; i < n; ++i) {
+            sig[i].re /= n;
+            sig[i].im /= n;
         }
-        M /= 2;
-        lenacc += N;
+        m /= 2;
+        lenacc += n;
     }
 
     for (auto i = 0; i < wt->siglength; ++i) {
@@ -2335,53 +2335,53 @@ void imodwt_fft(wavelet_transform* wt, double* oup)
     }
 }
 
-static void imodwt_per(wavelet_transform* wt, int M, double const* cA, int len_cA, double const* cD, double* X)
+static void imodwtPer(WaveletTransform* wt, int m, double const* cA, int lenCA, double const* cD, double* x)
 {
-    auto const len_avg = wt->wave().lpd_len();
-    auto filt = std::make_unique<double[]>(2 * len_avg);
+    auto const lenAvg = wt->wave().lpdLen();
+    auto filt = std::make_unique<double[]>(2 * lenAvg);
     auto s = std::sqrt(2.0);
 
-    for (auto i = 0; i < len_avg; ++i) {
+    for (auto i = 0; i < lenAvg; ++i) {
         filt[i] = wt->wave().lpd()[i] / s;
-        filt[len_avg + i] = wt->wave().hpd()[i] / s;
+        filt[lenAvg + i] = wt->wave().hpd()[i] / s;
     }
 
-    for (auto i = 0; i < len_cA; ++i) {
+    for (auto i = 0; i < lenCA; ++i) {
         auto t = i;
-        X[i] = (filt[0] * cA[t]) + (filt[len_avg] * cD[t]);
-        for (auto l = 1; l < len_avg; l++) {
-            t += M;
-            while (t >= len_cA) {
-                t -= len_cA;
+        x[i] = (filt[0] * cA[t]) + (filt[lenAvg] * cD[t]);
+        for (auto l = 1; l < lenAvg; l++) {
+            t += m;
+            while (t >= lenCA) {
+                t -= lenCA;
             }
             while (t < 0) {
-                t += len_cA;
+                t += lenCA;
             }
 
-            X[i] += (filt[l] * cA[t]) + (filt[len_avg + l] * cD[t]);
+            x[i] += (filt[l] * cA[t]) + (filt[lenAvg + l] * cD[t]);
         }
     }
 }
 
-static void imodwt_direct(wavelet_transform* wt, double* dwtop)
+static void imodwtDirect(WaveletTransform* wt, double* dwtop)
 {
-    auto N = wt->siglength;
-    auto lenacc = N;
+    auto n = wt->siglength;
+    auto lenacc = n;
 
-    auto J = wt->levels();
-    auto M = (int)std::pow(2.0, (double)J - 1.0);
+    auto j = wt->levels();
+    auto m = (int)std::pow(2.0, (double)j - 1.0);
 
-    auto X = std::make_unique<double[]>(N);
+    auto x = std::make_unique<double[]>(n);
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         dwtop[i] = wt->output()[i];
     }
 
-    for (auto iter = 0; iter < J; ++iter) {
+    for (auto iter = 0; iter < j; ++iter) {
         if (iter > 0) {
-            M = M / 2;
+            m = m / 2;
         }
-        imodwt_per(wt, M, dwtop, N, wt->params.get() + lenacc, X.get());
+        imodwtPer(wt, m, dwtop, n, wt->params.get() + lenacc, x.get());
         /*
 		for (auto j = lf - 1; j < N; ++j) {
 			dwtop[j - lf + 1] = X[j];
@@ -2390,24 +2390,24 @@ static void imodwt_direct(wavelet_transform* wt, double* dwtop)
 			dwtop[N - lf + 1 + j] = X[j];
 		}
 		*/
-        for (auto j = 0; j < N; ++j) {
-            dwtop[j] = X[j];
+        for (auto jj = 0; jj < n; ++jj) {
+            dwtop[jj] = x[jj];
         }
 
-        lenacc += N;
+        lenacc += n;
     }
 }
 
-void imodwt(wavelet_transform* wt, double* oup)
+void imodwt(WaveletTransform* wt, double* oup)
 {
-    if (wt->conv_method() == convolution_method::direct) {
-        imodwt_direct(wt, oup);
+    if (wt->convMethod() == ConvolutionMethod::direct) {
+        imodwtDirect(wt, oup);
         return;
     }
-    imodwt_fft(wt, oup);
+    imodwtFft(wt, oup);
 }
 
-void setWTREEExtension(wtree_set* wt, char const* extension)
+void setWTREEExtension(WtreeSet* wt, char const* extension)
 {
     if (extension == "sym"sv) {
         wt->ext = "sym";
@@ -2419,7 +2419,7 @@ void setWTREEExtension(wtree_set* wt, char const* extension)
     }
 }
 
-void setDWPTExtension(wpt_set* wt, char const* extension)
+void setDWPTExtension(WptSet* wt, char const* extension)
 {
     if (extension == "sym"sv) {
         wt->ext = "sym";
@@ -2431,7 +2431,7 @@ void setDWPTExtension(wpt_set* wt, char const* extension)
     }
 }
 
-void setDWT2Extension(wt2_set* wt, char const* extension)
+void setDWT2Extension(Wt2Set* wt, char const* extension)
 {
     if (wt->method == "dwt"sv) {
         if (extension == "sym"sv) {
@@ -2452,7 +2452,7 @@ void setDWT2Extension(wt2_set* wt, char const* extension)
     }
 }
 
-void setDWPTEntropy(wpt_set* wt, char const* entropy, double eparam)
+void setDWPTEntropy(WptSet* wt, char const* entropy, double eparam)
 {
     if (strcmp(entropy, "shannon") == 0) {
         wt->entropy = "shannon";
@@ -2470,12 +2470,12 @@ void setDWPTEntropy(wpt_set* wt, char const* entropy, double eparam)
     }
 }
 
-auto dwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
+auto dwt2(Wt2Set* wt, double* inp) -> std::unique_ptr<double[]>
 {
     int iter;
-    int N;
-    int rows_i;
-    int cols_i;
+    int n;
+    int rowsI;
+    int colsI;
     int ir;
     int ic;
     int istride;
@@ -2487,49 +2487,49 @@ auto dwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     int cdim;
     double* orig;
 
-    auto J = wt->J;
+    auto j = wt->J;
     wt->outlength = 0;
 
-    auto rows_n = wt->rows;
-    auto cols_n = wt->cols;
-    auto lp = wt->wave->lpd_len();
-    auto clen = J * 3;
+    auto rowsN = wt->rows;
+    auto colsN = wt->cols;
+    auto lp = wt->wave->lpdLen();
+    auto clen = j * 3;
 
     if (wt->ext == "per"sv) {
-        auto idx = 2 * J;
+        auto idx = 2 * j;
         while (idx > 0) {
-            rows_n = (int)ceil((double)rows_n / 2.0);
-            cols_n = (int)ceil((double)cols_n / 2.0);
-            wt->dimensions[idx - 1] = cols_n;
-            wt->dimensions[idx - 2] = rows_n;
-            wt->outlength += (rows_n * cols_n) * 3;
+            rowsN = (int)ceil((double)rowsN / 2.0);
+            colsN = (int)ceil((double)colsN / 2.0);
+            wt->dimensions[idx - 1] = colsN;
+            wt->dimensions[idx - 2] = rowsN;
+            wt->outlength += (rowsN * colsN) * 3;
             idx = idx - 2;
         }
-        wt->outlength += (rows_n * cols_n);
-        N = wt->outlength;
+        wt->outlength += (rowsN * colsN);
+        n = wt->outlength;
         auto wavecoeff = makeZeros<double>(wt->outlength);
 
         orig = inp;
         ir = wt->rows;
         ic = wt->cols;
-        cols_i = wt->dimensions[2 * J - 1];
+        colsI = wt->dimensions[2 * j - 1];
 
-        auto lp_dn1 = makeZeros<double>(ir * cols_i);
-        auto hp_dn1 = makeZeros<double>(ir * cols_i);
+        auto lpDn1 = makeZeros<double>(ir * colsI);
+        auto hpDn1 = makeZeros<double>(ir * colsI);
 
-        for (iter = 0; iter < J; ++iter) {
-            rows_i = wt->dimensions[2 * J - 2 * iter - 2];
-            cols_i = wt->dimensions[2 * J - 2 * iter - 1];
+        for (iter = 0; iter < j; ++iter) {
+            rowsI = wt->dimensions[2 * j - 2 * iter - 2];
+            colsI = wt->dimensions[2 * j - 2 * iter - 1];
             istride = 1;
             ostride = 1;
-            cdim = rows_i * cols_i;
+            cdim = rowsI * colsI;
             // Row filtering and column subsampling
             for (auto i = 0; i < ir; ++i) {
-                dwt_per_stride(orig + i * ic, ic, wt->wave->lpd(), wt->wave->hpd(), lp, lp_dn1.get() + i * cols_i, cols_i, hp_dn1.get() + i * cols_i, istride, ostride);
+                dwtPerStride(orig + i * ic, ic, wt->wave->lpd(), wt->wave->hpd(), lp, lpDn1.get() + i * colsI, colsI, hpDn1.get() + i * colsI, istride, ostride);
             }
 
             // Column Filtering and Row subsampling
-            aHH = N - cdim;
+            aHH = n - cdim;
             wt->coeffaccess[clen] = aHH;
             aHL = aHH - cdim;
             wt->coeffaccess[clen - 1] = aHL;
@@ -2537,20 +2537,20 @@ auto dwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
             wt->coeffaccess[clen - 2] = aLH;
             aLL = aLH - cdim;
 
-            N -= 3 * cdim;
-            ic = cols_i;
+            n -= 3 * cdim;
+            ic = colsI;
             istride = ic;
             ostride = ic;
 
             for (auto i = 0; i < ic; ++i) {
-                dwt_per_stride(lp_dn1.get() + i, ir, wt->wave->lpd(), wt->wave->hpd(), lp, wavecoeff.get() + aLL + i, rows_i, wavecoeff.get() + aLH + i, istride, ostride);
+                dwtPerStride(lpDn1.get() + i, ir, wt->wave->lpd(), wt->wave->hpd(), lp, wavecoeff.get() + aLL + i, rowsI, wavecoeff.get() + aLH + i, istride, ostride);
             }
 
             for (auto i = 0; i < ic; ++i) {
-                dwt_per_stride(hp_dn1.get() + i, ir, wt->wave->lpd(), wt->wave->hpd(), lp, wavecoeff.get() + aHL + i, rows_i, wavecoeff.get() + aHH + i, istride, ostride);
+                dwtPerStride(hpDn1.get() + i, ir, wt->wave->lpd(), wt->wave->hpd(), lp, wavecoeff.get() + aHL + i, rowsI, wavecoeff.get() + aHH + i, istride, ostride);
             }
 
-            ir = rows_i;
+            ir = rowsI;
             orig = wavecoeff.get() + aLL;
             clen -= 3;
         }
@@ -2561,62 +2561,62 @@ auto dwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
 
     assert(wt->ext == "sym"sv);
 
-    auto idx = 2 * J;
+    auto idx = 2 * j;
     while (idx > 0) {
-        rows_n += lp - 2;
-        cols_n += lp - 2;
-        rows_n = (int)ceil((double)rows_n / 2.0);
-        cols_n = (int)ceil((double)cols_n / 2.0);
-        wt->dimensions[idx - 1] = cols_n;
-        wt->dimensions[idx - 2] = rows_n;
-        wt->outlength += (rows_n * cols_n) * 3;
+        rowsN += lp - 2;
+        colsN += lp - 2;
+        rowsN = (int)ceil((double)rowsN / 2.0);
+        colsN = (int)ceil((double)colsN / 2.0);
+        wt->dimensions[idx - 1] = colsN;
+        wt->dimensions[idx - 2] = rowsN;
+        wt->outlength += (rowsN * colsN) * 3;
         idx = idx - 2;
     }
-    wt->outlength += (rows_n * cols_n);
-    N = wt->outlength;
+    wt->outlength += (rowsN * colsN);
+    n = wt->outlength;
     auto wavecoeff = makeZeros<double>(wt->outlength);
 
     orig = inp;
     ir = wt->rows;
     ic = wt->cols;
-    cols_i = wt->dimensions[2 * J - 1];
+    colsI = wt->dimensions[2 * j - 1];
 
-    auto lp_dn1 = makeZeros<double>(ir * cols_i);
-    auto hp_dn1 = makeZeros<double>(ir * cols_i);
+    auto lpDn1 = makeZeros<double>(ir * colsI);
+    auto hpDn1 = makeZeros<double>(ir * colsI);
 
-    for (iter = 0; iter < J; ++iter) {
-        rows_i = wt->dimensions[2 * J - 2 * iter - 2];
-        cols_i = wt->dimensions[2 * J - 2 * iter - 1];
+    for (iter = 0; iter < j; ++iter) {
+        rowsI = wt->dimensions[2 * j - 2 * iter - 2];
+        colsI = wt->dimensions[2 * j - 2 * iter - 1];
         istride = 1;
         ostride = 1;
-        cdim = rows_i * cols_i;
+        cdim = rowsI * colsI;
         // Row filtering and column subsampling
         for (auto i = 0; i < ir; ++i) {
-            dwt_sym_stride(orig + i * ic, ic, wt->wave->lpd(), wt->wave->hpd(), lp, lp_dn1.get() + i * cols_i, cols_i, hp_dn1.get() + i * cols_i, istride, ostride);
+            dwtSymStride(orig + i * ic, ic, wt->wave->lpd(), wt->wave->hpd(), lp, lpDn1.get() + i * colsI, colsI, hpDn1.get() + i * colsI, istride, ostride);
         }
 
         // Column Filtering and Row subsampling
-        aHH = N - cdim;
+        aHH = n - cdim;
         wt->coeffaccess[clen] = aHH;
         aHL = aHH - cdim;
         wt->coeffaccess[clen - 1] = aHL;
         aLH = aHL - cdim;
         wt->coeffaccess[clen - 2] = aLH;
         aLL = aLH - cdim;
-        N -= 3 * cdim;
-        ic = cols_i;
+        n -= 3 * cdim;
+        ic = colsI;
         istride = ic;
         ostride = ic;
 
         for (auto i = 0; i < ic; ++i) {
-            dwt_sym_stride(lp_dn1.get() + i, ir, wt->wave->lpd(), wt->wave->hpd(), lp, wavecoeff.get() + aLL + i, rows_i, wavecoeff.get() + aLH + i, istride, ostride);
+            dwtSymStride(lpDn1.get() + i, ir, wt->wave->lpd(), wt->wave->hpd(), lp, wavecoeff.get() + aLL + i, rowsI, wavecoeff.get() + aLH + i, istride, ostride);
         }
 
         for (auto i = 0; i < ic; ++i) {
-            dwt_sym_stride(hp_dn1.get() + i, ir, wt->wave->lpd(), wt->wave->hpd(), lp, wavecoeff.get() + aHL + i, rows_i, wavecoeff.get() + aHH + i, istride, ostride);
+            dwtSymStride(hpDn1.get() + i, ir, wt->wave->lpd(), wt->wave->hpd(), lp, wavecoeff.get() + aHL + i, rowsI, wavecoeff.get() + aHH + i, istride, ostride);
         }
 
-        ir = rows_i;
+        ir = rowsI;
         orig = wavecoeff.get() + aLL;
         clen -= 3;
     }
@@ -2626,7 +2626,7 @@ auto dwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     return wavecoeff;
 }
 
-void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
+void idwt2(Wt2Set* wt, double* wavecoeff, double* oup)
 {
 
     int ir;
@@ -2643,13 +2643,13 @@ void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
 
     auto const rows = wt->rows;
     auto const cols = wt->cols;
-    auto const J = wt->J;
+    auto const j = wt->J;
 
     if (wt->ext == "per"sv) {
-        auto const N = rows > cols ? 2 * rows : 2 * cols;
-        auto const lf = (wt->wave->lpr_len() + wt->wave->hpr_len()) / 2;
+        auto const n = rows > cols ? 2 * rows : 2 * cols;
+        auto const lf = (wt->wave->lprLen() + wt->wave->hprLen()) / 2;
 
-        auto idx = J;
+        auto idx = j;
         auto dim1 = wt->dimensions[0];
         auto dim2 = wt->dimensions[1];
         auto k = 0;
@@ -2660,14 +2660,14 @@ void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
             idx--;
         }
 
-        auto X_lp = makeZeros<double>(N + 2 * lf - 1);
+        auto xLp = makeZeros<double>(n + 2 * lf - 1);
         auto cL = makeZeros<double>(dim1 * dim2);
         auto cH = makeZeros<double>(dim1 * dim2);
         auto out = makeZeros<double>(dim1 * dim2);
 
         aLL = wt->coeffaccess[0];
         orig = wavecoeff + aLL;
-        for (iter = 0; iter < J; ++iter) {
+        for (iter = 0; iter < j; ++iter) {
             ir = wt->dimensions[2 * iter];
             ic = wt->dimensions[2 * iter + 1];
             istride = ic;
@@ -2676,16 +2676,16 @@ void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
             aHL = wt->coeffaccess[iter * 3 + 2];
             aHH = wt->coeffaccess[iter * 3 + 3];
             for (auto i = 0; i < ic; ++i) {
-                idwt_per_stride(orig + i, ir, wavecoeff + aLH + i, wt->wave->lpr(), wt->wave->hpr(), lf, X_lp.get(), istride, ostride);
+                idwtPerStride(orig + i, ir, wavecoeff + aLH + i, wt->wave->lpr(), wt->wave->hpr(), lf, xLp.get(), istride, ostride);
 
                 for (k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
-                    cL[(k - lf / 2 + 1) * ic + i] = X_lp[k];
+                    cL[(k - lf / 2 + 1) * ic + i] = xLp[k];
                 }
 
-                idwt_per_stride(wavecoeff + aHL + i, ir, wavecoeff + aHH + i, wt->wave->lpr(), wt->wave->hpr(), lf, X_lp.get(), istride, ostride);
+                idwtPerStride(wavecoeff + aHL + i, ir, wavecoeff + aHH + i, wt->wave->lpr(), wt->wave->hpr(), lf, xLp.get(), istride, ostride);
 
                 for (k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
-                    cH[(k - lf / 2 + 1) * ic + i] = X_lp[k];
+                    cH[(k - lf / 2 + 1) * ic + i] = xLp[k];
                 }
             }
 
@@ -2694,14 +2694,14 @@ void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
             ostride = 1;
 
             for (auto i = 0; i < ir; ++i) {
-                idwt_per_stride(cL.get() + i * ic, ic, cH.get() + i * ic, wt->wave->lpr(), wt->wave->hpr(), lf, X_lp.get(), istride, ostride);
+                idwtPerStride(cL.get() + i * ic, ic, cH.get() + i * ic, wt->wave->lpr(), wt->wave->hpr(), lf, xLp.get(), istride, ostride);
 
                 for (k = lf / 2 - 1; k < 2 * ic + lf / 2 - 1; ++k) {
-                    out[(k - lf / 2 + 1) + i * ic * 2] = X_lp[k];
+                    out[(k - lf / 2 + 1) + i * ic * 2] = xLp[k];
                 }
             }
             ic *= 2;
-            if (iter == J - 1) {
+            if (iter == j - 1) {
                 for (auto i = 0; i < wt->rows; ++i) {
                     for (k = 0; k < wt->cols; ++k) {
                         oup[k + i * wt->cols] = out[k + i * ic];
@@ -2722,10 +2722,10 @@ void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
     }
     assert(wt->ext == "sym"sv);
 
-    auto const N = rows > cols ? 2 * rows - 1 : 2 * cols - 1;
-    auto const lf = (wt->wave->lpr_len() + wt->wave->hpr_len()) / 2;
+    auto const n = rows > cols ? 2 * rows - 1 : 2 * cols - 1;
+    auto const lf = (wt->wave->lprLen() + wt->wave->hprLen()) / 2;
 
-    auto idx = J;
+    auto idx = j;
     auto dim1 = wt->dimensions[0];
     auto dim2 = wt->dimensions[1];
     auto k = 0;
@@ -2736,14 +2736,14 @@ void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
         idx--;
     }
 
-    auto X_lp = makeZeros<double>(N + 2 * lf - 1);
+    auto xLp = makeZeros<double>(n + 2 * lf - 1);
     auto cL = makeZeros<double>(dim1 * dim2);
     auto cH = makeZeros<double>(dim1 * dim2);
     auto out = makeZeros<double>(dim1 * dim2);
 
     aLL = wt->coeffaccess[0];
     orig = wavecoeff + aLL;
-    for (iter = 0; iter < J; ++iter) {
+    for (iter = 0; iter < j; ++iter) {
         ir = wt->dimensions[2 * iter];
         ic = wt->dimensions[2 * iter + 1];
         istride = ic;
@@ -2752,16 +2752,16 @@ void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
         aHL = wt->coeffaccess[iter * 3 + 2];
         aHH = wt->coeffaccess[iter * 3 + 3];
         for (auto i = 0; i < ic; ++i) {
-            idwt_sym_stride(orig + i, ir, wavecoeff + aLH + i, wt->wave->lpr(), wt->wave->hpr(), lf, X_lp.get(), istride, ostride);
+            idwtSymStride(orig + i, ir, wavecoeff + aLH + i, wt->wave->lpr(), wt->wave->hpr(), lf, xLp.get(), istride, ostride);
 
             for (k = lf - 2; k < 2 * ir; ++k) {
-                cL[(k - lf + 2) * ic + i] = X_lp[k];
+                cL[(k - lf + 2) * ic + i] = xLp[k];
             }
 
-            idwt_sym_stride(wavecoeff + aHL + i, ir, wavecoeff + aHH + i, wt->wave->lpr(), wt->wave->hpr(), lf, X_lp.get(), istride, ostride);
+            idwtSymStride(wavecoeff + aHL + i, ir, wavecoeff + aHH + i, wt->wave->lpr(), wt->wave->hpr(), lf, xLp.get(), istride, ostride);
 
             for (k = lf - 2; k < 2 * ir; ++k) {
-                cH[(k - lf + 2) * ic + i] = X_lp[k];
+                cH[(k - lf + 2) * ic + i] = xLp[k];
             }
         }
 
@@ -2770,14 +2770,14 @@ void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
         ostride = 1;
 
         for (auto i = 0; i < ir; ++i) {
-            idwt_sym_stride(cL.get() + i * ic, ic, cH.get() + i * ic, wt->wave->lpr(), wt->wave->hpr(), lf, X_lp.get(), istride, ostride);
+            idwtSymStride(cL.get() + i * ic, ic, cH.get() + i * ic, wt->wave->lpr(), wt->wave->hpr(), lf, xLp.get(), istride, ostride);
 
             for (k = lf - 2; k < 2 * ic; ++k) {
-                out[(k - lf + 2) + i * ic * 2] = X_lp[k];
+                out[(k - lf + 2) + i * ic * 2] = xLp[k];
             }
         }
         ic *= 2;
-        if (iter == J - 1) {
+        if (iter == j - 1) {
             for (auto i = 0; i < wt->rows; ++i) {
                 for (k = 0; k < wt->cols; ++k) {
                     oup[k + i * wt->cols] = out[k + i * ic];
@@ -2795,17 +2795,17 @@ void idwt2(wt2_set* wt, double* wavecoeff, double* oup)
     }
 }
 
-auto swt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
+auto swt2(Wt2Set* wt, double* inp) -> std::unique_ptr<double[]>
 {
-    int J;
+    int j;
     int iter;
-    int M;
-    int N;
+    int m;
+    int n;
     int lp;
-    int rows_n;
-    int cols_n;
-    int rows_i;
-    int cols_i;
+    int rowsN;
+    int colsN;
+    int rowsI;
+    int colsI;
     int ir;
     int ic;
     int istride;
@@ -2818,49 +2818,49 @@ auto swt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     int clen;
     double* orig;
 
-    J = wt->J;
-    M = 1;
+    j = wt->J;
+    m = 1;
     wt->outlength = 0;
 
-    rows_n = wt->rows;
-    cols_n = wt->cols;
-    lp = wt->wave->lpd_len();
-    clen = J * 3;
+    rowsN = wt->rows;
+    colsN = wt->cols;
+    lp = wt->wave->lpdLen();
+    clen = j * 3;
 
-    auto idx = 2 * J;
+    auto idx = 2 * j;
     while (idx > 0) {
-        wt->dimensions[idx - 1] = cols_n;
-        wt->dimensions[idx - 2] = rows_n;
-        wt->outlength += (rows_n * cols_n) * 3;
+        wt->dimensions[idx - 1] = colsN;
+        wt->dimensions[idx - 2] = rowsN;
+        wt->outlength += (rowsN * colsN) * 3;
         idx = idx - 2;
     }
-    wt->outlength += (rows_n * cols_n);
-    N = wt->outlength;
+    wt->outlength += (rowsN * colsN);
+    n = wt->outlength;
     auto wavecoeff = makeZeros<double>(wt->outlength);
 
     orig = inp;
     ir = wt->rows;
     ic = wt->cols;
-    cols_i = wt->dimensions[2 * J - 1];
+    colsI = wt->dimensions[2 * j - 1];
 
-    auto lp_dn1 = std::make_unique<double[]>(ir * cols_i);
-    auto hp_dn1 = std::make_unique<double[]>(ir * cols_i);
+    auto lpDn1 = std::make_unique<double[]>(ir * colsI);
+    auto hpDn1 = std::make_unique<double[]>(ir * colsI);
 
-    for (iter = 0; iter < J; ++iter) {
+    for (iter = 0; iter < j; ++iter) {
         if (iter > 0) {
-            M = 2 * M;
+            m = 2 * m;
         }
-        rows_i = wt->dimensions[2 * J - 2 * iter - 2];
-        cols_i = wt->dimensions[2 * J - 2 * iter - 1];
+        rowsI = wt->dimensions[2 * j - 2 * iter - 2];
+        colsI = wt->dimensions[2 * j - 2 * iter - 1];
         istride = 1;
         ostride = 1;
-        cdim = rows_i * cols_i;
+        cdim = rowsI * colsI;
         // Row filtering and column subsampling
         for (auto i = 0; i < ir; ++i) {
-            swt_per_stride(M, orig + i * ic, ic, wt->wave->lpd(), wt->wave->hpd(), lp, lp_dn1.get() + i * cols_i, cols_i, hp_dn1.get() + i * cols_i, istride, ostride);
+            swtPerStride(m, orig + i * ic, ic, wt->wave->lpd(), wt->wave->hpd(), lp, lpDn1.get() + i * colsI, colsI, hpDn1.get() + i * colsI, istride, ostride);
         }
         // Column Filtering and Row subsampling
-        aHH = N - cdim;
+        aHH = n - cdim;
         wt->coeffaccess[clen] = aHH;
         aHL = aHH - cdim;
         wt->coeffaccess[clen - 1] = aHL;
@@ -2868,19 +2868,19 @@ auto swt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
         wt->coeffaccess[clen - 2] = aLH;
         aLL = aLH - cdim;
 
-        N -= 3 * cdim;
-        ic = cols_i;
+        n -= 3 * cdim;
+        ic = colsI;
         istride = ic;
         ostride = ic;
         for (auto i = 0; i < ic; ++i) {
-            swt_per_stride(M, lp_dn1.get() + i, ir, wt->wave->lpd(), wt->wave->hpd(), lp, wavecoeff.get() + aLL + i, rows_i, wavecoeff.get() + aLH + i, istride, ostride);
+            swtPerStride(m, lpDn1.get() + i, ir, wt->wave->lpd(), wt->wave->hpd(), lp, wavecoeff.get() + aLL + i, rowsI, wavecoeff.get() + aLH + i, istride, ostride);
         }
 
         for (auto i = 0; i < ic; ++i) {
-            swt_per_stride(M, hp_dn1.get() + i, ir, wt->wave->lpd(), wt->wave->hpd(), lp, wavecoeff.get() + aHL + i, rows_i, wavecoeff.get() + aHH + i, istride, ostride);
+            swtPerStride(m, hpDn1.get() + i, ir, wt->wave->lpd(), wt->wave->hpd(), lp, wavecoeff.get() + aHL + i, rowsI, wavecoeff.get() + aHH + i, istride, ostride);
         }
 
-        ir = rows_i;
+        ir = rowsI;
         orig = wavecoeff.get() + aLL;
         clen -= 3;
     }
@@ -2889,14 +2889,14 @@ auto swt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     return wavecoeff;
 }
 
-void iswt2(wt2_set* wt, double const* wavecoeffs, double* oup)
+void iswt2(Wt2Set* wt, double const* wavecoeffs, double* oup)
 {
     int k;
     int iter;
     int it2;
     int it3;
-    int J;
-    int M;
+    int j;
+    int m;
     int rows;
     int cols;
     int lf;
@@ -2910,15 +2910,15 @@ void iswt2(wt2_set* wt, double const* wavecoeffs, double* oup)
     int aHL;
     int aHH;
     int shift;
-    J = wt->J;
+    j = wt->J;
     rows = wt->rows;
     cols = wt->cols;
-    lf = wt->wave->lpd_len();
+    lf = wt->wave->lpdLen();
 
-    auto A = makeZeros<double>((rows + lf) * (cols + lf));
-    auto H = makeZeros<double>((rows + lf) * (cols + lf));
-    auto V = makeZeros<double>((rows + lf) * (cols + lf));
-    auto D = makeZeros<double>((rows + lf) * (cols + lf));
+    auto a = makeZeros<double>((rows + lf) * (cols + lf));
+    auto h = makeZeros<double>((rows + lf) * (cols + lf));
+    auto v = makeZeros<double>((rows + lf) * (cols + lf));
+    auto d = makeZeros<double>((rows + lf) * (cols + lf));
     auto oup1 = makeZeros<double>((rows + lf) * (cols + lf));
     auto oup2 = makeZeros<double>((rows + lf) * (cols + lf));
 
@@ -2930,54 +2930,54 @@ void iswt2(wt2_set* wt, double const* wavecoeffs, double* oup)
         }
     }
 
-    for (iter = J; iter > 0; iter--) {
-        aLH = wt->coeffaccess[(J - iter) * 3 + 1];
-        aHL = wt->coeffaccess[(J - iter) * 3 + 2];
-        aHH = wt->coeffaccess[(J - iter) * 3 + 3];
-        M = (int)std::pow(2.0, (double)iter - 1);
+    for (iter = j; iter > 0; iter--) {
+        aLH = wt->coeffaccess[(j - iter) * 3 + 1];
+        aHL = wt->coeffaccess[(j - iter) * 3 + 2];
+        aHH = wt->coeffaccess[(j - iter) * 3 + 3];
+        m = (int)std::pow(2.0, (double)iter - 1);
 
-        for (it2 = 0; it2 < M; ++it2) {
+        for (it2 = 0; it2 < m; ++it2) {
             ir = 0;
             ic = 0;
             it3 = 0;
             // oup1
-            for (auto i = it2; i < rows; i += 2 * M) {
+            for (auto i = it2; i < rows; i += 2 * m) {
                 ic = 0;
-                for (k = it2; k < cols; k += 2 * M) {
-                    A[it3] = oup[i * cols + k];
-                    H[it3] = wavecoeffs[aLH + i * cols + k];
-                    V[it3] = wavecoeffs[aHL + i * cols + k];
-                    D[it3] = wavecoeffs[aHH + i * cols + k];
+                for (k = it2; k < cols; k += 2 * m) {
+                    a[it3] = oup[i * cols + k];
+                    h[it3] = wavecoeffs[aLH + i * cols + k];
+                    v[it3] = wavecoeffs[aHL + i * cols + k];
+                    d[it3] = wavecoeffs[aHH + i * cols + k];
                     it3++;
                     ic++;
                 }
                 ir++;
             }
             shift = 0;
-            idwt2_shift(shift, ir, ic, wt->wave->lpr(), wt->wave->hpr(), wt->wave->lpd_len(), A.get(), H.get(), V.get(), D.get(), oup1.get());
+            idwt2Shift(shift, ir, ic, wt->wave->lpr(), wt->wave->hpr(), wt->wave->lpdLen(), a.get(), h.get(), v.get(), d.get(), oup1.get());
             //oup2
             ir = 0;
             ic = 0;
             it3 = 0;
-            for (auto i = it2 + M; i < rows; i += 2 * M) {
+            for (auto i = it2 + m; i < rows; i += 2 * m) {
                 ic = 0;
-                for (k = it2 + M; k < cols; k += 2 * M) {
-                    A[it3] = oup[i * cols + k];
-                    H[it3] = wavecoeffs[aLH + i * cols + k];
-                    V[it3] = wavecoeffs[aHL + i * cols + k];
-                    D[it3] = wavecoeffs[aHH + i * cols + k];
+                for (k = it2 + m; k < cols; k += 2 * m) {
+                    a[it3] = oup[i * cols + k];
+                    h[it3] = wavecoeffs[aLH + i * cols + k];
+                    v[it3] = wavecoeffs[aHL + i * cols + k];
+                    d[it3] = wavecoeffs[aHH + i * cols + k];
                     it3++;
                     ic++;
                 }
                 ir++;
             }
             shift = -1;
-            idwt2_shift(shift, ir, ic, wt->wave->lpr(), wt->wave->hpr(), wt->wave->lpd_len(), A.get(), H.get(), V.get(), D.get(), oup2.get());
+            idwt2Shift(shift, ir, ic, wt->wave->lpr(), wt->wave->hpr(), wt->wave->lpdLen(), a.get(), h.get(), v.get(), d.get(), oup2.get());
             // Shift oup1 and oup2. Then add them to get A.
             i1 = 0;
-            for (auto i = it2; i < rows; i += M) {
+            for (auto i = it2; i < rows; i += m) {
                 k1 = 0;
-                for (k = it2; k < cols; k += M) {
+                for (k = it2; k < cols; k += m) {
                     oup[i * cols + k] = 0.5 * (oup1[i1 * 2 * ic + k1] + oup2[i1 * 2 * ic + k1]);
                     k1++;
                 }
@@ -2987,17 +2987,17 @@ void iswt2(wt2_set* wt, double const* wavecoeffs, double* oup)
     }
 }
 
-auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
+auto modwt2(Wt2Set* wt, double* inp) -> std::unique_ptr<double[]>
 {
-    int J;
+    int j;
     int iter;
-    int M;
-    int N;
+    int m;
+    int n;
     int lp;
-    int rows_n;
-    int cols_n;
-    int rows_i;
-    int cols_i;
+    int rowsN;
+    int colsN;
+    int rowsI;
+    int colsI;
     int ir;
     int ic;
     int istride;
@@ -3011,24 +3011,24 @@ auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     double* orig;
     double s;
 
-    J = wt->J;
-    M = 1;
+    j = wt->J;
+    m = 1;
     wt->outlength = 0;
 
-    rows_n = wt->rows;
-    cols_n = wt->cols;
-    lp = wt->wave->lpd_len();
-    clen = J * 3;
+    rowsN = wt->rows;
+    colsN = wt->cols;
+    lp = wt->wave->lpdLen();
+    clen = j * 3;
 
-    auto idx = 2 * J;
+    auto idx = 2 * j;
     while (idx > 0) {
-        wt->dimensions[idx - 1] = cols_n;
-        wt->dimensions[idx - 2] = rows_n;
-        wt->outlength += (rows_n * cols_n) * 3;
+        wt->dimensions[idx - 1] = colsN;
+        wt->dimensions[idx - 2] = rowsN;
+        wt->outlength += (rowsN * colsN) * 3;
         idx = idx - 2;
     }
-    wt->outlength += (rows_n * cols_n);
-    N = wt->outlength;
+    wt->outlength += (rowsN * colsN);
+    n = wt->outlength;
     auto wavecoeff = makeZeros<double>(wt->outlength);
     auto filt = std::make_unique<double[]>(2 * lp);
     s = std::sqrt(2.0);
@@ -3040,45 +3040,45 @@ auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     orig = inp;
     ir = wt->rows;
     ic = wt->cols;
-    cols_i = wt->dimensions[2 * J - 1];
+    colsI = wt->dimensions[2 * j - 1];
 
-    auto lp_dn1 = std::make_unique<double[]>(ir * cols_i);
-    auto hp_dn1 = std::make_unique<double[]>(ir * cols_i);
+    auto lpDn1 = std::make_unique<double[]>(ir * colsI);
+    auto hpDn1 = std::make_unique<double[]>(ir * colsI);
 
-    for (iter = 0; iter < J; ++iter) {
+    for (iter = 0; iter < j; ++iter) {
         if (iter > 0) {
-            M = 2 * M;
+            m = 2 * m;
         }
-        rows_i = wt->dimensions[2 * J - 2 * iter - 2];
-        cols_i = wt->dimensions[2 * J - 2 * iter - 1];
+        rowsI = wt->dimensions[2 * j - 2 * iter - 2];
+        colsI = wt->dimensions[2 * j - 2 * iter - 1];
         istride = 1;
         ostride = 1;
-        cdim = rows_i * cols_i;
+        cdim = rowsI * colsI;
         // Row filtering and column subsampling
         for (auto i = 0; i < ir; ++i) {
-            modwt_per_stride(M, orig + i * ic, ic, filt.get(), lp, lp_dn1.get() + i * cols_i, cols_i, hp_dn1.get() + i * cols_i, istride, ostride);
+            modwtPerStride(m, orig + i * ic, ic, filt.get(), lp, lpDn1.get() + i * colsI, colsI, hpDn1.get() + i * colsI, istride, ostride);
         }
         // Column Filtering and Row subsampling
-        aHH = N - cdim;
+        aHH = n - cdim;
         wt->coeffaccess[clen] = aHH;
         aHL = aHH - cdim;
         wt->coeffaccess[clen - 1] = aHL;
         aLH = aHL - cdim;
         wt->coeffaccess[clen - 2] = aLH;
         aLL = aLH - cdim;
-        N -= 3 * cdim;
-        ic = cols_i;
+        n -= 3 * cdim;
+        ic = colsI;
         istride = ic;
         ostride = ic;
         for (auto i = 0; i < ic; ++i) {
-            modwt_per_stride(M, lp_dn1.get() + i, ir, filt.get(), lp, wavecoeff.get() + aLL + i, rows_i, wavecoeff.get() + aLH + i, istride, ostride);
+            modwtPerStride(m, lpDn1.get() + i, ir, filt.get(), lp, wavecoeff.get() + aLL + i, rowsI, wavecoeff.get() + aLH + i, istride, ostride);
         }
 
         for (auto i = 0; i < ic; ++i) {
-            modwt_per_stride(M, hp_dn1.get() + i, ir, filt.get(), lp, wavecoeff.get() + aHL + i, rows_i, wavecoeff.get() + aHH + i, istride, ostride);
+            modwtPerStride(m, hpDn1.get() + i, ir, filt.get(), lp, wavecoeff.get() + aHL + i, rowsI, wavecoeff.get() + aHH + i, istride, ostride);
         }
 
-        ir = rows_i;
+        ir = rowsI;
         orig = wavecoeff.get() + aLL;
         clen -= 3;
     }
@@ -3087,11 +3087,11 @@ auto modwt2(wt2_set* wt, double* inp) -> std::unique_ptr<double[]>
     return wavecoeff;
 }
 
-void imodwt2(wt2_set* wt, double* wavecoeff, double* oup)
+void imodwt2(Wt2Set* wt, double* wavecoeff, double* oup)
 {
     int rows;
     int cols;
-    int M;
+    int m;
     // int N;
     int ir;
     int ic;
@@ -3099,7 +3099,7 @@ void imodwt2(wt2_set* wt, double* wavecoeff, double* oup)
     int istride;
     int ostride;
     int iter;
-    int J;
+    int j;
     int aLL;
     int aLH;
     int aHL;
@@ -3109,11 +3109,11 @@ void imodwt2(wt2_set* wt, double* wavecoeff, double* oup)
 
     rows = wt->rows;
     cols = wt->cols;
-    J = wt->J;
+    j = wt->J;
 
-    M = (int)std::pow(2.0, (double)J - 1.0);
+    m = (int)std::pow(2.0, (double)j - 1.0);
     // N = rows > cols ? rows : cols;
-    lf = (wt->wave->lpr_len() + wt->wave->hpr_len()) / 2;
+    lf = (wt->wave->lprLen() + wt->wave->hprLen()) / 2;
 
     auto filt = makeZeros<double>(2 * lf);
     s = std::sqrt(2.0);
@@ -3126,9 +3126,9 @@ void imodwt2(wt2_set* wt, double* wavecoeff, double* oup)
     auto cH = makeZeros<double>(rows * cols);
     aLL = wt->coeffaccess[0];
     orig = wavecoeff + aLL;
-    for (iter = 0; iter < J; ++iter) {
+    for (iter = 0; iter < j; ++iter) {
         if (iter > 0) {
-            M = M / 2;
+            m = m / 2;
         }
         ir = wt->dimensions[2 * iter];
         ic = wt->dimensions[2 * iter + 1];
@@ -3138,37 +3138,37 @@ void imodwt2(wt2_set* wt, double* wavecoeff, double* oup)
         aHL = wt->coeffaccess[iter * 3 + 2];
         aHH = wt->coeffaccess[iter * 3 + 3];
         for (auto i = 0; i < ic; ++i) {
-            imodwt_per_stride(M, orig + i, ir, wavecoeff + aLH + i, filt.get(), lf, cL.get() + i, istride, ostride);
-            imodwt_per_stride(M, wavecoeff + aHL + i, ir, wavecoeff + aHH + i, filt.get(), lf, cH.get() + i, istride, ostride);
+            imodwtPerStride(m, orig + i, ir, wavecoeff + aLH + i, filt.get(), lf, cL.get() + i, istride, ostride);
+            imodwtPerStride(m, wavecoeff + aHL + i, ir, wavecoeff + aHH + i, filt.get(), lf, cH.get() + i, istride, ostride);
         }
 
         istride = 1;
         ostride = 1;
 
         for (auto i = 0; i < ir; ++i) {
-            imodwt_per_stride(M, cL.get() + i * ic, ic, cH.get() + i * ic, filt.get(), lf, oup + i * ic, istride, ostride);
+            imodwtPerStride(m, cL.get() + i * ic, ic, cH.get() + i * ic, filt.get(), lf, oup + i * ic, istride, ostride);
         }
 
         orig = oup;
     }
 }
 
-auto getWT2Coeffs(wt2_set* wt, double* wcoeffs, int level, char const* type, int* rows, int* cols) -> double*
+auto getWT2Coeffs(Wt2Set* wt, double* wcoeffs, int level, char const* type, int* rows, int* cols) -> double*
 {
-    int J;
+    int j;
     int iter;
     int t;
     double* ptr;
-    J = wt->J;
+    j = wt->J;
     // Error Check
 
-    if (level > J || level < 1) {
-        printf("Error : The data is decomposed into %d levels so the acceptable values of level are between 1 and %d", J, J);
+    if (level > j || level < 1) {
+        printf("Error : The data is decomposed into %d levels so the acceptable values of level are between 1 and %d", j, j);
         exit(-1);
     }
 
-    if ((strcmp(type, "A") == 0) && level != J) {
-        printf("Approximation Coefficients are only available for level %d", J);
+    if ((strcmp(type, "A") == 0) && level != j) {
+        printf("Approximation Coefficients are only available for level %d", j);
         exit(-1);
     }
 
@@ -3189,94 +3189,94 @@ auto getWT2Coeffs(wt2_set* wt, double* wcoeffs, int level, char const* type, int
         exit(-1);
     }
 
-    iter += (J - level) * 3;
+    iter += (j - level) * 3;
 
     ptr = wcoeffs + wt->coeffaccess[iter];
-    *rows = wt->dimensions[2 * (J - level)];
-    *cols = wt->dimensions[2 * (J - level) + 1];
+    *rows = wt->dimensions[2 * (j - level)];
+    *cols = wt->dimensions[2 * (j - level) + 1];
 
     return ptr;
 }
 
-void dispWT2Coeffs(double* A, int row, int col)
+void dispWT2Coeffs(double* a, int row, int col)
 {
     printf("\n MATRIX Order : %d X %d \n \n", row, col);
 
     for (auto i = 0; i < row; i++) {
         printf("R%d: ", i);
         for (auto j = 0; j < col; j++) {
-            printf("%g ", A[i * col + j]);
+            printf("%g ", a[i * col + j]);
         }
         printf(":R%d \n", i);
     }
 }
 
-void wave_summary(wavelet const& obj)
+void waveSummary(Wavelet const& obj)
 {
-    auto const N = obj.size();
+    auto const n = obj.size();
     printf("\n");
     printf("Wavelet Name: %s \n", obj.name().c_str());
     printf("\n");
     printf("Wavelet Filters \n");
     printf("lpd: [");
-    for (auto i = 0; i < N - 1; ++i) {
+    for (auto i = 0; i < n - 1; ++i) {
         printf("%g,", obj.lpd()[i]);
     }
-    printf("%g", obj.lpd()[N - 1]);
+    printf("%g", obj.lpd()[n - 1]);
     printf("] \n");
     printf("hpd: [");
-    for (auto i = 0; i < N - 1; ++i) {
+    for (auto i = 0; i < n - 1; ++i) {
         printf("%g,", obj.hpd()[i]);
     }
-    printf("%g", obj.hpd()[N - 1]);
+    printf("%g", obj.hpd()[n - 1]);
     printf("] \n");
     printf("lpr: [");
-    for (auto i = 0; i < N - 1; ++i) {
+    for (auto i = 0; i < n - 1; ++i) {
         printf("%g,", obj.lpr()[i]);
     }
-    printf("%g", obj.lpr()[N - 1]);
+    printf("%g", obj.lpr()[n - 1]);
     printf("] \n");
     printf("hpr: [");
-    for (auto i = 0; i < N - 1; ++i) {
+    for (auto i = 0; i < n - 1; ++i) {
         printf("%g,", obj.hpr()[i]);
     }
-    printf("%g", obj.hpr()[N - 1]);
+    printf("%g", obj.hpr()[n - 1]);
     printf("] \n");
 }
 
-void wt_summary(wavelet_transform* wt)
+void wtSummary(WaveletTransform* wt)
 {
-    int J;
+    int j;
     int t;
-    J = wt->levels();
-    wave_summary(wt->wave());
+    j = wt->levels();
+    waveSummary(wt->wave());
     printf("\n");
     printf("Wavelet Transform : %s \n", wt->method().c_str());
     printf("Signal Extension : %s \n", toString(wt->extension()).c_str());
-    printf("Convolutional Method : %s \n", toString(wt->conv_method()).c_str());
+    printf("Convolutional Method : %s \n", toString(wt->convMethod()).c_str());
     printf("Number of Decomposition Levels %d \n", wt->levels());
     printf("Length of Input Signal %d \n", wt->siglength);
     printf("Length of WT Output Vector %d \n", wt->outlength);
     printf("Wavelet Coefficients are contained in vector : %s \n", "output");
     printf("Approximation Coefficients \n");
-    printf("Level %d Access : output[%d] Length : %d \n", J, 0, wt->length[0]);
+    printf("Level %d Access : output[%d] Length : %d \n", j, 0, wt->length[0]);
     printf("Detail Coefficients \n");
     t = wt->length[0];
-    for (auto i = 0; i < J; ++i) {
-        printf("Level %d Access : output[%d] Length : %d \n", J - i, t, wt->length[i + 1]);
+    for (auto i = 0; i < j; ++i) {
+        printf("Level %d Access : output[%d] Length : %d \n", j - i, t, wt->length[i + 1]);
         t += wt->length[i + 1];
     }
     printf("\n");
 }
 
-void wtree_summary(wtree_set* wt)
+void wtreeSummary(WtreeSet* wt)
 {
     int k;
     int p2;
-    int J;
+    int j;
     int t;
-    J = wt->J;
-    wave_summary(*wt->wave);
+    j = wt->J;
+    waveSummary(*wt->wave);
     printf("\n");
     printf("Wavelet Transform : %s \n", wt->method.c_str());
     printf("\n");
@@ -3293,9 +3293,9 @@ void wtree_summary(wtree_set* wt)
     printf("Coefficients Access \n");
     t = 0;
     p2 = 2;
-    for (auto i = 0; i < J; ++i) {
+    for (auto i = 0; i < j; ++i) {
         for (k = 0; k < p2; ++k) {
-            printf("Node %d %d Access : output[%d] Length : %d \n", i + 1, k, wt->nodelength[t], wt->length[J - i]);
+            printf("Node %d %d Access : output[%d] Length : %d \n", i + 1, k, wt->nodelength[t], wt->length[j - i]);
             t++;
         }
         p2 *= 2;
@@ -3303,15 +3303,15 @@ void wtree_summary(wtree_set* wt)
     printf("\n");
 }
 
-void wpt_summary(wpt_set* wt)
+void wptSummary(WptSet* wt)
 {
     int k;
     int p2;
-    int J;
+    int j;
     int it1;
     int it2;
-    J = wt->J;
-    wave_summary(*wt->wave);
+    j = wt->J;
+    waveSummary(*wt->wave);
     printf("\n");
     printf("Signal Extension : %s \n", wt->ext.c_str());
     printf("\n");
@@ -3330,16 +3330,16 @@ void wpt_summary(wpt_set* wt)
     printf("Coefficients Access \n");
     it1 = 1;
     it2 = 0;
-    for (auto i = 0; i < J; ++i) {
+    for (auto i = 0; i < j; ++i) {
         it1 += ipow2(i + 1);
     }
-    for (auto i = J; i > 0; --i) {
+    for (auto i = j; i > 0; --i) {
         p2 = ipow2(i);
         it1 -= p2;
         for (k = 0; k < p2; ++k) {
             if (wt->basisvector[it1 + k] == 1) {
-                printf("Node %d %d Access : output[%d] Length : %d \n", i, k, it2, wt->length[J - i + 1]);
-                it2 += wt->length[J - i + 1];
+                printf("Node %d %d Access : output[%d] Length : %d \n", i, k, it2, wt->length[j - i + 1]);
+                it2 += wt->length[j - i + 1];
             }
         }
     }
@@ -3347,7 +3347,7 @@ void wpt_summary(wpt_set* wt)
     printf("\n");
 }
 
-void cwt_summary(cwavelet_transform* wt)
+void cwtSummary(CwaveletTransform* wt)
 {
 
     printf("\n");
@@ -3371,15 +3371,15 @@ void cwt_summary(cwavelet_transform* wt)
     printf("\n");
 }
 
-void wt2_summary(wt2_set* wt)
+void wt2Summary(Wt2Set* wt)
 {
-    int J;
+    int j;
     int t;
     int rows;
     int cols;
     int vsize;
-    J = wt->J;
-    wave_summary(*wt->wave);
+    j = wt->J;
+    waveSummary(*wt->wave);
     printf("\n");
     printf("Wavelet Transform : %s \n", wt->method.c_str());
     printf("\n");
@@ -3394,15 +3394,15 @@ void wt2_summary(wt2_set* wt)
     printf("Length of Wavelet Coefficients Vector %d \n", wt->outlength);
     printf("\n");
     t = 0;
-    for (auto i = J; i > 0; --i) {
-        rows = wt->dimensions[2 * (J - i)];
-        cols = wt->dimensions[2 * (J - i) + 1];
+    for (auto i = j; i > 0; --i) {
+        rows = wt->dimensions[2 * (j - i)];
+        cols = wt->dimensions[2 * (j - i) + 1];
         vsize = rows * cols;
         printf("Level %d Decomposition Rows :%d Columns:%d Vector Size (Rows*Cols):%d \n", i, rows, cols, vsize);
-        printf("Access Row values stored at wt->dimensions[%d]\n", 2 * (J - i));
-        printf("Access Column values stored at wt->dimensions[%d]\n\n", 2 * (J - i) + 1);
+        printf("Access Row values stored at wt->dimensions[%d]\n", 2 * (j - i));
+        printf("Access Column values stored at wt->dimensions[%d]\n\n", 2 * (j - i) + 1);
 
-        if (i == J) {
+        if (i == j) {
             printf("Approximation Coefficients access at wt->coeffaccess[%d]=%d, Vector size:%d \n", t, wt->coeffaccess[t], vsize);
         }
 
@@ -3415,22 +3415,22 @@ void wt2_summary(wt2_set* wt)
     }
 }
 
-void wtree_free(wtree_set* object)
+void wtreeFree(WtreeSet* object)
 {
     delete object;
 }
 
-void wpt_free(wpt_set* object)
+void wptFree(WptSet* object)
 {
     delete object;
 }
 
-void cwt_free(cwavelet_transform* object)
+void cwtFree(CwaveletTransform* object)
 {
     delete object;
 }
 
-void wt2_free(wt2_set* wt)
+void wt2Free(Wt2Set* wt)
 {
     delete wt;
 }

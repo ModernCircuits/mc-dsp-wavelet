@@ -12,12 +12,12 @@
 auto main() -> int
 {
     auto const input = readFileToVector("testData/signal.txt");
-    auto const N = 256;
+    auto const n = 256;
 
-    auto obj = wavelet { "db4" };
-    auto wt = wavelet_transform(obj, "dwt", N, 3);
-    wt.extension(signal_extension::symmetric);
-    wt.conv_method(convolution_method::direct);
+    auto obj = Wavelet { "db4" };
+    auto wt = WaveletTransform(obj, "dwt", n, 3);
+    wt.extension(SignalExtension::symmetric);
+    wt.convMethod(ConvolutionMethod::direct);
 
     // DWT output can be accessed using wt.output vector.
     // Use wt_summary to find out how to extract appx and detail coefficients
@@ -27,10 +27,10 @@ auto main() -> int
         printf("%g ", wt.output()[i]);
     }
 
-    auto out = std::make_unique<double[]>(N);
+    auto out = std::make_unique<double[]>(n);
     idwt(&wt, out.get());
 
-    auto diff = std::make_unique<double[]>(N);
+    auto diff = std::make_unique<double[]>(n);
     for (auto i = 0; i < wt.siglength; ++i) {
         diff[i] = out[i] - input[i];
     }
@@ -39,7 +39,7 @@ auto main() -> int
     printf("\n MAX %g \n", absmax(diff.get(), wt.siglength));
 
     // Prints the full summary.
-    wt_summary(&wt);
+    wtSummary(&wt);
 
     return 0;
 }

@@ -2,10 +2,10 @@
 
 #include <memory>
 
-void meyer(int N, double lb, double ub, double* phi, double* psi, double* tgrid)
+void meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
 {
-    auto const M = divideby(N, 2);
-    if (M == 0) {
+    auto const m = divideby(n, 2);
+    if (m == 0) {
         printf("Size of Wavelet must be a power of 2");
         exit(1);
     }
@@ -14,25 +14,25 @@ void meyer(int N, double lb, double ub, double* phi, double* psi, double* tgrid)
         exit(1);
     }
 
-    auto obj = fft_init(N, -1);
-    auto w = std::make_unique<double[]>(N);
-    auto phiw = std::make_unique<fft_data[]>(N);
-    auto psiw = std::make_unique<fft_data[]>(N);
-    auto oup = std::make_unique<fft_data[]>(N);
+    auto obj = fftInit(n, -1);
+    auto w = std::make_unique<double[]>(n);
+    auto phiw = std::make_unique<FftData[]>(n);
+    auto psiw = std::make_unique<FftData[]>(n);
+    auto oup = std::make_unique<FftData[]>(n);
 
     auto const delta = 2 * (ub - lb) / PI2;
 
-    auto j = (double)N;
+    auto j = (double)n;
     j *= -1.0;
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         w[i] = j / delta;
         j += 2.0;
         psiw[i].re = psiw[i].im = 0.0;
         phiw[i].re = phiw[i].im = 0.0;
     }
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         auto const wf = fabs(w[i]);
         if (wf <= PI2 / 3.0) {
             phiw[i].re = 1.0;
@@ -65,20 +65,20 @@ void meyer(int N, double lb, double ub, double* phi, double* psi, double* tgrid)
         }
     }
 
-    nsfft_exec(obj.get(), phiw.get(), oup.get(), lb, ub, tgrid);
+    nsfftExec(obj.get(), phiw.get(), oup.get(), lb, ub, tgrid);
 
-    for (auto i = 0; i < N; ++i) {
-        phi[i] = oup[i].re / N;
+    for (auto i = 0; i < n; ++i) {
+        phi[i] = oup[i].re / n;
     }
 
-    nsfft_exec(obj.get(), psiw.get(), oup.get(), lb, ub, tgrid);
+    nsfftExec(obj.get(), psiw.get(), oup.get(), lb, ub, tgrid);
 
-    for (auto i = 0; i < N; ++i) {
-        psi[i] = oup[i].re / N;
+    for (auto i = 0; i < n; ++i) {
+        psi[i] = oup[i].re / n;
     }
 }
 
-void gauss(int N, int p, double lb, double ub, double* psi, double* t)
+void gauss(int n, int p, double lb, double ub, double* psi, double* t)
 {
     double delta;
     double num;
@@ -93,13 +93,13 @@ void gauss(int N, int p, double lb, double ub, double* psi, double* t)
     }
 
     t[0] = lb;
-    t[N - 1] = ub;
-    delta = (ub - lb) / (N - 1);
-    for (i = 1; i < N - 1; ++i) {
+    t[n - 1] = ub;
+    delta = (ub - lb) / (n - 1);
+    for (i = 1; i < n - 1; ++i) {
         t[i] = lb + delta * i;
     }
 
-    den = std::sqrt(cwt_gamma(p + 0.5));
+    den = std::sqrt(cwtGamma(p + 0.5));
 
     if ((p + 1) % 2 == 0) {
         num = 1.0;
@@ -112,53 +112,53 @@ void gauss(int N, int p, double lb, double ub, double* psi, double* t)
     //printf("\n%g\n",num);
 
     if (p == 1) {
-        for (i = 0; i < N; ++i) {
+        for (i = 0; i < n; ++i) {
             psi[i] = -t[i] * std::exp(-t[i] * t[i] / 2.0) * num;
         }
     } else if (p == 2) {
-        for (i = 0; i < N; ++i) {
+        for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
             psi[i] = (-1.0 + t2) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 3) {
-        for (i = 0; i < N; ++i) {
+        for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
             psi[i] = t[i] * (3.0 - t2) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 4) {
-        for (i = 0; i < N; ++i) {
+        for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
             psi[i] = (t2 * t2 - 6.0 * t2 + 3.0) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 5) {
-        for (i = 0; i < N; ++i) {
+        for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
             psi[i] = t[i] * (-t2 * t2 + 10.0 * t2 - 15.0) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 6) {
-        for (i = 0; i < N; ++i) {
+        for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
             psi[i] = (t2 * t2 * t2 - 15.0 * t2 * t2 + 45.0 * t2 - 15.0) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 7) {
-        for (i = 0; i < N; ++i) {
+        for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
             psi[i] = t[i] * (-t2 * t2 * t2 + 21.0 * t2 * t2 - 105.0 * t2 + 105.0) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 8) {
-        for (i = 0; i < N; ++i) {
+        for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
             t4 = t2 * t2;
             psi[i] = (t4 * t4 - 28.0 * t4 * t2 + 210.0 * t4 - 420.0 * t2 + 105.0) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 9) {
-        for (i = 0; i < N; ++i) {
+        for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
             t4 = t2 * t2;
             psi[i] = t[i] * (-t4 * t4 + 36.0 * t4 * t2 - 378.0 * t4 + 1260.0 * t2 - 945.0) * std::exp(-t2 / 2.0) * num;
         }
     } else if (p == 10) {
-        for (i = 0; i < N; ++i) {
+        for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
             t4 = t2 * t2;
             psi[i] = (t4 * t4 * t2 - 45.0 * t4 * t4 + 630.0 * t4 * t2 - 3150.0 * t4 + 4725.0 * t2 - 945.0) * std::exp(-t2 / 2.0) * num;
@@ -169,12 +169,12 @@ void gauss(int N, int p, double lb, double ub, double* psi, double* t)
     }
 }
 
-void mexhat(int N, double lb, double ub, double* psi, double* t)
+void mexhat(int n, double lb, double ub, double* psi, double* t)
 {
-    gauss(N, 2, lb, ub, psi, t);
+    gauss(n, 2, lb, ub, psi, t);
 }
 
-void morlet(int N, double lb, double ub, double* psi, double* t)
+void morlet(int n, double lb, double ub, double* psi, double* t)
 {
     int i;
     double delta;
@@ -185,13 +185,13 @@ void morlet(int N, double lb, double ub, double* psi, double* t)
     }
 
     t[0] = lb;
-    t[N - 1] = ub;
-    delta = (ub - lb) / (N - 1);
-    for (i = 1; i < N - 1; ++i) {
+    t[n - 1] = ub;
+    delta = (ub - lb) / (n - 1);
+    for (i = 1; i < n - 1; ++i) {
         t[i] = lb + delta * i;
     }
 
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         psi[i] = std::exp(-t[i] * t[i] / 2.0) * cos(5 * t[i]);
     }
 }

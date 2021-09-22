@@ -9,23 +9,23 @@
 
 auto main() -> int
 {
-    auto obj = wavelet { "db2" };
+    auto obj = Wavelet { "db2" };
 
     auto rows = 32;
     auto cols = 30;
-    auto N = rows * cols;
+    auto n = rows * cols;
 
-    auto inp = makeZeros<double>(N);
-    auto oup = makeZeros<double>(N);
-    auto diff = makeZeros<double>(N);
+    auto inp = makeZeros<double>(n);
+    auto oup = makeZeros<double>(n);
+    auto diff = makeZeros<double>(n);
 
-    auto const J = 3;
+    auto const j = 3;
 
-    wt2_set* wt = wt2_init(obj, "dwt", rows, cols, J);
+    Wt2Set* wt = wt2Init(obj, "dwt", rows, cols, j);
 
     for (auto i = 0; i < rows; ++i) {
         for (auto k = 0; k < cols; ++k) {
-            inp[i * cols + k] = generate_rnd();
+            inp[i * cols + k] = generateRnd();
             oup[i * cols + k] = 0.0;
         }
     }
@@ -44,10 +44,10 @@ auto main() -> int
         diff[i] = oup[i] - inp[i];
     }
 
-    wt2_summary(wt);
+    wt2Summary(wt);
     std::printf("Abs Max %g \n", absmax(diff.get(), rows * cols));
 
-    wt2_free(wt);
+    wt2Free(wt);
 
     return EXIT_SUCCESS;
 }

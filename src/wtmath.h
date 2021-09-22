@@ -5,46 +5,46 @@
 
 #include "wavefilt.h"
 
-void dwt_per_stride(double const* inp, int N, double const* lpd, double const* hpd, int lpd_len,
-    double* cA, int len_cA, double* cD, int istride, int ostride);
+void dwtPerStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen,
+    double* cA, int lenCA, double* cD, int istride, int ostride);
 
-void dwt_sym_stride(double const* inp, int N, double const* lpd, double const* hpd, int lpd_len,
-    double* cA, int len_cA, double* cD, int istride, int ostride);
+void dwtSymStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen,
+    double* cA, int lenCA, double* cD, int istride, int ostride);
 
-void modwt_per_stride(int M, double const* inp, int N, double const* filt, int lpd_len,
-    double* cA, int len_cA, double* cD, int istride, int ostride);
+void modwtPerStride(int m, double const* inp, int n, double const* filt, int lpdLen,
+    double* cA, int lenCA, double* cD, int istride, int ostride);
 
-void swt_per_stride(int M, double const* inp, int N, double const* lpd, double const* hpd, int lpd_len,
-    double* cA, int len_cA, double* cD, int istride, int ostride);
+void swtPerStride(int m, double const* inp, int n, double const* lpd, double const* hpd, int lpdLen,
+    double* cA, int lenCA, double* cD, int istride, int ostride);
 
-void idwt_per_stride(double const* cA, int len_cA, double const* cD, double const* lpr, double const* hpr,
-    int lpr_len, double* X, int istride, int ostride);
+void idwtPerStride(double const* cA, int lenCA, double const* cD, double const* lpr, double const* hpr,
+    int lprLen, double* x, int istride, int ostride);
 
-void idwt_sym_stride(double const* cA, int len_cA, double const* cD, double const* lpr, double const* hpr,
-    int lpr_len, double* X, int istride, int ostride);
+void idwtSymStride(double const* cA, int lenCA, double const* cD, double const* lpr, double const* hpr,
+    int lprLen, double* x, int istride, int ostride);
 
-void imodwt_per_stride(int M, double const* cA, int len_cA, double const* cD, double const* filt,
-    int lf, double* X, int istride, int ostride);
+void imodwtPerStride(int m, double const* cA, int lenCA, double const* cD, double const* filt,
+    int lf, double* x, int istride, int ostride);
 
-void idwt2_shift(int shift, int rows, int cols, double const* lpr, double const* hpr, int lf,
-    double* A, double* H, double* V, double* D, double* oup);
+void idwt2Shift(int shift, int rows, int cols, double const* lpr, double const* hpr, int lf,
+    double* a, double* h, double* v, double* d, double* oup);
 
-auto upsamp(double const* x, int lenx, int M, double* y) -> int;
+auto upsamp(double const* x, int lenx, int m, double* y) -> int;
 
-auto upsamp2(double const* x, int lenx, int M, double* y) -> int;
+auto upsamp2(double const* x, int lenx, int m, double* y) -> int;
 
-auto downsamp(double const* x, int lenx, int M, double* y) -> int;
+auto downsamp(double const* x, int lenx, int m, double* y) -> int;
 
-auto per_ext(double const* sig, int len, int a, double* oup) -> int;
+auto perExt(double const* sig, int len, int a, double* oup) -> int;
 
-auto symm_ext(double const* sig, int len, int a, double* oup) -> int;
+auto symmExt(double const* sig, int len, int a, double* oup) -> int;
 
-void circshift(double* array, int N, int L);
+void circshift(double* array, int n, int l);
 
-auto testSWTlength(int N, int J) -> int;
+auto testSWTlength(int n, int j) -> int;
 
-auto wmaxiter(int sig_len, int filt_len) -> int;
+auto wmaxiter(int sigLen, int filtLen) -> int;
 
-auto costfunc(double* x, int N, char const* entropy, double p) -> double;
+auto costfunc(double* x, int n, char const* entropy, double p) -> double;
 
 #endif /* WAVELIB_H_ */

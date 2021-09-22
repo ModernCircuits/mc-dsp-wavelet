@@ -7,7 +7,7 @@
 
 #include <string>
 
-struct denoise_set {
+struct DenoiseSet {
     int N; //signal length
     int J; // Levels of Wavelet decomposition
     std::string wname; //Wavelet name
@@ -20,26 +20,26 @@ struct denoise_set {
     std::string dmethod; //Denoising Method -sureshrink or visushrink
 };
 
-auto denoise_init(int length, int J, char const* wname) -> denoise_set*;
+auto denoiseInit(int length, int j, char const* wname) -> DenoiseSet*;
 
-void visushrink(double* signal, int N, int J, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised);
+void visushrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised);
 
-void sureshrink(double* signal, int N, int J, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised);
+void sureshrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised);
 
-void modwtshrink(double* signal, int N, int J, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised);
+void modwtshrink(double* signal, int n, int j, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised);
 
-void denoise(denoise_set* obj, double* signal, double* denoised);
+void denoise(DenoiseSet* obj, double* signal, double* denoised);
 
-void setDenoiseMethod(denoise_set* obj, char const* dmethod);
+void setDenoiseMethod(DenoiseSet* obj, char const* dmethod);
 
-void setDenoiseWTMethod(denoise_set* obj, char const* wmethod);
+void setDenoiseWTMethod(DenoiseSet* obj, char const* wmethod);
 
-void setDenoiseWTExtension(denoise_set* obj, char const* extension);
+void setDenoiseWTExtension(DenoiseSet* obj, char const* extension);
 
-void setDenoiseParameters(denoise_set* obj, char const* thresh, char const* level);
+void setDenoiseParameters(DenoiseSet* obj, char const* thresh, char const* level);
 
-void denoise_free(denoise_set* object);
+void denoiseFree(DenoiseSet* object);
 
-auto mad(double* x, int N) -> double;
+auto mad(double* x, int n) -> double;
 
 #endif /* WAUXLIB_H_ */

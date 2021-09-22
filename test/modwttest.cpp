@@ -11,18 +11,18 @@
 
 auto main() -> int
 {
-    auto obj = wavelet { "db4" };
-    wave_summary(obj);
+    auto obj = Wavelet { "db4" };
+    waveSummary(obj);
 
-    auto N = 177;
-    auto J = 2;
+    auto n = 177;
+    auto j = 2;
 
     auto inp = readFileToVector("testData/signal.txt");
-    auto out = std::make_unique<double[]>(N);
-    auto diff = std::make_unique<double[]>(N);
+    auto out = std::make_unique<double[]>(n);
+    auto diff = std::make_unique<double[]>(n);
 
     // Initialize the wavelet transform object
-    auto wt = wavelet_transform(obj, "modwt", N, J);
+    auto wt = WaveletTransform(obj, "modwt", n, j);
 
     // MODWT output can be accessed using wt.output vector.
     // Use wt_summary to find out how to extract appx and detail coefficients
@@ -41,7 +41,7 @@ auto main() -> int
     // If Reconstruction succeeded then the output should be a small value.
     printf("\n MAX %g \n", absmax(diff.get(), wt.siglength));
 
-    wt_summary(&wt); // Prints the full summary.
+    wtSummary(&wt); // Prints the full summary.
 
     return 0;
 }

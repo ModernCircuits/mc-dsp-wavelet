@@ -10,22 +10,22 @@
 #include <iostream>
 #include <vector>
 
-void SWTReconstructionTest()
+void swtReconstructionTest()
 {
 
     int i;
     double epsilon = 1e-15;
     double err;
 
-    auto const N = 4000;
+    auto const n = 4000;
 
     // N = 256;
 
-    auto inp = makeZeros<double>(N);
-    auto out = makeZeros<double>(N);
+    auto inp = makeZeros<double>(n);
+    auto out = makeZeros<double>(n);
     // wmean = mean(temp, N);
 
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         inp[i] = (rand() / (double)(RAND_MAX));
     }
     std::vector<std::string> waveletNames;
@@ -72,24 +72,24 @@ void SWTReconstructionTest()
     waveletNames.emplace_back("rbior5.5");
     waveletNames.emplace_back("rbior6.8");
 
-    for (unsigned int direct_fft = 0; direct_fft < 2; direct_fft++) {
-        for (unsigned int sym_per = 0; sym_per < 1; sym_per++) {
+    for (unsigned int directFft = 0; directFft < 2; directFft++) {
+        for (unsigned int symPer = 0; symPer < 1; symPer++) {
             for (auto& name : waveletNames) {
-                auto obj = wavelet { name.c_str() };
-                for (auto J = 1; J < 3; J++) {
-                    auto wt = wavelet_transform(obj, "swt", N, J);
+                auto obj = Wavelet { name.c_str() };
+                for (auto j = 1; j < 3; j++) {
+                    auto wt = WaveletTransform(obj, "swt", n, j);
 
-                    if (direct_fft == 0) {
-                        wt.conv_method(convolution_method::direct);
+                    if (directFft == 0) {
+                        wt.convMethod(ConvolutionMethod::direct);
                     } else {
-                        wt.conv_method(convolution_method::fft);
+                        wt.convMethod(ConvolutionMethod::fft);
                     }
 
-                    if (sym_per == 0) {
-                        wt.extension(signal_extension::periodic); // Options are "per" and "sym".
+                    if (symPer == 0) {
+                        wt.extension(SignalExtension::periodic); // Options are "per" and "sym".
                         // Symmetric is the default option
-                    } else if (sym_per == 1 && direct_fft == 1) {
-                        wt.extension(signal_extension::symmetric);
+                    } else if (symPer == 1 && directFft == 1) {
+                        wt.extension(SignalExtension::symmetric);
                     } else {
                         break;
                     }
@@ -99,7 +99,7 @@ void SWTReconstructionTest()
                     iswt(&wt, out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
-                    if (direct_fft == 0) {
+                    if (directFft == 0) {
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
@@ -108,7 +108,7 @@ void SWTReconstructionTest()
                     // If Reconstruction succeeded then the output should be a small value.
 
                     // printf("%g ",RMS_Error(out, inp, wt.siglength));
-                    err = RMS_Error(out.get(), inp.get(), wt.siglength);
+                    err = rmsError(out.get(), inp.get(), wt.siglength);
                     // printf("%d %d %g \n",direct_fft,sym_per,err);
                     if (err > epsilon) {
                         printf(
@@ -121,9 +121,9 @@ void SWTReconstructionTest()
     }
 }
 
-void SWT2ReconstructionTest()
+void swT2ReconstructionTest()
 {
-    wt2_set* wt;
+    Wt2Set* wt;
     // int i;
     // int k;
     // int J;
@@ -131,10 +131,10 @@ void SWT2ReconstructionTest()
     auto const rows = 512;
     auto const cols = 500;
 
-    auto const N = rows * cols;
+    auto const n = rows * cols;
 
-    auto inp = makeZeros<double>(N);
-    auto out = makeZeros<double>(N);
+    auto inp = makeZeros<double>(n);
+    auto out = makeZeros<double>(n);
 
     std::vector<std::string> waveletNames;
 
@@ -183,19 +183,19 @@ void SWT2ReconstructionTest()
     for (auto i = 0; i < rows; ++i) {
         for (auto k = 0; k < cols; ++k) {
             // inp[i*cols + k] = i*cols + k;
-            inp[i * cols + k] = generate_rnd();
+            inp[i * cols + k] = generateRnd();
             out[i * cols + k] = 0.0;
         }
     }
 
-    for (unsigned int direct_fft = 0; direct_fft < 1; direct_fft++) {
-        for (unsigned int sym_per = 0; sym_per < 1; sym_per++) {
+    for (unsigned int directFft = 0; directFft < 1; directFft++) {
+        for (unsigned int symPer = 0; symPer < 1; symPer++) {
             for (auto& name : waveletNames) {
-                auto obj = wavelet { name.c_str() };
-                for (auto J = 1; J < 3; J++) {
-                    wt = wt2_init(obj, "swt", rows, cols,
-                        J); // Initialize the wavelet transform object
-                    if (sym_per == 0) {
+                auto obj = Wavelet { name.c_str() };
+                for (auto j = 1; j < 3; j++) {
+                    wt = wt2Init(obj, "swt", rows, cols,
+                        j); // Initialize the wavelet transform object
+                    if (symPer == 0) {
                         setDWT2Extension(wt, "per"); // Options are "per"
                     }
 
@@ -205,7 +205,7 @@ void SWT2ReconstructionTest()
                     // Test Reconstruction
 
                     double epsilon { 0.0 };
-                    if (direct_fft == 0) {
+                    if (directFft == 0) {
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
@@ -214,12 +214,12 @@ void SWT2ReconstructionTest()
                     // If Reconstruction succeeded then the output should be a small value.
 
                     // printf("%g ",RMS_Error(out, inp, wt.siglength));
-                    if (RMS_Error(out.get(), inp.get(), N) > epsilon) {
+                    if (rmsError(out.get(), inp.get(), n) > epsilon) {
                         printf(
                             "\n ERROR : SWT2 Reconstruction Unit Test Failed. Exiting. \n");
                         exit(-1);
                     }
-                    wt2_free(wt);
+                    wt2Free(wt);
                 }
             }
         }
@@ -229,10 +229,10 @@ void SWT2ReconstructionTest()
 auto main() -> int
 {
     printf("Running SWT ReconstructionTests ... ");
-    SWTReconstructionTest();
+    swtReconstructionTest();
     printf("DONE \n");
     printf("Running SWT2 ReconstructionTests ... ");
-    SWT2ReconstructionTest();
+    swT2ReconstructionTest();
     printf("DONE \n");
     return 0;
 }

@@ -11,22 +11,22 @@
 
 auto main() -> int
 {
-    auto obj = wavelet { "bior3.1" };
+    auto obj = Wavelet { "bior3.1" };
 
     auto const rows = 64;
     auto const cols = 48;
-    auto const N = rows * cols;
+    auto const n = rows * cols;
 
-    auto inp = makeZeros<double>(N);
-    auto oup = makeZeros<double>(N);
-    auto diff = makeZeros<double>(N);
-    auto const J = 2;
+    auto inp = makeZeros<double>(n);
+    auto oup = makeZeros<double>(n);
+    auto diff = makeZeros<double>(n);
+    auto const j = 2;
 
-    wt2_set* wt = wt2_init(obj, "swt", rows, cols, J);
+    Wt2Set* wt = wt2Init(obj, "swt", rows, cols, j);
 
     for (auto i = 0; i < rows; ++i) {
         for (auto k = 0; k < cols; ++k) {
-            inp[i * cols + k] = generate_rnd();
+            inp[i * cols + k] = generateRnd();
             oup[i * cols + k] = 0.0;
         }
     }
@@ -35,20 +35,20 @@ auto main() -> int
 
     int ir { 0 };
     int ic { 0 };
-    auto* cLL = getWT2Coeffs(wt, wavecoeffs.get(), J, "A", &ir, &ic);
+    auto* cLL = getWT2Coeffs(wt, wavecoeffs.get(), j, "A", &ir, &ic);
 
     dispWT2Coeffs(cLL, ir, ic);
 
     iswt2(wt, wavecoeffs.get(), oup.get());
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         diff[i] = oup[i] - inp[i];
     }
 
-    wt2_summary(wt);
-    std::printf("Abs Max %g \n", absmax(diff.get(), N));
+    wt2Summary(wt);
+    std::printf("Abs Max %g \n", absmax(diff.get(), n));
 
-    wt2_free(wt);
+    wt2Free(wt);
 
     return 0;
 }

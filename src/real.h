@@ -10,7 +10,7 @@
 
 #include "hsfft.h"
 
-void fft_r2c_exec(fft_real_set* obj, fft_type const* inp, fft_data* oup);
-void fft_c2r_exec(fft_real_set* obj, fft_data* inp, fft_type* oup);
+void fftR2cExec(FftRealSet* obj, fft_type const* inp, FftData* oup);
+void fftC2rExec(FftRealSet* obj, FftData* inp, fft_type* oup);
 
 #endif /* REAL_H_ */

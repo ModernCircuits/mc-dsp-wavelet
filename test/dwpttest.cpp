@@ -10,19 +10,19 @@
 
 auto main() -> int
 {
-    auto obj = wavelet { "db4" };
-    auto const N = 788 + 23;
-    auto const J = 4;
+    auto obj = Wavelet { "db4" };
+    auto const n = 788 + 23;
+    auto const j = 4;
 
-    auto inp = std::make_unique<double[]>(N);
-    auto oup = std::make_unique<double[]>(N);
-    auto diff = std::make_unique<double[]>(N);
+    auto inp = std::make_unique<double[]>(n);
+    auto oup = std::make_unique<double[]>(n);
+    auto diff = std::make_unique<double[]>(n);
 
-    for (auto i = 1; i < N + 1; ++i) {
+    for (auto i = 1; i < n + 1; ++i) {
         inp[i - 1] = i;
     }
 
-    wpt_set* wt = wpt_init(&obj, N, J);
+    WptSet* wt = wptInit(&obj, n, j);
     setDWPTExtension(wt, "per");
     setDWPTEntropy(wt, "logenergy", 0);
 
@@ -30,15 +30,15 @@ auto main() -> int
 
     idwpt(wt, oup.get());
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         diff[i] = (inp[i] - oup[i]) / inp[i];
     }
 
-    wpt_summary(wt);
+    wptSummary(wt);
 
     // If Reconstruction succeeded then the output should be a small value.
     printf("\n MAX %g \n", absmax(diff.get(), wt->siglength));
 
-    wpt_free(wt);
+    wptFree(wt);
     return 0;
 }

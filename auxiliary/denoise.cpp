@@ -11,13 +11,13 @@
 
 using namespace std::string_view_literals;
 
-auto denoise_init(int length, int J, char const* wname) -> denoise_set*
+auto denoiseInit(int length, int j, char const* wname) -> DenoiseSet*
 {
 
-    auto obj = std::make_unique<denoise_set>();
+    auto obj = std::make_unique<DenoiseSet>();
 
     obj->N = length;
-    obj->J = J;
+    obj->J = j;
 
     obj->wname = wname;
 
@@ -32,27 +32,27 @@ auto denoise_init(int length, int J, char const* wname) -> denoise_set*
     return obj.release();
 }
 
-void visushrink(double* signal, int N, int J, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised)
+void visushrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised)
 {
-    int dwt_len;
+    int dwtLen;
     int sgn;
     int it;
     double sigma;
     double td;
     double tmp;
 
-    auto wave = wavelet { wname };
-    auto filt_len = wave.size();
-    auto MaxIter = (int)(std::log((double)N / ((double)filt_len - 1.0)) / std::log(2.0));
+    auto wave = Wavelet { wname };
+    auto filtLen = wave.size();
+    auto maxIter = (int)(std::log((double)n / ((double)filtLen - 1.0)) / std::log(2.0));
 
-    if (J > MaxIter) {
-        std::printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
+    if (j > maxIter) {
+        std::printf("\n Error - The Signal Can only be iterated %d times using this Wavelet. Exiting\n", maxIter);
         std::exit(-1);
     }
 
-    auto wt = wavelet_transform { wave, method, N, J };
+    auto wt = WaveletTransform { wave, method, n, j };
     if (method == "dwt"sv) {
-        wt.extension(ext == "per"sv ? signal_extension::periodic : signal_extension::symmetric);
+        wt.extension(ext == "per"sv ? SignalExtension::periodic : SignalExtension::symmetric);
         dwt(&wt, signal);
     } else if (method == "swt"sv) {
         swt(&wt, signal);
@@ -61,17 +61,17 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         std::exit(-1);
     }
 
-    auto lnoise = std::make_unique<double[]>(J);
+    auto lnoise = std::make_unique<double[]>(j);
 
     //Set sigma
 
     auto iter = wt.length[0];
-    auto dlen = wt.length[J];
+    auto dlen = wt.length[j];
 
     auto dout = std::make_unique<double[]>(dlen);
 
     if (level == "first"sv) {
-        for (auto i = 1; i < J; ++i) {
+        for (auto i = 1; i < j; ++i) {
             iter += wt.length[i];
         }
 
@@ -80,11 +80,11 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         }
 
         sigma = median(dout.get(), dlen) / 0.6745;
-        for (it = 0; it < J; ++it) {
+        for (it = 0; it < j; ++it) {
             lnoise[it] = sigma;
         }
     } else if (level == "all"sv) {
-        for (it = 0; it < J; ++it) {
+        for (it = 0; it < j; ++it) {
             dlen = wt.length[it + 1];
             for (auto i = 0; i < dlen; ++i) {
                 dout[i] = fabs(wt.output()[iter + i]);
@@ -99,12 +99,12 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
         std::exit(-1);
     }
 
-    dwt_len = wt.outlength;
+    dwtLen = wt.outlength;
     iter = wt.length[0];
-    for (it = 0; it < J; ++it) {
+    for (it = 0; it < j; ++it) {
         sigma = lnoise[it];
         dlen = wt.length[it + 1];
-        td = std::sqrt(2.0 * std::log(dwt_len)) * sigma;
+        td = std::sqrt(2.0 * std::log(dwtLen)) * sigma;
 
         if (thresh == "hard"sv) {
             for (auto i = 0; i < dlen; ++i) {
@@ -134,16 +134,16 @@ void visushrink(double* signal, int N, int J, char const* wname, char const* met
     }
 }
 
-void sureshrink(double* signal, int N, int J, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised)
+void sureshrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised)
 {
-    int filt_len;
+    int filtLen;
     int it;
     int len;
     int dlen;
-    int dwt_len;
-    int min_index;
+    int dwtLen;
+    int minIndex;
     int sgn;
-    int MaxIter;
+    int maxIter;
     int iter;
     double sigma;
     double norm;
@@ -153,22 +153,22 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
     double ct;
     double thr;
     double temp;
-    double x_sum;
+    double xSum;
 
-    auto wave = wavelet { wname };
-    filt_len = wave.size();
+    auto wave = Wavelet { wname };
+    filtLen = wave.size();
 
-    MaxIter = (int)(std::log((double)N / ((double)filt_len - 1.0)) / std::log(2.0));
+    maxIter = (int)(std::log((double)n / ((double)filtLen - 1.0)) / std::log(2.0));
     // Depends on J
-    if (J > MaxIter) {
-        std::printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
+    if (j > maxIter) {
+        std::printf("\n Error - The Signal Can only be iterated %d times using this Wavelet. Exiting\n", maxIter);
         std::exit(-1);
     }
 
-    auto wt = wavelet_transform(wave, method, N, J);
+    auto wt = WaveletTransform(wave, method, n, j);
 
     if (method == "dwt"sv) {
-        wt.extension(ext == "per"sv ? signal_extension::periodic : signal_extension::symmetric);
+        wt.extension(ext == "per"sv ? SignalExtension::periodic : SignalExtension::symmetric);
         dwt(&wt, signal);
     } else if (method == "swt"sv) {
         swt(&wt, signal);
@@ -178,17 +178,17 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
     }
 
     len = wt.length[0];
-    dlen = wt.length[J];
+    dlen = wt.length[j];
 
     auto dout = std::make_unique<double[]>(dlen);
     auto risk = std::make_unique<double[]>(dlen);
     auto dsum = std::make_unique<double[]>(dlen);
-    auto lnoise = std::make_unique<double[]>(J);
+    auto lnoise = std::make_unique<double[]>(j);
 
     iter = wt.length[0];
 
     if (level == "first"sv) {
-        for (auto i = 1; i < J; ++i) {
+        for (auto i = 1; i < j; ++i) {
             iter += wt.length[i];
         }
 
@@ -197,11 +197,11 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
         }
 
         sigma = median(dout.get(), dlen) / 0.6745;
-        for (it = 0; it < J; ++it) {
+        for (it = 0; it < j; ++it) {
             lnoise[it] = sigma;
         }
     } else if (level == "all"sv) {
-        for (it = 0; it < J; ++it) {
+        for (it = 0; it < j; ++it) {
             dlen = wt.length[it + 1];
             for (auto i = 0; i < dlen; ++i) {
                 dout[i] = fabs(wt.output()[iter + i]);
@@ -216,42 +216,42 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
         std::exit(-1);
     }
 
-    for (it = 0; it < J; ++it) {
-        dwt_len = wt.length[it + 1];
+    for (it = 0; it < j; ++it) {
+        dwtLen = wt.length[it + 1];
         sigma = lnoise[it];
 
         if (sigma < 0.00000001) {
             td = 0;
         } else {
-            tv = std::sqrt(2.0 * std::log(dwt_len));
+            tv = std::sqrt(2.0 * std::log(dwtLen));
             norm = 0.0;
-            for (auto i = 0; i < dwt_len; ++i) {
+            for (auto i = 0; i < dwtLen; ++i) {
                 norm += (wt.output()[len + i] * wt.output()[len + i] / (sigma * sigma));
             }
-            te = (norm - (double)dwt_len) / (double)dwt_len;
-            ct = pow(std::log((double)dwt_len) / std::log(2.0), 1.5) / std::sqrt((double)dwt_len);
+            te = (norm - (double)dwtLen) / (double)dwtLen;
+            ct = pow(std::log((double)dwtLen) / std::log(2.0), 1.5) / std::sqrt((double)dwtLen);
 
             if (te < ct) {
                 td = tv;
             } else {
-                x_sum = 0.0;
+                xSum = 0.0;
 
-                for (auto i = 0; i < dwt_len; ++i) {
+                for (auto i = 0; i < dwtLen; ++i) {
                     dout[i] = fabs(wt.output()[len + i] / sigma);
                 }
 
-                std::sort(dout.get(), dout.get() + dwt_len, std::less<double> {});
-                for (auto i = 0; i < dwt_len; ++i) {
+                std::sort(dout.get(), dout.get() + dwtLen, std::less<double> {});
+                for (auto i = 0; i < dwtLen; ++i) {
                     dout[i] = (dout[i] * dout[i]);
-                    x_sum += dout[i];
-                    dsum[i] = x_sum;
+                    xSum += dout[i];
+                    dsum[i] = xSum;
                 }
 
-                for (auto i = 0; i < dwt_len; ++i) {
-                    risk[i] = ((double)dwt_len - 2 * ((double)i + 1) + dsum[i] + dout[i] * ((double)dwt_len - 1 - (double)i)) / (double)dwt_len;
+                for (auto i = 0; i < dwtLen; ++i) {
+                    risk[i] = ((double)dwtLen - 2 * ((double)i + 1) + dsum[i] + dout[i] * ((double)dwtLen - 1 - (double)i)) / (double)dwtLen;
                 }
-                min_index = minindex(risk.get(), dwt_len);
-                thr = std::sqrt(dout[min_index]);
+                minIndex = minindex(risk.get(), dwtLen);
+                thr = std::sqrt(dout[minIndex]);
                 td = thr < tv ? thr : tv;
             }
         }
@@ -259,13 +259,13 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
         td = td * sigma;
 
         if (thresh == "hard"sv) {
-            for (auto i = 0; i < dwt_len; ++i) {
+            for (auto i = 0; i < dwtLen; ++i) {
                 if (fabs(wt.output()[len + i]) < td) {
                     wt.output()[len + i] = 0;
                 }
             }
         } else if (thresh == "soft"sv) {
-            for (auto i = 0; i < dwt_len; ++i) {
+            for (auto i = 0; i < dwtLen; ++i) {
                 if (fabs(wt.output()[len + i]) < td) {
                     wt.output()[len + i] = 0;
                 } else {
@@ -286,40 +286,40 @@ void sureshrink(double* signal, int N, int J, char const* wname, char const* met
     }
 }
 
-void modwtshrink(double* signal, int N, int J, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised)
+void modwtshrink(double* signal, int n, int j, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised)
 {
     int sgn;
     int it;
     double sigma;
     double td;
     double tmp;
-    double M;
+    double m;
     double llen;
 
-    auto wave = wavelet { wname };
-    auto filt_len = wave.size();
+    auto wave = Wavelet { wname };
+    auto filtLen = wave.size();
 
-    auto MaxIter = (int)(std::log((double)N / ((double)filt_len - 1.0)) / std::log(2.0));
+    auto maxIter = (int)(std::log((double)n / ((double)filtLen - 1.0)) / std::log(2.0));
 
-    if (J > MaxIter) {
-        std::printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", MaxIter);
+    if (j > maxIter) {
+        std::printf("\n Error - The Signal Can only be iterated %d times using this Wavelet. Exiting\n", maxIter);
         std::exit(-1);
     }
 
-    auto wt = wavelet_transform(wave, "modwt", N, J);
+    auto wt = WaveletTransform(wave, "modwt", n, j);
 
     if ((ext == "sym"sv) && (cmethod == "fft"sv)) {
-        wt.conv_method(convolution_method::fft);
-        wt.extension(signal_extension::symmetric);
+        wt.convMethod(ConvolutionMethod::fft);
+        wt.extension(SignalExtension::symmetric);
     } else if ((ext == "sym"sv) && (cmethod == "direct"sv)) {
         std::printf("Symmetric Extension is not available for direct method");
         std::exit(-1);
     } else if ((ext == "per"sv) && (cmethod == "direct"sv)) {
-        wt.conv_method(convolution_method::direct);
-        wt.extension(signal_extension::periodic);
+        wt.convMethod(ConvolutionMethod::direct);
+        wt.extension(SignalExtension::periodic);
     } else if ((ext == "per"sv) && (cmethod == "fft"sv)) {
-        wt.conv_method(convolution_method::fft);
-        wt.extension(signal_extension::periodic);
+        wt.convMethod(ConvolutionMethod::fft);
+        wt.extension(SignalExtension::periodic);
     } else {
         std::printf("Signal extension can be either per or sym");
         std::exit(-1);
@@ -327,15 +327,15 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
 
     modwt(&wt, signal);
 
-    auto lnoise = std::make_unique<double[]>(J);
+    auto lnoise = std::make_unique<double[]>(j);
 
     //Set sigma
 
     auto iter = wt.length[0];
-    auto dlen = wt.length[J];
+    auto dlen = wt.length[j];
     auto dout = std::make_unique<double[]>(dlen);
 
-    for (it = 0; it < J; ++it) {
+    for (it = 0; it < j; ++it) {
         dlen = wt.length[it + 1];
         for (auto i = 0; i < dlen; ++i) {
             dout[i] = fabs(wt.output()[iter + i]);
@@ -346,15 +346,15 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
         iter += dlen;
     }
 
-    M = pow(2.0, J);
+    m = pow(2.0, j);
     llen = std::log((double)wt.modwtsiglength);
     // Thresholding
 
     iter = wt.length[0];
-    for (it = 0; it < J; ++it) {
+    for (it = 0; it < j; ++it) {
         sigma = lnoise[it];
         dlen = wt.length[it + 1];
-        td = std::sqrt(2.0 * llen / M) * sigma;
+        td = std::sqrt(2.0 * llen / m) * sigma;
 
         if (thresh == "hard"sv) {
             for (auto i = 0; i < dlen; ++i) {
@@ -375,13 +375,13 @@ void modwtshrink(double* signal, int N, int J, char const* wname, char const* cm
         }
 
         iter += wt.length[it + 1];
-        M /= 2.0;
+        m /= 2.0;
     }
 
     imodwt(&wt, denoised);
 }
 
-void denoise(denoise_set* obj, double* signal, double* denoised)
+void denoise(DenoiseSet* obj, double* signal, double* denoised)
 {
     if (obj->dmethod == "sureshrink"sv) {
         if (obj->wmethod == "modwt"sv) {
@@ -407,7 +407,7 @@ void denoise(denoise_set* obj, double* signal, double* denoised)
     }
 }
 
-void setDenoiseMethod(denoise_set* obj, char const* dmethod)
+void setDenoiseMethod(DenoiseSet* obj, char const* dmethod)
 {
     if (strcmp(dmethod, "sureshrink") == 0) {
         obj->dmethod = "sureshrink";
@@ -421,7 +421,7 @@ void setDenoiseMethod(denoise_set* obj, char const* dmethod)
     }
 }
 
-void setDenoiseWTMethod(denoise_set* obj, char const* wmethod)
+void setDenoiseWTMethod(DenoiseSet* obj, char const* wmethod)
 {
     obj->wmethod = wmethod;
     if (!((wmethod == "dwt"sv) || (wmethod == "swt"sv) || (wmethod == "modwt"sv))) {
@@ -430,7 +430,7 @@ void setDenoiseWTMethod(denoise_set* obj, char const* wmethod)
     }
 }
 
-void setDenoiseWTExtension(denoise_set* obj, char const* extension)
+void setDenoiseWTExtension(DenoiseSet* obj, char const* extension)
 {
     if (strcmp(extension, "sym") == 0) {
         obj->ext = "sym";
@@ -442,7 +442,7 @@ void setDenoiseWTExtension(denoise_set* obj, char const* extension)
     }
 }
 
-void setDenoiseParameters(denoise_set* obj, char const* thresh, char const* level)
+void setDenoiseParameters(DenoiseSet* obj, char const* thresh, char const* level)
 {
 
     //Set thresholding
@@ -467,7 +467,7 @@ void setDenoiseParameters(denoise_set* obj, char const* thresh, char const* leve
     }
 }
 
-void denoise_free(denoise_set* object)
+void denoiseFree(DenoiseSet* object)
 {
     delete object;
 }

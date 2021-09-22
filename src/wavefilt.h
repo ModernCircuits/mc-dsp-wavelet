@@ -12,9 +12,9 @@
 auto filtlength(char const* name) -> int;
 auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int;
 
-void copy_reverse(double const* in, int N, double* out);
-void qmf_even(double const* in, int N, double* out);
-void qmf_wrev(double const* in, int N, double* out);
-void copy(double const* in, int N, double* out);
+void copyReverse(double const* in, int n, double* out);
+void qmfEven(double const* in, int n, double* out);
+void qmfWrev(double const* in, int n, double* out);
+void copy(double const* in, int n, double* out);
 
 #endif /* WAVEFILT_H_ */

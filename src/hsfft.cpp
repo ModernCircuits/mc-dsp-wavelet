@@ -10,42 +10,42 @@
 #include <cstdio>
 #include <memory>
 
-auto fft_init(int N, int sgn) -> std::unique_ptr<fft_set>
+auto fftInit(int n, int sgn) -> std::unique_ptr<FftSet>
 {
-    auto obj = std::unique_ptr<fft_set>();
-    int twi_len { 0 };
-    auto const out = dividebyN(N);
+    auto obj = std::unique_ptr<FftSet>();
+    int twiLen { 0 };
+    auto const out = dividebyN(n);
 
     if (out == 1) {
-        obj = std::make_unique<fft_set>();
-        obj->data = makeZeros<fft_data>(N);
-        obj->lf = factors(N, obj->factors);
+        obj = std::make_unique<FftSet>();
+        obj->data = makeZeros<FftData>(n);
+        obj->lf = factors(n, obj->factors);
         longvectorN(obj->data.get(), obj->factors, obj->lf);
-        twi_len = N;
+        twiLen = n;
         obj->lt = 0;
     } else {
-        int K;
-        int M;
-        K = (int)std::pow(2.0, ceil(log10(N) / log10(2.0)));
+        int k;
+        int m;
+        k = (int)std::pow(2.0, ceil(log10(n) / log10(2.0)));
 
-        if (K < 2 * N - 2) {
-            M = K * 2;
+        if (k < 2 * n - 2) {
+            m = k * 2;
         } else {
-            M = K;
+            m = k;
         }
-        obj = std::make_unique<fft_set>();
-        obj->data = makeZeros<fft_data>(M);
-        obj->lf = factors(M, obj->factors);
+        obj = std::make_unique<FftSet>();
+        obj->data = makeZeros<FftData>(m);
+        obj->lf = factors(m, obj->factors);
         longvectorN(obj->data.get(), obj->factors, obj->lf);
         obj->lt = 1;
-        twi_len = M;
+        twiLen = m;
     }
 
-    obj->N = N;
+    obj->N = n;
     obj->sgn = sgn;
 
     if (sgn == -1) {
-        for (auto ct = 0; ct < twi_len; ct++) {
+        for (auto ct = 0; ct < twiLen; ct++) {
             (obj->data.get() + ct)->im = -(obj->data.get() + ct)->im;
         }
     }
@@ -53,17 +53,17 @@ auto fft_init(int N, int sgn) -> std::unique_ptr<fft_set>
     return obj;
 }
 
-static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, int sgn, int N, int l, int inc)
+static void mixedRadixDitRec(FftData* op, FftData* ip, const FftSet* obj, int sgn, int n, int l, int inc)
 {
 
-    auto const radix = N > 1 ? obj->factors[inc] : 0;
+    auto const radix = n > 1 ? obj->factors[inc] : 0;
 
-    if (N == 1) {
+    if (n == 1) {
 
         op[0].re = ip[0].re;
         op[0].im = ip[0].im;
 
-    } else if (N == 2) {
+    } else if (n == 2) {
         fft_type tau1r;
         fft_type tau1i;
         op[0].re = ip[0].re;
@@ -81,7 +81,7 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
         op[1].re = tau1r - op[1].re;
         op[1].im = tau1i - op[1].im;
 
-    } else if (N == 3) {
+    } else if (n == 3) {
         fft_type tau0r;
         fft_type tau0i;
         fft_type tau1r;
@@ -117,7 +117,7 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
 
         return;
 
-    } else if (N == 4) {
+    } else if (n == 4) {
         fft_type tau0r;
         fft_type tau0i;
         fft_type tau1r;
@@ -162,7 +162,7 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
         op[3].re = tau1r - tau3i;
         op[3].im = tau1i + tau3r;
 
-    } else if (N == 5) {
+    } else if (n == 5) {
         fft_type tau0r;
         fft_type tau0i;
         fft_type tau1r;
@@ -262,7 +262,7 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
         op[0].re += tau0r + tau1r;
         op[0].im += tau0i + tau1i;
 
-    } else if (N == 7) {
+    } else if (n == 7) {
         fft_type tau0r;
         fft_type tau0i;
         fft_type tau1r;
@@ -394,7 +394,7 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
         op[0].re += tau0r + tau1r + tau2r;
         op[0].im += tau0i + tau1i + tau2i;
 
-    } else if (N == 8) {
+    } else if (n == 8) {
         fft_type tau0r;
         fft_type tau0i;
         fft_type tau1r;
@@ -557,10 +557,10 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
         fft_type tau1i;
         fft_type tau2r;
         fft_type tau2i;
-        auto const m = N / 2;
+        auto const m = n / 2;
         auto const ll = 2 * l;
-        mixed_radix_dit_rec(op, ip, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
 
         for (k = 0; k < m; k++) {
             ind = m - 1 + k;
@@ -603,11 +603,11 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
         fft_type bi;
         fft_type cr;
         fft_type ci;
-        auto const m = N / 3;
+        auto const m = n / 3;
         auto const ll = 3 * l;
-        mixed_radix_dit_rec(op, ip, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
         //mixed_radix3_dit_rec(op,ip,obj,sgn,ll,m);
 
         for (k = 0; k < m; ++k) {
@@ -676,12 +676,12 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
         fft_type ci;
         fft_type dr;
         fft_type di;
-        auto const m = N / 4;
+        auto const m = n / 4;
         auto const ll = 4 * l;
-        mixed_radix_dit_rec(op, ip, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 3 * m, ip + 3 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 3 * m, ip + 3 * l, obj, sgn, m, ll, inc + 1);
 
         //mixed_radix4_dit_rec(op,ip,obj,sgn,ll,m);
 
@@ -820,13 +820,13 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
         fft_type c2;
         fft_type s1;
         fft_type s2;
-        auto const m = N / 5;
+        auto const m = n / 5;
         auto const ll = 5 * l;
-        mixed_radix_dit_rec(op, ip, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 3 * m, ip + 3 * l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 4 * m, ip + 4 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 3 * m, ip + 3 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 4 * m, ip + 4 * l, obj, sgn, m, ll, inc + 1);
         //mixed_radix3_dit_rec(op,ip,obj,sgn,ll,m);
 
         c1 = 0.30901699437;
@@ -1054,15 +1054,15 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
         fft_type s1;
         fft_type s2;
         fft_type s3;
-        auto const m = N / 7;
+        auto const m = n / 7;
         auto const ll = 7 * l;
-        mixed_radix_dit_rec(op, ip, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 3 * m, ip + 3 * l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 4 * m, ip + 4 * l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 5 * m, ip + 5 * l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 6 * m, ip + 6 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 3 * m, ip + 3 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 4 * m, ip + 4 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 5 * m, ip + 5 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 6 * m, ip + 6 * l, obj, sgn, m, ll, inc + 1);
         //mixed_radix3_dit_rec(op,ip,obj,sgn,ll,m);
 
         c1 = 0.62348980185;
@@ -1378,16 +1378,16 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
         fft_type temp2r;
         fft_type temp2i;
 
-        auto const m = N / 8;
+        auto const m = n / 8;
         auto const ll = 8 * l;
-        mixed_radix_dit_rec(op, ip, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 3 * m, ip + 3 * l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 4 * m, ip + 4 * l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 5 * m, ip + 5 * l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 6 * m, ip + 6 * l, obj, sgn, m, ll, inc + 1);
-        mixed_radix_dit_rec(op + 7 * m, ip + 7 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 3 * m, ip + 3 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 4 * m, ip + 4 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 5 * m, ip + 5 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 6 * m, ip + 6 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op + 7 * m, ip + 7 * l, obj, sgn, m, ll, inc + 1);
         //mixed_radix3_dit_rec(op,ip,obj,sgn,ll,m);
 
         c1 = 0.70710678118654752440084436210485;
@@ -1653,16 +1653,16 @@ static void mixed_radix_dit_rec(fft_data* op, fft_data* ip, const fft_set* obj, 
     // }
 }
 
-static void bluestein_exp(fft_data* hl, fft_data* hlt, int len, int M)
+static void bluesteinExp(FftData* hl, FftData* hlt, int len, int m)
 {
-    fft_type PI;
+    fft_type pi;
     fft_type theta;
     fft_type angle;
     int l2;
     int len2;
     int i;
-    PI = 3.1415926535897932384626433832795;
-    theta = PI / len;
+    pi = 3.1415926535897932384626433832795;
+    theta = pi / len;
     l2 = 0;
     len2 = 2 * len;
 
@@ -1678,83 +1678,83 @@ static void bluestein_exp(fft_data* hl, fft_data* hlt, int len, int M)
         }
     }
 
-    for (i = len; i < M - len + 1; i++) {
+    for (i = len; i < m - len + 1; i++) {
         hl[i].re = 0.0;
         hl[i].im = 0.0;
     }
 
-    for (i = M - len + 1; i < M; i++) {
-        hl[i].re = hlt[M - i].re;
-        hl[i].im = hlt[M - i].im;
+    for (i = m - len + 1; i < m; i++) {
+        hl[i].re = hlt[m - i].re;
+        hl[i].im = hlt[m - i].im;
     }
 }
 
-static void bluestein_fft(fft_data* data, fft_data* oup, fft_set* obj, int sgn, int N)
+static void bluesteinFft(FftData* data, FftData* oup, FftSet* obj, int sgn, int n)
 {
 
-    int M;
+    int m;
     int ii;
     int i;
     fft_type scale;
     fft_type temp;
 
     obj->lt = 0;
-    auto K = (int)std::pow(2.0, ceil((double)log10((double)N) / log10((double)2.0)));
-    auto def_lt = 1;
-    auto def_sgn = obj->sgn;
-    auto def_N = obj->N;
+    auto k = (int)std::pow(2.0, ceil((double)log10((double)n) / log10((double)2.0)));
+    auto defLt = 1;
+    auto defSgn = obj->sgn;
+    auto defN = obj->N;
 
-    if (K < 2 * N - 2) {
-        M = K * 2;
+    if (k < 2 * n - 2) {
+        m = k * 2;
     } else {
-        M = K;
+        m = k;
     }
-    obj->N = M;
+    obj->N = m;
 
-    auto yn = std::make_unique<fft_data[]>(M);
-    auto hk = std::make_unique<fft_data[]>(M);
-    auto tempop = std::make_unique<fft_data[]>(M);
-    auto yno = std::make_unique<fft_data[]>(M);
-    auto hlt = std::make_unique<fft_data[]>(N);
+    auto yn = std::make_unique<FftData[]>(m);
+    auto hk = std::make_unique<FftData[]>(m);
+    auto tempop = std::make_unique<FftData[]>(m);
+    auto yno = std::make_unique<FftData[]>(m);
+    auto hlt = std::make_unique<FftData[]>(n);
 
-    bluestein_exp(tempop.get(), hlt.get(), N, M);
-    scale = 1.0 / M;
+    bluesteinExp(tempop.get(), hlt.get(), n, m);
+    scale = 1.0 / m;
 
-    for (ii = 0; ii < M; ++ii) {
+    for (ii = 0; ii < m; ++ii) {
         tempop[ii].im *= scale;
         tempop[ii].re *= scale;
     }
 
     //fft_set* obj = initialize_fft2(M,1);
-    fft_exec(*obj, tempop.get(), hk.get());
+    fftExec(*obj, tempop.get(), hk.get());
 
     if (sgn == 1) {
-        for (i = 0; i < N; i++) {
+        for (i = 0; i < n; i++) {
             tempop[i].re = data[i].re * hlt[i].re + data[i].im * hlt[i].im;
             tempop[i].im = -data[i].re * hlt[i].im + data[i].im * hlt[i].re;
         }
     } else {
-        for (i = 0; i < N; i++) {
+        for (i = 0; i < n; i++) {
             tempop[i].re = data[i].re * hlt[i].re - data[i].im * hlt[i].im;
             tempop[i].im = data[i].re * hlt[i].im + data[i].im * hlt[i].re;
         }
     }
 
-    for (i = N; i < M; i++) {
+    for (i = n; i < m; i++) {
         tempop[i].re = 0.0;
         tempop[i].im = 0.0;
     }
 
-    fft_exec(*obj, tempop.get(), yn.get());
+    fftExec(*obj, tempop.get(), yn.get());
 
     if (sgn == 1) {
-        for (i = 0; i < M; i++) {
+        for (i = 0; i < m; i++) {
             temp = yn[i].re * hk[i].re - yn[i].im * hk[i].im;
             yn[i].im = yn[i].re * hk[i].im + yn[i].im * hk[i].re;
             yn[i].re = temp;
         }
     } else {
-        for (i = 0; i < M; i++) {
+        for (i = 0; i < m; i++) {
             temp = yn[i].re * hk[i].re + yn[i].im * hk[i].im;
             yn[i].im = -yn[i].re * hk[i].im + yn[i].im * hk[i].re;
             yn[i].re = temp;
@@ -1763,35 +1763,35 @@ static void bluestein_fft(fft_data* data, fft_data* oup, fft_set* obj, int sgn, 
 
     //IFFT
 
-    for (ii = 0; ii < M; ++ii) {
+    for (ii = 0; ii < m; ++ii) {
         (obj->data.get() + ii)->im = -(obj->data.get() + ii)->im;
     }
 
     obj->sgn = -1 * sgn;
 
-    fft_exec(*obj, yn.get(), yno.get());
+    fftExec(*obj, yn.get(), yno.get());
 
     if (sgn == 1) {
-        for (i = 0; i < N; i++) {
+        for (i = 0; i < n; i++) {
             oup[i].re = yno[i].re * hlt[i].re + yno[i].im * hlt[i].im;
             oup[i].im = -yno[i].re * hlt[i].im + yno[i].im * hlt[i].re;
         }
     } else {
-        for (i = 0; i < N; i++) {
+        for (i = 0; i < n; i++) {
             oup[i].re = yno[i].re * hlt[i].re - yno[i].im * hlt[i].im;
             oup[i].im = yno[i].re * hlt[i].im + yno[i].im * hlt[i].re;
         }
     }
 
-    obj->sgn = def_sgn;
-    obj->N = def_N;
-    obj->lt = def_lt;
-    for (ii = 0; ii < M; ++ii) {
+    obj->sgn = defSgn;
+    obj->N = defN;
+    obj->lt = defLt;
+    for (ii = 0; ii < m; ++ii) {
         (obj->data.get() + ii)->im = -(obj->data.get() + ii)->im;
     }
 }
 
-void fft_exec(fft_set& obj, fft_data* inp, fft_data* oup)
+void fftExec(FftSet& obj, FftData* inp, FftData* oup)
 {
     if (obj.lt == 0) {
         //fftct_radix3_dit_rec(inp,oup,obj, obj.sgn, obj.N);
@@ -1805,202 +1805,202 @@ void fft_exec(fft_set& obj, fft_data* inp, fft_data* oup)
         l = 1;
         inc = 0;
         //radix3_dit_rec(oup,inp,obj,sgn1,nn,l);
-        mixed_radix_dit_rec(oup, inp, &obj, sgn1, nn, l, inc);
+        mixedRadixDitRec(oup, inp, &obj, sgn1, nn, l, inc);
     } else if (obj.lt == 1) {
         int nn;
         int sgn1;
         nn = obj.N;
         sgn1 = obj.sgn;
-        bluestein_fft(inp, oup, &obj, sgn1, nn);
+        bluesteinFft(inp, oup, &obj, sgn1, nn);
     }
 }
 
-auto divideby(int M, int d) -> int
+auto divideby(int m, int d) -> int
 {
-    while (M % d == 0) {
-        M = M / d;
+    while (m % d == 0) {
+        m = m / d;
     }
-    if (M == 1) {
+    if (m == 1) {
         return 1;
     }
     return 0;
 }
 
-auto dividebyN(int N) -> int
+auto dividebyN(int n) -> int
 {
-    while (N % 53 == 0) {
-        N = N / 53;
+    while (n % 53 == 0) {
+        n = n / 53;
     }
-    while (N % 47 == 0) {
-        N = N / 47;
+    while (n % 47 == 0) {
+        n = n / 47;
     }
-    while (N % 43 == 0) {
-        N = N / 43;
+    while (n % 43 == 0) {
+        n = n / 43;
     }
-    while (N % 41 == 0) {
-        N = N / 41;
+    while (n % 41 == 0) {
+        n = n / 41;
     }
-    while (N % 37 == 0) {
-        N = N / 37;
+    while (n % 37 == 0) {
+        n = n / 37;
     }
-    while (N % 31 == 0) {
-        N = N / 31;
+    while (n % 31 == 0) {
+        n = n / 31;
     }
-    while (N % 29 == 0) {
-        N = N / 29;
+    while (n % 29 == 0) {
+        n = n / 29;
     }
-    while (N % 23 == 0) {
-        N = N / 23;
+    while (n % 23 == 0) {
+        n = n / 23;
     }
-    while (N % 17 == 0) {
-        N = N / 17;
+    while (n % 17 == 0) {
+        n = n / 17;
     }
-    while (N % 13 == 0) {
-        N = N / 13;
+    while (n % 13 == 0) {
+        n = n / 13;
     }
-    while (N % 11 == 0) {
-        N = N / 11;
+    while (n % 11 == 0) {
+        n = n / 11;
     }
-    while (N % 8 == 0) {
-        N = N / 8;
+    while (n % 8 == 0) {
+        n = n / 8;
     }
-    while (N % 7 == 0) {
-        N = N / 7;
+    while (n % 7 == 0) {
+        n = n / 7;
     }
-    while (N % 5 == 0) {
-        N = N / 5;
+    while (n % 5 == 0) {
+        n = n / 5;
     }
-    while (N % 4 == 0) {
-        N = N / 4;
+    while (n % 4 == 0) {
+        n = n / 4;
     }
-    while (N % 3 == 0) {
-        N = N / 3;
+    while (n % 3 == 0) {
+        n = n / 3;
     }
-    while (N % 2 == 0) {
-        N = N / 2;
+    while (n % 2 == 0) {
+        n = n / 2;
     }
-    if (N == 1) {
+    if (n == 1) {
         return 1;
     }
     return 0;
 }
 
-auto factors(int M, int* arr) -> int
+auto factors(int m, int* arr) -> int
 {
     int i;
-    int N;
+    int n;
     int num;
     int mult;
     int m1;
     int m2;
     i = 0;
-    N = M;
-    while (N % 53 == 0) {
-        N = N / 53;
+    n = m;
+    while (n % 53 == 0) {
+        n = n / 53;
         arr[i] = 53;
         i++;
     }
-    while (N % 47 == 0) {
-        N = N / 47;
+    while (n % 47 == 0) {
+        n = n / 47;
         arr[i] = 47;
         i++;
     }
-    while (N % 43 == 0) {
-        N = N / 43;
+    while (n % 43 == 0) {
+        n = n / 43;
         arr[i] = 43;
         i++;
     }
-    while (N % 41 == 0) {
-        N = N / 41;
+    while (n % 41 == 0) {
+        n = n / 41;
         arr[i] = 41;
         i++;
     }
-    while (N % 37 == 0) {
-        N = N / 37;
+    while (n % 37 == 0) {
+        n = n / 37;
         arr[i] = 37;
         i++;
     }
-    while (N % 31 == 0) {
-        N = N / 31;
+    while (n % 31 == 0) {
+        n = n / 31;
         arr[i] = 31;
         i++;
     }
-    while (N % 29 == 0) {
-        N = N / 29;
+    while (n % 29 == 0) {
+        n = n / 29;
         arr[i] = 29;
         i++;
     }
-    while (N % 23 == 0) {
-        N = N / 23;
+    while (n % 23 == 0) {
+        n = n / 23;
         arr[i] = 23;
         i++;
     }
-    while (N % 19 == 0) {
-        N = N / 19;
+    while (n % 19 == 0) {
+        n = n / 19;
         arr[i] = 19;
         i++;
     }
-    while (N % 17 == 0) {
-        N = N / 17;
+    while (n % 17 == 0) {
+        n = n / 17;
         arr[i] = 17;
         i++;
     }
-    while (N % 13 == 0) {
-        N = N / 13;
+    while (n % 13 == 0) {
+        n = n / 13;
         arr[i] = 13;
         i++;
     }
-    while (N % 11 == 0) {
-        N = N / 11;
+    while (n % 11 == 0) {
+        n = n / 11;
         arr[i] = 11;
         i++;
     }
-    while (N % 8 == 0) {
-        N = N / 8;
+    while (n % 8 == 0) {
+        n = n / 8;
         arr[i] = 8;
         i++;
     }
-    while (N % 7 == 0) {
-        N = N / 7;
+    while (n % 7 == 0) {
+        n = n / 7;
         arr[i] = 7;
         i++;
     }
-    while (N % 5 == 0) {
-        N = N / 5;
+    while (n % 5 == 0) {
+        n = n / 5;
         arr[i] = 5;
         i++;
     }
-    while (N % 4 == 0) {
-        N = N / 4;
+    while (n % 4 == 0) {
+        n = n / 4;
         arr[i] = 4;
         i++;
     }
-    while (N % 3 == 0) {
-        N = N / 3;
+    while (n % 3 == 0) {
+        n = n / 3;
         arr[i] = 3;
         i++;
     }
-    while (N % 2 == 0) {
-        N = N / 2;
+    while (n % 2 == 0) {
+        n = n / 2;
         arr[i] = 2;
         i++;
     }
-    if (N > 31) {
+    if (n > 31) {
         num = 2;
 
-        while (N > 1) {
+        while (n > 1) {
             mult = num * 6;
             m1 = mult - 1;
             m2 = mult + 1;
-            while (N % m1 == 0) {
+            while (n % m1 == 0) {
                 arr[i] = m1;
                 i++;
-                N = N / m1;
+                n = n / m1;
             }
-            while (N % m2 == 0) {
+            while (n % m2 == 0) {
                 arr[i] = m2;
                 i++;
-                N = N / m2;
+                n = n / m2;
             }
             num += 1;
         }
@@ -2008,40 +2008,40 @@ auto factors(int M, int* arr) -> int
     return i;
 }
 
-void twiddle(fft_data* vec, int N, int radix)
+void twiddle(FftData* vec, int n, int radix)
 {
-    int K;
-    int KL;
+    int k;
+    int kl;
     fft_type theta;
     fft_type theta2;
-    theta = PI2 / N;
-    KL = N / radix;
+    theta = PI2 / n;
+    kl = n / radix;
     vec[0].re = 1.0;
     vec[0].im = 0.0;
 
-    for (K = 1; K < KL; K++) {
-        theta2 = theta * K;
-        vec[K].re = cos(theta2);
-        vec[K].im = -sin(theta2);
+    for (k = 1; k < kl; k++) {
+        theta2 = theta * k;
+        vec[k].re = cos(theta2);
+        vec[k].im = -sin(theta2);
     }
 }
 
-void longvectorN(fft_data* sig, int const* array, int tx)
+void longvectorN(FftData* sig, int const* array, int tx)
 {
-    int L;
+    int l;
     int i;
-    int Ls;
+    int ls;
     int ct;
     int j;
     int k;
     fft_type theta;
-    L = 1;
+    l = 1;
     ct = 0;
     for (i = 0; i < tx; i++) {
-        L = L * array[tx - 1 - i];
-        Ls = L / array[tx - 1 - i];
-        theta = -1.0 * PI2 / L;
-        for (j = 0; j < Ls; j++) {
+        l = l * array[tx - 1 - i];
+        ls = l / array[tx - 1 - i];
+        theta = -1.0 * PI2 / l;
+        for (j = 0; j < ls; j++) {
             for (k = 0; k < array[tx - 1 - i] - 1; k++) {
                 sig[ct].re = cos((k + 1) * j * theta);
                 sig[ct].im = sin((k + 1) * j * theta);

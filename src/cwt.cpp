@@ -10,7 +10,7 @@ C. Torrence and G. Compo, and is available at URL: http://atoc.colorado.edu/rese
 
 #include <memory>
 
-static auto factorial(int N) -> double
+static auto factorial(int n) -> double
 {
     static const double fact[41] = {
         1.0,
@@ -56,21 +56,21 @@ static auto factorial(int N) -> double
         815915283247897734345611269596115894272000000000.0,
     };
 
-    if (N > 40 || N < 0) {
+    if (n > 40 || n < 0) {
         printf("This program is only valid for 0 <= N <= 40 \n");
         return -1.0;
     }
 
-    return fact[N];
+    return fact[n];
 }
 
-static void wave_function(int nk, double dt, int mother, double param, double scale1, double const* kwave, double pi, double* period1,
-    double* coi1, fft_data* daughter)
+static void waveFunction(int nk, double dt, int mother, double param, double scale1, double const* kwave, double pi, double* period1,
+    double* coi1, FftData* daughter)
 {
 
     double norm;
     double expnt;
-    double fourier_factor;
+    double fourierFactor;
     int k;
     int m;
     double temp;
@@ -93,9 +93,9 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
         for (k = nk / 2 + 2; k <= nk; ++k) {
             daughter[k - 1].re = daughter[k - 1].im = 0.0;
         }
-        fourier_factor = (4.0 * pi) / (param + std::sqrt(2.0 + param * param));
-        *period1 = scale1 * fourier_factor;
-        *coi1 = fourier_factor / std::sqrt(2.0);
+        fourierFactor = (4.0 * pi) / (param + std::sqrt(2.0 + param * param));
+        *period1 = scale1 * fourierFactor;
+        *coi1 = fourierFactor / std::sqrt(2.0);
     } else if (mother == 1) {
         // PAUL
         if (param < 0.0) {
@@ -112,9 +112,9 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
         for (k = nk / 2 + 2; k <= nk; ++k) {
             daughter[k - 1].re = daughter[k - 1].im = 0.0;
         }
-        fourier_factor = (4.0 * pi) / (2.0 * m + 1.0);
-        *period1 = scale1 * fourier_factor;
-        *coi1 = fourier_factor * std::sqrt(2.0);
+        fourierFactor = (4.0 * pi) / (2.0 * m + 1.0);
+        *period1 = scale1 * fourierFactor;
+        *coi1 = fourierFactor * std::sqrt(2.0);
     } else if (mother == 2) {
         if (param < 0.0) {
             param = 2.0;
@@ -133,7 +133,7 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
             sign = 1;
         }
 
-        norm = std::sqrt(2.0 * pi * scale1 / dt) * std::sqrt(1.0 / cwt_gamma(m + 0.50));
+        norm = std::sqrt(2.0 * pi * scale1 / dt) * std::sqrt(1.0 / cwtGamma(m + 0.50));
         norm *= sign;
 
         if (re == 1) {
@@ -149,13 +149,13 @@ static void wave_function(int nk, double dt, int mother, double param, double sc
                 daughter[k - 1].im = norm * std::pow(temp, (double)m) * std::exp(-0.50 * std::pow(temp, 2.0));
             }
         }
-        fourier_factor = (2.0 * pi) * std::sqrt(2.0 / (2.0 * m + 1.0));
-        *period1 = scale1 * fourier_factor;
-        *coi1 = fourier_factor / std::sqrt(2.0);
+        fourierFactor = (2.0 * pi) * std::sqrt(2.0 / (2.0 * m + 1.0));
+        *period1 = scale1 * fourierFactor;
+        *coi1 = fourierFactor / std::sqrt(2.0);
     }
 }
 
-void cwavelet(double const* y, int N, double dt, int mother, double param, double s0, double dj, int jtot, int npad,
+void cwavelet(double const* y, int n, double dt, int mother, double param, double s0, double dj, int jtot, int npad,
     double* wave, double const* scale, double* period, double* coi)
 {
 
@@ -176,38 +176,38 @@ void cwavelet(double const* y, int N, double dt, int mother, double param, doubl
 
     pi = 4.0 * atan(1.0);
 
-    if (npad < N) {
+    if (npad < n) {
         printf("npad must be >= N \n");
         exit(-1);
     }
 
-    auto obj = fft_init(npad, 1);
-    auto iobj = fft_init(npad, -1);
+    auto obj = fftInit(npad, 1);
+    auto iobj = fftInit(npad, -1);
 
-    auto ypad = std::make_unique<fft_data[]>(npad);
-    auto yfft = std::make_unique<fft_data[]>(npad);
-    auto daughter = std::make_unique<fft_data[]>(npad);
+    auto ypad = std::make_unique<FftData[]>(npad);
+    auto yfft = std::make_unique<FftData[]>(npad);
+    auto daughter = std::make_unique<FftData[]>(npad);
     auto kwave = std::make_unique<double[]>(npad);
     ymean = 0.0;
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         ymean += y[i];
     }
 
-    ymean /= N;
+    ymean /= n;
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         ypad[i].re = y[i] - ymean;
         ypad[i].im = 0.0;
     }
 
-    for (auto i = N; i < npad; ++i) {
+    for (auto i = n; i < npad; ++i) {
         ypad[i].re = ypad[i].im = 0.0;
     }
 
     // Find FFT of the input y (ypad)
 
-    fft_exec(*obj, ypad.get(), yfft.get());
+    fftExec(*obj, ypad.get(), yfft.get());
 
     for (auto i = 0; i < npad; ++i) {
         yfft[i].re /= (double)npad;
@@ -231,7 +231,7 @@ void cwavelet(double const* y, int N, double dt, int mother, double param, doubl
 
     for (j = 1; j <= jtot; ++j) {
         scale1 = scale[j - 1]; // = s0*std::pow(2.0, (double)(j - 1)*dj);
-        wave_function(npad, dt, mother, param, scale1, kwave.get(), pi, &period1, &coi1, daughter.get());
+        waveFunction(npad, dt, mother, param, scale1, kwave.get(), pi, &period1, &coi1, daughter.get());
         period[j - 1] = period1;
         for (k = 0; k < npad; ++k) {
             tmp1 = daughter[k].re * yfft[k].re - daughter[k].im * yfft[k].im;
@@ -239,17 +239,17 @@ void cwavelet(double const* y, int N, double dt, int mother, double param, doubl
             daughter[k].re = tmp1;
             daughter[k].im = tmp2;
         }
-        fft_exec(*iobj, daughter.get(), ypad.get());
-        iter = 2 * (j - 1) * N;
-        for (auto i = 0; i < N; ++i) {
+        fftExec(*iobj, daughter.get(), ypad.get());
+        iter = 2 * (j - 1) * n;
+        for (auto i = 0; i < n; ++i) {
             wave[iter + 2 * i] = ypad[i].re;
             wave[iter + 2 * i + 1] = ypad[i].im;
         }
     }
 
-    for (auto i = 1; i <= (N + 1) / 2; ++i) {
+    for (auto i = 1; i <= (n + 1) / 2; ++i) {
         coi[i - 1] = coi1 * dt * ((double)i - 1.0);
-        coi[N - i] = coi[i - 1];
+        coi[n - i] = coi[i - 1];
     }
 }
 
@@ -292,15 +292,15 @@ void psi0(int mother, double param, double* val, int* real)
             } else {
                 sign = 1;
             }
-            coeff = sign * std::pow(2.0, (double)m / 2) / cwt_gamma(0.5);
-            *val = coeff * cwt_gamma(((double)m + 1.0) / 2.0) / std::sqrt(cwt_gamma(m + 0.50));
+            coeff = sign * std::pow(2.0, (double)m / 2) / cwtGamma(0.5);
+            *val = coeff * cwtGamma(((double)m + 1.0) / 2.0) / std::sqrt(cwtGamma(m + 0.50));
         } else {
             *val = 0;
         }
     }
 }
 
-static auto maxabs(double* array, int N) -> int
+static auto maxabs(double* array, int n) -> int
 {
     double maxval;
     double temp;
@@ -309,7 +309,7 @@ static auto maxabs(double* array, int N) -> int
     maxval = 0.0;
     index = -1;
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         temp = fabs(array[i]);
         if (temp >= maxval) {
             maxval = temp;
@@ -323,39 +323,39 @@ static auto maxabs(double* array, int N) -> int
 auto cdelta(int mother, double param, double psi0) -> double
 {
     auto s0 { 0.0 };
-    auto N { 1 };
+    auto n { 1 };
     auto subscale = 8.0;
     auto dt = 0.25;
 
     if (mother == 0) {
-        N = 16;
+        n = 16;
         s0 = dt / 4;
     } else if (mother == 1) {
-        N = 16;
+        n = 16;
         s0 = dt / 4.0;
     } else if (mother == 2) {
         s0 = dt / 8.0;
-        N = 256;
+        n = 256;
         if (param == 2.0) {
             subscale = 16.0;
             s0 = dt / 16.0;
-            N = 2048;
+            n = 2048;
         }
     }
 
     auto const dj = 1.0 / subscale;
     auto const jtot = 16 * (int)subscale;
 
-    auto delta = std::make_unique<double[]>(N);
-    auto wave = std::make_unique<double[]>(2 * N * jtot);
-    auto coi = std::make_unique<double[]>(N);
+    auto delta = std::make_unique<double[]>(n);
+    auto wave = std::make_unique<double[]>(2 * n * jtot);
+    auto coi = std::make_unique<double[]>(n);
     auto scale = std::make_unique<double[]>(jtot);
     auto period = std::make_unique<double[]>(jtot);
-    auto mval = std::make_unique<double[]>(N);
+    auto mval = std::make_unique<double[]>(n);
 
     delta[0] = 1;
 
-    for (auto i = 1; i < N; ++i) {
+    for (auto i = 1; i < n; ++i) {
         delta[i] = 0;
     }
 
@@ -363,26 +363,26 @@ auto cdelta(int mother, double param, double psi0) -> double
         scale[i] = s0 * std::pow(2.0, (double)(i)*dj);
     }
 
-    cwavelet(delta.get(), N, dt, mother, param, s0, dj, jtot, N, wave.get(), scale.get(), period.get(), coi.get());
+    cwavelet(delta.get(), n, dt, mother, param, s0, dj, jtot, n, wave.get(), scale.get(), period.get(), coi.get());
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         mval[i] = 0;
     }
 
     for (auto j = 0; j < jtot; ++j) {
-        auto const iter = 2 * j * N;
+        auto const iter = 2 * j * n;
         auto const den = std::sqrt(scale[j]);
-        for (auto i = 0; i < N; ++i) {
+        for (auto i = 0; i < n; ++i) {
             mval[i] += wave[iter + 2 * i] / den;
         }
     }
 
-    auto const maxarr = maxabs(mval.get(), N);
+    auto const maxarr = maxabs(mval.get(), n);
     auto const cdel = std::sqrt(dt) * dj * mval[maxarr] / psi0;
     return cdel;
 }
 
-void icwavelet(double const* wave, int N, double* scale, int jtot, double dt, double dj, double cdelta, double psi0, double* oup)
+void icwavelet(double const* wave, int n, double* scale, int jtot, double dt, double dj, double cdelta, double psi0, double* oup)
 {
 
     int j;
@@ -392,19 +392,19 @@ void icwavelet(double const* wave, int N, double* scale, int jtot, double dt, do
 
     coeff = std::sqrt(dt) * dj / (cdelta * psi0);
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         oup[i] = 0.0;
     }
 
     for (j = 0; j < jtot; ++j) {
-        iter = 2 * j * N;
+        iter = 2 * j * n;
         den = std::sqrt(scale[j]);
-        for (auto i = 0; i < N; ++i) {
+        for (auto i = 0; i < n; ++i) {
             oup[i] += wave[iter + 2 * i] / den;
         }
     }
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         oup[i] *= coeff;
     }
 }

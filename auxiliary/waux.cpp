@@ -5,66 +5,66 @@
 #include <memory>
 #include <numeric>
 
-auto mean(double const* vec, int N) -> double
+auto mean(double const* vec, int n) -> double
 {
-    return std::accumulate(vec, vec + N, 0.0) / static_cast<double>(N);
+    return std::accumulate(vec, vec + n, 0.0) / static_cast<double>(n);
 }
 
-auto var(double const* vec, int N) -> double
+auto var(double const* vec, int n) -> double
 {
     double v;
     double temp;
     double m;
     v = 0.0;
-    m = mean(vec, N);
+    m = mean(vec, n);
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         temp = vec[i] - m;
         v += temp * temp;
     }
 
-    v = v / N;
+    v = v / n;
 
     return v;
 }
 
-auto median(double* const x, int N) -> double
+auto median(double* const x, int n) -> double
 {
-    std::sort(x, x + N, std::less<double> {});
+    std::sort(x, x + n, std::less<double> {});
 
     double sigma;
-    if ((N % 2) == 0) {
-        sigma = (x[N / 2 - 1] + x[N / 2]) / 2.0;
+    if ((n % 2) == 0) {
+        sigma = (x[n / 2 - 1] + x[n / 2]) / 2.0;
     } else {
-        sigma = x[N / 2];
+        sigma = x[n / 2];
     }
 
     return sigma;
 }
 
-auto mad(double* x, int N) -> double
+auto mad(double* x, int n) -> double
 {
     double sigma;
 
-    sigma = median(x, N);
+    sigma = median(x, n);
 
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         x[i] = (x[i] - sigma) > 0 ? (x[i] - sigma) : -(x[i] - sigma);
     }
 
-    sigma = median(x, N);
+    sigma = median(x, n);
 
     return sigma;
 }
 
-auto minindex(double const* arr, int N) -> int
+auto minindex(double const* arr, int n) -> int
 {
     double min;
     int index;
 
     min = DBL_MAX;
     index = 0;
-    for (auto i = 0; i < N; ++i) {
+    for (auto i = 0; i < n; ++i) {
         if (arr[i] < min) {
             min = arr[i];
             index = i;
@@ -74,48 +74,47 @@ auto minindex(double const* arr, int N) -> int
     return index;
 }
 
-void autocovar(double const* vec, int N, double* acov, int M)
+void autocovar(double const* vec, int n, double* acov, int m)
 {
-    double m;
     double temp1;
     double temp2;
     int t;
-    m = mean(vec, N);
 
-    if (M > N) {
-        M = N - 1;
+    if (m > n) {
+        m = n - 1;
         printf("\n Lag is greater than the length N of the input vector. It is automatically set to length N - 1.\n");
         printf("\n The Output Vector only contains N calculated values.");
-    } else if (M < 0) {
-        M = 0;
+    } else if (m < 0) {
+        m = 0;
     }
 
-    for (auto i = 0; i < M; i++) {
+    auto const me = mean(vec, n);
+    for (auto i = 0; i < m; i++) {
         acov[i] = 0.0;
-        for (t = 0; t < N - i; t++) {
-            temp1 = vec[t] - m;
-            temp2 = vec[t + i] - m;
+        for (t = 0; t < n - i; t++) {
+            temp1 = vec[t] - me;
+            temp2 = vec[t + i] - me;
             acov[i] += temp1 * temp2;
         }
-        acov[i] = acov[i] / N;
+        acov[i] = acov[i] / n;
     }
 }
 
-void autocorr(double const* vec, int N, double* acorr, int M)
+void autocorr(double const* vec, int n, double* acorr, int m)
 {
     double var;
-    if (M > N) {
-        M = N - 1;
+    if (m > n) {
+        m = n - 1;
         printf("\n Lag is greater than the length N of the input vector. It is automatically set to length N - 1.\n");
         printf("\n The Output Vector only contains N calculated values.");
-    } else if (M < 0) {
-        M = 0;
+    } else if (m < 0) {
+        m = 0;
     }
-    autocovar(vec, N, acorr, M);
+    autocovar(vec, n, acorr, m);
     var = acorr[0];
     acorr[0] = 1.0;
 
-    for (auto i = 1; i < M; i++) {
+    for (auto i = 1; i < m; i++) {
         acorr[i] = acorr[i] / var;
     }
 }
