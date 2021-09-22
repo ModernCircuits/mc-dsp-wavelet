@@ -132,7 +132,7 @@ struct BpmDetect {
 
         auto s = DoubleSignal(cDSum.data(), cDSum.size());
         auto x = OverlapSaveConvolver(s, s);
-        x.executeXcorr();
+        x.crossCorrelate();
         auto correl = x.extractResult();
 
         auto midpoint = static_cast<std::size_t>(std::floor(correl.size() / 2.0));

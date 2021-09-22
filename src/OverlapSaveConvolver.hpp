@@ -6,115 +6,10 @@
 #include <array>
 #include <cmath>
 #include <cstring>
-#include <initializer_list>
 #include <iostream>
 #include <iterator>
-#include <list>
 #include <memory>
-#include <sstream>
-#include <stdexcept>
 #include <vector>
-
-/// TYPECHECK/ANTIBUGGING
-
-// Given a container or its beginning and end iterables, converts the container to a string
-// of the form {a, b, c} (like a basic version of Python's __str__). Usage example:
-// vector<string> c1({"foo", "bar"});
-// vector<size_t> c2({1});
-// list<double> c3({1,2,3,4,5});
-// vector<bool> c4({false, true, false});
-// list<int> c5;
-// std::cout << IterableToString({1.23, 4.56, -789.0}) << '\n';
-// std::cout << IterableToString(c1) << '\n';
-// std::cout << IterableToString({"hello", "hello"}) << '\n';
-// std::cout << IterableToString(c2) << '\n';
-// std::cout << IterableToString(c3) << '\n';
-// std::cout << IterableToString(c4) << '\n';
-// std::cout << IterableToString(c5.begin(), c5.end()) << '\n';
-template <typename T>
-auto iterableToString(T it, T end) -> std::string
-{
-    std::stringstream ss;
-    ss << "{";
-    bool first = true;
-    for (; it != end; ++it) {
-        if (first) {
-            ss << *it;
-            first = false;
-        } else {
-            ss << ", " << *it;
-        }
-    }
-    ss << "}";
-    return ss.str();
-}
-template <typename C> // Overload IterableToString to directly accept any Collection like vector<int>
-auto iterableToString(const C& c) -> std::string
-{
-    return IterableToString(c.begin(), c.end());
-}
-template <typename T> // Overload IterableToString to directly accept initializer_lists
-auto iterableToString(const std::initializer_list<T> c) -> std::string
-{
-    return iterableToString(c.begin(), c.end());
-}
-
-// Given a container or its beginning and end iterables, checks wether all values contained in the
-// iterable are equal and raises an exception if not. Usage example:
-// vector<size_t> v1({});
-// vector<double> v2({123.4, 123.4, 123.4});
-// vector<bool> v3({false, false, false});
-// vector<size_t> v4({1});
-// vector<string> v5({"hello", "hello", "bye"});
-// CheckAllEqual({3,3,3,3,3,3,3,3});
-// CheckAllEqual(v1);
-// CheckAllEqual(v2.begin(), v2.end());
-// CheckAllEqual(v3);
-// CheckAllEqual(v4);
-// CheckAllEqual(v5.begin(), prev(v5.end()));
-// CheckAllEqual(v5);
-template <typename I>
-auto checkAllEqual(I beg, I end, std::string const& message = "CheckAllEqual") -> void
-{
-    I it = beg;
-    bool allEq = true;
-    auto last = (it == end) ? end : std::prev(end);
-    for (; it != last; ++it) {
-        allEq &= (*(it) == *(std::next(it)));
-        if (!allEq) {
-            throw std::runtime_error(std::string("[ERROR] ") + message + " " + iterableToString(beg, end));
-        }
-    }
-}
-template <typename C>
-auto checkAllEqual(const C& c, const std::string message = "CheckAllEqual") -> void
-{
-    CheckAllEqual(c.begin(), c.end(), message);
-}
-template <typename T>
-auto checkAllEqual(const std::initializer_list<T> c, const std::string message = "CheckAllEqual") -> void
-{
-    checkAllEqual(c.begin(), c.end(), message);
-}
-
-// Raises an exception if complex_size!=(real_size/2+1), being "/" an integer division.
-auto checkRealComplexRatio(std::size_t realSize, std::size_t complexSize,
-    std::string const& funcName = "CheckRealComplexRatio") -> void;
-
-// Abstract function that performs a comparation between any 2 elements, and if the comparation
-// returns a truthy value raises an exception with the given message.
-template <typename T, class Functor>
-auto checkTwoElements(const T a, const T b, const Functor& binaryPredicate, std::string const& message) -> void
-{
-    if (binaryPredicate(a, b)) {
-        throw std::runtime_error(std::string("[ERROR] ") + message + " " + iterableToString({ a, b }));
-    }
-}
-
-// Raises an exception with the given message if a>b.
-auto checkALessEqualB(std::size_t a, std::size_t b, std::string const& message = "a was greater than b!") -> void;
-
-auto pow2Ceil(std::size_t x) -> size_t;
 
 /// This is an abstract base class that provides some basic, type-independent functionality for
 /// any container that should behave as a signal. It is not intended to be instantiated directly.
@@ -131,6 +26,14 @@ struct Signal {
         memset(data_, 0, sizeof(T) * size);
     }
 
+    [[nodiscard]] auto begin() -> T* { return data_; }
+    [[nodiscard]] auto begin() const -> const T* { return data_; }
+    [[nodiscard]] auto cbegin() const -> const T* { return data_; }
+
+    [[nodiscard]] auto end() -> T* { return begin() + size(); }
+    [[nodiscard]] auto end() const -> const T* { return begin() + size(); }
+    [[nodiscard]] auto cend() const -> const T* { return begin() + size(); }
+
     [[nodiscard]] auto size() -> size_t& { return size_; }
     [[nodiscard]] auto size() const -> std::size_t const& { return size_; }
     [[nodiscard]] auto data() -> T* { return data_; }
@@ -138,14 +41,6 @@ struct Signal {
 
     [[nodiscard]] auto operator[](std::size_t idx) -> T& { return data_[idx]; }
     [[nodiscard]] auto operator[](std::size_t idx) const -> T& { return data_[idx]; }
-
-    auto print(std::string const& name = "signal") -> void
-    {
-        std::cout << '\n';
-        for (std::size_t i = 0; i < size_; ++i) {
-            std::cout << name << "[" << i << "]\t=\t" << data_[i] << '\n';
-        }
-    }
 
 protected:
     T* data_;
@@ -160,10 +55,6 @@ struct DoubleSignal : Signal<double> {
     DoubleSignal(double* data, size_t size);
     DoubleSignal(double* data, size_t size, size_t padBef, size_t padAft);
     ~DoubleSignal();
-
-    auto operator+=(double x) -> void;
-    auto operator*=(double x) -> void;
-    auto operator/=(double x) -> void;
 };
 
 /// This class is a Signal that works on aligned complex (double[2]) arrays allocated by FFTW.
@@ -172,12 +63,6 @@ struct ComplexSignal : Signal<fftw_complex> {
     /// the basic constructor allocates an aligned, double[2] array, which is zeroed by the superclass
     explicit ComplexSignal(std::size_t size);
     ~ComplexSignal();
-
-    auto operator*=(double x) -> void;
-    auto operator+=(double x) -> void;
-    auto operator+=(const fftw_complex x) -> void;
-
-    auto print(std::string const& name = "signal") -> void;
 };
 
 /// This free function takes three complex signals a,b,c of the same size and computes the complex
@@ -252,17 +137,16 @@ struct OverlapSaveConvolver {
     /// Note that len(signal) can never be smaller than len(patch), or an exception is thrown.
     OverlapSaveConvolver(DoubleSignal& signal, DoubleSignal& patch, std::string const& wisdomPath = "");
 
-    auto executeConv() -> void;
-    auto executeXcorr() -> void;
-    auto printChunks(std::string const& name = "convolver") -> void;
+    auto convolute() -> void;
+    auto crossCorrelate() -> void;
 
     // This method implements step 6 of the overlap-save algorithm. In convolution, the first (P-1)
     // samples of each chunk are discarded, in xcorr the last (P-1) ones. Therefore, depending on the
     // current _state_, the corresponding method is used. USAGE:
     // Every time it is called, this function returns a new DoubleSignal instance of size
-    // len(signal)+len(patch)-1. If the last operation performed was executeConv(), this function
+    // len(signal)+len(patch)-1. If the last operation performed was convolute(), this function
     // will return the  convolution of signal and patch. If the last operation performed was
-    // executeXcorr(), the result will contain the cross-correlation. If none of them was performed
+    // crossCorrelate(), the result will contain the cross-correlation. If none of them was performed
     // at the moment of calling this function, an exception will be thrown.
     // The indexing will start with the most negative relation, and increase accordingly. Which means:
     //   given S:=len(signal), P:=len(patch), T:=S+P-1
@@ -278,10 +162,6 @@ struct OverlapSaveConvolver {
     auto extractResult() -> DoubleSignal;
 
 private:
-    // This private method throws an exception if _state_ is Uninitialized, because that
-    // means that some "getter" has ben called before any computation has been performed.
-    auto checkLastExecutedNotNull(std::string const& methodName) -> void;
-
     // This private method implements steps 3,4,5 of the algorithm. If the given flag is false,
     // it will perform a convolution (4a), and a cross-correlation (4b) otherwise.
     // Note the parallelization with OpenMP, which increases performance in supporting CPUs.
