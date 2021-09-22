@@ -5,6 +5,7 @@
 */
 #include "wavefilt.h"
 
+#include "conv.h"
 #include "filters/coif.hpp"
 #include "filters/daubechies.hpp"
 #include "filters/h.hpp"
@@ -13,6 +14,10 @@
 
 #include <memory>
 #include <string_view>
+
+// #include <cstdio>
+// #define USE_MATH_DEFINES
+// #include <cmath>
 
 using namespace std::string_view_literals;
 
@@ -53,7 +58,7 @@ auto qmfWrev(double const* in, int n, double* out)
 }
 } // namespace
 
-auto filtlength(char const* name) -> int
+auto waveletFilterLength(char const* name) -> int
 {
     int len = strlen(name);
     int i = 0;
@@ -214,10 +219,10 @@ auto filtlength(char const* name) -> int
     return -1;
 }
 
-auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int
+auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int
 {
     int i = 0;
-    int n = filtlength(name);
+    int n = waveletFilterLength(name);
     if ((strcmp(name, "haar") == 0) || (strcmp(name, "db1") == 0)) {
         copyReverse(daubechies1, n, lp1);
         qmfWrev(daubechies1, n, hp1);

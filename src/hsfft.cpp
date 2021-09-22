@@ -10,6 +10,10 @@
 #include <cstdio>
 #include <memory>
 
+auto factors(int m, int* arr) -> int;
+auto twiddle(FftData* vec, int n, int radix) -> void;
+auto longvectorN(FftData* sig, int const* array, int tx) -> void;
+
 auto fftInit(int n, int sgn) -> std::unique_ptr<FftSet>
 {
     auto obj = std::unique_ptr<FftSet>();

@@ -26,10 +26,4 @@ auto divideby(int m, int d) -> int;
 
 auto dividebyN(int n) -> int;
 
-auto factors(int m, int* arr) -> int;
-
-auto twiddle(FftData* vec, int n, int radix) -> void;
-
-auto longvectorN(FftData* sig, int const* array, int tx) -> void;
-
 #endif /* HSFFT_H_ */

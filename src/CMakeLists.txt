@@ -11,27 +11,47 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 )
 target_sources(${CMAKE_PROJECT_NAME}
     PRIVATE
-        conv.h
+        AudioFile.h
+        ComplexWaveletTransform.cpp
+        ComplexWaveletTransform.hpp
         conv.cpp
-        cwt.h
+        conv.h
+        Convolution.hpp
+        ConvolutionMethod.hpp
         cwt.cpp
-        cwtmath.h
+        cwt.h
         cwtmath.cpp
-        hsfft.h
+        cwtmath.h
+        denoise.cpp
+        FFT.hpp
         hsfft.cpp
-        overlap_save_convolver.hpp
+        hsfft.h
         overlap_save_convolver.cpp
-        real.h
+        overlap_save_convolver.hpp
         real.cpp
-        wavefilt.h
+        real.h
+        SignalExtension.hpp
+        waux.cpp
+        waux.h
+        wauxlib.h
         wavefilt.cpp
-        Wavelet.hpp
-        Wavelet.cpp
-        wavefunc.h
+        wavefilt.h
         wavefunc.cpp
+        wavefunc.h
+        Wavelet.cpp
+        Wavelet.hpp
+        WaveletPacketTransform.cpp
+        WaveletPacketTransform.hpp
+        WaveletTransform2D.cpp
+        WaveletTransform2D.hpp
+        WaveletTransform.cpp
+        WaveletTransform.hpp
+        WaveletTree.cpp
+        WaveletTree.hpp
         wavelib.cpp
-        wtmath.h
+        wavelib.h
         wtmath.cpp
+        wtmath.h
 )
 
 add_library(wauxlib)

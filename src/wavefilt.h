@@ -1,15 +1,4 @@
-/// \copyright Copyright (c) 2014, Rafat Hussain
-/// \copyright Copyright (c) 2016, Holger Nahrstaedt
+#pragma once
 
-#ifndef WAVEFILT_H_
-#define WAVEFILT_H_
-
-#include "conv.h"
-#include <cstdio>
-#define USE_MATH_DEFINES
-#include <cmath>
-
-auto filtlength(char const* name) -> int;
-auto filtcoef(char const* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int;
-
-#endif /* WAVEFILT_H_ */
+auto waveletFilterLength(char const* name) -> int;
+auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int;

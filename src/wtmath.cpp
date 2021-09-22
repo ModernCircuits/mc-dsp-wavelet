@@ -2,6 +2,13 @@
 
 #include "wtmath.h"
 
+#include "FFT.hpp"
+
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
 auto dwtPerStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride) -> void
 {
     int l;
