@@ -3,7 +3,7 @@
 #ifndef WAUXLIB_H_
 #define WAUXLIB_H_
 
-#include "wavelets.hpp"
+#include "lt/dsp/wavelets.hpp"
 
 #include <cfloat>
 #include <cmath>

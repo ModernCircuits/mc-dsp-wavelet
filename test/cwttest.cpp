@@ -1,4 +1,4 @@
-#include "wavelets.hpp"
+#include "lt/dsp/wavelets.hpp"
 
 #include "readFileToVector.hpp"
 

@@ -2,8 +2,8 @@
 
 #include "tcb/span.hpp"
 
-#include "wavelets/Convolution.hpp"
-#include "wavelets/wavefunc.h"
+#include "lt/dsp/wavelets/Convolution.hpp"
+#include "lt/dsp/wavelets/wavefunc.h"
 
 #include <string>
 

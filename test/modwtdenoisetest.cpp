@@ -1,4 +1,4 @@
-#include "wavelets/Denoise.hpp"
+#include "lt/dsp/wavelets/Denoise.hpp"
 
 #include "readFileToVector.hpp"
 

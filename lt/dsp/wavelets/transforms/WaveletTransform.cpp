@@ -1,8 +1,8 @@
 #include "WaveletTransform.hpp"
 
-#include "wavelets/Convolution.hpp"
-#include "wavelets/FFT.hpp"
-#include "wavelets/wtmath.h"
+#include "lt/dsp/wavelets/Convolution.hpp"
+#include "lt/dsp/wavelets/FFT.hpp"
+#include "lt/dsp/wavelets/wtmath.h"
 
 #include <cassert>
 #include <cmath>

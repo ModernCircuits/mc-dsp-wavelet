@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Holger Nahrstaedt (TU Berlin)
  */
-#include "wavelets.hpp"
+#include "lt/dsp/wavelets.hpp"
 
 #include "helper.hpp"
 

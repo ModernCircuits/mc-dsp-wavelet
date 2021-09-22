@@ -1,7 +1,7 @@
-#include "wavelets.hpp"
+#include "lt/core/AudioFile.h"
+#include "lt/dsp/convolution.hpp"
+#include "lt/dsp/wavelets.hpp"
 
-#include "AudioFile.h"
-#include "convolution/OverlapSave.hpp"
 #include "helper.hpp"
 #include "readFileToVector.hpp"
 

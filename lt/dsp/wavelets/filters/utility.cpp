@@ -5,12 +5,12 @@
 */
 #include "utility.hpp"
 
-#include "wavelets/Convolution.hpp"
-#include "wavelets/filters/coif.hpp"
-#include "wavelets/filters/daubechies.hpp"
-#include "wavelets/filters/h.hpp"
-#include "wavelets/filters/meyer.hpp"
-#include "wavelets/filters/sym.hpp"
+#include "lt/dsp/wavelets/Convolution.hpp"
+#include "lt/dsp/wavelets/filters/coif.hpp"
+#include "lt/dsp/wavelets/filters/daubechies.hpp"
+#include "lt/dsp/wavelets/filters/h.hpp"
+#include "lt/dsp/wavelets/filters/meyer.hpp"
+#include "lt/dsp/wavelets/filters/sym.hpp"
 
 #define USE_MATH_DEFINES
 #include <cmath>
