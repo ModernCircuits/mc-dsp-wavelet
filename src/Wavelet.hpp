@@ -34,3 +34,5 @@ private:
     lt::span<double> lpr_;
     lt::span<double> hpr_;
 };
+
+auto summary(Wavelet const& obj) -> void;
