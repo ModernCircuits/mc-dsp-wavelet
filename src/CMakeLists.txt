@@ -25,6 +25,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         real.cpp
         wavefilt.h
         wavefilt.cpp
+        Wavelet.hpp
+        Wavelet.cpp
         wavefunc.h
         wavefunc.cpp
         wavelib.cpp

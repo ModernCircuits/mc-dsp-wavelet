@@ -22,7 +22,7 @@ auto main() -> int
     auto diff = makeZeros<double>(n);
     auto const j = 2;
 
-    Wt2Set* wt = wt2Init(obj, "swt", rows, cols, j);
+    WaveletTransform2D* wt = wt2Init(obj, "swt", rows, cols, j);
 
     for (auto i = 0; i < rows; ++i) {
         for (auto k = 0; k < cols; ++k) {

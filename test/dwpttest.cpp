@@ -22,7 +22,7 @@ auto main() -> int
         inp[i - 1] = i;
     }
 
-    WptSet* wt = wptInit(&obj, n, j);
+    WaveletPacketTransform* wt = wptInit(&obj, n, j);
     setDWPTExtension(wt, "per");
     setDWPTEntropy(wt, "logenergy", 0);
 

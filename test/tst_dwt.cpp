@@ -85,7 +85,7 @@ auto modwtReconstructionTest()
 
 auto modwT2ReconstructionTest()
 {
-    Wt2Set* wt;
+    WaveletTransform2D* wt;
     int i;
     int k;
     int rows;
@@ -154,7 +154,7 @@ auto modwT2ReconstructionTest()
 auto dwptReconstructionTest()
 {
 
-    WptSet* wt;
+    WaveletPacketTransform* wt;
 
     int n;
     int i;
@@ -278,7 +278,7 @@ auto cwtReconstructionTest()
     double epsilon;
     int it1;
     int it2;
-    CwaveletTransform* wt;
+    ComplexWaveletTransform* wt;
 
     char const* wave[3] {
         "morl",

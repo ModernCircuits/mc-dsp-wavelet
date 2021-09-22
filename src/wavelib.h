@@ -3,6 +3,10 @@
 
 #include "tcb/span.hpp"
 
+#include "ConvolutionMethod.hpp"
+#include "SignalExtension.hpp"
+#include "Wavelet.hpp"
+
 #include <algorithm>
 #include <memory>
 #include <string>
@@ -28,65 +32,9 @@ auto makeZeros(std::size_t length) -> std::unique_ptr<T[]>
     return ptr;
 }
 
-enum struct SignalExtension {
-    periodic,
-    symmetric,
-};
-
-[[nodiscard]] inline auto toString(SignalExtension ext) -> std::string
-{
-    if (ext == SignalExtension::periodic) {
-        return "periodic";
-    }
-    return "symmetric";
-}
-
-enum struct ConvolutionMethod {
-    direct,
-    fft,
-};
-
-[[nodiscard]] inline auto toString(ConvolutionMethod method) -> std::string
-{
-    if (method == ConvolutionMethod::direct) {
-        return "direct";
-    }
-    return "fft";
-}
-
 struct CplxData {
     cplx_type re;
     cplx_type im;
-};
-
-struct Wavelet {
-    explicit Wavelet(char const* wname);
-
-    [[nodiscard]] auto size() const noexcept -> int { return static_cast<int>(size_); }
-    [[nodiscard]] auto name() const noexcept -> std::string const& { return name_; }
-
-    [[nodiscard]] auto lpd() const noexcept -> double const* { return lpd_.data(); }
-    [[nodiscard]] auto hpd() const noexcept -> double const* { return hpd_.data(); }
-    [[nodiscard]] auto lpr() const noexcept -> double const* { return lpr_.data(); }
-    [[nodiscard]] auto hpr() const noexcept -> double const* { return hpr_.data(); }
-
-    [[nodiscard]] auto lpdLen() const noexcept -> int { return static_cast<int>(lpd_.size()); }
-    [[nodiscard]] auto hpdLen() const noexcept -> int { return static_cast<int>(hpd_.size()); }
-    [[nodiscard]] auto lprLen() const noexcept -> int { return static_cast<int>(lpr_.size()); }
-    [[nodiscard]] auto hprLen() const noexcept -> int { return static_cast<int>(hpr_.size()); }
-
-private:
-    std::string name_;
-
-    // When all filters are of the same length.
-    // [Matlab uses zero-padding to make all filters of the same length]
-    std::size_t size_;
-    std::unique_ptr<double[]> params_;
-
-    lt::span<double> lpd_;
-    lt::span<double> hpd_;
-    lt::span<double> lpr_;
-    lt::span<double> hpr_;
 };
 
 struct FftData {
@@ -112,7 +60,7 @@ struct FftRealSet {
 
 auto fftRealInit(int n, int sgn) -> std::unique_ptr<FftRealSet>;
 
-struct ConvSet {
+struct Convolution {
     std::unique_ptr<FftRealSet> fobj;
     std::unique_ptr<FftRealSet> iobj;
     int ilen1;
@@ -120,7 +68,7 @@ struct ConvSet {
     int clen;
 };
 
-auto convInit(int n, int l) -> std::unique_ptr<ConvSet>;
+auto convInit(int n, int l) -> std::unique_ptr<Convolution>;
 
 struct WaveletTransform {
     WaveletTransform(Wavelet& wave, char const* method, int siglength, int j);
@@ -149,7 +97,7 @@ private:
     double* output_;
 
 public:
-    std::unique_ptr<ConvSet> cobj;
+    std::unique_ptr<Convolution> cobj;
     int siglength; // Length of the original signal.
     int modwtsiglength; // Modified signal length for MODWT
     int outlength; // Length of the output DWT vector
@@ -164,9 +112,9 @@ public:
     std::unique_ptr<double[]> params;
 };
 
-struct WtreeSet {
+struct WaveletTree {
     Wavelet* wave;
-    ConvSet* cobj;
+    Convolution* cobj;
     std::string method;
     int siglength; // Length of the original signal.
     int outlength; // Length of the output DWT vector
@@ -187,11 +135,11 @@ struct WtreeSet {
     std::unique_ptr<double[]> params;
 };
 
-auto wtreeInit(Wavelet* wave, int siglength, int j) -> WtreeSet*;
+auto wtreeInit(Wavelet* wave, int siglength, int j) -> WaveletTree*;
 
-struct WptSet {
+struct WaveletPacketTransform {
     Wavelet* wave;
-    ConvSet* cobj;
+    Convolution* cobj;
     int siglength; // Length of the original signal.
     int outlength; // Length of the output DWT vector
     int lenlength; // Length of the Output Dimension Vector "length"
@@ -214,9 +162,9 @@ struct WptSet {
     std::unique_ptr<double[]> params;
 };
 
-auto wptInit(Wavelet* wave, int siglength, int j) -> WptSet*;
+auto wptInit(Wavelet* wave, int siglength, int j) -> WaveletPacketTransform*;
 
-struct CwaveletTransform {
+struct ComplexWaveletTransform {
     std::string wave; // Wavelet - morl/morlet,paul,dog/dgauss
     int siglength; // Length of Input Data
     int J; // Total Number of Scales
@@ -239,9 +187,9 @@ struct CwaveletTransform {
     std::unique_ptr<double[]> params;
 };
 
-auto cwtInit(char const* wave, double param, int siglength, double dt, int j) -> CwaveletTransform*;
+auto cwtInit(char const* wave, double param, int siglength, double dt, int j) -> ComplexWaveletTransform*;
 
-struct Wt2Set {
+struct WaveletTransform2D {
     Wavelet* wave;
     std::string method;
     int rows; // Matrix Number of rows
@@ -258,17 +206,17 @@ struct Wt2Set {
     std::unique_ptr<int[]> params;
 };
 
-auto wt2Init(Wavelet& wave, char const* method, int rows, int cols, int j) -> Wt2Set*;
+auto wt2Init(Wavelet& wave, char const* method, int rows, int cols, int j) -> WaveletTransform2D*;
 
 auto dwt(WaveletTransform& wt, double const* inp) -> void;
 
 auto idwt(WaveletTransform& wt, double* dwtop) -> void;
 
-auto wtree(WtreeSet* wt, double const* inp) -> void;
+auto wtree(WaveletTree* wt, double const* inp) -> void;
 
-auto dwpt(WptSet* wt, double const* inp) -> void;
+auto dwpt(WaveletPacketTransform* wt, double const* inp) -> void;
 
-auto idwpt(WptSet* wt, double* dwtop) -> void;
+auto idwpt(WaveletPacketTransform* wt, double* dwtop) -> void;
 
 auto swt(WaveletTransform& wt, double const* inp) -> void;
 
@@ -278,39 +226,39 @@ auto modwt(WaveletTransform& wt, double const* inp) -> void;
 
 auto imodwt(WaveletTransform& wt, double* oup) -> void;
 
-auto setWTREEExtension(WtreeSet* wt, char const* extension) -> void;
+auto setWTREEExtension(WaveletTree* wt, char const* extension) -> void;
 
-auto setDWPTExtension(WptSet* wt, char const* extension) -> void;
+auto setDWPTExtension(WaveletPacketTransform* wt, char const* extension) -> void;
 
-auto setDWT2Extension(Wt2Set* wt, char const* extension) -> void;
+auto setDWT2Extension(WaveletTransform2D* wt, char const* extension) -> void;
 
-auto setDWPTEntropy(WptSet* wt, char const* entropy, double eparam) -> void;
+auto setDWPTEntropy(WaveletPacketTransform* wt, char const* entropy, double eparam) -> void;
 
-auto getWTREENodelength(WtreeSet* wt, int x) -> int;
+auto getWTREENodelength(WaveletTree* wt, int x) -> int;
 
-auto getWTREECoeffs(WtreeSet* wt, int x, int y, double* coeffs, int n) -> void;
+auto getWTREECoeffs(WaveletTree* wt, int x, int y, double* coeffs, int n) -> void;
 
-auto getDWPTNodelength(WptSet* wt, int x) -> int;
+auto getDWPTNodelength(WaveletPacketTransform* wt, int x) -> int;
 
-auto setCWTScales(CwaveletTransform* wt, double s0, double dj, char const* type, int power) -> void;
+auto setCWTScales(ComplexWaveletTransform* wt, double s0, double dj, char const* type, int power) -> void;
 
-auto cwt(CwaveletTransform* wt, double const* inp) -> void;
+auto cwt(ComplexWaveletTransform* wt, double const* inp) -> void;
 
-auto icwt(CwaveletTransform* wt, double* cwtop) -> void;
+auto icwt(ComplexWaveletTransform* wt, double* cwtop) -> void;
 
-auto dwt2(Wt2Set* wt, double* inp) -> std::unique_ptr<double[]>;
+auto dwt2(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>;
 
-auto idwt2(Wt2Set* wt, double* wavecoeff, double* oup) -> void;
+auto idwt2(WaveletTransform2D* wt, double* wavecoeff, double* oup) -> void;
 
-auto swt2(Wt2Set* wt, double* inp) -> std::unique_ptr<double[]>;
+auto swt2(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>;
 
-auto iswt2(Wt2Set* wt, double const* wavecoeffs, double* oup) -> void;
+auto iswt2(WaveletTransform2D* wt, double const* wavecoeffs, double* oup) -> void;
 
-auto modwt2(Wt2Set* wt, double* inp) -> std::unique_ptr<double[]>;
+auto modwt2(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>;
 
-auto imodwt2(Wt2Set* wt, double* wavecoeff, double* oup) -> void;
+auto imodwt2(WaveletTransform2D* wt, double* wavecoeff, double* oup) -> void;
 
-auto getWT2Coeffs(Wt2Set* wt, double* wcoeffs, int level, char const* type, int* rows, int* cols) -> double*;
+auto getWT2Coeffs(WaveletTransform2D* wt, double* wcoeffs, int level, char const* type, int* rows, int* cols) -> double*;
 
 auto dispWT2Coeffs(double* a, int row, int col) -> void;
 
@@ -318,20 +266,20 @@ auto waveSummary(Wavelet const& obj) -> void;
 
 auto wtSummary(WaveletTransform const& wt) -> void;
 
-auto wtreeSummary(WtreeSet* wt) -> void;
+auto wtreeSummary(WaveletTree* wt) -> void;
 
-auto wptSummary(WptSet* wt) -> void;
+auto wptSummary(WaveletPacketTransform* wt) -> void;
 
-auto cwtSummary(CwaveletTransform* wt) -> void;
+auto cwtSummary(ComplexWaveletTransform* wt) -> void;
 
-auto wt2Summary(Wt2Set* wt) -> void;
+auto wt2Summary(WaveletTransform2D* wt) -> void;
 
-auto wtreeFree(WtreeSet* object) -> void;
+auto wtreeFree(WaveletTree* object) -> void;
 
-auto wptFree(WptSet* object) -> void;
+auto wptFree(WaveletPacketTransform* object) -> void;
 
-auto cwtFree(CwaveletTransform* object) -> void;
+auto cwtFree(ComplexWaveletTransform* object) -> void;
 
-auto wt2Free(Wt2Set* wt) -> void;
+auto wt2Free(WaveletTransform2D* wt) -> void;
 
 #endif /* WAVELIB_H_ */

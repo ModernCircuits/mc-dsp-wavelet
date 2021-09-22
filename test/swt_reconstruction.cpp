@@ -126,7 +126,7 @@ auto swtReconstructionTest()
 
 auto swT2ReconstructionTest()
 {
-    Wt2Set* wt;
+    WaveletTransform2D* wt;
     // int i;
     // int k;
     // int J;

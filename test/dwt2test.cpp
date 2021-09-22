@@ -21,7 +21,7 @@ auto main() -> int
 
     auto const j = 3;
 
-    Wt2Set* wt = wt2Init(obj, "dwt", rows, cols, j);
+    WaveletTransform2D* wt = wt2Init(obj, "dwt", rows, cols, j);
 
     for (auto i = 0; i < rows; ++i) {
         for (auto k = 0; k < cols; ++k) {

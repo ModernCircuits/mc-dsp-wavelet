@@ -44,9 +44,9 @@ namespace {
 }
 }
 
-auto convInit(int n, int l) -> std::unique_ptr<ConvSet>
+auto convInit(int n, int l) -> std::unique_ptr<Convolution>
 {
-    auto obj = std::make_unique<ConvSet>();
+    auto obj = std::make_unique<Convolution>();
 
     auto const convLen = n + l - 1;
     obj->clen = findnexte(convLen);
@@ -109,7 +109,7 @@ auto convDirect(fft_type const* inp1, int n, fft_type const* inp2, int l, fft_ty
     }
 }
 
-auto convFft(ConvSet const& obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup) -> void
+auto convFft(Convolution const& obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup) -> void
 {
 
     auto n = obj.clen;

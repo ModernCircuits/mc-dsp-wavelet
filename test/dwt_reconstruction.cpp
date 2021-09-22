@@ -113,7 +113,7 @@ auto dwtReconstructionTest()
 
 auto dwT2ReconstructionTest()
 {
-    Wt2Set* wt;
+    WaveletTransform2D* wt;
     double epsilon;
 
     auto const rows = 256;

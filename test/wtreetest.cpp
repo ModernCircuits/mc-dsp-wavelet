@@ -16,7 +16,7 @@ auto main() -> int
     }
     auto const j = 3;
 
-    WtreeSet* wt = wtreeInit(&obj, n, j);
+    WaveletTree* wt = wtreeInit(&obj, n, j);
     setWTREEExtension(wt, "sym");
 
     wtree(wt, inp.get());

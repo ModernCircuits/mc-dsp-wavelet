@@ -26,7 +26,7 @@ auto main() -> int
     double num;
     double reconMean;
     double reconVar;
-    CwaveletTransform* wt;
+    ComplexWaveletTransform* wt;
 
     // Set Morlet wavelet. Other options "paul" and "dog"
     auto const* wave = "morlet";
