@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <random>
 
 auto absmax(double* array, int n) -> double
 {
@@ -100,5 +101,8 @@ auto relError(double const* data, double const* rec, int n) -> double
 
 auto generateRnd() -> double
 {
-    return (double)(std::rand() % 100 + 1);
+    auto rd = std::random_device {};
+    auto gen = std::mt19937 { rd() };
+    auto dis = std::uniform_real_distribution<double> { 1.0, 100.0 };
+    return dis(gen);
 }

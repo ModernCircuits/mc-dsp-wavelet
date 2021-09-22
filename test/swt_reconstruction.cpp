@@ -6,8 +6,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
 #include <iostream>
+#include <random>
 #include <vector>
 
 auto swtReconstructionTest()
@@ -23,10 +23,13 @@ auto swtReconstructionTest()
 
     auto inp = makeZeros<double>(n);
     auto out = makeZeros<double>(n);
-    // wmean = mean(temp, N);
+
+    auto rd = std::random_device {};
+    auto gen = std::mt19937 { rd() };
+    auto dis = std::uniform_real_distribution<double> { 0.0, 1.0 };
 
     for (i = 0; i < n; ++i) {
-        inp[i] = (rand() / (double)(RAND_MAX));
+        inp[i] = dis(gen);
     }
     std::vector<std::string> waveletNames;
 

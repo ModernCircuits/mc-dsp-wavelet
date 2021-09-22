@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <iostream>
 #include <memory>
+#include <random>
 #include <sstream>
 #include <vector>
 
@@ -23,7 +24,11 @@ auto modwtReconstructionTest()
 
     auto out = std::make_unique<double[]>(n);
     auto inp = std::make_unique<double[]>(n);
-    std::generate_n(inp.get(), n, [] { return (rand() / (double)(RAND_MAX)); });
+
+    auto rd = std::random_device {};
+    auto gen = std::mt19937 { rd() };
+    auto dis = std::uniform_real_distribution<double> { 0.0, 1.0 };
+    std::generate_n(inp.get(), n, [&] { return dis(gen); });
 
     auto waveletNames = std::vector<std::string> {};
 
@@ -163,8 +168,12 @@ auto dwptReconstructionTest()
     auto out = std::make_unique<double[]>(n);
     // wmean = mean(temp, N);
 
+    auto rd = std::random_device {};
+    auto gen = std::mt19937 { rd() };
+    auto dis = std::uniform_real_distribution<double> { 0.0, 1.0 };
+
     for (i = 0; i < n; ++i) {
-        inp[i] = (rand() / (double)(RAND_MAX));
+        inp[i] = dis(gen);
     }
     std::vector<std::string> waveletNames;
 

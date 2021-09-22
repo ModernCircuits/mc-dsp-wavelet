@@ -15,16 +15,16 @@
 #include <cstdlib>
 #include <cstring>
 
-auto mean(double const* vec, int N) -> double;
+auto mean(double const* vec, int n) -> double;
 
-auto var(double const* vec, int N) -> double;
+auto var(double const* vec, int n) -> double;
 
-auto median(double* x, int N) -> double;
+auto median(double* x, int n) -> double;
 
-auto minindex(double const* arr, int N) -> int;
+auto minindex(double const* arr, int n) -> int;
 
-auto autocovar(double const* vec, int N, double* acov, int M) -> void;
+auto autocovar(double const* vec, int n, double* acov, int m) -> void;
 
-auto autocorr(double const* vec, int N, double* acorr, int M) -> void;
+auto autocorr(double const* vec, int n, double* acorr, int m) -> void;
 
 #endif /* AUXILIARY_WAUX_H_ */
