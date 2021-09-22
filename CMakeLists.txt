@@ -22,6 +22,20 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CTest)
     enable_testing()
 
+    include(CheckCXXCompilerFlag)
+
+    if (MSVC)
+        check_cxx_compiler_flag("/arch:AVX" COMPILER_AVX_SUPPORTED)
+        if (COMPILER_AVX_SUPPORTED)
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
+        endif ()
+    else ()
+        check_cxx_compiler_flag("-mavx" COMPILER_AVX_SUPPORTED)
+        if (COMPILER_AVX_SUPPORTED)
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx")
+        endif ()
+    endif ()
+
     list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
     include(ltCompilerOptions)
     include(ltCompilerWarnings)
@@ -50,12 +64,13 @@ conan_cmake_configure(
         cmake_find_package
     OPTIONS
         boost:header_only=True
-        fftw:precision=single
+        fftw:precision=double
+        fftw:simd=avx
 )
 conan_cmake_autodetect(settings)
 conan_cmake_install(PATH_OR_REFERENCE . BUILD missing REMOTE conancenter SETTINGS ${settings})
 
-find_package(FFTW3f REQUIRED)
+find_package(FFTW3 REQUIRED)
 find_package(coz-profiler REQUIRED)
 
 add_subdirectory(3rd_party/span)

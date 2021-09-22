@@ -40,7 +40,7 @@ auto mean(It f, It l) -> double
     return sum / static_cast<double>(std::distance(f, l));
 }
 
-auto peak_detect(lt::span<float> data) -> std::size_t
+auto peak_detect(lt::span<double> data) -> std::size_t
 {
     auto peaks = std::minmax_element(data.begin(), data.end());
     if (fabs(*peaks.first) >= fabs(*peaks.second)) {
@@ -70,18 +70,16 @@ struct bpm_detect {
         auto cD = lt::span<double> {};
 
         auto cD_minlen = 0.0;
-        cD_sum_.clear();
+        auto cD_sum = std::vector<double> {};
         dwt(&wt_, input.data());
         for (auto loop { 0 }; loop < levels; ++loop) {
-            cD_.clear();
-            cA_.clear();
             if (loop == 0) {
                 // dwt(&wt_, input.data());
                 cA = wt_.approx();
                 cD = wt_.detail(loop + 1);
                 cD_minlen = static_cast<double>(std::size(cD)) / maxDecimation + 1.0;
-                cD_sum_.resize(static_cast<std::size_t>(std::floor(cD_minlen)));
-                std::fill(begin(cD_sum_), end(cD_sum_), 0.0);
+                cD_sum.resize(static_cast<std::size_t>(std::floor(cD_minlen)));
+                std::fill(begin(cD_sum), end(cD_sum), 0.0);
             } else {
                 // dwt(&wt_, cA.data());
                 cA = wt_.approx();
@@ -105,7 +103,7 @@ struct bpm_detect {
             //    Essentially, each level the detail coefs (i.e. the HPF values)
             //    are concatenated to the beginning of the array
             // cD_sum = cD[0: math.floor(cD_minlen)] + cD_sum
-            cD_sum_.insert(begin(cD_sum_), std::begin(cD), std::next(std::begin(cD), static_cast<size_t>(std::floor(cD_minlen))));
+            cD_sum.insert(begin(cD_sum), std::begin(cD), std::next(std::begin(cD), static_cast<size_t>(std::floor(cD_minlen))));
         }
 
         // if [b for b in cA if b != 0.0] == []:
@@ -122,23 +120,23 @@ struct bpm_detect {
         std::transform(std::begin(cA), std::end(cA), std::begin(cA), [](auto v) { return std::fabs(v); });
         auto const m = mean(std::begin(cA), std::end(cA));
         std::transform(std::begin(cA), std::end(cA), std::begin(cA), [m](auto v) { return v - m; });
-        cD_sum_.insert(begin(cD_sum_), std::begin(cA), std::next(std::begin(cA), static_cast<size_t>(std::floor(cD_minlen))));
+        cD_sum.insert(begin(cD_sum), std::begin(cA), std::next(std::begin(cA), static_cast<size_t>(std::floor(cD_minlen))));
 
         // # ACF
         // correl = np.correlate(cD_sum, cD_sum, "full")
-        cD_sumf_.clear();
-        std::copy(std::begin(wt_.output()), std::begin(wt_.output()) + wt_.outlength, std::back_inserter(cD_sumf_));
+        // cD_sum.clear();
+        std::copy(std::begin(wt_.output()), std::begin(wt_.output()) + wt_.outlength, std::back_inserter(cD_sum));
         // std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [](auto v) { return std::fabs(v); });
         // auto const m = mean(begin(cD_sumf_), end(cD_sumf_));
         // std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [m](auto v) { return v - m; });
 
-        auto s = FloatSignal(cD_sumf_.data(), cD_sumf_.size());
+        auto s = DoubleSignal(cD_sum.data(), cD_sum.size());
         auto x = OverlapSaveConvolver(s, s);
         x.executeXcorr();
         auto correl = x.extractResult();
 
         auto midpoint = static_cast<std::size_t>(std::floor(correl.size() / 2.0));
-        auto correl_midpoint_tmp = lt::span<float> { correl.data(), correl.size() }.subspan(midpoint);
+        auto correl_midpoint_tmp = lt::span<double> { correl.data(), correl.size() }.subspan(midpoint);
         auto const peak_ndx = peak_detect(correl_midpoint_tmp.subspan(minNdx, maxNdx - minNdx));
 
         auto const peak_ndx_adjusted = peak_ndx + minNdx;
@@ -149,12 +147,6 @@ struct bpm_detect {
 private:
     wavelet wave_;
     wavelet_transform wt_;
-
-    std::vector<double> cA_ {};
-    std::vector<double> cD_ {};
-    std::vector<double> correl_ {};
-    std::vector<double> cD_sum_ {};
-    std::vector<float> cD_sumf_ {};
 };
 
 auto median(lt::span<double> data) -> double

@@ -10,8 +10,8 @@ void checkRealComplexRatio(std::size_t const realSize, std::size_t const complex
 {
     if (complexSize != (realSize / 2 + 1)) {
         throw std::runtime_error(std::string("[ERROR] ") + funcName
-            + ": size of ComplexSignal must equal size(FloatSignal)/2+1. "
-            + " Sizes were (float, complex): " + iterableToString({ realSize, complexSize }));
+            + ": size of ComplexSignal must equal size(DoubleSignal)/2+1. "
+            + " Sizes were (double, complex): " + iterableToString({ realSize, complexSize }));
     }
 }
 
@@ -26,39 +26,39 @@ void checkALessEqualB(std::size_t const a, std::size_t const b, std::string cons
 
 auto pow2Ceil(std::size_t x) -> size_t { return std::pow(2, std::ceil(std::log2(x))); }
 
-// the basic constructor allocates an aligned, float array, which is zeroed by the superclass
-FloatSignal::FloatSignal(std::size_t size)
-    : Signal(fftwf_alloc_real(size), size)
+// the basic constructor allocates an aligned, double array, which is zeroed by the superclass
+DoubleSignal::DoubleSignal(std::size_t size)
+    : Signal(fftw_alloc_real(size), size)
 {
 }
 
-FloatSignal::FloatSignal(float* data, size_t size)
-    : FloatSignal(size)
+DoubleSignal::DoubleSignal(double* data, size_t size)
+    : DoubleSignal(size)
 {
-    std::memcpy(data_, data, sizeof(float) * size);
+    std::memcpy(data_, data, sizeof(double) * size);
 }
-FloatSignal::FloatSignal(float* data, size_t size, size_t padBef, size_t padAft)
-    : FloatSignal(size + padBef + padAft)
+DoubleSignal::DoubleSignal(double* data, size_t size, size_t padBef, size_t padAft)
+    : DoubleSignal(size + padBef + padAft)
 {
-    std::memcpy(data_ + padBef, data, sizeof(float) * size);
+    std::memcpy(data_ + padBef, data, sizeof(double) * size);
 }
 // the destructor frees the only resource allocated
-FloatSignal::~FloatSignal() { fftwf_free(data_); }
-void FloatSignal::operator+=(float const x)
+DoubleSignal::~DoubleSignal() { fftw_free(data_); }
+void DoubleSignal::operator+=(double const x)
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i] += x;
     }
     COZ_PROGRESS;
 }
-void FloatSignal::operator*=(float const x)
+void DoubleSignal::operator*=(double const x)
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i] *= x;
     }
     COZ_PROGRESS;
 }
-void FloatSignal::operator/=(float const x)
+void DoubleSignal::operator/=(double const x)
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i] /= x;
@@ -67,13 +67,13 @@ void FloatSignal::operator/=(float const x)
 }
 
 ComplexSignal::ComplexSignal(std::size_t size)
-    : Signal(fftwf_alloc_complex(size), size)
+    : Signal(fftw_alloc_complex(size), size)
 {
 }
 
-ComplexSignal::~ComplexSignal() { fftwf_free(data_); }
+ComplexSignal::~ComplexSignal() { fftw_free(data_); }
 
-void ComplexSignal::operator*=(float const x)
+void ComplexSignal::operator*=(double const x)
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i][REAL] *= x;
@@ -82,7 +82,7 @@ void ComplexSignal::operator*=(float const x)
     COZ_PROGRESS;
 }
 
-void ComplexSignal::operator+=(float const x)
+void ComplexSignal::operator+=(double const x)
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i][REAL] += x;
@@ -90,7 +90,7 @@ void ComplexSignal::operator+=(float const x)
     COZ_PROGRESS;
 }
 
-void ComplexSignal::operator+=(const fftwf_complex x)
+void ComplexSignal::operator+=(const fftw_complex x)
 {
     for (std::size_t i = 0; i < size_; ++i) {
         data_[i][REAL] += x[REAL];
@@ -137,19 +137,19 @@ void spectralCorrelation(ComplexSignal const& a, ComplexSignal const& b, Complex
     COZ_PROGRESS;
 }
 
-FftForwardPlan::FftForwardPlan(FloatSignal& fs, ComplexSignal& cs)
-    : FftPlan(fftwf_plan_dft_r2c_1d(fs.size(), fs.data(), cs.data(), FFTW_ESTIMATE))
+FftForwardPlan::FftForwardPlan(DoubleSignal& fs, ComplexSignal& cs)
+    : FftPlan(fftw_plan_dft_r2c_1d(fs.size(), fs.data(), cs.data(), FFTW_ESTIMATE))
 {
     checkRealComplexRatio(fs.size(), cs.size(), "FftForwardPlan");
 }
 
-FftBackwardPlan::FftBackwardPlan(ComplexSignal& cs, FloatSignal& fs)
-    : FftPlan(fftwf_plan_dft_c2r_1d(fs.size(), cs.data(), fs.data(), FFTW_ESTIMATE))
+FftBackwardPlan::FftBackwardPlan(ComplexSignal& cs, DoubleSignal& fs)
+    : FftPlan(fftw_plan_dft_c2r_1d(fs.size(), cs.data(), fs.data(), FFTW_ESTIMATE))
 {
     checkRealComplexRatio(fs.size(), cs.size(), "FftBackwardPlan");
 }
 
-OverlapSaveConvolver::OverlapSaveConvolver(FloatSignal& signal, FloatSignal& patch, std::string const& /*wisdomPath*/)
+OverlapSaveConvolver::OverlapSaveConvolver(DoubleSignal& signal, DoubleSignal& patch, std::string const& /*wisdomPath*/)
     : signalSize_(signal.size())
     , patchSize_(patch.size())
     , resultSize_(signalSize_ + patchSize_ - 1)
@@ -168,9 +168,9 @@ OverlapSaveConvolver::OverlapSaveConvolver(FloatSignal& signal, FloatSignal& pat
     // chunk the signal into strides of same size as padded patch
     // and make complex counterparts too, as well as the corresponding xcorr signals
     for (std::size_t i = 0; i <= paddedSignal_.size() - resultChunksize_; i += result_stride_) {
-        inputChunks_.push_back(std::make_unique<FloatSignal>(&paddedSignal_[i], resultChunksize_));
+        inputChunks_.push_back(std::make_unique<DoubleSignal>(&paddedSignal_[i], resultChunksize_));
         inputChunksComplex_.push_back(std::make_unique<ComplexSignal>(resultChunksizeComplex_));
-        resultChunks_.push_back(std::make_unique<FloatSignal>(resultChunksize_));
+        resultChunks_.push_back(std::make_unique<DoubleSignal>(resultChunksize_));
         resultChunksComplex_.push_back(std::make_unique<ComplexSignal>(resultChunksizeComplex_));
     }
     // make one forward plan per signal chunk, and one for the patch
@@ -206,7 +206,7 @@ void OverlapSaveConvolver::printChunks(std::string const& name)
 // This method implements step 6 of the overlap-save algorithm. In convolution, the first (P-1)
 // samples of each chunk are discarded, in xcorr the last (P-1) ones. Therefore, depending on the
 // current _state_, the corresponding method is used. USAGE:
-// Every time it is called, this function returns a new FloatSignal instance of size
+// Every time it is called, this function returns a new DoubleSignal instance of size
 // len(signal)+len(patch)-1. If the last operation performed was executeConv(), this function
 // will return the  convolution of signal and patch. If the last operation performed was
 // executeXcorr(), the result will contain the cross-correlation. If none of them was performed
@@ -222,7 +222,7 @@ void OverlapSaveConvolver::printChunks(std::string const& name)
 //   ...
 // Result[8] =                  [1 1 1]        => 1*7         = 7  // LAST ENTRY
 // Note that the returned signal object takes care of its own memory, so no management is needed.
-auto OverlapSaveConvolver::extractResult() -> FloatSignal
+auto OverlapSaveConvolver::extractResult() -> DoubleSignal
 {
     // make sure that an operation was called before
     checkLastExecutedNotNull("extractResult");
@@ -232,17 +232,17 @@ auto OverlapSaveConvolver::extractResult() -> FloatSignal
         discardOffset = resultChunksize_ - result_stride_;
     }
     // instantiate new signal to be filled with the desired info
-    FloatSignal result(resultSize_);
-    float* resultArr = result.data(); // not const because of std::memcpy
+    DoubleSignal result(resultSize_);
+    double* resultArr = result.data(); // not const because of std::memcpy
     // fill!
     static std::size_t kNumChunks = resultChunks_.size();
     for (std::size_t i = 0; i < kNumChunks; i++) {
-        float* xcArr = resultChunks_.at(i)->data();
+        double* xcArr = resultChunks_.at(i)->data();
         std::size_t const kBegin = i * result_stride_;
         // if the last chunk goes above resultSize_, reduce copy size. else copy_size=result_stride_
         std::size_t copySize = result_stride_;
         copySize -= (kBegin + result_stride_ > resultSize_) ? kBegin + result_stride_ - resultSize_ : 0;
-        std::memcpy(resultArr + kBegin, xcArr + discardOffset, sizeof(float) * copySize);
+        std::memcpy(resultArr + kBegin, xcArr + discardOffset, sizeof(double) * copySize);
     }
 
     COZ_PROGRESS;
@@ -301,30 +301,30 @@ void OverlapSaveConvolver::execute(const bool crossCorrelate)
 //     // MakeAndExportFftwWisdom(kWisdomPatient, 0, 29, FFTW_PATIENT);
 
 //     std::size_t const kSizeS = 44100;  // 44100*10;
-//     auto* sArr               = new float[kSizeS];
+//     auto* sArr               = new double[kSizeS];
 //     std::size_t const kSizeP = 44100;  // 44100*1;
-//     auto* pArr               = new float[kSizeP];
+//     auto* pArr               = new double[kSizeP];
 
-//     float sum = 0.0f;
+//     double sum = 0.0f;
 
 //     // for (auto i {0U}; i < count; ++i)
 //     // {
-//     // auto xi = std::array<float, 3> {1.0f, 2.0f, 3.0f};
-//     // auto yi = std::array<float, 3> {0.0f, 1.0f, 0.5f};
+//     // auto xi = std::array<double, 3> {1.0f, 2.0f, 3.0f};
+//     // auto yi = std::array<double, 3> {0.0f, 1.0f, 0.5f};
 
 //     auto xi = std::array {1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
 //     auto yi = std::array {0.0f, 1.0f, 0.5f, 1.0f, 1.0f};
 
 //     // create a test signal
 //     for (std::size_t i = 0; i < kSizeS; ++i) { sArr[i] = i + 1; }
-//     // FloatSignal s(sArr, kSizeS);
-//     FloatSignal s(xi.data(), xi.size());
+//     // DoubleSignal s(sArr, kSizeS);
+//     DoubleSignal s(xi.data(), xi.size());
 //     // s.print("signal");
 
 //     // create a test patch
 //     for (std::size_t i = 0; i < kSizeP; ++i) { pArr[i] = i + 1; }
-//     // FloatSignal p(pArr, kSizeP);
-//     FloatSignal p(yi.data(), yi.size());
+//     // DoubleSignal p(pArr, kSizeP);
+//     DoubleSignal p(yi.data(), yi.size());
 //     // p.print("patch");
 
 //     // Instantiate convolver with both signals (p can't be bigger than s)

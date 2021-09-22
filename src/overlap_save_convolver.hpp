@@ -152,30 +152,30 @@ protected:
     std::size_t size_;
 };
 
-/// This class is a Signal that works on aligned float arrays allocated by FFTW.
+/// This class is a Signal that works on aligned double arrays allocated by FFTW.
 /// It also overloads some further operators to do basic arithmetic
-struct FloatSignal : Signal<float> {
-    /// the basic constructor allocates an aligned, float array, which is zeroed by the superclass
-    explicit FloatSignal(std::size_t size);
-    FloatSignal(float* data, size_t size);
-    FloatSignal(float* data, size_t size, size_t padBef, size_t padAft);
-    ~FloatSignal();
+struct DoubleSignal : Signal<double> {
+    /// the basic constructor allocates an aligned, double array, which is zeroed by the superclass
+    explicit DoubleSignal(std::size_t size);
+    DoubleSignal(double* data, size_t size);
+    DoubleSignal(double* data, size_t size, size_t padBef, size_t padAft);
+    ~DoubleSignal();
 
-    void operator+=(float x);
-    void operator*=(float x);
-    void operator/=(float x);
+    void operator+=(double x);
+    void operator*=(double x);
+    void operator/=(double x);
 };
 
-/// This class is a Signal that works on aligned complex (float[2]) arrays allocated by FFTW.
+/// This class is a Signal that works on aligned complex (double[2]) arrays allocated by FFTW.
 /// It also overloads some further operators to do basic arithmetic
-struct ComplexSignal : Signal<fftwf_complex> {
-    /// the basic constructor allocates an aligned, float[2] array, which is zeroed by the superclass
+struct ComplexSignal : Signal<fftw_complex> {
+    /// the basic constructor allocates an aligned, double[2] array, which is zeroed by the superclass
     explicit ComplexSignal(std::size_t size);
     ~ComplexSignal();
 
-    void operator*=(float x);
-    void operator+=(float x);
-    void operator+=(const fftwf_complex x);
+    void operator*=(double x);
+    void operator+=(double x);
+    void operator+=(const fftw_complex x);
 
     void print(std::string const& name = "signal");
 };
@@ -196,39 +196,39 @@ void spectralCorrelation(ComplexSignal const& a, ComplexSignal const& b, Complex
 /// It is not expected to be used directly: rather, to be extended by specific plans, for instance,
 /// if working with real, 1D signals, only 1D complex<->real plans are needed.
 struct FftPlan {
-    explicit FftPlan(fftwf_plan p)
+    explicit FftPlan(fftw_plan p)
         : plan_(p)
     {
     }
-    ~FftPlan() { fftwf_destroy_plan(plan_); }
-    void execute() { fftwf_execute(plan_); }
+    ~FftPlan() { fftw_destroy_plan(plan_); }
+    void execute() { fftw_execute(plan_); }
 
 private:
-    fftwf_plan plan_;
+    fftw_plan plan_;
 };
 
-// This forward plan (1D, R->C) is adequate to process 1D floats (real).
+// This forward plan (1D, R->C) is adequate to process 1D doubles (real).
 struct FftForwardPlan : FftPlan {
     // This constructor creates a real->complex plan that performs the FFT(real) and saves it into the
     // complex. As explained in the FFTW docs (http://www.fftw.org/#documentation), the size of
     // the complex has to be size(real)/2+1, so the constructor will throw a runtime error if
     // this condition doesn't hold. Since the signals and the superclass already have proper
     // destructors, no special memory management has to be done.
-    explicit FftForwardPlan(FloatSignal& fs, ComplexSignal& cs);
+    explicit FftForwardPlan(DoubleSignal& fs, ComplexSignal& cs);
 };
 
-// This backward plan (1D, C->R) is adequate to process spectra of 1D floats (real).
+// This backward plan (1D, C->R) is adequate to process spectra of 1D doubles (real).
 struct FftBackwardPlan : FftPlan {
     // This constructor creates a complex->real plan that performs the IFFT(complex) and saves it
     // complex. As explained in the FFTW docs (http://www.fftw.org/#documentation), the size of
     // the complex has to be size(real)/2+1, so the constructor will throw a runtime error if
     // this condition doesn't hold. Since the signals and the superclass already have proper
     // destructors, no special memory management has to be done.
-    explicit FftBackwardPlan(ComplexSignal& cs, FloatSignal& fs);
+    explicit FftBackwardPlan(ComplexSignal& cs, DoubleSignal& fs);
 };
 
 /// This class performs an efficient version of the spectral convolution/cross-correlation between
-/// two 1D float arrays, <SIGNAL> and <PATCH>, called overlap-save:
+/// two 1D double arrays, <SIGNAL> and <PATCH>, called overlap-save:
 /// http://www.comm.utoronto.ca/~dkundur/course_info/real-time-DSP/notes/8_Kundur_Overlap_Save_Add.pdf
 /// This algorithm requires that the length of <PATCH> is less or equal the length of <SIGNAL>,
 /// so an exception is thrown otherwise. The algorithm works as follows:
@@ -250,7 +250,7 @@ struct OverlapSaveConvolver {
     /// of them, so no care has to be taken regarding memory management.
     /// The wisdomPath may be empty, or a path to a valid wisdom file.
     /// Note that len(signal) can never be smaller than len(patch), or an exception is thrown.
-    OverlapSaveConvolver(FloatSignal& signal, FloatSignal& patch, std::string const& wisdomPath = "");
+    OverlapSaveConvolver(DoubleSignal& signal, DoubleSignal& patch, std::string const& wisdomPath = "");
 
     void executeConv();
     void executeXcorr();
@@ -259,7 +259,7 @@ struct OverlapSaveConvolver {
     // This method implements step 6 of the overlap-save algorithm. In convolution, the first (P-1)
     // samples of each chunk are discarded, in xcorr the last (P-1) ones. Therefore, depending on the
     // current _state_, the corresponding method is used. USAGE:
-    // Every time it is called, this function returns a new FloatSignal instance of size
+    // Every time it is called, this function returns a new DoubleSignal instance of size
     // len(signal)+len(patch)-1. If the last operation performed was executeConv(), this function
     // will return the  convolution of signal and patch. If the last operation performed was
     // executeXcorr(), the result will contain the cross-correlation. If none of them was performed
@@ -275,7 +275,7 @@ struct OverlapSaveConvolver {
     //   ...
     // Result[8] =                  [1 1 1]        => 1*7         = 7  // LAST ENTRY
     // Note that the returned signal object takes care of its own memory, so no management is needed.
-    auto extractResult() -> FloatSignal;
+    auto extractResult() -> DoubleSignal;
 
 private:
     // This private method throws an exception if _state_ is Uninitialized, because that
@@ -293,21 +293,21 @@ private:
     std::size_t resultSize_;
 
     // make padded copies of the inputs and get chunk measurements
-    FloatSignal paddedPatch_;
+    DoubleSignal paddedPatch_;
     std::size_t resultChunksize_;
     std::size_t resultChunksizeComplex_;
     std::size_t result_stride_;
     ComplexSignal paddedPatchComplex_;
 
     // padded copy of the signal
-    FloatSignal paddedSignal_;
+    DoubleSignal paddedSignal_;
 
     // the deconstructed signal
-    std::vector<std::unique_ptr<FloatSignal>> inputChunks_;
+    std::vector<std::unique_ptr<DoubleSignal>> inputChunks_;
     std::vector<std::unique_ptr<ComplexSignal>> inputChunksComplex_;
 
     // the corresponding chunks holding convs/xcorrs
-    std::vector<std::unique_ptr<FloatSignal>> resultChunks_;
+    std::vector<std::unique_ptr<DoubleSignal>> resultChunks_;
     std::vector<std::unique_ptr<ComplexSignal>> resultChunksComplex_;
 
     // the corresponding plans (plus the plan of the patch)
