@@ -13,38 +13,39 @@ target_sources(${CMAKE_PROJECT_NAME}
     PRIVATE
         core/AudioFile.h
 
+        dsp/convolution.hpp
         dsp/convolution/Convolution.cpp
         dsp/convolution/Convolution.hpp
         dsp/convolution/ConvolutionMethod.hpp
         dsp/convolution/OverlapSave.cpp
         dsp/convolution/OverlapSave.hpp
 
+        dsp/fft.hpp
         dsp/fft/FFT.hpp
         dsp/fft/FFT.cpp
 
         dsp/wavelets.hpp
+        dsp/wavelets/common.cpp
+        dsp/wavelets/common.hpp
+        dsp/wavelets/ComplexWaveletTransform.cpp
+        dsp/wavelets/ComplexWaveletTransform.hpp
         dsp/wavelets/Denoise.hpp
         dsp/wavelets/Denoise.cpp
         dsp/wavelets/SignalExtension.hpp
         dsp/wavelets/Wavelet.cpp
         dsp/wavelets/Wavelet.hpp
+        dsp/wavelets/WaveletPacketTransform.cpp
+        dsp/wavelets/WaveletPacketTransform.hpp
+        dsp/wavelets/WaveletTransform2D.cpp
+        dsp/wavelets/WaveletTransform2D.hpp
+        dsp/wavelets/WaveletTransform.cpp
+        dsp/wavelets/WaveletTransform.hpp
+        dsp/wavelets/WaveletTree.cpp
+        dsp/wavelets/WaveletTree.hpp
 
         dsp/wavelets/filters/coif.hpp
         dsp/wavelets/filters/daubechies.hpp
         dsp/wavelets/filters/h.hpp
         dsp/wavelets/filters/meyer.hpp
         dsp/wavelets/filters/sym.hpp
-
-        dsp/wavelets/transforms/common.cpp
-        dsp/wavelets/transforms/common.hpp
-        dsp/wavelets/transforms/ComplexWaveletTransform.cpp
-        dsp/wavelets/transforms/ComplexWaveletTransform.hpp
-        dsp/wavelets/transforms/WaveletPacketTransform.cpp
-        dsp/wavelets/transforms/WaveletPacketTransform.hpp
-        dsp/wavelets/transforms/WaveletTransform2D.cpp
-        dsp/wavelets/transforms/WaveletTransform2D.hpp
-        dsp/wavelets/transforms/WaveletTransform.cpp
-        dsp/wavelets/transforms/WaveletTransform.hpp
-        dsp/wavelets/transforms/WaveletTree.cpp
-        dsp/wavelets/transforms/WaveletTree.hpp
 )

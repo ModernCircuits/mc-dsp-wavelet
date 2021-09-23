@@ -1,6 +1,6 @@
 #include "WaveletTree.hpp"
 
-#include "lt/dsp/wavelets/transforms/common.hpp"
+#include "lt/dsp/wavelets/common.hpp"
 
 #include <cmath>
 #include <string_view>
