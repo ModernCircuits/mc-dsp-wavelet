@@ -472,9 +472,9 @@ auto AudioFile<T>::load(const std::string& filePath) -> bool
     }
     if (audioFileFormat_ == AudioFileFormat::Aiff) {
         return decodeAiffFile(fileData);
-    }         reportError("Audio File Type: Error");
-        return false;
-   
+    }
+    reportError("Audio File Type: Error");
+    return false;
 }
 
 //=============================================================
@@ -613,7 +613,8 @@ auto AudioFile<T>::decodeAiffFile(std::vector<uint8_t>& fileData) -> bool
     //int32_t fileSizeInBytes = fourBytesToInt (fileData, 4, Endianness::BigEndian) + 8;
     std::string format(fileData.begin() + 8, fileData.begin() + 12);
 
-    int audioFormat = format == "AIFF" ? AIFFAudioFormat::Uncompressed : format == "AIFC" ? AIFFAudioFormat::Compressed : AIFFAudioFormat::Error;
+    int audioFormat = format == "AIFF" ? AIFFAudioFormat::Uncompressed : format == "AIFC" ? AIFFAudioFormat::Compressed
+                                                                                          : AIFFAudioFormat::Error;
 
     // -----------------------------------------------------------
     // try and find the start points of key chunks
@@ -1071,7 +1072,8 @@ auto AudioFile<T>::determineAudioFileFormat(std::vector<uint8_t>& fileData) -> A
     }
     if (header == "FORM") {
         return AudioFileFormat::Aiff;
-    }         return AudioFileFormat::Error;
+    }
+    return AudioFileFormat::Error;
 }
 
 //=============================================================

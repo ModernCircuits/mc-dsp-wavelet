@@ -34,10 +34,10 @@ stats:
 
 .PHONY: format
 format:
-	@find auxiliary -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs clang-format-12 -i
-	@find src -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs clang-format-12 -i
+	@find lt -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs clang-format-12 -i
 	@find test -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs clang-format-12 -i
 
 .PHONY: format-check
 format-check:
-	@find src -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs -n 1 -P 1 -I{} -t sh -c 'clang-format-12 -style=file {} | diff - {}'
+	@find lt -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs -n 1 -P 1 -I{} -t sh -c 'clang-format-12 -style=file {} | diff - {}'
+	@find test -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs -n 1 -P 1 -I{} -t sh -c 'clang-format-12 -style=file {} | diff - {}'
