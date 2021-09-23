@@ -29,22 +29,14 @@ auto imodwtPerStride(int m, double const* cA, int lenCA, double const* cD, doubl
 auto idwt2Shift(int shift, int rows, int cols, double const* lpr, double const* hpr, int lf,
     double* a, double* h, double* v, double* d, double* oup) -> void;
 
-auto upsamp(double const* x, int lenx, int m, double* y) -> int;
-
-auto upsamp2(double const* x, int lenx, int m, double* y) -> int;
-
 auto downsamp(double const* x, int lenx, int m, double* y) -> int;
 
 auto perExt(double const* sig, int len, int a, double* oup) -> int;
 
 auto symmExt(double const* sig, int len, int a, double* oup) -> int;
 
-auto circshift(double* array, int n, int l) -> void;
-
 auto testSWTlength(int n, int j) -> int;
 
 auto wmaxiter(int sigLen, int filtLen) -> int;
-
-auto costfunc(double* x, int n, char const* entropy, double p) -> double;
 
 #endif /* WAVELIB_H_ */

@@ -13,6 +13,113 @@
 
 using namespace std::string_view_literals;
 
+namespace {
+
+auto upsamp(double const* x, int lenx, int m, double* y) -> int
+{
+    int n;
+    int i;
+    int j;
+    int k;
+
+    if (m < 0) {
+        return -1;
+    }
+
+    if (m == 0) {
+        for (i = 0; i < lenx; ++i) {
+            y[i] = x[i];
+        }
+        return lenx;
+    }
+
+    n = m * (lenx - 1) + 1;
+    j = 1;
+    k = 0;
+
+    for (i = 0; i < n; ++i) {
+        j--;
+        y[i] = 0.0;
+        if (j == 0) {
+            y[i] = x[k];
+            k++;
+            j = m;
+        }
+    }
+
+    return n;
+}
+
+auto upsamp2(double const* x, int lenx, int m, double* y) -> int
+{
+    int n;
+    int i;
+    int j;
+    int k;
+    // upsamp2 returns even numbered output. Last value is set to zero
+    if (m < 0) {
+        return -1;
+    }
+
+    if (m == 0) {
+        for (i = 0; i < lenx; ++i) {
+            y[i] = x[i];
+        }
+        return lenx;
+    }
+
+    n = m * lenx;
+    j = 1;
+    k = 0;
+
+    for (i = 0; i < n; ++i) {
+        j--;
+        y[i] = 0.0;
+        if (j == 0) {
+            y[i] = x[k];
+            k++;
+            j = m;
+        }
+    }
+
+    return n;
+}
+
+auto isign(int n) -> int
+{
+    int m;
+    if (n >= 0) {
+        m = 1;
+    } else {
+        m = -1;
+    }
+
+    return m;
+}
+
+auto circshift(double* array, int n, int l) -> void
+{
+    if (std::abs(l) > n) {
+        l = isign(l) * (std::abs(l) % n);
+    }
+    if (l < 0) {
+        l = (n + l) % n;
+    }
+
+    auto temp = makeZeros<double>(l);
+    for (auto i = 0; i < l; ++i) {
+        temp[i] = array[i];
+    }
+    for (auto i = 0; i < n - l; ++i) {
+        array[i] = array[i + l];
+    }
+    for (auto i = 0; i < l; ++i) {
+        array[n - l + i] = temp[i];
+    }
+}
+
+}
+
 WaveletTransform::WaveletTransform(Wavelet& w, char const* method, int siglength, int j)
     : wave_ { &w }
     , levels_ { j }

@@ -13,6 +13,84 @@
 
 using namespace std::string_view_literals;
 
+namespace {
+auto entropyS(double const* x, int n) -> double
+{
+    auto val = 0.0;
+    for (auto i = 0; i < n; ++i) {
+        if (x[i] != 0) {
+            auto x2 = x[i] * x[i];
+            val -= x2 * std::log(x2);
+        }
+    }
+    return val;
+}
+
+auto entropyT(double* x, int n, double t) -> double
+{
+    if (t < 0) {
+        std::printf("Threshold value must be >= 0");
+        std::exit(1);
+    }
+
+    auto val = 0.0;
+    for (auto i = 0; i < n; ++i) {
+        if (auto const x2 = fabs(x[i]); x2 > t) {
+            val += 1;
+        }
+    }
+
+    return val;
+}
+
+auto entropyN(double* x, int n, double p) -> double
+{
+    if (p < 1) {
+        std::printf("Norm power value must be >= 1");
+        std::exit(1);
+    }
+
+    auto val = 0.0;
+    for (auto i = 0; i < n; ++i) {
+        auto const x2 = fabs(x[i]);
+        val += std::pow(x2, (double)p);
+    }
+
+    return val;
+}
+
+auto entropyL(double const* x, int n) -> double
+{
+    auto val = 0.0;
+    for (auto i = 0; i < n; ++i) {
+        if (x[i] != 0) {
+            auto const x2 = x[i] * x[i];
+            val += std::log(x2);
+        }
+    }
+    return val;
+}
+
+auto costfunc(double* x, int n, char const* entropy, double p) -> double
+{
+    if (entropy == "shannon"sv) {
+        return entropyS(x, n);
+    }
+    if (entropy == "threshold"sv) {
+        return entropyT(x, n, p);
+    }
+    if (entropy == "norm"sv) {
+        return entropyN(x, n, p);
+    }
+    if ((entropy == "logenergy"sv) || (entropy == "log energy"sv) || (entropy == "energy"sv)) {
+        return entropyL(x, n);
+    }
+
+    std::printf("Entropy must be one of shannon, threshold, norm or energy");
+    return 0.0;
+}
+}
+
 auto wptInit(Wavelet* wave, int siglength, int j) -> WaveletPacketTransform*
 {
     auto const size = wave->size();
