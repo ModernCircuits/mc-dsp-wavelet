@@ -34,12 +34,12 @@ auto denoiseInit(int length, int j, char const* wname) -> DenoiseSet*
 
 auto visushrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void
 {
-    int dwtLen;
-    int sgn;
-    int it;
-    double sigma;
-    double td;
-    double tmp;
+    int dwtLen = 0;
+    int sgn = 0;
+    int it = 0;
+    double sigma = NAN;
+    double td = NAN;
+    double tmp = NAN;
 
     auto wave = Wavelet { wname };
     auto filtLen = wave.size();
@@ -136,24 +136,24 @@ auto visushrink(double* signal, int n, int j, char const* wname, char const* met
 
 auto sureshrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void
 {
-    int filtLen;
-    int it;
-    int len;
-    int dlen;
-    int dwtLen;
-    int minIndex;
-    int sgn;
-    int maxIter;
-    int iter;
-    double sigma;
-    double norm;
-    double td;
-    double tv;
-    double te;
-    double ct;
-    double thr;
-    double temp;
-    double xSum;
+    int filtLen = 0;
+    int it = 0;
+    int len = 0;
+    int dlen = 0;
+    int dwtLen = 0;
+    int minIndex = 0;
+    int sgn = 0;
+    int maxIter = 0;
+    int iter = 0;
+    double sigma = NAN;
+    double norm = NAN;
+    double td = NAN;
+    double tv = NAN;
+    double te = NAN;
+    double ct = NAN;
+    double thr = NAN;
+    double temp = NAN;
+    double xSum = NAN;
 
     auto wave = Wavelet { wname };
     filtLen = wave.size();
@@ -288,13 +288,13 @@ auto sureshrink(double* signal, int n, int j, char const* wname, char const* met
 
 auto modwtshrink(double* signal, int n, int j, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised) -> void
 {
-    int sgn;
-    int it;
-    double sigma;
-    double td;
-    double tmp;
-    double m;
-    double llen;
+    int sgn = 0;
+    int it = 0;
+    double sigma = NAN;
+    double td = NAN;
+    double tmp = NAN;
+    double m = NAN;
+    double llen = NAN;
 
     auto wave = Wavelet { wname };
     auto filtLen = wave.size();
@@ -476,7 +476,7 @@ auto median(double* const x, int n) -> double
 {
     std::sort(x, x + n, std::less<double> {});
 
-    double sigma;
+    double sigma = NAN;
     if ((n % 2) == 0) {
         sigma = (x[n / 2 - 1] + x[n / 2]) / 2.0;
     } else {
@@ -488,8 +488,8 @@ auto median(double* const x, int n) -> double
 
 auto minindex(double const* arr, int n) -> int
 {
-    double min;
-    int index;
+    double min = NAN;
+    int index = 0;
 
     min = DBL_MAX;
     index = 0;

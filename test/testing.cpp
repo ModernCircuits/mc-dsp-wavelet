@@ -6,8 +6,8 @@
 
 auto absmax(double* array, int n) -> double
 {
-    double max;
-    int i;
+    double max = NAN;
+    int i = 0;
 
     max = 0.0;
     for (i = 0; i < n; ++i) {
@@ -21,8 +21,8 @@ auto absmax(double* array, int n) -> double
 
 auto sum1(double const* array, int n) -> double
 {
-    double sum;
-    int i;
+    double sum = NAN;
+    int i = 0;
 
     sum = 0.0;
     for (i = 0; i < n; ++i) {
@@ -32,8 +32,8 @@ auto sum1(double const* array, int n) -> double
 }
 auto sum2(double const* array, int n) -> double
 {
-    double sum;
-    int i;
+    double sum = NAN;
+    int i = 0;
 
     sum = 0.0;
     for (i = 0; i < n; i += 2) {
@@ -43,8 +43,8 @@ auto sum2(double const* array, int n) -> double
 }
 auto sum3(double const* array, int n) -> double
 {
-    double sum;
-    int i;
+    double sum = NAN;
+    int i = 0;
 
     sum = 0.0;
     for (i = 1; i < n; i += 2) {
@@ -55,8 +55,8 @@ auto sum3(double const* array, int n) -> double
 // np.sum(w[2*m:(2*N+2*m)]*w[0:2*N])
 auto sum4(double const* array, int n) -> double
 {
-    double sum;
-    int i;
+    double sum = NAN;
+    int i = 0;
 
     sum = 0.0;
     for (i = 0; i < n; i += 1) {
@@ -67,8 +67,8 @@ auto sum4(double const* array, int n) -> double
 // np.sum(w[2 * m:(2 * N)] * w[0:2 * N - 2 * m])
 auto sum5(double const* array, int n, int m) -> double
 {
-    double sum;
-    int i;
+    double sum = NAN;
+    int i = 0;
 
     sum = 0.0;
     for (i = 2 * m; i < n; i += 1) {
@@ -79,7 +79,7 @@ auto sum5(double const* array, int n, int m) -> double
 
 auto rmsError(double const* data, double const* rec, int n) -> double
 {
-    int i;
+    int i = 0;
     double sum = 0;
     for (i = 0; i < n; ++i) {
         sum += (data[i] - rec[i]) * (data[i] - rec[i]);
@@ -89,7 +89,7 @@ auto rmsError(double const* data, double const* rec, int n) -> double
 
 auto relError(double const* data, double const* rec, int n) -> double
 {
-    int i;
+    int i = 0;
     double sum1 = 0;
     double sum2 = 0;
     for (i = 0; i < n; ++i) {

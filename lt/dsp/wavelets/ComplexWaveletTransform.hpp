@@ -9,7 +9,7 @@
 struct ComplexWaveletTransform {
     ComplexWaveletTransform(char const* wave, double param, int siglength, double dt, int j);
 
-    auto wave() const noexcept -> std::string const& { return wave_; }
+    [[nodiscard]] auto wave() const noexcept -> std::string const& { return wave_; }
     auto scales(double s0, double dj, char const* type, int power) -> void;
 
     int signalLength;
@@ -24,7 +24,7 @@ struct ComplexWaveletTransform {
     int npad;
     int mother;
     double m; // Wavelet parameter param
-    double smean; // Input Signal mean
+    double smean{}; // Input Signal mean
 
     Complex<double>* output;
     double* scale;

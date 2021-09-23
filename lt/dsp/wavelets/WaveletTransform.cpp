@@ -18,10 +18,10 @@ namespace {
 
 auto upsamp(double const* x, int lenx, int m, double* y) -> int
 {
-    int n;
-    int i;
-    int j;
-    int k;
+    int n = 0;
+    int i = 0;
+    int j = 0;
+    int k = 0;
 
     if (m < 0) {
         return -1;
@@ -53,10 +53,10 @@ auto upsamp(double const* x, int lenx, int m, double* y) -> int
 
 auto upsamp2(double const* x, int lenx, int m, double* y) -> int
 {
-    int n;
-    int i;
-    int j;
-    int k;
+    int n = 0;
+    int i = 0;
+    int j = 0;
+    int k = 0;
     // upsamp2 returns even numbered output. Last value is set to zero
     if (m < 0) {
         return -1;
@@ -88,7 +88,7 @@ auto upsamp2(double const* x, int lenx, int m, double* y) -> int
 
 auto isign(int n) -> int
 {
-    int m;
+    int m = 0;
     if (n >= 0) {
         m = 1;
     } else {
@@ -121,10 +121,10 @@ auto circshift(double* array, int n, int l) -> void
 
 auto perExt(double const* sig, int len, int a, double* oup) -> int
 {
-    int i;
-    int len2;
-    double temp1;
-    double temp2;
+    int i = 0;
+    int len2 = 0;
+    double temp1 = NAN;
+    double temp2 = NAN;
     for (i = 0; i < len; ++i) {
         oup[a + i] = sig[i];
     }
@@ -144,10 +144,10 @@ auto perExt(double const* sig, int len, int a, double* oup) -> int
 
 auto symmExt(double const* sig, int len, int a, double* oup) -> int
 {
-    int i;
-    int len2;
-    double temp1;
-    double temp2;
+    int i = 0;
+    int len2 = 0;
+    double temp1 = NAN;
+    double temp2 = NAN;
     // oup is of length len + 2 * a
     for (i = 0; i < len; ++i) {
         oup[a + i] = sig[i];
@@ -165,8 +165,8 @@ auto symmExt(double const* sig, int len, int a, double* oup) -> int
 
 auto downsamp(double const* x, int lenx, int m, double* y) -> int
 {
-    int n;
-    int i;
+    int n = 0;
+    int i = 0;
 
     if (m < 0) {
         return -1;
@@ -555,12 +555,12 @@ static auto idwtSym(WaveletTransform& wt, double* cA, int lenCA, double* cD, dou
 auto idwt(WaveletTransform& wt, double* dwtop) -> void
 {
 
-    int lf;
-    int n;
-    int n2;
-    int iter;
-    int k;
-    int detLen;
+    int lf = 0;
+    int n = 0;
+    int n2 = 0;
+    int iter = 0;
+    int k = 0;
+    int detLen = 0;
 
     auto j = wt.levels();
     auto u = 2;
@@ -773,11 +773,11 @@ static auto swtFft(WaveletTransform& wt, double const* inp) -> void
 
 static auto swtDirect(WaveletTransform& wt, double const* inp) -> void
 {
-    int j;
-    int tempLen;
-    int iter;
-    int m;
-    int lenacc;
+    int j = 0;
+    int tempLen = 0;
+    int iter = 0;
+    int m = 0;
+    int lenacc = 0;
 
     tempLen = wt.siglength;
     j = wt.levels();
@@ -1021,13 +1021,13 @@ static auto modwtDirect(WaveletTransform& wt, double const* inp) -> void
 
 static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
 {
-    int j;
-    int iter;
-    int m;
-    int lenacc;
-    double s;
-    double tmp1;
-    double tmp2;
+    int j = 0;
+    int iter = 0;
+    int m = 0;
+    int lenacc = 0;
+    double s = NAN;
+    double tmp1 = NAN;
+    double tmp2 = NAN;
 
     auto tempLen = wt.siglength;
     auto lenAvg = wt.wave().lpdLen();
@@ -1320,8 +1320,8 @@ auto imodwt(WaveletTransform& wt, double* oup) -> void
 
 auto summary(WaveletTransform const& wt) -> void
 {
-    int j;
-    int t;
+    int j = 0;
+    int t = 0;
     j = wt.levels();
     summary(wt.wave());
     printf("\n");

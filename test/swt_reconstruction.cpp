@@ -13,9 +13,9 @@
 auto swtReconstructionTest()
 {
 
-    int i;
+    int i = 0;
     double epsilon = 1e-15;
-    double err;
+    double err = NAN;
 
     auto const n = 4000;
 
@@ -126,7 +126,7 @@ auto swtReconstructionTest()
 
 auto swT2ReconstructionTest()
 {
-    WaveletTransform2D* wt;
+    WaveletTransform2D* wt = nullptr;
     // int i;
     // int k;
     // int J;

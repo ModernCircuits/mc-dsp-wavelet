@@ -63,11 +63,11 @@ WaveletTree::WaveletTree(Wavelet* wave, int signalLength, int j)
 
 static auto wtreePer(WaveletTree& wt, double const* inp, int n, double* cA, int lenCA, double* cD) -> void
 {
-    int l;
-    int l2;
-    int isodd;
-    int t;
-    int lenAvg;
+    int l = 0;
+    int l2 = 0;
+    int isodd = 0;
+    int t = 0;
+    int lenAvg = 0;
 
     lenAvg = wt.wave->lpdLen();
     l2 = lenAvg / 2;
@@ -113,9 +113,9 @@ static auto wtreePer(WaveletTree& wt, double const* inp, int n, double* cA, int 
 
 static auto wtreeSym(WaveletTree& wt, double const* inp, int n, double* cA, int lenCA, double* cD) -> void
 {
-    int l;
-    int t;
-    int lenAvg;
+    int l = 0;
+    int t = 0;
+    int lenAvg = 0;
 
     lenAvg = wt.wave->lpdLen();
 
@@ -140,17 +140,17 @@ static auto wtreeSym(WaveletTree& wt, double const* inp, int n, double* cA, int 
 
 auto wtree(WaveletTree& wt, double const* inp) -> void
 {
-    int iter;
-    int n;
-    int lp;
-    int p2;
-    int k;
-    int n2;
-    int np;
-    int lenCA;
-    int t;
-    int t2;
-    int it1;
+    int iter = 0;
+    int n = 0;
+    int lp = 0;
+    int p2 = 0;
+    int k = 0;
+    int n2 = 0;
+    int np = 0;
+    int lenCA = 0;
+    int t = 0;
+    int t2 = 0;
+    int it1 = 0;
 
     auto tempLen = wt.siglength;
     auto j = wt.J;
@@ -274,11 +274,11 @@ auto WaveletTree::nodeLength(int x) -> int
     return length[J - x + 1];
 }
 
-auto WaveletTree::coeffs(int x, int y, double* coeffs, int n) -> void
+auto WaveletTree::coeffs(int x, int y, double* coeffs, int n) const -> void
 {
-    int ymax;
-    int t;
-    int t2;
+    int ymax = 0;
+    int t = 0;
+    int t2 = 0;
 
     if (x <= 0 || x > J) {
         printf("X co-ordinate must be >= 1 and <= %d", J);
@@ -327,10 +327,10 @@ auto WaveletTree::extension() const noexcept -> std::string const&
 
 auto summary(WaveletTree const& wt) -> void
 {
-    int k;
-    int p2;
-    int j;
-    int t;
+    int k = 0;
+    int p2 = 0;
+    int j = 0;
+    int t = 0;
     j = wt.J;
     summary(*wt.wave);
     printf("\n");

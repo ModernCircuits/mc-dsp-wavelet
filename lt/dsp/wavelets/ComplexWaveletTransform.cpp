@@ -213,17 +213,17 @@ auto cwtGamma(double x) -> double
 
     // numerator and denominator coefficients for 1 <= x <= 2
 
-    double y;
-    double oup;
-    double fact;
-    double sum;
-    double y2;
-    double yi;
-    double z;
-    double nsum;
-    double dsum;
-    int swi;
-    int n;
+    double y = NAN;
+    double oup = NAN;
+    double fact = NAN;
+    double sum = NAN;
+    double y2 = NAN;
+    double yi = NAN;
+    double z = NAN;
+    double nsum = NAN;
+    double dsum = NAN;
+    int swi = 0;
+    int n = 0;
 
     constexpr double spi = 0.9189385332046727417803297;
     constexpr double pi = 3.1415926535897932384626434;
@@ -353,14 +353,14 @@ auto waveFunction(int nk, double dt, int mother, double param, double scale1, do
     double* coi1, Complex<double>* daughter) -> void
 {
 
-    double norm;
-    double expnt;
-    double fourierFactor;
-    int k;
-    int m;
-    double temp;
-    int sign;
-    int re;
+    double norm = NAN;
+    double expnt = NAN;
+    double fourierFactor = NAN;
+    int k = 0;
+    int m = 0;
+    double temp = NAN;
+    int sign = 0;
+    int re = 0;
 
     if (mother == 0) {
         //MORLET
@@ -448,17 +448,17 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
     double* wave, double const* scale, double* period, double* coi) -> void
 {
 
-    int j;
-    int k;
-    int iter;
-    double ymean;
-    double freq1;
-    double pi;
-    double period1;
-    double coi1;
-    double tmp1;
-    double tmp2;
-    double scale1;
+    int j = 0;
+    int k = 0;
+    int iter = 0;
+    double ymean = NAN;
+    double freq1 = NAN;
+    double pi = NAN;
+    double period1 = NAN;
+    double coi1 = NAN;
+    double tmp1 = NAN;
+    double tmp2 = NAN;
+    double scale1 = NAN;
 
     (void)s0;
     (void)dj; /* yes, we need these parameters unused */
@@ -545,10 +545,10 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
 
 auto psi0(int mother, double param, double* val, int* real) -> void
 {
-    double pi;
-    double coeff;
-    int m;
-    int sign;
+    double pi = NAN;
+    double coeff = NAN;
+    int m = 0;
+    int sign = 0;
 
     m = (int)param;
     pi = 4.0 * std::atan(1.0);
@@ -592,10 +592,10 @@ auto psi0(int mother, double param, double* val, int* real) -> void
 
 static auto maxabs(double* array, int n) -> int
 {
-    double maxval;
-    double temp;
+    double maxval = NAN;
+    double temp = NAN;
 
-    int index;
+    int index = 0;
     maxval = 0.0;
     index = -1;
 
@@ -675,10 +675,10 @@ auto cdelta(int mother, double param, double psi0) -> double
 auto icwavelet(double const* wave, int n, double* scale, int jtot, double dt, double dj, double cdelta, double psi0, double* oup) -> void
 {
 
-    int j;
-    int iter;
-    double den;
-    double coeff;
+    int j = 0;
+    int iter = 0;
+    double den = NAN;
+    double coeff = NAN;
 
     coeff = std::sqrt(dt) * dj / (cdelta * psi0);
 
@@ -811,11 +811,11 @@ auto ComplexWaveletTransform::scales(double newS0, double newDj, char const* new
 
 auto cwt(ComplexWaveletTransform& wt, double const* inp) -> void
 {
-    int n;
-    int npad;
-    int nj2;
-    int j;
-    int j2;
+    int n = 0;
+    int npad = 0;
+    int nj2 = 0;
+    int j = 0;
+    int j2 = 0;
     n = wt.signalLength;
     if (wt.sflag == 0) {
         for (auto i = 0; i < wt.J; ++i) {
@@ -846,11 +846,11 @@ auto cwt(ComplexWaveletTransform& wt, double const* inp) -> void
 
 auto icwt(ComplexWaveletTransform& wt, double* cwtop) -> void
 {
-    double psi;
-    double cdel;
-    int real;
-    int n;
-    int nj2;
+    double psi = NAN;
+    double cdel = NAN;
+    int real = 0;
+    int n = 0;
+    int nj2 = 0;
 
     n = wt.signalLength;
     nj2 = n * 2 * wt.J;
@@ -963,12 +963,12 @@ auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
 
 auto gauss(int n, int p, double lb, double ub, double* psi, double* t) -> void
 {
-    double delta;
-    double num;
-    double den;
-    double t2;
-    double t4;
-    int i;
+    double delta = NAN;
+    double num = NAN;
+    double den = NAN;
+    double t2 = NAN;
+    double t4 = NAN;
+    int i = 0;
 
     if (lb >= ub) {
         printf("upper bound must be greater than lower bound");
@@ -1059,8 +1059,8 @@ auto mexhat(int n, double lb, double ub, double* psi, double* t) -> void
 
 auto morlet(int n, double lb, double ub, double* psi, double* t) -> void
 {
-    int i;
-    double delta;
+    int i = 0;
+    double delta = NAN;
 
     if (lb >= ub) {
         printf("upper bound must be greater than lower bound");

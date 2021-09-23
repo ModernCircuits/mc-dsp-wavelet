@@ -8,19 +8,19 @@
 #include <string>
 
 struct WaveletTransform2D {
-    Wavelet* wave;
+    Wavelet* wave{};
     std::string method;
-    int rows; // Matrix Number of rows
-    int cols; // Matrix Number of columns
-    int outlength; // Length of the output DWT vector
-    int J; // Number of decomposition Levels
-    int MaxIter; // Maximum Iterations J <= MaxIter
+    int rows{}; // Matrix Number of rows
+    int cols{}; // Matrix Number of columns
+    int outlength{}; // Length of the output DWT vector
+    int J{}; // Number of decomposition Levels
+    int MaxIter{}; // Maximum Iterations J <= MaxIter
     std::string ext; // Type of Extension used - "per" or "sym"
-    int coeffaccesslength;
+    int coeffaccesslength{};
 
-    int N; //
-    int* dimensions;
-    int* coeffaccess;
+    int N{}; //
+    int* dimensions{};
+    int* coeffaccess{};
     std::unique_ptr<int[]> params;
 };
 

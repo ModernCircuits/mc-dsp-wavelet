@@ -11,14 +11,14 @@
 
 auto dwtPerStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride) -> void
 {
-    int l;
-    int l2;
-    int isodd;
-    int i;
-    int t;
-    int lenAvg;
-    int is;
-    int os;
+    int l = 0;
+    int l2 = 0;
+    int isodd = 0;
+    int i = 0;
+    int t = 0;
+    int lenAvg = 0;
+    int is = 0;
+    int os = 0;
 
     lenAvg = lpdLen;
     l2 = lenAvg / 2;
@@ -73,12 +73,12 @@ auto dwtPerStride(double const* inp, int n, double const* lpd, double const* hpd
 
 auto dwtSymStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride) -> void
 {
-    int i;
-    int l;
-    int t;
-    int lenAvg;
-    int is;
-    int os;
+    int i = 0;
+    int l = 0;
+    int t = 0;
+    int lenAvg = 0;
+    int is = 0;
+    int os = 0;
     lenAvg = lpdLen;
 
     for (i = 0; i < lenCA; ++i) {
@@ -106,12 +106,12 @@ auto dwtSymStride(double const* inp, int n, double const* lpd, double const* hpd
 
 auto modwtPerStride(int m, double const* inp, int /*N*/, double const* filt, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride) -> void
 {
-    int l;
-    int i;
-    int t;
-    int lenAvg;
-    int is;
-    int os;
+    int l = 0;
+    int i = 0;
+    int t = 0;
+    int lenAvg = 0;
+    int is = 0;
+    int os = 0;
     lenAvg = lpdLen;
 
     for (i = 0; i < lenCA; ++i) {
@@ -138,15 +138,15 @@ auto modwtPerStride(int m, double const* inp, int /*N*/, double const* filt, int
 
 auto swtPerStride(int m, double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride) -> void
 {
-    int l;
-    int l2;
-    int isodd;
-    int i;
-    int t;
-    int lenAvg;
-    int j;
-    int is;
-    int os;
+    int l = 0;
+    int l2 = 0;
+    int isodd = 0;
+    int i = 0;
+    int t = 0;
+    int lenAvg = 0;
+    int j = 0;
+    int is = 0;
+    int os = 0;
     lenAvg = m * lpdLen;
     l2 = lenAvg / 2;
     isodd = n % 2;
@@ -195,16 +195,16 @@ auto swtPerStride(int m, double const* inp, int n, double const* lpd, double con
 
 auto idwtPerStride(double const* cA, int lenCA, double const* cD, double const* lpr, double const* hpr, int lprLen, double* x, int istride, int ostride) -> void
 {
-    int lenAvg;
-    int i;
-    int l;
-    int m;
-    int n;
-    int t;
-    int l2;
-    int is;
-    int ms;
-    int ns;
+    int lenAvg = 0;
+    int i = 0;
+    int l = 0;
+    int m = 0;
+    int n = 0;
+    int t = 0;
+    int l2 = 0;
+    int is = 0;
+    int ms = 0;
+    int ns = 0;
 
     lenAvg = lprLen;
     l2 = lenAvg / 2;
@@ -239,16 +239,16 @@ auto idwtPerStride(double const* cA, int lenCA, double const* cD, double const* 
 
 auto idwtSymStride(double const* cA, int lenCA, double const* cD, double const* lpr, double const* hpr, int lprLen, double* x, int istride, int ostride) -> void
 {
-    int lenAvg;
-    int i;
-    int l;
-    int m;
-    int n;
-    int t;
-    int v;
-    int ms;
-    int ns;
-    int is;
+    int lenAvg = 0;
+    int i = 0;
+    int l = 0;
+    int m = 0;
+    int n = 0;
+    int t = 0;
+    int v = 0;
+    int ms = 0;
+    int ns = 0;
+    int is = 0;
     lenAvg = lprLen;
     m = -2;
     n = -1;
@@ -274,9 +274,9 @@ auto idwtSymStride(double const* cA, int lenCA, double const* cD, double const* 
 
 auto testSWTlength(int n, int j) -> int
 {
-    int ret;
-    int div;
-    int i;
+    int ret = 0;
+    int div = 0;
+    int i = 0;
     ret = 1;
 
     div = 1;
@@ -293,8 +293,8 @@ auto testSWTlength(int n, int j) -> int
 
 auto wmaxiter(int sigLen, int filtLen) -> int
 {
-    int lev;
-    double temp;
+    int lev = 0;
+    double temp = NAN;
 
     temp = std::log((double)sigLen / ((double)filtLen - 1.0)) / std::log(2.0);
     lev = (int)temp;

@@ -79,12 +79,12 @@ auto idwtShift(int shift, int rows, int cols, double const* lpr, double const* h
 
 auto imodwtPerStride(int m, double const* cA, int lenCA, double const* cD, double const* filt, int lf, double* x, int istride, int ostride) -> void
 {
-    int lenAvg;
-    int i;
-    int l;
-    int t;
-    int is;
-    int os;
+    int lenAvg = 0;
+    int i = 0;
+    int l = 0;
+    int t = 0;
+    int is = 0;
+    int os = 0;
 
     lenAvg = lf;
 
@@ -202,20 +202,20 @@ auto setDWT2Extension(WaveletTransform2D* wt, char const* extension) -> void
 
 auto dwt(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>
 {
-    int iter;
-    int n;
-    int rowsI;
-    int colsI;
-    int ir;
-    int ic;
-    int istride;
-    int ostride;
-    int aLL;
-    int aLH;
-    int aHL;
-    int aHH;
-    int cdim;
-    double* orig;
+    int iter = 0;
+    int n = 0;
+    int rowsI = 0;
+    int colsI = 0;
+    int ir = 0;
+    int ic = 0;
+    int istride = 0;
+    int ostride = 0;
+    int aLL = 0;
+    int aLH = 0;
+    int aHL = 0;
+    int aHH = 0;
+    int cdim = 0;
+    double* orig = nullptr;
 
     auto j = wt->J;
     wt->outlength = 0;
@@ -359,17 +359,17 @@ auto dwt(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>
 auto idwt(WaveletTransform2D* wt, double* wavecoeff, double* oup) -> void
 {
 
-    int ir;
-    int ic;
+    int ir = 0;
+    int ic = 0;
 
-    int istride;
-    int ostride;
-    int iter;
-    int aLL;
-    int aLH;
-    int aHL;
-    int aHH;
-    double* orig;
+    int istride = 0;
+    int ostride = 0;
+    int iter = 0;
+    int aLL = 0;
+    int aLH = 0;
+    int aHL = 0;
+    int aHH = 0;
+    double* orig = nullptr;
 
     auto const rows = wt->rows;
     auto const cols = wt->cols;
@@ -527,26 +527,26 @@ auto idwt(WaveletTransform2D* wt, double* wavecoeff, double* oup) -> void
 
 auto swt2(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>
 {
-    int j;
-    int iter;
-    int m;
-    int n;
-    int lp;
-    int rowsN;
-    int colsN;
-    int rowsI;
-    int colsI;
-    int ir;
-    int ic;
-    int istride;
-    int ostride;
-    int aLL;
-    int aLH;
-    int aHL;
-    int aHH;
-    int cdim;
-    int clen;
-    double* orig;
+    int j = 0;
+    int iter = 0;
+    int m = 0;
+    int n = 0;
+    int lp = 0;
+    int rowsN = 0;
+    int colsN = 0;
+    int rowsI = 0;
+    int colsI = 0;
+    int ir = 0;
+    int ic = 0;
+    int istride = 0;
+    int ostride = 0;
+    int aLL = 0;
+    int aLH = 0;
+    int aHL = 0;
+    int aHH = 0;
+    int cdim = 0;
+    int clen = 0;
+    double* orig = nullptr;
 
     j = wt->J;
     m = 1;
@@ -621,25 +621,25 @@ auto swt2(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>
 
 auto iswt2(WaveletTransform2D* wt, double const* wavecoeffs, double* oup) -> void
 {
-    int k;
-    int iter;
-    int it2;
-    int it3;
-    int j;
-    int m;
-    int rows;
-    int cols;
-    int lf;
-    int ir;
-    int ic;
-    int k1;
-    int i1;
+    int k = 0;
+    int iter = 0;
+    int it2 = 0;
+    int it3 = 0;
+    int j = 0;
+    int m = 0;
+    int rows = 0;
+    int cols = 0;
+    int lf = 0;
+    int ir = 0;
+    int ic = 0;
+    int k1 = 0;
+    int i1 = 0;
 
-    int aLL;
-    int aLH;
-    int aHL;
-    int aHH;
-    int shift;
+    int aLL = 0;
+    int aLH = 0;
+    int aHL = 0;
+    int aHH = 0;
+    int shift = 0;
     j = wt->J;
     rows = wt->rows;
     cols = wt->cols;
@@ -719,27 +719,27 @@ auto iswt2(WaveletTransform2D* wt, double const* wavecoeffs, double* oup) -> voi
 
 auto modwt(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>
 {
-    int j;
-    int iter;
-    int m;
-    int n;
-    int lp;
-    int rowsN;
-    int colsN;
-    int rowsI;
-    int colsI;
-    int ir;
-    int ic;
-    int istride;
-    int ostride;
-    int aLL;
-    int aLH;
-    int aHL;
-    int aHH;
-    int cdim;
-    int clen;
-    double* orig;
-    double s;
+    int j = 0;
+    int iter = 0;
+    int m = 0;
+    int n = 0;
+    int lp = 0;
+    int rowsN = 0;
+    int colsN = 0;
+    int rowsI = 0;
+    int colsI = 0;
+    int ir = 0;
+    int ic = 0;
+    int istride = 0;
+    int ostride = 0;
+    int aLL = 0;
+    int aLH = 0;
+    int aHL = 0;
+    int aHH = 0;
+    int cdim = 0;
+    int clen = 0;
+    double* orig = nullptr;
+    double s = NAN;
 
     j = wt->J;
     m = 1;
@@ -819,23 +819,23 @@ auto modwt(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>
 
 auto imodwt(WaveletTransform2D* wt, double* wavecoeff, double* oup) -> void
 {
-    int rows;
-    int cols;
-    int m;
+    int rows = 0;
+    int cols = 0;
+    int m = 0;
     // int N;
-    int ir;
-    int ic;
-    int lf;
-    int istride;
-    int ostride;
-    int iter;
-    int j;
-    int aLL;
-    int aLH;
-    int aHL;
-    int aHH;
-    double* orig;
-    double s;
+    int ir = 0;
+    int ic = 0;
+    int lf = 0;
+    int istride = 0;
+    int ostride = 0;
+    int iter = 0;
+    int j = 0;
+    int aLL = 0;
+    int aLH = 0;
+    int aHL = 0;
+    int aHH = 0;
+    double* orig = nullptr;
+    double s = NAN;
 
     rows = wt->rows;
     cols = wt->cols;
@@ -885,10 +885,10 @@ auto imodwt(WaveletTransform2D* wt, double* wavecoeff, double* oup) -> void
 
 auto getWT2Coeffs(WaveletTransform2D* wt, double* wcoeffs, int level, char const* type, int* rows, int* cols) -> double*
 {
-    int j;
-    int iter;
-    int t;
-    double* ptr;
+    int j = 0;
+    int iter = 0;
+    int t = 0;
+    double* ptr = nullptr;
     j = wt->J;
     // Error Check
 
@@ -943,11 +943,11 @@ auto dispWT2Coeffs(double* a, int row, int col) -> void
 
 auto summary(WaveletTransform2D const& wt) -> void
 {
-    int j;
-    int t;
-    int rows;
-    int cols;
-    int vsize;
+    int j = 0;
+    int t = 0;
+    int rows = 0;
+    int cols = 0;
+    int vsize = 0;
     j = wt.J;
     summary(*wt.wave);
     printf("\n");

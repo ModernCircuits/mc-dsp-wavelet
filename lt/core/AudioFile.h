@@ -205,8 +205,8 @@ private:
 
     //=============================================================
     AudioFileFormat audioFileFormat_;
-    uint32_t sampleRate_;
-    int bitDepth_;
+    uint32_t sampleRate_{};
+    int bitDepth_{};
     bool logErrorsToConsole_ { true };
 };
 
@@ -855,7 +855,7 @@ auto AudioFile<T>::saveToWaveFile(std::string filePath) -> bool
                 fileData.push_back(bytes[1]);
                 fileData.push_back(bytes[2]);
             } else if (bitDepth_ == 32) {
-                int32_t sampleAsInt;
+                int32_t sampleAsInt = 0;
 
                 if (audioFormat == WavAudioFormat::IEEEFloat) {
                     sampleAsInt = (int32_t) reinterpret_cast<int32_t&>(samples[channel][i]);
@@ -1080,7 +1080,7 @@ auto AudioFile<T>::determineAudioFileFormat(std::vector<uint8_t>& fileData) -> A
 template <class T>
 auto AudioFile<T>::fourBytesToInt(std::vector<uint8_t>& source, int startIndex, Endianness endianness) -> int32_t
 {
-    int32_t result;
+    int32_t result = 0;
 
     if (endianness == Endianness::LittleEndian) {
         result = (source[startIndex + 3] << 24) | (source[startIndex + 2] << 16) | (source[startIndex + 1] << 8) | source[startIndex];
@@ -1095,7 +1095,7 @@ auto AudioFile<T>::fourBytesToInt(std::vector<uint8_t>& source, int startIndex, 
 template <class T>
 auto AudioFile<T>::twoBytesToInt(std::vector<uint8_t>& source, int startIndex, Endianness endianness) -> int16_t
 {
-    int16_t result;
+    int16_t result = 0;
 
     if (endianness == Endianness::LittleEndian) {
         result = (source[startIndex + 1] << 8) | source[startIndex];

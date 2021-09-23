@@ -113,8 +113,8 @@ auto dwtReconstructionTest()
 
 auto dwT2ReconstructionTest()
 {
-    WaveletTransform2D* wt;
-    double epsilon;
+    WaveletTransform2D* wt = nullptr;
+    double epsilon = NAN;
 
     auto const rows = 256;
     auto const cols = 200;

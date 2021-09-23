@@ -85,13 +85,13 @@ auto modwtReconstructionTest()
 
 auto modwT2ReconstructionTest()
 {
-    WaveletTransform2D* wt;
-    int i;
-    int k;
-    int rows;
-    int cols;
+    WaveletTransform2D* wt = nullptr;
+    int i = 0;
+    int k = 0;
+    int rows = 0;
+    int cols = 0;
 
-    double epsilon;
+    double epsilon = NAN;
 
     rows = 512;
     cols = 500;
@@ -154,9 +154,9 @@ auto modwT2ReconstructionTest()
 auto dwtReconstructionTest()
 {
 
-    WaveletPacketTransform* wt;
+    WaveletPacketTransform* wt = nullptr;
 
-    int i;
+    int i = 0;
     double epsilon = 1e-8;
 
     auto n = 8096;
@@ -261,19 +261,19 @@ auto dwtReconstructionTest()
 
 auto cwtReconstructionTest()
 {
-    int i;
-    int n;
-    int j;
-    int subscale;
-    int a0;
-    double dt;
-    double dj;
-    double s0;
-    double pi;
-    double t;
-    double epsilon;
-    int it1;
-    int it2;
+    int i = 0;
+    int n = 0;
+    int j = 0;
+    int subscale = 0;
+    int a0 = 0;
+    double dt = NAN;
+    double dj = NAN;
+    double s0 = NAN;
+    double pi = NAN;
+    double t = NAN;
+    double epsilon = NAN;
+    int it1 = 0;
+    int it2 = 0;
 
     char const* wave[3] {
         "morl",
@@ -386,11 +386,11 @@ auto dbCoefTests()
 auto coifCoefTests()
 {
     double epsilon = 1e-15;
-    double t1;
-    double t2;
-    double t3;
-    double t4;
-    double t5;
+    double t1 = NAN;
+    double t2 = NAN;
+    double t3 = NAN;
+    double t4 = NAN;
+    double t5 = NAN;
     std::vector<std::string> waveletNames;
     waveletNames.resize(17);
     for (std::size_t i = 0; i < waveletNames.size(); i++) {
@@ -422,11 +422,11 @@ auto coifCoefTests()
 auto symCoefTests()
 {
     double epsilon = 1e-10;
-    double t1;
-    double t2;
-    double t3;
-    double t4;
-    double t5;
+    double t1 = NAN;
+    double t2 = NAN;
+    double t3 = NAN;
+    double t4 = NAN;
+    double t5 = NAN;
     std::vector<std::string> waveletNames;
     for (std::size_t i = 1; i < 20; i++) {
         waveletNames.push_back(std::string("sym") + std::to_string(i + 1));
@@ -457,12 +457,12 @@ auto symCoefTests()
 auto biorCoefTests()
 {
     double epsilon = 1e-10;
-    double t1;
-    double t2;
-    double t3;
-    double t4;
-    double t5;
-    double t6;
+    double t1 = NAN;
+    double t2 = NAN;
+    double t3 = NAN;
+    double t4 = NAN;
+    double t5 = NAN;
+    double t6 = NAN;
     std::vector<std::string> waveletNames;
     waveletNames.emplace_back("bior1.1");
     waveletNames.emplace_back("bior1.3");
@@ -502,12 +502,12 @@ auto biorCoefTests()
 auto rBiorCoefTests()
 {
     double epsilon = 1e-10;
-    double t1;
-    double t2;
-    double t3;
-    double t4;
-    double t5;
-    double t6;
+    double t1 = NAN;
+    double t2 = NAN;
+    double t3 = NAN;
+    double t4 = NAN;
+    double t5 = NAN;
+    double t6 = NAN;
     std::vector<std::string> waveletNames;
     waveletNames.emplace_back("rbior1.1");
     waveletNames.emplace_back("rbior1.3");

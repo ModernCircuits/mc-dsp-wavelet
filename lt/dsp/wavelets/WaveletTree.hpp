@@ -11,10 +11,10 @@ struct WaveletTree {
     WaveletTree(Wavelet* wave, int signalLength, int j);
 
     auto extension(char const* newExtension) noexcept -> void;
-    auto extension() const noexcept -> std::string const&;
+    [[nodiscard]] auto extension() const noexcept -> std::string const&;
 
     auto nodeLength(int x) -> int;
-    auto coeffs(int x, int y, double* coeffs, int n) -> void;
+    auto coeffs(int x, int y, double* coeffs, int n) const -> void;
 
     Wavelet* wave;
     std::string method;
@@ -25,11 +25,11 @@ struct WaveletTree {
     int MaxIter; // Maximum Iterations J <= MaxIter
     int even; // even = 1 if signal is of even length. even = 0 otherwise
 
-    int N; //
+    int N{}; //
     int nodes;
     int cfftset;
-    int zpad;
-    int length[102];
+    int zpad{};
+    int length[102]{};
     double* output;
     int* coeflength;
     std::unique_ptr<double[]> params;

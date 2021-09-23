@@ -13,8 +13,8 @@
 #include <string>
 
 struct DenoiseSet {
-    int N; //signal length
-    int J; // Levels of Wavelet decomposition
+    int N{}; //signal length
+    int J{}; // Levels of Wavelet decomposition
     std::string wname; //Wavelet name
     std::string wmethod; //Wavelet decomposition method - dwt or swt
     std::string cmethod; //Cnvolution Method - direct or fft . Available only for modwt.

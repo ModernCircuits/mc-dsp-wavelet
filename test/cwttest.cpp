@@ -7,25 +7,25 @@
 
 auto main() -> int
 {
-    int i;
-    int n;
-    int j;
-    int subscale;
-    int a0;
-    int iter;
-    int nd;
-    int k;
-    double dt;
-    double dj;
-    double s0;
-    double param;
-    double mn;
-    double td;
-    double tn;
-    double den;
-    double num;
-    double reconMean;
-    double reconVar;
+    int i = 0;
+    int n = 0;
+    int j = 0;
+    int subscale = 0;
+    int a0 = 0;
+    int iter = 0;
+    int nd = 0;
+    int k = 0;
+    double dt = NAN;
+    double dj = NAN;
+    double s0 = NAN;
+    double param = NAN;
+    double mn = NAN;
+    double td = NAN;
+    double tn = NAN;
+    double den = NAN;
+    double num = NAN;
+    double reconMean = NAN;
+    double reconVar = NAN;
 
     // Set Morlet wavelet. Other options "paul" and "dog"
     auto const* wave = "morlet";

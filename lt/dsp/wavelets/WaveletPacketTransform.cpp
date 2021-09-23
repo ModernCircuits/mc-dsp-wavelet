@@ -163,11 +163,11 @@ auto wptInit(Wavelet* wave, int siglength, int j) -> WaveletPacketTransform*
 
 static auto dwtPer(WaveletPacketTransform* wt, double const* inp, int n, double* cA, int lenCA, double* cD) -> void
 {
-    int l;
-    int l2;
-    int isodd;
-    int t;
-    int lenAvg;
+    int l = 0;
+    int l2 = 0;
+    int isodd = 0;
+    int t = 0;
+    int lenAvg = 0;
 
     lenAvg = wt->wave->lpdLen();
     l2 = lenAvg / 2;
@@ -213,9 +213,9 @@ static auto dwtPer(WaveletPacketTransform* wt, double const* inp, int n, double*
 
 static auto dwtSym(WaveletPacketTransform* wt, double const* inp, int n, double* cA, int lenCA, double* cD) -> void
 {
-    int l;
-    int t;
-    int lenAvg;
+    int l = 0;
+    int t = 0;
+    int lenAvg = 0;
 
     lenAvg = wt->wave->lpdLen();
 
@@ -249,16 +249,16 @@ static constexpr auto ipow2(int n) -> int
 
 auto dwt(WaveletPacketTransform* wt, double const* inp) -> void
 {
-    int iter;
-    int p2;
-    int k;
-    int n2;
-    int np;
-    int llb;
-    double v1;
-    double v2;
-    int lenCA;
-    int t;
+    int iter = 0;
+    int p2 = 0;
+    int k = 0;
+    int n2 = 0;
+    int np = 0;
+    int llb = 0;
+    double v1 = NAN;
+    double v2 = NAN;
+    int lenCA = 0;
+    int t = 0;
 
     auto tempLen = wt->siglength;
     auto jj = wt->J;
@@ -484,12 +484,12 @@ auto getDWPTNodelength(WaveletPacketTransform* wt, int x) -> int
 
 static auto idwtPer(WaveletPacketTransform* wt, double const* cA, int lenCA, double const* cD, double* x) -> void
 {
-    int lenAvg;
-    int l;
-    int m;
-    int n;
-    int t;
-    int l2;
+    int lenAvg = 0;
+    int l = 0;
+    int m = 0;
+    int n = 0;
+    int t = 0;
+    int l2 = 0;
 
     lenAvg = (wt->wave->lprLen() + wt->wave->hprLen()) / 2;
     l2 = lenAvg / 2;
@@ -541,9 +541,9 @@ static auto idwtSym(WaveletPacketTransform* wt, double const* cA, int lenCA, dou
 
 auto idwt(WaveletPacketTransform* wt, double* dwtop) -> void
 {
-    int k;
-    int l;
-    int index;
+    int k = 0;
+    int l = 0;
+    int index = 0;
 
     auto j = wt->J;
     auto appLen = wt->length[0];
@@ -799,11 +799,11 @@ auto setDWPTEntropy(WaveletPacketTransform* wt, char const* entropy, double epar
 
 auto summary(WaveletPacketTransform const& wt) -> void
 {
-    int k;
-    int p2;
-    int j;
-    int it1;
-    int it2;
+    int k = 0;
+    int p2 = 0;
+    int j = 0;
+    int it1 = 0;
+    int it2 = 0;
     j = wt.J;
     summary(*wt.wave);
     printf("\n");

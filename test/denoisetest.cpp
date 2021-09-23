@@ -6,10 +6,11 @@
 #include <cstring>
 #include <memory>
 
+
 static auto rmse(int n, double const* x, double const* y) -> double
 {
-    double rms;
-    int i;
+    double rms = NAN;
+    int i = 0;
 
     rms = 0.0;
 
@@ -24,15 +25,15 @@ static auto rmse(int n, double const* x, double const* y) -> double
 
 static auto corrcoef(int n, double const* x, double const* y) -> double
 {
-    double cc;
-    double xm;
-    double ym;
-    double tx;
-    double ty;
-    double num;
-    double den1;
-    double den2;
-    int i;
+    double cc = NAN;
+    double xm = NAN;
+    double ym = NAN;
+    double tx = NAN;
+    double ty = NAN;
+    double num = NAN;
+    double den1 = NAN;
+    double den2 = NAN;
+    int i = 0;
     xm = ym = 0.0;
     for (i = 0; i < n; ++i) {
         xm += x[i];
@@ -59,12 +60,12 @@ static auto corrcoef(int n, double const* x, double const* y) -> double
 auto main() -> int
 {
 
-    int i;
-    int n;
-    int j;
-    FILE* ifp;
+    int i = 0;
+    int n = 0;
+    int j = 0;
+    FILE* ifp = nullptr;
 
-    DenoiseSet* obj;
+    DenoiseSet* obj = nullptr;
     double temp[2400];
 
     char const* wname = "db5";
