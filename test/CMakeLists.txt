@@ -19,8 +19,8 @@ endfunction()
 add_executable(bpm_detector "bpm_detector.cpp")
 target_link_libraries(bpm_detector PRIVATE wavelib wavelib_testdata lt::CodeCoverage)
 
-wavelib_add_test(ConvolutionTest)
-wavelib_add_test(OverlapSaveTest)
+wavelib_add_test(FFTConvolverTest)
+wavelib_add_test(OverlapSaveConvolverTest)
 
 wavelib_add_test(cwttest)
 wavelib_add_test(dwttest)

@@ -17,8 +17,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         dsp/convolution/FFTConvolver.cpp
         dsp/convolution/FFTConvolver.hpp
         dsp/convolution/ConvolutionMethod.hpp
-        dsp/convolution/OverlapSave.cpp
-        dsp/convolution/OverlapSave.hpp
+        dsp/convolution/OverlapSaveConvolver.cpp
+        dsp/convolution/OverlapSaveConvolver.hpp
 
         dsp/fft.hpp
         dsp/fft/FFT.hpp
