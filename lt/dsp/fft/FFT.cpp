@@ -208,9 +208,9 @@ auto longvectorN(Complex<double>* sig, int const* array, int tx) -> void
 }
 }
 
-FFT::FFT(int n, int sgn)
-    : N { n }
-    , sgn { sgn }
+FFT::FFT(int n, Direction direction)
+    : size_ { n }
+    , direction_ { direction }
 {
     int twiLen { 0 };
     auto const out = dividebyN(n);
@@ -238,17 +238,19 @@ FFT::FFT(int n, int sgn)
         twiLen = m;
     }
 
-    if (sgn == -1) {
+    if (direction_ == FFT::backward) {
         for (auto ct = 0; ct < twiLen; ct++) {
-            (this->data.get() + ct)->imag(-(this->data.get() + ct)->imag());
+            auto& val = this->data[ct];
+            val = std::conj(val);
         }
     }
 }
 
-static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, const FFT* obj, int sgn, int n, int l, int inc) -> void
+static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, const FFT* obj, FFT::Direction direction, int n, int l, int inc) -> void
 {
 
     auto const radix = n > 1 ? obj->factors[inc] : 0;
+    auto const sgn = direction == FFT::forward ? 1 : (-1);
 
     if (n == 1) {
 
@@ -751,8 +753,8 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         double tau2i;
         auto const m = n / 2;
         auto const ll = 2 * l;
-        mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op, ip, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + m, ip + l, obj, direction, m, ll, inc + 1);
 
         for (k = 0; k < m; k++) {
             ind = m - 1 + k;
@@ -797,10 +799,10 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         double ci;
         auto const m = n / 3;
         auto const ll = 3 * l;
-        mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
-        //mixed_radix3_dit_rec(op,ip,obj,sgn,ll,m);
+        mixedRadixDitRec(op, ip, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + m, ip + l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, direction, m, ll, inc + 1);
+        //mixed_radix3_dit_rec(op,ip,obj,direction,ll,m);
 
         for (k = 0; k < m; ++k) {
             ind = m - 1 + 2 * k;
@@ -870,12 +872,12 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         double di;
         auto const m = n / 4;
         auto const ll = 4 * l;
-        mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 3 * m, ip + 3 * l, obj, sgn, m, ll, inc + 1);
+        mixedRadixDitRec(op, ip, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + m, ip + l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 3 * m, ip + 3 * l, obj, direction, m, ll, inc + 1);
 
-        //mixed_radix4_dit_rec(op,ip,obj,sgn,ll,m);
+        //mixed_radix4_dit_rec(op,ip,obj,direction,ll,m);
 
         tkm1 = m;
         tkm2 = tkm1 + m;
@@ -1014,12 +1016,12 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         double s2;
         auto const m = n / 5;
         auto const ll = 5 * l;
-        mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 3 * m, ip + 3 * l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 4 * m, ip + 4 * l, obj, sgn, m, ll, inc + 1);
-        //mixed_radix3_dit_rec(op,ip,obj,sgn,ll,m);
+        mixedRadixDitRec(op, ip, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + m, ip + l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 3 * m, ip + 3 * l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 4 * m, ip + 4 * l, obj, direction, m, ll, inc + 1);
+        //mixed_radix3_dit_rec(op,ip,obj,direction,ll,m);
 
         c1 = 0.30901699437;
         c2 = -0.80901699437;
@@ -1248,14 +1250,14 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         double s3;
         auto const m = n / 7;
         auto const ll = 7 * l;
-        mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 3 * m, ip + 3 * l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 4 * m, ip + 4 * l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 5 * m, ip + 5 * l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 6 * m, ip + 6 * l, obj, sgn, m, ll, inc + 1);
-        //mixed_radix3_dit_rec(op,ip,obj,sgn,ll,m);
+        mixedRadixDitRec(op, ip, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + m, ip + l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 3 * m, ip + 3 * l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 4 * m, ip + 4 * l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 5 * m, ip + 5 * l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 6 * m, ip + 6 * l, obj, direction, m, ll, inc + 1);
+        //mixed_radix3_dit_rec(op,ip,obj,direction,ll,m);
 
         c1 = 0.62348980185;
         c2 = -0.22252093395;
@@ -1572,15 +1574,15 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
 
         auto const m = n / 8;
         auto const ll = 8 * l;
-        mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + m, ip + l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 3 * m, ip + 3 * l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 4 * m, ip + 4 * l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 5 * m, ip + 5 * l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 6 * m, ip + 6 * l, obj, sgn, m, ll, inc + 1);
-        mixedRadixDitRec(op + 7 * m, ip + 7 * l, obj, sgn, m, ll, inc + 1);
-        //mixed_radix3_dit_rec(op,ip,obj,sgn,ll,m);
+        mixedRadixDitRec(op, ip, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + m, ip + l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 2 * m, ip + 2 * l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 3 * m, ip + 3 * l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 4 * m, ip + 4 * l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 5 * m, ip + 5 * l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 6 * m, ip + 6 * l, obj, direction, m, ll, inc + 1);
+        mixedRadixDitRec(op + 7 * m, ip + 7 * l, obj, direction, m, ll, inc + 1);
+        //mixed_radix3_dit_rec(op,ip,obj,direction,ll,m);
 
         c1 = 0.70710678118654752440084436210485;
         s1 = 0.70710678118654752440084436210485;
@@ -1768,7 +1770,7 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
     //     auto const ll = radix * l;
 
     //     for (i = 0; i < radix; ++i) {
-    //         mixed_radix_dit_rec(op + i * m, ip + i * l, obj, sgn, m, ll, inc + 1);
+    //         mixed_radix_dit_rec(op + i * m, ip + i * l, obj, direction, m, ll, inc + 1);
     //     }
 
     //     M = (radix - 1) / 2;
@@ -1881,7 +1883,7 @@ static auto bluesteinExp(Complex<double>* hl, Complex<double>* hlt, int len, int
     }
 }
 
-static auto bluesteinFft(Complex<double> const* data, Complex<double>* oup, FFT* obj, int sgn, int n) -> void
+static auto bluesteinFft(Complex<double> const* data, Complex<double>* oup, FFT& fft, FFT::Direction direction, int n) -> void
 {
 
     int m;
@@ -1890,18 +1892,18 @@ static auto bluesteinFft(Complex<double> const* data, Complex<double>* oup, FFT*
     double scale;
     double temp;
 
-    obj->lt = 0;
+    fft.lt = 0;
     auto k = (int)std::pow(2.0, ceil((double)log10((double)n) / log10((double)2.0)));
     auto defLt = 1;
-    auto defSgn = obj->sgn;
-    auto defN = obj->N;
+    auto defSgn = direction;
+    auto defN = fft.size();
 
     if (k < 2 * n - 2) {
         m = k * 2;
     } else {
         m = k;
     }
-    obj->N = m;
+    fft.size(m);
 
     auto yn = std::make_unique<Complex<double>[]>(m);
     auto hk = std::make_unique<Complex<double>[]>(m);
@@ -1918,9 +1920,9 @@ static auto bluesteinFft(Complex<double> const* data, Complex<double>* oup, FFT*
     }
 
     //fft_set* obj = initialize_fft2(M,1);
-    obj->perform(tempop.get(), hk.get());
+    fft.perform(tempop.get(), hk.get());
 
-    if (sgn == 1) {
+    if (direction == FFT::forward) {
         for (i = 0; i < n; i++) {
             tempop[i].real(data[i].real() * hlt[i].real() + data[i].imag() * hlt[i].imag());
             tempop[i].imag(-data[i].real() * hlt[i].imag() + data[i].imag() * hlt[i].real());
@@ -1937,9 +1939,9 @@ static auto bluesteinFft(Complex<double> const* data, Complex<double>* oup, FFT*
         tempop[i].imag(0.0);
     }
 
-    obj->perform(tempop.get(), yn.get());
+    fft.perform(tempop.get(), yn.get());
 
-    if (sgn == 1) {
+    if (direction == FFT::forward) {
         for (i = 0; i < m; i++) {
             temp = yn[i].real() * hk[i].real() - yn[i].imag() * hk[i].imag();
             yn[i].imag(yn[i].real() * hk[i].imag() + yn[i].imag() * hk[i].real());
@@ -1954,16 +1956,15 @@ static auto bluesteinFft(Complex<double> const* data, Complex<double>* oup, FFT*
     }
 
     //IFFT
-
     for (ii = 0; ii < m; ++ii) {
-        (obj->data.get() + ii)->imag(-(obj->data.get() + ii)->imag());
+        auto& c = fft.data[ii];
+        c = conj(c);
     }
 
-    obj->sgn = -1 * sgn;
+    fft.direction(direction == FFT::forward ? FFT::backward : FFT::forward);
+    fft.perform(yn.get(), yno.get());
 
-    obj->perform(yn.get(), yno.get());
-
-    if (sgn == 1) {
+    if (direction == FFT::forward) {
         for (i = 0; i < n; i++) {
             oup[i].real(yno[i].real() * hlt[i].real() + yno[i].imag() * hlt[i].imag());
             oup[i].imag(-yno[i].real() * hlt[i].imag() + yno[i].imag() * hlt[i].real());
@@ -1975,23 +1976,23 @@ static auto bluesteinFft(Complex<double> const* data, Complex<double>* oup, FFT*
         }
     }
 
-    obj->sgn = defSgn;
-    obj->N = defN;
-    obj->lt = defLt;
+    fft.direction(defSgn);
+    fft.size(defN);
+    fft.lt = defLt;
     for (ii = 0; ii < m; ++ii) {
-        (obj->data.get() + ii)->imag(-(obj->data.get() + ii)->imag());
+        auto& c = fft.data[ii];
+        c = conj(c);
     }
 }
 
-auto FFT::perform(Complex<double> const* inp, Complex<double>* oup) -> void
+auto FFT::perform(Complex<double> const* input, Complex<double>* ouput) -> void
 {
+    assert((lt == 0) || (lt == 1));
     if (lt == 0) {
-        mixedRadixDitRec(oup, inp, this, sgn, N, 1, 0);
+        mixedRadixDitRec(ouput, input, this, direction(), size(), 1, 0);
         return;
     }
-
-    assert(lt == 1);
-    bluesteinFft(inp, oup, this, sgn, N);
+    bluesteinFft(input, ouput, *this, direction(), size());
 }
 
 auto divideby(int m, int d) -> int
@@ -2005,10 +2006,10 @@ auto divideby(int m, int d) -> int
     return 0;
 }
 
-RealFFT::RealFFT(int n, int sgn)
+RealFFT::RealFFT(int n, FFT::Direction direction)
 {
     data_ = std::make_unique<Complex<double>[]>(n / 2);
-    cobj_ = std::make_unique<FFT>(n / 2, sgn);
+    cobj_ = std::make_unique<FFT>(n / 2, direction);
 
     for (auto k = 0; k < n / 2; ++k) {
         auto const theta = PI2 * k / n;
@@ -2019,18 +2020,11 @@ RealFFT::RealFFT(int n, int sgn)
 
 auto RealFFT::performRealToComplex(double const* inp, Complex<double>* oup) -> void
 {
-    int i;
-    int n2;
-    int n;
-    double temp1;
-    double temp2;
-    n2 = cobj_->N;
-    n = n2 * 2;
-
+    auto const n2 = cobj_->size();
     auto cinp = std::make_unique<Complex<double>[]>(n2);
     auto coup = std::make_unique<Complex<double>[]>(n2);
 
-    for (i = 0; i < n2; ++i) {
+    for (auto i = 0; i < n2; ++i) {
         cinp[i].real(inp[2 * i]);
         cinp[i].imag(inp[2 * i + 1]);
     }
@@ -2040,17 +2034,18 @@ auto RealFFT::performRealToComplex(double const* inp, Complex<double>* oup) -> v
     oup[0].real(coup[0].real() + coup[0].imag());
     oup[0].imag(0.0);
 
-    for (i = 1; i < n2; ++i) {
-        temp1 = coup[i].imag() + coup[n2 - i].imag();
-        temp2 = coup[n2 - i].real() - coup[i].real();
+    for (auto i = 1; i < n2; ++i) {
+        auto const temp1 = coup[i].imag() + coup[n2 - i].imag();
+        auto const temp2 = coup[n2 - i].real() - coup[i].real();
         oup[i].real((coup[i].real() + coup[n2 - i].real() + (temp1 * data_[i].real()) + (temp2 * data_[i].imag())) / 2.0);
         oup[i].imag((coup[i].imag() - coup[n2 - i].imag() + (temp2 * data_[i].real()) - (temp1 * data_[i].imag())) / 2.0);
     }
 
+    auto const n = n2 * 2;
     oup[n2].real(coup[0].real() - coup[0].imag());
     oup[n2].imag(0.0);
 
-    for (i = 1; i < n2; ++i) {
+    for (auto i = 1; i < n2; ++i) {
         oup[n - i].real(oup[i].real());
         oup[n - i].imag(-oup[i].imag());
     }
@@ -2058,7 +2053,7 @@ auto RealFFT::performRealToComplex(double const* inp, Complex<double>* oup) -> v
 
 auto RealFFT::performComplexToReal(Complex<double> const* inp, double* oup) -> void
 {
-    auto const n = static_cast<std::size_t>(cobj_->N);
+    auto const n = static_cast<std::size_t>(cobj_->size());
     auto cinp = std::make_unique<Complex<double>[]>(n);
     auto coup = std::make_unique<Complex<double>[]>(n);
 

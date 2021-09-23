@@ -25,7 +25,7 @@ namespace {
 
     auto nsfftFd(FFT* obj, Complex<double>* inp, Complex<double>* oup, double lb, double ub, double* w) -> void
     {
-        auto const n = obj->N;
+        auto const n = obj->size();
         auto const l = n / 2;
 
         auto temp1 = std::make_unique<double[]>(l);
@@ -72,7 +72,7 @@ namespace {
     auto nsfftBk(FFT* obj, Complex<double>* inp, Complex<double>* oup, double lb, double ub, double* t) -> void
     {
 
-        auto const n = obj->N;
+        auto const n = obj->size();
         auto const l = n / 2;
 
         auto const m = divideby(n, 2);
@@ -126,12 +126,12 @@ namespace {
         }
     }
 
-    auto nsfftExec(FFT* obj, Complex<double>* inp, Complex<double>* oup, double lb, double ub, double* w) -> void
+    auto nsfftExec(FFT* fft, Complex<double>* inp, Complex<double>* oup, double lb, double ub, double* w) -> void
     {
-        if (obj->sgn == 1) {
-            nsfftFd(obj, inp, oup, lb, ub, w);
-        } else if (obj->sgn == -1) {
-            nsfftBk(obj, inp, oup, lb, ub, w);
+        if (fft->direction() == FFT::forward) {
+            nsfftFd(fft, inp, oup, lb, ub, w);
+        } else {
+            nsfftBk(fft, inp, oup, lb, ub, w);
         }
     }
 
@@ -309,7 +309,7 @@ auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
         exit(1);
     }
 
-    auto obj = std::make_unique<FFT>(n, -1);
+    auto obj = std::make_unique<FFT>(n, FFT::backward);
     auto w = std::make_unique<double[]>(n);
     auto phiw = std::make_unique<Complex<double>[]>(n);
     auto psiw = std::make_unique<Complex<double>[]>(n);
@@ -873,8 +873,8 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
         exit(-1);
     }
 
-    auto obj = std::make_unique<FFT>(npad, 1);
-    auto iobj = std::make_unique<FFT>(npad, -1);
+    auto obj = std::make_unique<FFT>(npad, FFT::forward);
+    auto iobj = std::make_unique<FFT>(npad, FFT::backward);
 
     auto ypad = std::make_unique<Complex<double>[]>(npad);
     auto yfft = std::make_unique<Complex<double>[]>(npad);

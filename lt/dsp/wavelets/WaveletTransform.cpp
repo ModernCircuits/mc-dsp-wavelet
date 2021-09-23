@@ -1046,8 +1046,8 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
         wt.length[iter] = n;
     }
 
-    auto fftFd = std::make_unique<FFT>(n, 1);
-    auto fftBd = std::make_unique<FFT>(n, -1);
+    auto fftFd = std::make_unique<FFT>(n, FFT::forward);
+    auto fftBd = std::make_unique<FFT>(n, FFT::backward);
 
     auto sig = std::make_unique<Complex<double>[]>(n);
     auto cA = std::make_unique<Complex<double>[]>(n);
@@ -1159,8 +1159,8 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
     auto j = wt.levels();
 
     auto s = std::sqrt(2.0);
-    auto fftFd = std::make_unique<FFT>(n, 1);
-    auto fftBd = std::make_unique<FFT>(n, -1);
+    auto fftFd = std::make_unique<FFT>(n, FFT::forward);
+    auto fftBd = std::make_unique<FFT>(n, FFT::backward);
 
     auto sig = std::make_unique<Complex<double>[]>(n);
     auto cA = std::make_unique<Complex<double>[]>(n);

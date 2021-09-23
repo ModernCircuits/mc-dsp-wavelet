@@ -39,8 +39,8 @@ Convolution::Convolution(std::size_t signalSize, std::size_t patchSize)
     : signalSize_ { signalSize }
     , patchSize_ { patchSize }
     , totalSize_ { findnexte(signalSize + patchSize_ - 1U) }
-    , forwardFFT_ { std::make_unique<RealFFT>(totalSize_, 1) }
-    , inverseFFT_ { std::make_unique<RealFFT>(totalSize_, -1) }
+    , forwardFFT_ { std::make_unique<RealFFT>(totalSize_, FFT::forward) }
+    , backwardFFT_ { std::make_unique<RealFFT>(totalSize_, FFT::backward) }
 {
 }
 
@@ -69,7 +69,7 @@ auto Convolution::fft(double const* signal, double const* patch, double* output)
         tmp_[i] = signalScratchOut_[i] * patchScratchOut_[i];
     }
 
-    inverseFFT_->performComplexToReal(tmp_.get(), tmpOut_.get());
+    backwardFFT_->performComplexToReal(tmp_.get(), tmpOut_.get());
 
     auto const ls = signalSize_ + patchSize_ - 1U;
     for (auto i = std::size_t { 0 }; i < ls; i++) {

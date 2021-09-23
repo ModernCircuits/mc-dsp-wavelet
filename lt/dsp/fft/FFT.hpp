@@ -18,20 +18,33 @@ template <typename T>
 using Complex = std::complex<T>;
 
 struct FFT {
-    FFT(int n, int sgn);
+    enum Direction {
+        backward = -1,
+        forward = 1,
+    };
+
+    FFT(int n, Direction direction);
 
     auto perform(Complex<double> const* inp, Complex<double>* oup) -> void;
 
-    int N;
-    int sgn;
+    auto direction() const noexcept -> Direction { return direction_; }
+    auto direction(Direction newDirection) noexcept -> void { direction_ = newDirection; }
+
+    auto size() const noexcept -> int { return size_; }
+    auto size(int newSize) noexcept -> void { size_ = newSize; }
+
     int factors[64];
     int lf;
     int lt;
     std::unique_ptr<Complex<double>[]> data;
+
+private:
+    int size_;
+    Direction direction_;
 };
 
 struct RealFFT {
-    RealFFT(int n, int sgn);
+    RealFFT(int n, FFT::Direction direction);
 
     auto performRealToComplex(double const* inp, Complex<double>* oup) -> void;
     auto performComplexToReal(Complex<double> const* inp, double* oup) -> void;

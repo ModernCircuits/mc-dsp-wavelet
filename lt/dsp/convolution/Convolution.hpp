@@ -15,7 +15,7 @@ private:
     std::size_t totalSize_;
 
     std::unique_ptr<RealFFT> forwardFFT_;
-    std::unique_ptr<RealFFT> inverseFFT_;
+    std::unique_ptr<RealFFT> backwardFFT_;
 
     std::unique_ptr<double[]> signalScratch_ { std::make_unique<double[]>(totalSize_) };
     std::unique_ptr<Complex<double>[]> signalScratchOut_ { std::make_unique<Complex<double>[]>(totalSize_) };
