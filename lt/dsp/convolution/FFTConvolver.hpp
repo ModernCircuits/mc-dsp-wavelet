@@ -5,7 +5,7 @@
 struct FFTConvolver {
     FFTConvolver(std::size_t signalSize, std::size_t patchSize);
 
-    auto fft(double const* signal, double const* patch, double* output) const -> void;
+    auto convolute(double const* signal, double const* patch, double* output) const -> void;
 
     static auto direct(double const* signal, std::size_t n, double const* patch, std::size_t l, double* output) noexcept -> void;
 

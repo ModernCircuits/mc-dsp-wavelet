@@ -44,7 +44,7 @@ FFTConvolver::FFTConvolver(std::size_t signalSize, std::size_t patchSize)
 {
 }
 
-auto FFTConvolver::fft(double const* signal, double const* patch, double* output) const -> void
+auto FFTConvolver::convolute(double const* signal, double const* patch, double* output) const -> void
 {
     std::fill(signalScratch_.get(), std::next(signalScratch_.get(), totalSize_), 0.0);
     std::fill(patchScratch_.get(), std::next(patchScratch_.get(), totalSize_), 0.0);

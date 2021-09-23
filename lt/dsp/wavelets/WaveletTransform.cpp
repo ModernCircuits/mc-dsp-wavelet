@@ -337,9 +337,9 @@ static auto wconv(WaveletTransform& wt, double* sig, int n, double const* filt, 
     assert(wt.convMethod() == ConvolutionMethod::fft);
     if (wt.cfftset == 0) {
         wt.cobj = std::make_unique<FFTConvolver>(n, l);
-        wt.cobj->fft(sig, filt, oup);
+        wt.cobj->convolute(sig, filt, oup);
     } else {
-        wt.cobj->fft(sig, filt, oup);
+        wt.cobj->convolute(sig, filt, oup);
     }
 }
 
