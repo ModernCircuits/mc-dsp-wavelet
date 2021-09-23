@@ -31,8 +31,8 @@ struct FftData {
     fft_type im;
 };
 
-struct FftSet {
-    FftSet(int n, int sgn);
+struct FFT {
+    FFT(int n, int sgn);
 
     int N;
     int sgn;
@@ -42,10 +42,10 @@ struct FftSet {
     std::unique_ptr<FftData[]> data;
 };
 
-auto fftExec(FftSet& obj, FftData* inp, FftData* oup) -> void;
+auto fftExec(FFT& obj, FftData* inp, FftData* oup) -> void;
 
 struct FftRealSet {
-    std::unique_ptr<FftSet> cobj;
+    std::unique_ptr<FFT> cobj;
     std::unique_ptr<FftData[]> data;
 };
 

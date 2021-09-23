@@ -208,7 +208,7 @@ auto longvectorN(FftData* sig, int const* array, int tx) -> void
 }
 }
 
-FftSet::FftSet(int n, int sgn)
+FFT::FFT(int n, int sgn)
     : N { n }
     , sgn { sgn }
 {
@@ -245,7 +245,7 @@ FftSet::FftSet(int n, int sgn)
     }
 }
 
-static auto mixedRadixDitRec(FftData* op, FftData* ip, const FftSet* obj, int sgn, int n, int l, int inc) -> void
+static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, int n, int l, int inc) -> void
 {
 
     auto const radix = n > 1 ? obj->factors[inc] : 0;
@@ -1881,7 +1881,7 @@ static auto bluesteinExp(FftData* hl, FftData* hlt, int len, int m) -> void
     }
 }
 
-static auto bluesteinFft(FftData* data, FftData* oup, FftSet* obj, int sgn, int n) -> void
+static auto bluesteinFft(FftData* data, FftData* oup, FFT* obj, int sgn, int n) -> void
 {
 
     int m;
@@ -1983,7 +1983,7 @@ static auto bluesteinFft(FftData* data, FftData* oup, FftSet* obj, int sgn, int 
     }
 }
 
-auto fftExec(FftSet& obj, FftData* inp, FftData* oup) -> void
+auto fftExec(FFT& obj, FftData* inp, FftData* oup) -> void
 {
     if (obj.lt == 0) {
         //fftct_radix3_dit_rec(inp,oup,obj, obj.sgn, obj.N);

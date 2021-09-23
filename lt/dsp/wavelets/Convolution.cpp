@@ -153,7 +153,7 @@ auto fftRealInit(int n, int sgn) -> std::unique_ptr<FftRealSet>
 {
     auto obj = std::make_unique<FftRealSet>();
     obj->data = std::make_unique<FftData[]>(n / 2);
-    obj->cobj = std::make_unique<FftSet>(n / 2, sgn);
+    obj->cobj = std::make_unique<FFT>(n / 2, sgn);
 
     for (auto k = 0; k < n / 2; ++k) {
         auto const theta = PI2 * k / n;
