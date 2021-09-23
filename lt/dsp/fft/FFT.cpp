@@ -1,6 +1,6 @@
 #include "FFT.hpp"
 
-#include <cassert>
+#include "lt/cassert.hpp"
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -1987,7 +1987,7 @@ static auto bluesteinFft(Complex<double> const* data, Complex<double>* oup, FFT&
 
 auto FFT::perform(Complex<double> const* input, Complex<double>* ouput) -> void
 {
-    assert((lt == 0) || (lt == 1));
+    LT_ASSERT((lt == 0) || (lt == 1));
     if (lt == 0) {
         mixedRadixDitRec(ouput, input, this, direction(), size(), 1, 0);
         return;

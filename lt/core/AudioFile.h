@@ -23,8 +23,8 @@
 #ifndef AS_AudioFile_h
 #define AS_AudioFile_h
 
+#include "lt/cassert.hpp"
 #include <algorithm>
-#include <cassert>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -347,7 +347,7 @@ auto AudioFile<T>::setAudioBuffer(AudioBuffer& newBuffer) -> bool
     int numChannels = (int)newBuffer.size();
 
     if (numChannels <= 0) {
-        assert(false && "The buffer your are trying to use has no channels");
+        LT_ASSERT(false && "The buffer your are trying to use has no channels");
         return false;
     }
 
@@ -357,7 +357,7 @@ auto AudioFile<T>::setAudioBuffer(AudioBuffer& newBuffer) -> bool
     samples.resize(newBuffer.size());
 
     for (int k = 0; k < getNumChannels(); k++) {
-        assert(newBuffer[k].size() == numSamples);
+        LT_ASSERT(newBuffer[k].size() == numSamples);
 
         samples[k].resize(numSamples);
 
@@ -588,7 +588,7 @@ auto AudioFile<T>::decodeWaveFile(std::vector<uint8_t>& fileData) -> bool
 
                 samples[channel].push_back(sample);
             } else {
-                assert(false);
+                LT_ASSERT(false);
             }
         }
     }
@@ -613,8 +613,7 @@ auto AudioFile<T>::decodeAiffFile(std::vector<uint8_t>& fileData) -> bool
     //int32_t fileSizeInBytes = fourBytesToInt (fileData, 4, Endianness::BigEndian) + 8;
     std::string format(fileData.begin() + 8, fileData.begin() + 12);
 
-    int audioFormat = format == "AIFF" ? AIFFAudioFormat::Uncompressed : format == "AIFC" ? AIFFAudioFormat::Compressed
-                                                                                          : AIFFAudioFormat::Error;
+    int audioFormat = format == "AIFF" ? AIFFAudioFormat::Uncompressed : format == "AIFC" ? AIFFAudioFormat::Compressed : AIFFAudioFormat::Error;
 
     // -----------------------------------------------------------
     // try and find the start points of key chunks
@@ -718,7 +717,7 @@ auto AudioFile<T>::decodeAiffFile(std::vector<uint8_t>& fileData) -> bool
 
                 samples[channel].push_back(sample);
             } else {
-                assert(false);
+                LT_ASSERT(false);
             }
         }
     }
@@ -865,7 +864,7 @@ auto AudioFile<T>::saveToWaveFile(std::string filePath) -> bool
 
                 addInt32ToFileData(fileData, sampleAsInt, Endianness::LittleEndian);
             } else {
-                assert(false && "Trying to write a file with unsupported bit depth");
+                LT_ASSERT(false && "Trying to write a file with unsupported bit depth");
                 return false;
             }
         }
@@ -956,7 +955,7 @@ auto AudioFile<T>::saveToAiffFile(std::string filePath) -> bool
                 auto sampleAsInt = (int32_t)(samples[channel][i] * std::numeric_limits<int32_t>::max());
                 addInt32ToFileData(fileData, sampleAsInt, Endianness::BigEndian);
             } else {
-                assert(false && "Trying to write a file with unsupported bit depth");
+                LT_ASSERT(false && "Trying to write a file with unsupported bit depth");
                 return false;
             }
         }
@@ -1131,7 +1130,7 @@ auto AudioFile<T>::getIndexOfChunk(std::vector<uint8_t>& source, const std::stri
 {
     constexpr int dataLen = 4;
     if (chunkHeaderID.size() != dataLen) {
-        assert(false && "Invalid chunk header ID string");
+        LT_ASSERT(false && "Invalid chunk header ID string");
         return -1;
     }
 

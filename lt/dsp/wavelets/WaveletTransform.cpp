@@ -5,7 +5,7 @@
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/common.hpp"
 
-#include <cassert>
+#include "lt/cassert.hpp"
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -281,7 +281,7 @@ auto WaveletTransform::convMethod(ConvolutionMethod method) -> void
 
 auto WaveletTransform::extension(SignalExtension ext) -> void
 {
-    assert((ext == SignalExtension::periodic) || (ext == SignalExtension::symmetric));
+    LT_ASSERT((ext == SignalExtension::periodic) || (ext == SignalExtension::symmetric));
     ext_ = ext;
 }
 
@@ -335,7 +335,7 @@ static auto wconv(WaveletTransform& wt, double* sig, int n, double const* filt, 
         return;
     }
 
-    assert(wt.convMethod() == ConvolutionMethod::fft);
+    LT_ASSERT(wt.convMethod() == ConvolutionMethod::fft);
     if (wt.cfftset == 0) {
         wt.convolver = std::make_unique<FFTConvolver>(n, l);
         convolute(*wt.convolver, sig, filt, oup);

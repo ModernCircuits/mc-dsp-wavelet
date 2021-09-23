@@ -4,7 +4,7 @@
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/common.hpp"
 
-#include <cassert>
+#include "lt/cassert.hpp"
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>

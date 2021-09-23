@@ -2,7 +2,7 @@
 
 #include "lt/dsp/wavelets/common.hpp"
 
-#include <cassert>
+#include "lt/cassert.hpp"
 #include <cmath>
 #include <string_view>
 
@@ -316,7 +316,7 @@ auto WaveletTree::coeffs(int x, int y, double* coeffs, int n) const -> void
 
 auto WaveletTree::extension(char const* newExtension) noexcept -> void
 {
-    assert((newExtension == "sym"sv) || (newExtension == "per"sv));
+    LT_ASSERT((newExtension == "sym"sv) || (newExtension == "per"sv));
     ext_ = newExtension;
 }
 

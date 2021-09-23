@@ -1,6 +1,6 @@
 #include "OverlapSaveConvolver.hpp"
 
-#include <cassert>
+#include "lt/cassert.hpp"
 
 namespace {
 constexpr auto REAL = 0U; // NOLINT
@@ -40,7 +40,7 @@ ComplexSignal::~ComplexSignal() { fftw_free(data_); }
 
 auto spectralConvolution(ComplexSignal const& a, ComplexSignal const& b, ComplexSignal& result) -> void
 {
-    assert((a.size() == result.size()) && (b.size() == result.size()));
+    LT_ASSERT((a.size() == result.size()) && (b.size() == result.size()));
     for (std::size_t i = 0; i < a.size(); ++i) {
         // a+ib * c+id = ac+iad+ibc-bd = ac-bd + i(ad+bc)
         result[i][REAL] = a[i][REAL] * b[i][REAL] - a[i][IMAG] * b[i][IMAG];
@@ -50,7 +50,7 @@ auto spectralConvolution(ComplexSignal const& a, ComplexSignal const& b, Complex
 
 auto spectralCorrelation(ComplexSignal const& a, ComplexSignal const& b, ComplexSignal& result) -> void
 {
-    assert((a.size() == result.size()) && (b.size() == result.size()));
+    LT_ASSERT((a.size() == result.size()) && (b.size() == result.size()));
     for (std::size_t i = 0; i < a.size(); ++i) {
         // a * conj(b) = a+ib * c-id = ac-iad+ibc+bd = ac+bd + i(bc-ad)
         result[i][REAL] = a[i][REAL] * b[i][REAL] + a[i][IMAG] * b[i][IMAG];
@@ -61,13 +61,13 @@ auto spectralCorrelation(ComplexSignal const& a, ComplexSignal const& b, Complex
 FftForwardPlan::FftForwardPlan(DoubleSignal& fs, ComplexSignal& cs)
     : FftPlan(fftw_plan_dft_r2c_1d(fs.size(), fs.data(), cs.data(), FFTW_ESTIMATE))
 {
-    assert(cs.size() == (fs.size() / 2U + 1U));
+    LT_ASSERT(cs.size() == (fs.size() / 2U + 1U));
 }
 
 FftBackwardPlan::FftBackwardPlan(ComplexSignal& cs, DoubleSignal& fs)
     : FftPlan(fftw_plan_dft_c2r_1d(fs.size(), cs.data(), fs.data(), FFTW_ESTIMATE))
 {
-    assert(cs.size() == (fs.size() / 2U + 1U));
+    LT_ASSERT(cs.size() == (fs.size() / 2U + 1U));
 }
 
 OverlapSaveConvolver::OverlapSaveConvolver(DoubleSignal& signal, DoubleSignal& patch, std::string const& /*wisdomPath*/)
@@ -82,7 +82,7 @@ OverlapSaveConvolver::OverlapSaveConvolver(DoubleSignal& signal, DoubleSignal& p
     , paddedSignal_(signal.data(), signalSize_, patchSize_ - 1, resultChunksize_ - (resultSize_ % result_stride_))
     , state_(State::Uninitialized)
 {
-    assert(patchSize_ <= signalSize_);
+    LT_ASSERT(patchSize_ <= signalSize_);
 
     // chunk the signal into strides of same size as padded patch
     // and make complex counterparts too, as well as the corresponding xcorr signals
@@ -133,7 +133,7 @@ auto OverlapSaveConvolver::crossCorrelate() -> void
 // Note that the returned signal object takes care of its own memory, so no management is needed.
 auto OverlapSaveConvolver::extractResult() -> DoubleSignal
 {
-    assert(state_ != State::Uninitialized);
+    LT_ASSERT(state_ != State::Uninitialized);
 
     auto result = DoubleSignal(resultSize_);
     auto* resultArr = result.data();

@@ -4,7 +4,7 @@
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/common.hpp"
 
-#include <cassert>
+#include "lt/cassert.hpp"
 #include <cmath>
 #include <cstring>
 #include <string_view>
@@ -289,7 +289,7 @@ auto dwt(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>
         return wavecoeff;
     }
 
-    assert(wt->ext == "sym"sv);
+    LT_ASSERT(wt->ext == "sym"sv);
 
     auto idx = 2 * j;
     while (idx > 0) {
@@ -450,7 +450,7 @@ auto idwt(WaveletTransform2D* wt, double* wavecoeff, double* oup) -> void
 
         return;
     }
-    assert(wt->ext == "sym"sv);
+    LT_ASSERT(wt->ext == "sym"sv);
 
     auto const n = rows > cols ? 2 * rows - 1 : 2 * cols - 1;
     auto const lf = (wt->wave->lprLen() + wt->wave->hprLen()) / 2;
