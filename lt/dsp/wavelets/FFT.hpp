@@ -34,6 +34,8 @@ struct FftData {
 struct FFT {
     FFT(int n, int sgn);
 
+    auto perform(FftData* inp, FftData* oup) -> void;
+
     int N;
     int sgn;
     int factors[64];
@@ -41,8 +43,6 @@ struct FFT {
     int lt;
     std::unique_ptr<FftData[]> data;
 };
-
-auto fftExec(FFT& obj, FftData* inp, FftData* oup) -> void;
 
 struct FftRealSet {
     std::unique_ptr<FFT> cobj;

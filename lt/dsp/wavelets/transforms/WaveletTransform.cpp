@@ -895,7 +895,7 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
         sig[i].im = 0.0;
     }
 
-    fftExec(*fftFd, sig.get(), lowPass.get());
+    fftFd->perform(sig.get(), lowPass.get());
 
     // High Pass Filter
 
@@ -908,7 +908,7 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
         sig[i].im = 0.0;
     }
 
-    fftExec(*fftFd, sig.get(), highPass.get());
+    fftFd->perform(sig.get(), highPass.get());
 
     // symmetric extension
     for (auto i = 0; i < tempLen; ++i) {
@@ -922,7 +922,7 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
 
     // FFT of data
 
-    fftExec(*fftFd, sig.get(), cA.get());
+    fftFd->perform(sig.get(), cA.get());
 
     lenacc = wt.outlength;
 
@@ -945,7 +945,7 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
             cD[i].im = highPass[index[i]].re * tmp2 + highPass[index[i]].im * tmp1;
         }
 
-        fftExec(*fftBd, cD.get(), sig.get());
+        fftBd->perform(cD.get(), sig.get());
 
         for (auto i = 0; i < n; ++i) {
             wt.params[lenacc + i] = sig[i].re / n;
@@ -954,7 +954,7 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
         m *= 2;
     }
 
-    fftExec(*fftBd, cA.get(), sig.get());
+    fftBd->perform(cA.get(), sig.get());
 
     for (auto i = 0; i < n; ++i) {
         wt.params[i] = sig[i].re / n;
@@ -1008,7 +1008,7 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
         sig[i].im = 0.0;
     }
 
-    fftExec(*fftFd, sig.get(), lowPass.get());
+    fftFd->perform(sig.get(), lowPass.get());
 
     // High Pass Filter
 
@@ -1021,7 +1021,7 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
         sig[i].im = 0.0;
     }
 
-    fftExec(*fftFd, sig.get(), highPass.get());
+    fftFd->perform(sig.get(), highPass.get());
 
     // Complex conjugate of the two filters
 
@@ -1038,12 +1038,12 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
     }
 
     for (auto iter = 0; iter < j; ++iter) {
-        fftExec(*fftFd, sig.get(), cA.get());
+        fftFd->perform(sig.get(), cA.get());
         for (auto i = 0; i < n; ++i) {
             sig[i].re = wt.output()[lenacc + i];
             sig[i].im = 0.0;
         }
-        fftExec(*fftFd, sig.get(), cD.get());
+        fftFd->perform(sig.get(), cD.get());
 
         for (auto i = 0; i < n; ++i) {
             index[i] = (m * i) % n;
@@ -1056,7 +1056,7 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
             cA[i].im = lowPass[index[i]].re * tmp2 + lowPass[index[i]].im * tmp1 + highPass[index[i]].re * cD[i].im + highPass[index[i]].im * cD[i].re;
         }
 
-        fftExec(*fftBd, cA.get(), sig.get());
+        fftBd->perform(cA.get(), sig.get());
 
         for (auto i = 0; i < n; ++i) {
             sig[i].re /= n;

@@ -1918,7 +1918,7 @@ static auto bluesteinFft(FftData* data, FftData* oup, FFT* obj, int sgn, int n) 
     }
 
     //fft_set* obj = initialize_fft2(M,1);
-    fftExec(*obj, tempop.get(), hk.get());
+    obj->perform(tempop.get(), hk.get());
 
     if (sgn == 1) {
         for (i = 0; i < n; i++) {
@@ -1937,7 +1937,7 @@ static auto bluesteinFft(FftData* data, FftData* oup, FFT* obj, int sgn, int n) 
         tempop[i].im = 0.0;
     }
 
-    fftExec(*obj, tempop.get(), yn.get());
+    obj->perform(tempop.get(), yn.get());
 
     if (sgn == 1) {
         for (i = 0; i < m; i++) {
@@ -1961,7 +1961,7 @@ static auto bluesteinFft(FftData* data, FftData* oup, FFT* obj, int sgn, int n) 
 
     obj->sgn = -1 * sgn;
 
-    fftExec(*obj, yn.get(), yno.get());
+    obj->perform(yn.get(), yno.get());
 
     if (sgn == 1) {
         for (i = 0; i < n; i++) {
@@ -1983,28 +1983,15 @@ static auto bluesteinFft(FftData* data, FftData* oup, FFT* obj, int sgn, int n) 
     }
 }
 
-auto fftExec(FFT& obj, FftData* inp, FftData* oup) -> void
+auto FFT::perform(FftData* inp, FftData* oup) -> void
 {
-    if (obj.lt == 0) {
-        //fftct_radix3_dit_rec(inp,oup,obj, obj.sgn, obj.N);
-        //fftct_mixed_rec(inp,oup,obj, obj.sgn, obj.N);
-        int l;
-        int inc;
-        int nn;
-        int sgn1;
-        nn = obj.N;
-        sgn1 = obj.sgn;
-        l = 1;
-        inc = 0;
-        //radix3_dit_rec(oup,inp,obj,sgn1,nn,l);
-        mixedRadixDitRec(oup, inp, &obj, sgn1, nn, l, inc);
-    } else if (obj.lt == 1) {
-        int nn;
-        int sgn1;
-        nn = obj.N;
-        sgn1 = obj.sgn;
-        bluesteinFft(inp, oup, &obj, sgn1, nn);
+    if (lt == 0) {
+        mixedRadixDitRec(oup, inp, this, sgn, N, 1, 0);
+        return;
     }
+
+    assert(lt == 1);
+    bluesteinFft(inp, oup, this, sgn, N);
 }
 
 auto divideby(int m, int d) -> int
@@ -2036,7 +2023,7 @@ auto fftR2cExec(FftRealSet* obj, fft_type const* inp, FftData* oup) -> void
         cinp[i].im = inp[2 * i + 1];
     }
 
-    fftExec(*(obj->cobj), cinp.get(), coup.get());
+    obj->cobj->perform(cinp.get(), coup.get());
 
     oup[0].re = coup[0].re + coup[0].im;
     oup[0].im = 0.0;
@@ -2075,7 +2062,8 @@ auto fftC2rExec(FftRealSet* obj, FftData* inp, fft_type* oup) -> void
         cinp[i].im = inp[i].im - inp[n2 - i].im + (temp2 * obj->data[i].re) + (temp1 * obj->data[i].im);
     }
 
-    fftExec(*(obj->cobj), cinp.get(), coup.get());
+    obj->cobj->perform(cinp.get(), coup.get());
+
     for (i = 0; i < n2; ++i) {
         oup[2 * i] = coup[i].re;
         oup[2 * i + 1] = coup[i].im;

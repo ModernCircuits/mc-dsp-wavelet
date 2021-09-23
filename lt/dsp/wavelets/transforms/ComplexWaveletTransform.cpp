@@ -418,7 +418,7 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
 
     // Find FFT of the input y (ypad)
 
-    fftExec(*obj, ypad.get(), yfft.get());
+    obj->perform(ypad.get(), yfft.get());
 
     for (auto i = 0; i < npad; ++i) {
         yfft[i].re /= (double)npad;
@@ -450,7 +450,7 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
             daughter[k].re = tmp1;
             daughter[k].im = tmp2;
         }
-        fftExec(*iobj, daughter.get(), ypad.get());
+        iobj->perform(daughter.get(), ypad.get());
         iter = 2 * (j - 1) * n;
         for (auto i = 0; i < n; ++i) {
             wave[iter + 2 * i] = ypad[i].re;

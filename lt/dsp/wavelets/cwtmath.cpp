@@ -22,7 +22,7 @@ static auto nsfftFd(FFT* obj, FftData* inp, FftData* oup, double lb, double ub, 
         j += 2;
     }
 
-    fftExec(*obj, inp, oup);
+    obj->perform(inp, oup);
 
     for (auto i = 0; i < l; ++i) {
         temp1[i] = oup[i].re;
@@ -101,7 +101,7 @@ static auto nsfftBk(FFT* obj, FftData* inp, FftData* oup, double lb, double ub, 
         inpt[n - l + i].im = temp2[i];
     }
 
-    fftExec(*obj, inpt.get(), oup);
+    obj->perform(inpt.get(), oup);
 
     for (auto i = 0; i < n; ++i) {
         t[i] = lb + i * delta;
