@@ -8,10 +8,11 @@
 
 using namespace std::string_view_literals;
 
-WaveletTree::WaveletTree(Wavelet* wave, int signalLength, int j)
+WaveletTree::WaveletTree(Wavelet* waveIn, int signalLength, int j)
+    : wave { waveIn }
 {
     auto const size = wave->size();
-    auto const maxIter = wmaxiter(signalLength, size);
+    auto const maxIter = maxIterations(signalLength, size);
     if (j > 100) {
         printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
         exit(-1);
@@ -35,7 +36,6 @@ WaveletTree::WaveletTree(Wavelet* wave, int signalLength, int j)
     this->outlength = signalLength * (j + 1) + elength;
     this->ext_ = "sym";
 
-    this->wave = wave;
     this->siglength = signalLength;
     this->J = j;
     this->MaxIter = maxIter;

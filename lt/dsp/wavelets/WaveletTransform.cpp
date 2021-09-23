@@ -195,7 +195,7 @@ WaveletTransform::WaveletTransform(Wavelet& w, char const* method, int siglength
 
 {
     auto const size = w.size();
-    auto const maxIter = wmaxiter(siglength, w.size());
+    auto const maxIter = maxIterations(siglength, w.size());
 
     if (levels_ > 100) {
         printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");

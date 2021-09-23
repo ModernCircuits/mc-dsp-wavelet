@@ -291,13 +291,8 @@ auto testSWTlength(int n, int j) -> int
     return ret;
 }
 
-auto wmaxiter(int sigLen, int filtLen) -> int
+auto maxIterations(int sigLen, int filtLen) -> int
 {
-    int lev = 0;
-    double temp = NAN;
-
-    temp = std::log((double)sigLen / ((double)filtLen - 1.0)) / std::log(2.0);
-    lev = (int)temp;
-
-    return lev;
+    auto const temp = std::log(static_cast<double>(sigLen) / (static_cast<double>(filtLen) - 1.0)) / std::log(2.0);
+    return static_cast<int>(temp);
 }

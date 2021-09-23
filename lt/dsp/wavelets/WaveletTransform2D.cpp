@@ -114,8 +114,8 @@ auto wt2Init(Wavelet& wave, char const* method, int rows, int cols, int j) -> Wa
 
     auto const size = wave.size();
 
-    auto const maxRows = wmaxiter(rows, size);
-    auto const maxCols = wmaxiter(cols, size);
+    auto const maxRows = maxIterations(rows, size);
+    auto const maxCols = maxIterations(cols, size);
 
     auto const maxIter = (maxRows < maxCols) ? maxRows : maxCols;
 

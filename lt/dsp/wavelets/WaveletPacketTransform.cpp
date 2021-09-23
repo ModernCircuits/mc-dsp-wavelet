@@ -100,7 +100,7 @@ auto wptInit(Wavelet* wave, int siglength, int j) -> WaveletPacketTransform*
         exit(-1);
     }
 
-    auto const maxIter = wmaxiter(siglength, size);
+    auto const maxIter = maxIterations(siglength, size);
     if (j > maxIter) {
         printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", maxIter);
         exit(-1);

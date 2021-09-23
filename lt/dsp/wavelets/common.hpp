@@ -20,4 +20,4 @@ auto idwtSymStride(double const* cA, int lenCA, double const* cD, double const* 
 
 auto testSWTlength(int n, int j) -> int;
 
-auto wmaxiter(int sigLen, int filtLen) -> int;
+auto maxIterations(int sigLen, int filtLen) -> int;
