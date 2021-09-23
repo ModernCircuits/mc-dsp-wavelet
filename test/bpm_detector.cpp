@@ -32,7 +32,7 @@ struct BpmDetect {
         , wt_ { wave_, "dwt", static_cast<int>(n), static_cast<int>(levels) }
     {
         wt_.extension(SignalExtension::symmetric);
-        wt_.convMethod(ConvolutionMethod::fft);
+        wt_.convMethod(ConvolutionMethod::direct);
     }
 
     [[nodiscard]] auto perform(lt::span<double> input, double sampleRate) -> double
