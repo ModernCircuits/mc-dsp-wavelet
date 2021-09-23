@@ -40,19 +40,15 @@ namespace {
 }
 }
 
-auto convInit(int n, int l) -> std::unique_ptr<Convolution>
+Convolution::Convolution(int n, int l)
 {
-    auto obj = std::make_unique<Convolution>();
-
     auto const convLen = n + l - 1;
-    obj->clen = findnexte(convLen);
-    obj->ilen1 = n;
-    obj->ilen2 = l;
+    clen = findnexte(convLen);
+    ilen1 = n;
+    ilen2 = l;
 
-    obj->fobj = std::make_unique<RealFFT>(obj->clen, 1);
-    obj->iobj = std::make_unique<RealFFT>(obj->clen, -1);
-
-    return obj;
+    fobj = std::make_unique<RealFFT>(clen, 1);
+    iobj = std::make_unique<RealFFT>(clen, -1);
 }
 
 auto convDirect(double const* inp1, int n, double const* inp2, int l, double* oup) -> void

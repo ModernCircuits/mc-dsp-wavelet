@@ -333,7 +333,7 @@ static auto wconv(WaveletTransform& wt, double* sig, int n, double const* filt, 
         convDirect(sig, n, filt, l, oup);
     } else if (wt.convMethod() == ConvolutionMethod::fft) {
         if (wt.cfftset == 0) {
-            wt.cobj = convInit(n, l);
+            wt.cobj = std::make_unique<Convolution>(n, l);
             convFft(*wt.cobj, sig, filt, oup);
         } else {
             convFft(*wt.cobj, sig, filt, oup);
@@ -367,7 +367,7 @@ static auto dwt1(WaveletTransform& wt, double* sig, int lenSig, double* cA, doub
         auto cAUndec = std::make_unique<double[]>(lenSig + lenAvg + wt.wave().lpdLen() - 1);
 
         if (wt.wave().lpdLen() == wt.wave().hpdLen() && (wt.convMethod() == ConvolutionMethod::fft)) {
-            wt.cobj = convInit(lenSig + lenAvg, wt.wave().lpdLen());
+            wt.cobj = std::make_unique<Convolution>(lenSig + lenAvg, wt.wave().lpdLen());
             wt.cfftset = 1;
         } else if (!(wt.wave().lpdLen() == wt.wave().hpdLen())) {
             printf("Decomposition Filters must have the same length.");
@@ -386,7 +386,7 @@ static auto dwt1(WaveletTransform& wt, double* sig, int lenSig, double* cA, doub
         auto cAUndec = std::make_unique<double[]>(lenSig + 3 * (lf - 1));
 
         if (wt.wave().lpdLen() == wt.wave().hpdLen() && (wt.convMethod() == ConvolutionMethod::fft)) {
-            wt.cobj = convInit(lenSig + 2 * (lf - 1), lf);
+            wt.cobj = std::make_unique<Convolution>(lenSig + 2 * (lf - 1), lf);
             wt.cfftset = 1;
         } else if (!(wt.wave().lpdLen() == wt.wave().hpdLen())) {
             printf("Decomposition Filters must have the same length.");
@@ -515,7 +515,7 @@ static auto idwt1(WaveletTransform& wt, double* temp, double* cAUp, double* cA, 
     auto n2 = 2 * lenCA + lenAvg;
 
     if (wt.wave().lprLen() == wt.wave().hprLen() && (wt.convMethod() == ConvolutionMethod::fft)) {
-        wt.cobj = convInit(n2, lenAvg);
+        wt.cobj = std::make_unique<Convolution>(n2, lenAvg);
         wt.cfftset = 1;
     } else if (!(wt.wave().lprLen() == wt.wave().hprLen())) {
         printf("Decomposition Filters must have the same length.");
@@ -661,7 +661,7 @@ auto idwt(WaveletTransform& wt, double* dwtop) -> void
             n2 = 2 * wt.length[i + 1] - 1;
 
             if (wt.wave().lprLen() == wt.wave().hprLen() && (wt.convMethod() == ConvolutionMethod::fft)) {
-                wt.cobj = convInit(n2, lf);
+                wt.cobj = std::make_unique<Convolution>(n2, lf);
                 wt.cfftset = 1;
             } else if (!(wt.wave().lprLen() == wt.wave().hprLen())) {
                 printf("Decomposition Filters must have the same length.");
@@ -748,7 +748,7 @@ static auto swtFft(WaveletTransform& wt, double const* inp) -> void
         perExt(wt.params.get(), tempLen, n / 2, sig.get());
 
         if (wt.wave().lpdLen() == wt.wave().hpdLen() && (wt.convMethod() == ConvolutionMethod::fft)) {
-            wt.cobj = convInit(n + tempLen + (tempLen % 2), n);
+            wt.cobj = std::make_unique<Convolution>(n + tempLen + (tempLen % 2), n);
             wt.cfftset = 1;
         } else if (!(wt.wave().lpdLen() == wt.wave().hpdLen())) {
             printf("Decomposition Filters must have the same length.");
@@ -890,7 +890,7 @@ auto iswt(WaveletTransform& wt, double* swtop) -> void
             auto n1 = 2 * len0 + lf;
 
             if (wt.wave().lprLen() == wt.wave().hprLen() && (wt.convMethod() == ConvolutionMethod::fft)) {
-                wt.cobj = convInit(n1, lf);
+                wt.cobj = std::make_unique<Convolution>(n1, lf);
                 wt.cfftset = 1;
             } else if (!(wt.wave().lpdLen() == wt.wave().hpdLen())) {
                 printf("Decomposition Filters must have the same length.");
