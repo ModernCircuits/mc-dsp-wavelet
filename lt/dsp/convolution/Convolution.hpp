@@ -3,23 +3,26 @@
 #include "lt/dsp/fft/FFT.hpp"
 
 struct Convolution {
-    Convolution(int n, int l);
+    Convolution(std::size_t signalSize, std::size_t patchSize);
 
-    auto fft(double const* inp1, double const* inp2, double* oup) const -> void;
+    auto fft(double const* signal, double const* patch, double* output) const -> void;
 
-    static auto direct(double const* inp1, int n, double const* inp2, int l, double* oup) noexcept -> void;
+    static auto direct(double const* signal, std::size_t n, double const* patch, std::size_t l, double* output) noexcept -> void;
 
 private:
-    int ilen1_;
-    int ilen2_;
-    int clen_;
-    std::unique_ptr<RealFFT> fobj_;
-    std::unique_ptr<RealFFT> iobj_;
+    std::size_t signalSize_;
+    std::size_t patchSize_;
+    std::size_t totalSize_;
 
-    std::unique_ptr<double[]> a { std::make_unique<double[]>(clen_) };
-    std::unique_ptr<double[]> b { std::make_unique<double[]>(clen_) };
-    std::unique_ptr<Complex<double>[]> c { std::make_unique<Complex<double>[]>(clen_) };
-    std::unique_ptr<Complex<double>[]> ao { std::make_unique<Complex<double>[]>(clen_) };
-    std::unique_ptr<Complex<double>[]> bo { std::make_unique<Complex<double>[]>(clen_) };
-    std::unique_ptr<double[]> co { std::make_unique<double[]>(clen_) };
+    std::unique_ptr<RealFFT> forwardFFT_;
+    std::unique_ptr<RealFFT> inverseFFT_;
+
+    std::unique_ptr<double[]> signalScratch_ { std::make_unique<double[]>(totalSize_) };
+    std::unique_ptr<Complex<double>[]> signalScratchOut_ { std::make_unique<Complex<double>[]>(totalSize_) };
+
+    std::unique_ptr<double[]> patchScratch_ { std::make_unique<double[]>(totalSize_) };
+    std::unique_ptr<Complex<double>[]> patchScratchOut_ { std::make_unique<Complex<double>[]>(totalSize_) };
+
+    std::unique_ptr<Complex<double>[]> tmp_ { std::make_unique<Complex<double>[]>(totalSize_) };
+    std::unique_ptr<double[]> tmpOut_ { std::make_unique<double[]>(totalSize_) };
 };
