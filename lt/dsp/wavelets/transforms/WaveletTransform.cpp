@@ -2,7 +2,7 @@
 
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/Convolution.hpp"
-#include "lt/dsp/wavelets/wtmath.h"
+#include "lt/dsp/wavelets/transforms/common.hpp"
 
 #include <cassert>
 #include <cmath>
@@ -116,6 +116,74 @@ auto circshift(double* array, int n, int l) -> void
     for (auto i = 0; i < l; ++i) {
         array[n - l + i] = temp[i];
     }
+}
+
+auto perExt(double const* sig, int len, int a, double* oup) -> int
+{
+    int i;
+    int len2;
+    double temp1;
+    double temp2;
+    for (i = 0; i < len; ++i) {
+        oup[a + i] = sig[i];
+    }
+    len2 = len;
+    if ((len % 2) != 0) {
+        len2 = len + 1;
+        oup[a + len] = sig[len - 1];
+    }
+    for (i = 0; i < a; ++i) {
+        temp1 = oup[a + i];
+        temp2 = oup[a + len2 - 1 - i];
+        oup[a - 1 - i] = temp2;
+        oup[len2 + a + i] = temp1;
+    }
+    return len2;
+}
+
+auto symmExt(double const* sig, int len, int a, double* oup) -> int
+{
+    int i;
+    int len2;
+    double temp1;
+    double temp2;
+    // oup is of length len + 2 * a
+    for (i = 0; i < len; ++i) {
+        oup[a + i] = sig[i];
+    }
+    len2 = len;
+    for (i = 0; i < a; ++i) {
+        temp1 = oup[a + i];
+        temp2 = oup[a + len2 - 1 - i];
+        oup[a - 1 - i] = temp1;
+        oup[len2 + a + i] = temp2;
+    }
+
+    return len2;
+}
+
+auto downsamp(double const* x, int lenx, int m, double* y) -> int
+{
+    int n;
+    int i;
+
+    if (m < 0) {
+        return -1;
+    }
+    if (m == 0) {
+        for (i = 0; i < lenx; ++i) {
+            y[i] = x[i];
+        }
+        return lenx;
+    }
+
+    n = (lenx - 1) / m + 1;
+
+    for (i = 0; i < n; ++i) {
+        y[i] = x[i * m];
+    }
+
+    return n;
 }
 
 }

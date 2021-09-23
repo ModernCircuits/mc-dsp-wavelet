@@ -2,7 +2,7 @@
 
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/Convolution.hpp"
-#include "lt/dsp/wavelets/wtmath.h"
+#include "lt/dsp/wavelets/transforms/common.hpp"
 
 #include <cassert>
 #include <cmath>
@@ -10,6 +10,104 @@
 #include <string_view>
 
 using namespace std::string_view_literals;
+
+namespace {
+
+auto idwt2Shift(int shift, int rows, int cols, double const* lpr, double const* hpr, int lf, double* a, double* h, double* v, double* d, double* oup) -> void
+{
+    auto const n = rows > cols ? 2 * rows : 2 * cols;
+    auto const dim1 = 2 * rows;
+    auto const dim2 = 2 * cols;
+
+    auto xLp = makeZeros<double>(n + 2 * lf - 1);
+    auto cL = makeZeros<double>(dim1 * dim2);
+    auto cH = makeZeros<double>(dim1 * dim2);
+
+    auto ir = rows;
+    auto ic = cols;
+    auto istride = ic;
+    auto ostride = 1;
+
+    for (auto i = 0; i < ic; ++i) {
+        idwtPerStride(a + i, ir, h + i, lpr, hpr, lf, xLp.get(), istride, ostride);
+
+        for (auto k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
+            cL[(k - lf / 2 + 1) * ic + i] = xLp[k];
+        }
+
+        idwtPerStride(v + i, ir, d + i, lpr, hpr, lf, xLp.get(), istride, ostride);
+
+        for (auto k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
+            cH[(k - lf / 2 + 1) * ic + i] = xLp[k];
+        }
+    }
+
+    ir *= 2;
+    istride = 1;
+    ostride = 1;
+
+    for (auto i = 0; i < ir; ++i) {
+        idwtPerStride(cL.get() + i * ic, ic, cH.get() + i * ic, lpr, hpr, lf, xLp.get(), istride, ostride);
+
+        for (auto k = lf / 2 - 1; k < 2 * ic + lf / 2 - 1; ++k) {
+            oup[(k - lf / 2 + 1) + i * ic * 2] = xLp[k];
+        }
+    }
+
+    ic *= 2;
+
+    if (shift == -1) {
+        //Save the last column
+        for (auto i = 0; i < ir; ++i) {
+            cL[i] = oup[(i + 1) * ic - 1];
+        }
+        // Save the last row
+        std::memcpy(cH.get(), oup + (ir - 1) * ic, sizeof(double) * ic);
+        for (auto i = ir - 1; i > 0; --i) {
+            std::memcpy(oup + i * ic + 1, oup + (i - 1) * ic, sizeof(double) * (ic - 1));
+        }
+        oup[0] = cL[ir - 1];
+        for (auto i = 1; i < ir; ++i) {
+            oup[i * ic] = cL[i - 1];
+        }
+
+        for (auto i = 1; i < ic; ++i) {
+            oup[i] = cH[i - 1];
+        }
+    }
+}
+
+auto imodwtPerStride(int m, double const* cA, int lenCA, double const* cD, double const* filt, int lf, double* x, int istride, int ostride) -> void
+{
+    int lenAvg;
+    int i;
+    int l;
+    int t;
+    int is;
+    int os;
+
+    lenAvg = lf;
+
+    for (i = 0; i < lenCA; ++i) {
+        t = i;
+        os = i * ostride;
+        is = t * istride;
+        x[os] = (filt[0] * cA[is]) + (filt[lenAvg] * cD[is]);
+        for (l = 1; l < lenAvg; l++) {
+            t += m;
+            while (t >= lenCA) {
+                t -= lenCA;
+            }
+            while (t < 0) {
+                t += lenCA;
+            }
+            is = t * istride;
+            x[os] += (filt[l] * cA[is]) + (filt[lenAvg + l] * cD[is]);
+        }
+    }
+}
+
+}
 
 auto wt2Init(Wavelet& wave, char const* method, int rows, int cols, int j) -> WaveletTransform2D*
 {

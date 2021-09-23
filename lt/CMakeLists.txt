@@ -23,8 +23,6 @@ target_sources(${CMAKE_PROJECT_NAME}
         dsp/wavelets/Convolution.cpp
         dsp/wavelets/Convolution.hpp
         dsp/wavelets/ConvolutionMethod.hpp
-        dsp/wavelets/cwtmath.cpp
-        dsp/wavelets/cwtmath.h
         dsp/wavelets/Denoise.hpp
         dsp/wavelets/Denoise.cpp
         dsp/wavelets/SignalExtension.hpp
@@ -41,6 +39,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         dsp/wavelets/filters/utility.cpp
         dsp/wavelets/filters/utility.hpp
 
+        dsp/wavelets/transforms/common.cpp
+        dsp/wavelets/transforms/common.hpp
         dsp/wavelets/transforms/ComplexWaveletTransform.cpp
         dsp/wavelets/transforms/ComplexWaveletTransform.hpp
         dsp/wavelets/transforms/WaveletPacketTransform.cpp
@@ -51,6 +51,4 @@ target_sources(${CMAKE_PROJECT_NAME}
         dsp/wavelets/transforms/WaveletTransform.hpp
         dsp/wavelets/transforms/WaveletTree.cpp
         dsp/wavelets/transforms/WaveletTree.hpp
-        dsp/wavelets/wtmath.cpp
-        dsp/wavelets/wtmath.h
 )

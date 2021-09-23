@@ -2,7 +2,7 @@
 
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/Convolution.hpp"
-#include "lt/dsp/wavelets/wtmath.h"
+#include "lt/dsp/wavelets/transforms/common.hpp"
 
 #include <cassert>
 #include <cmath>
