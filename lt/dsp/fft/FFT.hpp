@@ -37,8 +37,8 @@ struct RealFFT {
     auto performComplexToReal(Complex<double> const* inp, double* oup) -> void;
 
 private:
-    std::unique_ptr<FFT> cobj;
-    std::unique_ptr<Complex<double>[]> data;
+    std::unique_ptr<FFT> cobj_;
+    std::unique_ptr<Complex<double>[]> data_;
 };
 
 auto divideby(int m, int d) -> int;

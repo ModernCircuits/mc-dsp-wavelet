@@ -2007,13 +2007,13 @@ auto divideby(int m, int d) -> int
 
 RealFFT::RealFFT(int n, int sgn)
 {
-    data = std::make_unique<Complex<double>[]>(n / 2);
-    cobj = std::make_unique<FFT>(n / 2, sgn);
+    data_ = std::make_unique<Complex<double>[]>(n / 2);
+    cobj_ = std::make_unique<FFT>(n / 2, sgn);
 
     for (auto k = 0; k < n / 2; ++k) {
         auto const theta = PI2 * k / n;
-        data[k].real(std::cos(theta));
-        data[k].imag(std::sin(theta));
+        data_[k].real(std::cos(theta));
+        data_[k].imag(std::sin(theta));
     }
 }
 
@@ -2024,7 +2024,7 @@ auto RealFFT::performRealToComplex(double const* inp, Complex<double>* oup) -> v
     int n;
     double temp1;
     double temp2;
-    n2 = cobj->N;
+    n2 = cobj_->N;
     n = n2 * 2;
 
     auto cinp = std::make_unique<Complex<double>[]>(n2);
@@ -2035,7 +2035,7 @@ auto RealFFT::performRealToComplex(double const* inp, Complex<double>* oup) -> v
         cinp[i].imag(inp[2 * i + 1]);
     }
 
-    cobj->perform(cinp.get(), coup.get());
+    cobj_->perform(cinp.get(), coup.get());
 
     oup[0].real(coup[0].real() + coup[0].imag());
     oup[0].imag(0.0);
@@ -2043,8 +2043,8 @@ auto RealFFT::performRealToComplex(double const* inp, Complex<double>* oup) -> v
     for (i = 1; i < n2; ++i) {
         temp1 = coup[i].imag() + coup[n2 - i].imag();
         temp2 = coup[n2 - i].real() - coup[i].real();
-        oup[i].real((coup[i].real() + coup[n2 - i].real() + (temp1 * data[i].real()) + (temp2 * data[i].imag())) / 2.0);
-        oup[i].imag((coup[i].imag() - coup[n2 - i].imag() + (temp2 * data[i].real()) - (temp1 * data[i].imag())) / 2.0);
+        oup[i].real((coup[i].real() + coup[n2 - i].real() + (temp1 * data_[i].real()) + (temp2 * data_[i].imag())) / 2.0);
+        oup[i].imag((coup[i].imag() - coup[n2 - i].imag() + (temp2 * data_[i].real()) - (temp1 * data_[i].imag())) / 2.0);
     }
 
     oup[n2].real(coup[0].real() - coup[0].imag());
@@ -2058,18 +2058,18 @@ auto RealFFT::performRealToComplex(double const* inp, Complex<double>* oup) -> v
 
 auto RealFFT::performComplexToReal(Complex<double> const* inp, double* oup) -> void
 {
-    auto const n = static_cast<std::size_t>(cobj->N);
+    auto const n = static_cast<std::size_t>(cobj_->N);
     auto cinp = std::make_unique<Complex<double>[]>(n);
     auto coup = std::make_unique<Complex<double>[]>(n);
 
     for (auto i = std::size_t { 0 }; i < n; ++i) {
         auto const temp1 = -inp[i].imag() - inp[n - i].imag();
         auto const temp2 = -inp[n - i].real() + inp[i].real();
-        cinp[i].real(inp[i].real() + inp[n - i].real() + (temp1 * data[i].real()) - (temp2 * data[i].imag()));
-        cinp[i].imag(inp[i].imag() - inp[n - i].imag() + (temp2 * data[i].real()) + (temp1 * data[i].imag()));
+        cinp[i].real(inp[i].real() + inp[n - i].real() + (temp1 * data_[i].real()) - (temp2 * data_[i].imag()));
+        cinp[i].imag(inp[i].imag() - inp[n - i].imag() + (temp2 * data_[i].real()) + (temp1 * data_[i].imag()));
     }
 
-    cobj->perform(cinp.get(), coup.get());
+    cobj_->perform(cinp.get(), coup.get());
 
     for (auto i = std::size_t { 0 }; i < n; ++i) {
         oup[2 * i] = coup[i].real();
