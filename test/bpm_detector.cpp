@@ -2,36 +2,13 @@
 #include "lt/dsp/convolution.hpp"
 #include "lt/dsp/wavelets.hpp"
 
-#include "helper.hpp"
 #include "readFileToVector.hpp"
+#include "testing.hpp"
 
 #include <algorithm>
 #include <cmath>
 #include <numeric>
 #include <utility>
-
-auto approxCoeffs(WaveletTransform const& wt) -> std::vector<double>
-{
-    auto size = static_cast<std::size_t>(wt.length[0]);
-    auto result = std::vector<double>(size);
-    std::copy(std::begin(wt.output()), std::begin(wt.output()) + size, begin(result));
-    return result;
-}
-
-auto detailCoeffs(WaveletTransform const& wt) -> std::vector<double>
-{
-    auto const* first = std::begin(wt.output()) + wt.length[0];
-    auto size = static_cast<std::size_t>(wt.length[1]);
-    auto result = std::vector<double>(size);
-    std::copy(first, first + size, begin(result));
-    return result;
-}
-
-// t = wt->length[0];
-// for (auto i = 0; i < J; ++i) {
-//     printf("Level %d Access : output[%d] Length : %d \n", J - i, t, wt->length[i + 1]);
-//     t += wt->length[i + 1];
-// }
 
 template <typename It>
 auto mean(It f, It l) -> double

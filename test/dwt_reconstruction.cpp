@@ -1,6 +1,6 @@
 #include "lt/dsp/wavelets.hpp"
 
-#include "helper.hpp"
+#include "testing.hpp"
 
 #include <cmath>
 #include <cstdio>

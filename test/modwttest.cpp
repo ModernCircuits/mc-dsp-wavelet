@@ -1,7 +1,7 @@
 #include "lt/dsp/wavelets.hpp"
 
-#include "helper.hpp"
 #include "readFileToVector.hpp"
+#include "testing.hpp"
 
 #include <cmath>
 #include <cstdio>

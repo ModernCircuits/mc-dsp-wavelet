@@ -1,4 +1,4 @@
-#include "helper.hpp"
+#include "testing.hpp"
 
 #include <cmath>
 #include <cstdlib>
@@ -105,4 +105,41 @@ auto generateRnd() -> double
     auto gen = std::mt19937 { rd() };
     auto dis = std::uniform_real_distribution<double> { 1.0, 100.0 };
     return dis(gen);
+}
+
+auto split(std::string const& s, char delim) -> std::vector<std::string>
+{
+    auto result = std::vector<std::string> {};
+    auto ss = std::stringstream(s);
+    auto item = std::string {};
+
+    while (std::getline(ss, item, delim)) {
+        result.push_back(item);
+    }
+    return result;
+}
+
+auto loadConvolutionTestData(char const* filePath) -> ConvolutionTestData
+{
+    auto parseLine = [](auto const& line) {
+        auto splits = split(line, ' ');
+        auto values = std::vector<double> {};
+        for (auto const& s : splits) {
+            values.push_back(std::stod(s));
+        }
+        return values;
+    };
+
+    auto file = std::fstream { filePath, std::ios::in };
+    auto tmp = std::string {};
+    auto result = ConvolutionTestData {};
+
+    if (file.is_open()) {
+        while (std::getline(file, tmp)) {
+            result.push_back(parseLine(tmp));
+        }
+        file.close();
+    }
+
+    return result;
 }

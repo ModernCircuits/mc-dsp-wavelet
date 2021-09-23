@@ -1,4 +1,4 @@
-add_library(wavelib_testdata helper.hpp helper.cpp)
+add_library(wavelib_testdata testing.hpp testing.cpp)
 add_custom_command(
     TARGET
         wavelib_testdata
