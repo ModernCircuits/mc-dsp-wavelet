@@ -22,7 +22,7 @@ auto main() -> int
         inp[i - 1] = i;
     }
 
-    WaveletPacketTransform* wt = wptInit(&obj, n, j);
+    auto wt = WaveletPacketTransform(&obj, n, j);
     setDWPTExtension(wt, "per");
     setDWPTEntropy(wt, "logenergy", 0);
 
@@ -34,11 +34,10 @@ auto main() -> int
         diff[i] = (inp[i] - oup[i]) / inp[i];
     }
 
-    summary(*wt);
+    summary(wt);
 
     // If Reconstruction succeeded then the output should be a small value.
-    printf("\n MAX %g \n", absmax(diff.get(), wt->siglength));
+    printf("\n MAX %g \n", absmax(diff.get(), wt.siglength));
 
-    wptFree(wt);
     return 0;
 }

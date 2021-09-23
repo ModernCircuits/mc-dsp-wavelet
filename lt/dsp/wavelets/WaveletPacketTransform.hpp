@@ -8,6 +8,8 @@
 #include <string>
 
 struct WaveletPacketTransform {
+    WaveletPacketTransform(Wavelet* wave, int siglength, int j);
+
     Wavelet* wave {};
     FFTConvolver* cobj {};
     int siglength {}; // Length of the original signal.
@@ -32,14 +34,11 @@ struct WaveletPacketTransform {
     std::unique_ptr<double[]> params;
 };
 
-auto wptInit(Wavelet* wave, int siglength, int j) -> WaveletPacketTransform*;
+auto dwt(WaveletPacketTransform& wt, double const* inp) -> void;
+auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void;
 
-auto dwt(WaveletPacketTransform* wt, double const* inp) -> void;
-auto idwt(WaveletPacketTransform* wt, double* dwtop) -> void;
-
-auto setDWPTExtension(WaveletPacketTransform* wt, char const* extension) -> void;
-auto setDWPTEntropy(WaveletPacketTransform* wt, char const* entropy, double eparam) -> void;
-auto getDWPTNodelength(WaveletPacketTransform* wt, int x) -> int;
+auto setDWPTExtension(WaveletPacketTransform& wt, char const* extension) -> void;
+auto setDWPTEntropy(WaveletPacketTransform& wt, char const* entropy, double eparam) -> void;
+auto getDWPTNodelength(WaveletPacketTransform& wt, int x) -> int;
 
 auto summary(WaveletPacketTransform const& wt) -> void;
-auto wptFree(WaveletPacketTransform* object) -> void;

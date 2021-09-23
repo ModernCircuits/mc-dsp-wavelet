@@ -149,8 +149,6 @@ auto modwT2ReconstructionTest()
 auto dwtReconstructionTest()
 {
 
-    WaveletPacketTransform* wt = nullptr;
-
     int i = 0;
     double epsilon = 1e-8;
 
@@ -217,7 +215,7 @@ auto dwtReconstructionTest()
                 for (auto j = 1; j < 3; j++) {
                     // J = 3;
 
-                    wt = wptInit(&obj, n, j); // Initialize the wavelet transform object
+                    auto wt = WaveletPacketTransform(&obj, n, j); // Initialize the wavelet transform object
                     if (symPer == 0) {
                         setDWPTExtension(wt,
                             "sym"); // Options are "per" and "sym".
@@ -235,12 +233,11 @@ auto dwtReconstructionTest()
                     dwt(wt, inp.get());
                     idwt(wt, out.get());
 
-                    if (rmsError(out.get(), inp.get(), wt->siglength) > epsilon) {
+                    if (rmsError(out.get(), inp.get(), wt.siglength) > epsilon) {
                         printf(
                             "\n ERROR : DWPT Reconstruction Unit Test Failed. Exiting. \n");
                         exit(-1);
                     }
-                    wptFree(wt);
                 }
             }
         }

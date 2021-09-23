@@ -1,7 +1,6 @@
 #include "lt/dsp/wavelets/Denoise.hpp"
 #include "lt/cmath.hpp"
 
-
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -65,7 +64,6 @@ auto main() -> int
     int j = 0;
     FILE* ifp = nullptr;
 
-    DenoiseSet* obj = nullptr;
     double temp[2400];
 
     char const* wname = "db5";
@@ -118,7 +116,7 @@ auto main() -> int
     for (i = 0; i < n; ++i) {
         inp[i] = temp[i];
     }
-    obj = denoiseInit(n, j, wname);
+    auto obj = DenoiseSet(n, j, wname);
     setDenoiseMethod(obj, "visushrink"); // sureshrink is also the default. The other option with dwt and swt is visushrink.
     // modwt works only with modwtshrink method
     setDenoiseWTMethod(obj, method); // Default is dwt. the other options are swt and modwt
@@ -143,6 +141,5 @@ auto main() -> int
     printf("RMSE %g\n", rmse(n, sig.get(), oup.get()));
     printf("Corr Coeff %g\n", corrcoef(n, sig.get(), oup.get()));
 
-    denoiseFree(obj);
     return 0;
 }
