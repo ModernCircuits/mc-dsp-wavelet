@@ -392,8 +392,8 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
         exit(-1);
     }
 
-    auto obj = fftInit(npad, 1);
-    auto iobj = fftInit(npad, -1);
+    auto obj = std::make_unique<FftSet>(npad, 1);
+    auto iobj = std::make_unique<FftSet>(npad, -1);
 
     auto ypad = std::make_unique<FftData[]>(npad);
     auto yfft = std::make_unique<FftData[]>(npad);

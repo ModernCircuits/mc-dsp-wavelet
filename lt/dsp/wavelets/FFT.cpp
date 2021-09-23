@@ -6,23 +6,221 @@
 #include <cstring>
 #include <memory>
 
-auto factors(int m, int* arr) -> int;
-auto twiddle(FftData* vec, int n, int radix) -> void;
-auto longvectorN(FftData* sig, int const* array, int tx) -> void;
-
-auto fftInit(int n, int sgn) -> std::unique_ptr<FftSet>
+namespace {
+auto dividebyN(int n) -> int
 {
-    auto obj = std::unique_ptr<FftSet>();
+    while (n % 53 == 0) {
+        n = n / 53;
+    }
+    while (n % 47 == 0) {
+        n = n / 47;
+    }
+    while (n % 43 == 0) {
+        n = n / 43;
+    }
+    while (n % 41 == 0) {
+        n = n / 41;
+    }
+    while (n % 37 == 0) {
+        n = n / 37;
+    }
+    while (n % 31 == 0) {
+        n = n / 31;
+    }
+    while (n % 29 == 0) {
+        n = n / 29;
+    }
+    while (n % 23 == 0) {
+        n = n / 23;
+    }
+    while (n % 17 == 0) {
+        n = n / 17;
+    }
+    while (n % 13 == 0) {
+        n = n / 13;
+    }
+    while (n % 11 == 0) {
+        n = n / 11;
+    }
+    while (n % 8 == 0) {
+        n = n / 8;
+    }
+    while (n % 7 == 0) {
+        n = n / 7;
+    }
+    while (n % 5 == 0) {
+        n = n / 5;
+    }
+    while (n % 4 == 0) {
+        n = n / 4;
+    }
+    while (n % 3 == 0) {
+        n = n / 3;
+    }
+    while (n % 2 == 0) {
+        n = n / 2;
+    }
+    if (n == 1) {
+        return 1;
+    }
+    return 0;
+}
+
+auto factor(int m, int* arr) -> int
+{
+    int i;
+    int n;
+    int num;
+    int mult;
+    int m1;
+    int m2;
+    i = 0;
+    n = m;
+    while (n % 53 == 0) {
+        n = n / 53;
+        arr[i] = 53;
+        i++;
+    }
+    while (n % 47 == 0) {
+        n = n / 47;
+        arr[i] = 47;
+        i++;
+    }
+    while (n % 43 == 0) {
+        n = n / 43;
+        arr[i] = 43;
+        i++;
+    }
+    while (n % 41 == 0) {
+        n = n / 41;
+        arr[i] = 41;
+        i++;
+    }
+    while (n % 37 == 0) {
+        n = n / 37;
+        arr[i] = 37;
+        i++;
+    }
+    while (n % 31 == 0) {
+        n = n / 31;
+        arr[i] = 31;
+        i++;
+    }
+    while (n % 29 == 0) {
+        n = n / 29;
+        arr[i] = 29;
+        i++;
+    }
+    while (n % 23 == 0) {
+        n = n / 23;
+        arr[i] = 23;
+        i++;
+    }
+    while (n % 19 == 0) {
+        n = n / 19;
+        arr[i] = 19;
+        i++;
+    }
+    while (n % 17 == 0) {
+        n = n / 17;
+        arr[i] = 17;
+        i++;
+    }
+    while (n % 13 == 0) {
+        n = n / 13;
+        arr[i] = 13;
+        i++;
+    }
+    while (n % 11 == 0) {
+        n = n / 11;
+        arr[i] = 11;
+        i++;
+    }
+    while (n % 8 == 0) {
+        n = n / 8;
+        arr[i] = 8;
+        i++;
+    }
+    while (n % 7 == 0) {
+        n = n / 7;
+        arr[i] = 7;
+        i++;
+    }
+    while (n % 5 == 0) {
+        n = n / 5;
+        arr[i] = 5;
+        i++;
+    }
+    while (n % 4 == 0) {
+        n = n / 4;
+        arr[i] = 4;
+        i++;
+    }
+    while (n % 3 == 0) {
+        n = n / 3;
+        arr[i] = 3;
+        i++;
+    }
+    while (n % 2 == 0) {
+        n = n / 2;
+        arr[i] = 2;
+        i++;
+    }
+    if (n > 31) {
+        num = 2;
+
+        while (n > 1) {
+            mult = num * 6;
+            m1 = mult - 1;
+            m2 = mult + 1;
+            while (n % m1 == 0) {
+                arr[i] = m1;
+                i++;
+                n = n / m1;
+            }
+            while (n % m2 == 0) {
+                arr[i] = m2;
+                i++;
+                n = n / m2;
+            }
+            num += 1;
+        }
+    }
+    return i;
+}
+
+auto longvectorN(FftData* sig, int const* array, int tx) -> void
+{
+    auto l = 1;
+    auto ct = 0;
+    for (auto i = 0; i < tx; i++) {
+        l = l * array[tx - 1 - i];
+        auto const ls = l / array[tx - 1 - i];
+        auto const theta = -1.0 * PI2 / l;
+        for (auto j = 0; j < ls; j++) {
+            for (auto k = 0; k < array[tx - 1 - i] - 1; k++) {
+                sig[ct].re = cos((k + 1) * j * theta);
+                sig[ct].im = sin((k + 1) * j * theta);
+                ct++;
+            }
+        }
+    }
+}
+}
+
+FftSet::FftSet(int n, int sgn)
+    : N { n }
+    , sgn { sgn }
+{
     int twiLen { 0 };
     auto const out = dividebyN(n);
 
     if (out == 1) {
-        obj = std::make_unique<FftSet>();
-        obj->data = makeZeros<FftData>(n);
-        obj->lf = factors(n, obj->factors);
-        longvectorN(obj->data.get(), obj->factors, obj->lf);
+        this->data = makeZeros<FftData>(n);
+        this->lf = factor(n, this->factors);
+        longvectorN(this->data.get(), this->factors, this->lf);
         twiLen = n;
-        obj->lt = 0;
+        this->lt = 0;
     } else {
         int k;
         int m;
@@ -33,24 +231,18 @@ auto fftInit(int n, int sgn) -> std::unique_ptr<FftSet>
         } else {
             m = k;
         }
-        obj = std::make_unique<FftSet>();
-        obj->data = makeZeros<FftData>(m);
-        obj->lf = factors(m, obj->factors);
-        longvectorN(obj->data.get(), obj->factors, obj->lf);
-        obj->lt = 1;
+        this->data = makeZeros<FftData>(m);
+        this->lf = factor(m, this->factors);
+        longvectorN(this->data.get(), this->factors, this->lf);
+        this->lt = 1;
         twiLen = m;
     }
 
-    obj->N = n;
-    obj->sgn = sgn;
-
     if (sgn == -1) {
         for (auto ct = 0; ct < twiLen; ct++) {
-            (obj->data.get() + ct)->im = -(obj->data.get() + ct)->im;
+            (this->data.get() + ct)->im = -(this->data.get() + ct)->im;
         }
     }
-
-    return obj;
 }
 
 static auto mixedRadixDitRec(FftData* op, FftData* ip, const FftSet* obj, int sgn, int n, int l, int inc) -> void
@@ -1826,227 +2018,66 @@ auto divideby(int m, int d) -> int
     return 0;
 }
 
-auto dividebyN(int n) -> int
-{
-    while (n % 53 == 0) {
-        n = n / 53;
-    }
-    while (n % 47 == 0) {
-        n = n / 47;
-    }
-    while (n % 43 == 0) {
-        n = n / 43;
-    }
-    while (n % 41 == 0) {
-        n = n / 41;
-    }
-    while (n % 37 == 0) {
-        n = n / 37;
-    }
-    while (n % 31 == 0) {
-        n = n / 31;
-    }
-    while (n % 29 == 0) {
-        n = n / 29;
-    }
-    while (n % 23 == 0) {
-        n = n / 23;
-    }
-    while (n % 17 == 0) {
-        n = n / 17;
-    }
-    while (n % 13 == 0) {
-        n = n / 13;
-    }
-    while (n % 11 == 0) {
-        n = n / 11;
-    }
-    while (n % 8 == 0) {
-        n = n / 8;
-    }
-    while (n % 7 == 0) {
-        n = n / 7;
-    }
-    while (n % 5 == 0) {
-        n = n / 5;
-    }
-    while (n % 4 == 0) {
-        n = n / 4;
-    }
-    while (n % 3 == 0) {
-        n = n / 3;
-    }
-    while (n % 2 == 0) {
-        n = n / 2;
-    }
-    if (n == 1) {
-        return 1;
-    }
-    return 0;
-}
-
-auto factors(int m, int* arr) -> int
+auto fftR2cExec(FftRealSet* obj, fft_type const* inp, FftData* oup) -> void
 {
     int i;
+    int n2;
     int n;
-    int num;
-    int mult;
-    int m1;
-    int m2;
-    i = 0;
-    n = m;
-    while (n % 53 == 0) {
-        n = n / 53;
-        arr[i] = 53;
-        i++;
-    }
-    while (n % 47 == 0) {
-        n = n / 47;
-        arr[i] = 47;
-        i++;
-    }
-    while (n % 43 == 0) {
-        n = n / 43;
-        arr[i] = 43;
-        i++;
-    }
-    while (n % 41 == 0) {
-        n = n / 41;
-        arr[i] = 41;
-        i++;
-    }
-    while (n % 37 == 0) {
-        n = n / 37;
-        arr[i] = 37;
-        i++;
-    }
-    while (n % 31 == 0) {
-        n = n / 31;
-        arr[i] = 31;
-        i++;
-    }
-    while (n % 29 == 0) {
-        n = n / 29;
-        arr[i] = 29;
-        i++;
-    }
-    while (n % 23 == 0) {
-        n = n / 23;
-        arr[i] = 23;
-        i++;
-    }
-    while (n % 19 == 0) {
-        n = n / 19;
-        arr[i] = 19;
-        i++;
-    }
-    while (n % 17 == 0) {
-        n = n / 17;
-        arr[i] = 17;
-        i++;
-    }
-    while (n % 13 == 0) {
-        n = n / 13;
-        arr[i] = 13;
-        i++;
-    }
-    while (n % 11 == 0) {
-        n = n / 11;
-        arr[i] = 11;
-        i++;
-    }
-    while (n % 8 == 0) {
-        n = n / 8;
-        arr[i] = 8;
-        i++;
-    }
-    while (n % 7 == 0) {
-        n = n / 7;
-        arr[i] = 7;
-        i++;
-    }
-    while (n % 5 == 0) {
-        n = n / 5;
-        arr[i] = 5;
-        i++;
-    }
-    while (n % 4 == 0) {
-        n = n / 4;
-        arr[i] = 4;
-        i++;
-    }
-    while (n % 3 == 0) {
-        n = n / 3;
-        arr[i] = 3;
-        i++;
-    }
-    while (n % 2 == 0) {
-        n = n / 2;
-        arr[i] = 2;
-        i++;
-    }
-    if (n > 31) {
-        num = 2;
+    fft_type temp1;
+    fft_type temp2;
+    n2 = obj->cobj->N;
+    n = n2 * 2;
 
-        while (n > 1) {
-            mult = num * 6;
-            m1 = mult - 1;
-            m2 = mult + 1;
-            while (n % m1 == 0) {
-                arr[i] = m1;
-                i++;
-                n = n / m1;
-            }
-            while (n % m2 == 0) {
-                arr[i] = m2;
-                i++;
-                n = n / m2;
-            }
-            num += 1;
-        }
+    auto cinp = std::make_unique<FftData[]>(n2);
+    auto coup = std::make_unique<FftData[]>(n2);
+
+    for (i = 0; i < n2; ++i) {
+        cinp[i].re = inp[2 * i];
+        cinp[i].im = inp[2 * i + 1];
     }
-    return i;
-}
 
-auto twiddle(FftData* vec, int n, int radix) -> void
-{
-    int k;
-    int kl;
-    fft_type theta;
-    fft_type theta2;
-    theta = PI2 / n;
-    kl = n / radix;
-    vec[0].re = 1.0;
-    vec[0].im = 0.0;
+    fftExec(*(obj->cobj), cinp.get(), coup.get());
 
-    for (k = 1; k < kl; k++) {
-        theta2 = theta * k;
-        vec[k].re = cos(theta2);
-        vec[k].im = -sin(theta2);
+    oup[0].re = coup[0].re + coup[0].im;
+    oup[0].im = 0.0;
+
+    for (i = 1; i < n2; ++i) {
+        temp1 = coup[i].im + coup[n2 - i].im;
+        temp2 = coup[n2 - i].re - coup[i].re;
+        oup[i].re = (coup[i].re + coup[n2 - i].re + (temp1 * obj->data[i].re) + (temp2 * obj->data[i].im)) / 2.0;
+        oup[i].im = (coup[i].im - coup[n2 - i].im + (temp2 * obj->data[i].re) - (temp1 * obj->data[i].im)) / 2.0;
+    }
+
+    oup[n2].re = coup[0].re - coup[0].im;
+    oup[n2].im = 0.0;
+
+    for (i = 1; i < n2; ++i) {
+        oup[n - i].re = oup[i].re;
+        oup[n - i].im = -oup[i].im;
     }
 }
 
-auto longvectorN(FftData* sig, int const* array, int tx) -> void
+auto fftC2rExec(FftRealSet* obj, FftData* inp, fft_type* oup) -> void
 {
-    int l;
     int i;
-    int ls;
-    int ct;
-    int j;
-    int k;
-    fft_type theta;
-    l = 1;
-    ct = 0;
-    for (i = 0; i < tx; i++) {
-        l = l * array[tx - 1 - i];
-        ls = l / array[tx - 1 - i];
-        theta = -1.0 * PI2 / l;
-        for (j = 0; j < ls; j++) {
-            for (k = 0; k < array[tx - 1 - i] - 1; k++) {
-                sig[ct].re = cos((k + 1) * j * theta);
-                sig[ct].im = sin((k + 1) * j * theta);
-                ct++;
-            }
-        }
+    int n2;
+    fft_type temp1;
+    fft_type temp2;
+    n2 = obj->cobj->N;
+
+    auto cinp = std::make_unique<FftData[]>(n2);
+    auto coup = std::make_unique<FftData[]>(n2);
+
+    for (i = 0; i < n2; ++i) {
+        temp1 = -inp[i].im - inp[n2 - i].im;
+        temp2 = -inp[n2 - i].re + inp[i].re;
+        cinp[i].re = inp[i].re + inp[n2 - i].re + (temp1 * obj->data[i].re) - (temp2 * obj->data[i].im);
+        cinp[i].im = inp[i].im - inp[n2 - i].im + (temp2 * obj->data[i].re) + (temp1 * obj->data[i].im);
+    }
+
+    fftExec(*(obj->cobj), cinp.get(), coup.get());
+    for (i = 0; i < n2; ++i) {
+        oup[2 * i] = coup[i].re;
+        oup[2 * i + 1] = coup[i].im;
     }
 }

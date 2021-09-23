@@ -872,8 +872,8 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
         wt.length[iter] = n;
     }
 
-    auto fftFd = fftInit(n, 1);
-    auto fftBd = fftInit(n, -1);
+    auto fftFd = std::make_unique<FftSet>(n, 1);
+    auto fftBd = std::make_unique<FftSet>(n, -1);
 
     auto sig = std::make_unique<FftData[]>(n);
     auto cA = std::make_unique<FftData[]>(n);
@@ -985,8 +985,8 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
     auto j = wt.levels();
 
     auto s = std::sqrt(2.0);
-    auto fftFd = fftInit(n, 1);
-    auto fftBd = fftInit(n, -1);
+    auto fftFd = std::make_unique<FftSet>(n, 1);
+    auto fftBd = std::make_unique<FftSet>(n, -1);
 
     auto sig = std::make_unique<FftData[]>(n);
     auto cA = std::make_unique<FftData[]>(n);

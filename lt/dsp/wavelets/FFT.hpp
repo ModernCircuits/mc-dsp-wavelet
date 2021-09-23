@@ -32,6 +32,8 @@ struct FftData {
 };
 
 struct FftSet {
+    FftSet(int n, int sgn);
+
     int N;
     int sgn;
     int factors[64];
@@ -40,7 +42,7 @@ struct FftSet {
     std::unique_ptr<FftData[]> data;
 };
 
-auto fftInit(int n, int sgn) -> std::unique_ptr<FftSet>;
+auto fftExec(FftSet& obj, FftData* inp, FftData* oup) -> void;
 
 struct FftRealSet {
     std::unique_ptr<FftSet> cobj;
@@ -49,6 +51,7 @@ struct FftRealSet {
 
 auto fftRealInit(int n, int sgn) -> std::unique_ptr<FftRealSet>;
 
-auto fftExec(FftSet& obj, FftData* inp, FftData* oup) -> void;
+auto fftR2cExec(FftRealSet* obj, fft_type const* inp, FftData* oup) -> void;
+auto fftC2rExec(FftRealSet* obj, FftData* inp, fft_type* oup) -> void;
+
 auto divideby(int m, int d) -> int;
-auto dividebyN(int n) -> int;

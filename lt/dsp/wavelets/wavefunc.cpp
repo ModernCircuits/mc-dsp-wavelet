@@ -16,7 +16,7 @@ auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
         exit(1);
     }
 
-    auto obj = fftInit(n, -1);
+    auto obj = std::make_unique<FftSet>(n, -1);
     auto w = std::make_unique<double[]>(n);
     auto phiw = std::make_unique<FftData[]>(n);
     auto psiw = std::make_unique<FftData[]>(n);
