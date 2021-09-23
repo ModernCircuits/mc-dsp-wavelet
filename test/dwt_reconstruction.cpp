@@ -100,11 +100,7 @@ auto dwtReconstructionTest()
                         epsilon = 1e-10;
                     }
 
-                    // std::printf("%g ",RMS_Error(out.get(), inp.get(), wt.signalLength()));
-                    if (rmsError(out.get(), inp.get(), wt.signalLength()) > epsilon) {
-                        std::printf("\n ERROR : DWT Reconstruction Unit Test Failed. Exiting. \n");
-                        std::exit(-1);
-                    }
+                    REQUIRE(rmsError(out.get(), inp.get(), wt.signalLength()) <= epsilon);
                 }
             }
         }
@@ -201,10 +197,7 @@ auto dwT2ReconstructionTest()
                         epsilon = 1e-10;
                     }
 
-                    if (rmsError(out.get(), inp.get(), n) > epsilon) {
-                        std::printf("\n ERROR : DWT2 Reconstruction Unit Test Failed. Exiting. \n");
-                        std::exit(-1);
-                    }
+                    REQUIRE(rmsError(out.get(), inp.get(), n) <= epsilon);
                 }
             }
         }

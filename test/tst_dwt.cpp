@@ -70,10 +70,7 @@ auto modwtReconstructionTest()
                     }
 
                     auto const err = rmsError(out.get(), inp.get(), wt.signalLength());
-                    if (err > epsilon) {
-                        printf("\n ERROR : DWT Reconstruction Unit Test Failed. Exiting. \n");
-                        exit(-1);
-                    }
+                    REQUIRE(err <= epsilon);
                 }
             }
         }
@@ -135,11 +132,7 @@ auto modwT2ReconstructionTest()
                     } else {
                         epsilon = 1e-10;
                     }
-                    if (rmsError(out.get(), inp.get(), n) > epsilon) {
-                        printf("\n ERROR : MODWT2 Reconstruction Unit Test Failed. "
-                               "Exiting. \n");
-                        exit(-1);
-                    }
+                    REQUIRE(rmsError(out.get(), inp.get(), n) <= epsilon);
                 }
             }
         }
@@ -233,11 +226,7 @@ auto dwtReconstructionTest()
                     dwt(wt, inp.get());
                     idwt(wt, out.get());
 
-                    if (rmsError(out.get(), inp.get(), wt.siglength) > epsilon) {
-                        printf(
-                            "\n ERROR : DWPT Reconstruction Unit Test Failed. Exiting. \n");
-                        exit(-1);
-                    }
+                    REQUIRE(rmsError(out.get(), inp.get(), wt.siglength) <= epsilon);
                 }
             }
         }
@@ -323,16 +312,12 @@ auto cwtReconstructionTest()
 
     for (it1 = 0; it1 < 3; ++it1) {
         for (it2 = 0; it2 < 10; ++it2) {
-
             auto wt = ComplexWaveletTransform { wave[it1], param[it1 * 10 + it2], n, dt, j };
             wt.scales(s0, dj, type, a0);
             cwt(wt, inp.get());
             icwt(wt, oup.get());
 
-            if (relError(inp.get(), oup.get(), wt.signalLength) > epsilon) {
-                printf("\n ERROR : DWPT Reconstruction Unit Test Failed. Exiting. \n");
-                exit(-1);
-            }
+            REQUIRE(relError(inp.get(), oup.get(), wt.signalLength) <= epsilon);
         }
     }
 }
@@ -353,17 +338,14 @@ auto dbCoefTests()
         auto t3 = sum3(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
         auto t4 = sum4(obj.lpr(), obj.lprLen()) - 1.0;
 
-        if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
-            printf("\n ERROR : DB Coefficients Unit Test Failed. Exiting. \n");
-            exit(-1);
-        }
+        REQUIRE(fabs(t1) <= epsilon);
+        REQUIRE(fabs(t2) <= epsilon);
+        REQUIRE(fabs(t3) <= epsilon);
+        REQUIRE(fabs(t4) <= epsilon);
 
         for (int m = 1; m < (obj.lprLen() / 2) - 1; m++) {
             auto t5 = sum5(obj.lpr(), obj.lprLen(), m);
-            if (fabs(t5) > epsilon) {
-                printf("\n ERROR : DB Coefficients Unit Test Failed. Exiting. \n");
-                exit(-1);
-            }
+            REQUIRE(fabs(t5) <= epsilon);
         }
     }
 }
@@ -389,17 +371,13 @@ auto coifCoefTests()
         t3 = sum3(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
         t4 = sum4(obj.lpr(), obj.lprLen()) - 1.0;
 
-        if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
-            printf("\n ERROR : Coif Coefficients Unit Test Failed. Exiting. \n");
-            exit(-1);
-        }
-
+        REQUIRE(fabs(t1) <= epsilon);
+        REQUIRE(fabs(t2) <= epsilon);
+        REQUIRE(fabs(t3) <= epsilon);
+        REQUIRE(fabs(t4) <= epsilon);
         for (int m = 1; m < (obj.lprLen() / 2) - 1; m++) {
             t5 = sum5(obj.lpr(), obj.lprLen(), m);
-            if (fabs(t5) > epsilon) {
-                printf("\n ERROR : Coif Coefficients Unit Test Failed. Exiting. \n");
-                exit(-1);
-            }
+            REQUIRE(fabs(t5) <= epsilon);
         }
     }
 }
@@ -424,30 +402,21 @@ auto symCoefTests()
         t3 = sum3(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
         t4 = sum4(obj.lpr(), obj.lprLen()) - 1.0;
 
-        if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon) {
-            printf("\n ERROR : Sym Coefficients Unit Test Failed. Exiting. \n");
-            exit(-1);
-        }
+        REQUIRE(fabs(t1) <= epsilon);
+        REQUIRE(fabs(t2) <= epsilon);
+        REQUIRE(fabs(t3) <= epsilon);
+        REQUIRE(fabs(t4) <= epsilon);
 
         for (int m = 1; m < (obj.lprLen() / 2) - 1; m++) {
             t5 = sum5(obj.lpr(), obj.lprLen(), m);
-            if (fabs(t5) > epsilon) {
-                printf("\n ERROR : Sym Coefficients Unit Test Failed. Exiting. \n");
-                exit(-1);
-            }
+            REQUIRE(fabs(t5) <= epsilon);
         }
     }
 }
 
 auto biorCoefTests()
 {
-    double epsilon = 1e-10;
-    double t1 = NAN;
-    double t2 = NAN;
-    double t3 = NAN;
-    double t4 = NAN;
-    double t5 = NAN;
-    double t6 = NAN;
+    constexpr double epsilon = 1e-10;
     std::vector<std::string> waveletNames;
     waveletNames.emplace_back("bior1.1");
     waveletNames.emplace_back("bior1.3");
@@ -468,19 +437,21 @@ auto biorCoefTests()
     for (auto const& name : waveletNames) {
         auto obj = Wavelet { name.c_str() };
 
-        t1 = sum1(obj.lpr(), obj.lprLen()) - std::sqrt(2.0);
-        t2 = sum1(obj.lpd(), obj.lpdLen()) - std::sqrt(2.0);
+        auto const t1 = sum1(obj.lpr(), obj.lprLen()) - std::sqrt(2.0);
+        auto const t2 = sum1(obj.lpd(), obj.lpdLen()) - std::sqrt(2.0);
 
-        t3 = sum2(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
-        t4 = sum2(obj.lpd(), obj.lpdLen()) - 1.0 / std::sqrt(2.0);
+        auto const t3 = sum2(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
+        auto const t4 = sum2(obj.lpd(), obj.lpdLen()) - 1.0 / std::sqrt(2.0);
 
-        t5 = sum3(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
-        t6 = sum3(obj.lpd(), obj.lpdLen()) - 1.0 / std::sqrt(2.0);
+        auto const t5 = sum3(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
+        auto const t6 = sum3(obj.lpd(), obj.lpdLen()) - 1.0 / std::sqrt(2.0);
 
-        if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon || fabs(t5) > epsilon || fabs(t6) > epsilon) {
-            printf("\n ERROR : Bior Coefficients Unit Test Failed. Exiting. \n");
-            exit(-1);
-        }
+        REQUIRE(fabs(t1) <= epsilon);
+        REQUIRE(fabs(t2) <= epsilon);
+        REQUIRE(fabs(t3) <= epsilon);
+        REQUIRE(fabs(t4) <= epsilon);
+        REQUIRE(fabs(t5) <= epsilon);
+        REQUIRE(fabs(t6) <= epsilon);
     }
 }
 
@@ -522,10 +493,12 @@ auto rBiorCoefTests()
         t5 = sum3(obj.lpr(), obj.lprLen()) - 1.0 / std::sqrt(2.0);
         t6 = sum3(obj.lpd(), obj.lpdLen()) - 1.0 / std::sqrt(2.0);
 
-        if (fabs(t1) > epsilon || fabs(t2) > epsilon || fabs(t3) > epsilon || fabs(t4) > epsilon || fabs(t5) > epsilon || fabs(t6) > epsilon) {
-            printf("\n ERROR : RBior Coefficients Unit Test Failed. Exiting. \n");
-            exit(-1);
-        }
+        REQUIRE(fabs(t1) <= epsilon);
+        REQUIRE(fabs(t2) <= epsilon);
+        REQUIRE(fabs(t3) <= epsilon);
+        REQUIRE(fabs(t4) <= epsilon);
+        REQUIRE(fabs(t5) <= epsilon);
+        REQUIRE(fabs(t6) <= epsilon);
     }
 }
 

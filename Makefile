@@ -30,7 +30,7 @@ coverage-xml: coverage
 
 .PHONY: stats
 stats:
-	@cloc -by-file-by-lang --exclude-dir=3rd_party,filters --exclude-ext=svg --vcs=git .
+	@cloc -by-file-by-lang --exclude-dir=3rd_party --exclude-ext=svg --vcs=git .
 
 .PHONY: format
 format:

@@ -89,35 +89,24 @@ auto swtReconstructionTest()
                     }
 
                     if (symPer == 0) {
-                        wt.extension(SignalExtension::periodic); // Options are "per" and "sym".
-                        // Symmetric is the default option
+                        wt.extension(SignalExtension::periodic);
                     } else if (symPer == 1 && directFft == 1) {
                         wt.extension(SignalExtension::symmetric);
                     } else {
-                        break;
+                        REQUIRE(false);
                     }
 
-                    swt(wt, inp.get()); // Perform DWT
-
-                    iswt(wt, out.get()); // Perform IDWT (if needed)
-                    // Test Reconstruction
+                    swt(wt, inp.get());
+                    iswt(wt, out.get());
 
                     if (directFft == 0) {
                         epsilon = 1e-8;
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt.signalLength()), epsilon); //
-                    // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%g ",RMS_Error(out, inp, wt.signalLength()));
                     err = rmsError(out.get(), inp.get(), wt.signalLength());
-                    // printf("%d %d %g \n",direct_fft,sym_per,err);
-                    if (err > epsilon) {
-                        printf(
-                            "\n ERROR : SWT Reconstruction Unit Test Failed. Exiting. \n");
-                        exit(-1);
-                    }
+                    REQUIRE(err <= epsilon);
                 }
             }
         }
@@ -192,16 +181,13 @@ auto swT2ReconstructionTest()
             for (auto& name : waveletNames) {
                 auto obj = Wavelet { name.c_str() };
                 for (auto j = 1; j < 3; j++) {
-                    auto wt = WaveletTransform2D(obj, "swt", rows, cols,
-                        j); // Initialize the wavelet transform object
+                    auto wt = WaveletTransform2D(obj, "swt", rows, cols, j);
                     if (symPer == 0) {
                         setDWT2Extension(wt, "per"); // Options are "per"
                     }
 
-                    auto wavecoeffs = swt2(wt, inp.get()); // Perform DWT
-
-                    iswt2(wt, wavecoeffs.get(), out.get()); // Perform IDWT (if needed)
-                    // Test Reconstruction
+                    auto wavecoeffs = swt2(wt, inp.get());
+                    iswt2(wt, wavecoeffs.get(), out.get());
 
                     double epsilon { 0.0 };
                     if (directFft == 0) {
@@ -209,15 +195,8 @@ auto swT2ReconstructionTest()
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt.signalLength()), epsilon); //
-                    // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%g ",RMS_Error(out, inp, wt.signalLength()));
-                    if (rmsError(out.get(), inp.get(), n) > epsilon) {
-                        printf(
-                            "\n ERROR : SWT2 Reconstruction Unit Test Failed. Exiting. \n");
-                        exit(-1);
-                    }
+                    REQUIRE(rmsError(out.get(), inp.get(), n) <= epsilon);
                 }
             }
         }
@@ -226,11 +205,13 @@ auto swT2ReconstructionTest()
 
 auto main() -> int
 {
-    printf("Running SWT ReconstructionTests ... ");
+    std::cout << "Running SWT ReconstructionTests ... ";
     swtReconstructionTest();
-    printf("DONE \n");
-    printf("Running SWT2 ReconstructionTests ... ");
+    std::cout << "DONE \n";
+
+    std::cout << "Running SWT2 ReconstructionTests ... ";
     swT2ReconstructionTest();
-    printf("DONE \n");
-    return 0;
+    std::cout << "DONE \n";
+
+    return EXIT_SUCCESS;
 }
