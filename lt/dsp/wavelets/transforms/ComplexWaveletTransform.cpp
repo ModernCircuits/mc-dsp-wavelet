@@ -96,7 +96,7 @@ auto cwtInit(char const* wave, double param, int siglength, double dt, int j) ->
 
     obj->npad = (int)std::pow(2.0, (double)ibase2);
 
-    obj->output = (CplxData*)&obj->params[0];
+    obj->output = (Complex*)&obj->params[0];
     obj->scale = &obj->params[nj2];
     obj->period = &obj->params[nj2 + j];
     obj->coi = &obj->params[nj2 + 2 * j];
@@ -276,7 +276,7 @@ static auto factorial(int n) -> double
 }
 
 static auto waveFunction(int nk, double dt, int mother, double param, double scale1, double const* kwave, double pi, double* period1,
-    double* coi1, FftData* daughter) -> void
+    double* coi1, Complex* daughter) -> void
 {
 
     double norm;
@@ -395,9 +395,9 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
     auto obj = std::make_unique<FFT>(npad, 1);
     auto iobj = std::make_unique<FFT>(npad, -1);
 
-    auto ypad = std::make_unique<FftData[]>(npad);
-    auto yfft = std::make_unique<FftData[]>(npad);
-    auto daughter = std::make_unique<FftData[]>(npad);
+    auto ypad = std::make_unique<Complex[]>(npad);
+    auto yfft = std::make_unique<Complex[]>(npad);
+    auto daughter = std::make_unique<Complex[]>(npad);
     auto kwave = std::make_unique<double[]>(npad);
     ymean = 0.0;
 

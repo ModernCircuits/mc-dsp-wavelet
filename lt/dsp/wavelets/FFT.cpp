@@ -189,7 +189,7 @@ auto factor(int m, int* arr) -> int
     return i;
 }
 
-auto longvectorN(FftData* sig, int const* array, int tx) -> void
+auto longvectorN(Complex* sig, int const* array, int tx) -> void
 {
     auto l = 1;
     auto ct = 0;
@@ -216,7 +216,7 @@ FFT::FFT(int n, int sgn)
     auto const out = dividebyN(n);
 
     if (out == 1) {
-        this->data = makeZeros<FftData>(n);
+        this->data = makeZeros<Complex>(n);
         this->lf = factor(n, this->factors);
         longvectorN(this->data.get(), this->factors, this->lf);
         twiLen = n;
@@ -231,7 +231,7 @@ FFT::FFT(int n, int sgn)
         } else {
             m = k;
         }
-        this->data = makeZeros<FftData>(m);
+        this->data = makeZeros<Complex>(m);
         this->lf = factor(m, this->factors);
         longvectorN(this->data.get(), this->factors, this->lf);
         this->lt = 1;
@@ -245,7 +245,7 @@ FFT::FFT(int n, int sgn)
     }
 }
 
-static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, int n, int l, int inc) -> void
+static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, int n, int l, int inc) -> void
 {
 
     auto const radix = n > 1 ? obj->factors[inc] : 0;
@@ -256,8 +256,8 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
         op[0].im = ip[0].im;
 
     } else if (n == 2) {
-        fft_type tau1r;
-        fft_type tau1i;
+        double tau1r;
+        double tau1i;
         op[0].re = ip[0].re;
         op[0].im = ip[0].im;
 
@@ -274,12 +274,12 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
         op[1].im = tau1i - op[1].im;
 
     } else if (n == 3) {
-        fft_type tau0r;
-        fft_type tau0i;
-        fft_type tau1r;
-        fft_type tau1i;
-        fft_type tau2r;
-        fft_type tau2i;
+        double tau0r;
+        double tau0i;
+        double tau1r;
+        double tau1i;
+        double tau2r;
+        double tau2i;
         op[0].re = ip[0].re;
         op[0].im = ip[0].im;
 
@@ -310,14 +310,14 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
         return;
 
     } else if (n == 4) {
-        fft_type tau0r;
-        fft_type tau0i;
-        fft_type tau1r;
-        fft_type tau1i;
-        fft_type tau2r;
-        fft_type tau2i;
-        fft_type tau3r;
-        fft_type tau3i;
+        double tau0r;
+        double tau0i;
+        double tau1r;
+        double tau1i;
+        double tau2r;
+        double tau2i;
+        double tau3r;
+        double tau3i;
         op[0].re = ip[0].re;
         op[0].im = ip[0].im;
 
@@ -355,24 +355,24 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
         op[3].im = tau1i + tau3r;
 
     } else if (n == 5) {
-        fft_type tau0r;
-        fft_type tau0i;
-        fft_type tau1r;
-        fft_type tau1i;
-        fft_type tau2r;
-        fft_type tau2i;
-        fft_type tau3r;
-        fft_type tau3i;
-        fft_type tau4r;
-        fft_type tau4i;
-        fft_type tau5r;
-        fft_type tau5i;
-        fft_type tau6r;
-        fft_type tau6i;
-        fft_type c1;
-        fft_type c2;
-        fft_type s1;
-        fft_type s2;
+        double tau0r;
+        double tau0i;
+        double tau1r;
+        double tau1i;
+        double tau2r;
+        double tau2i;
+        double tau3r;
+        double tau3i;
+        double tau4r;
+        double tau4i;
+        double tau5r;
+        double tau5i;
+        double tau6r;
+        double tau6i;
+        double c1;
+        double c2;
+        double s1;
+        double s2;
         op[0].re = ip[0].re;
         op[0].im = ip[0].im;
 
@@ -455,28 +455,28 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
         op[0].im += tau0i + tau1i;
 
     } else if (n == 7) {
-        fft_type tau0r;
-        fft_type tau0i;
-        fft_type tau1r;
-        fft_type tau1i;
-        fft_type tau2r;
-        fft_type tau2i;
-        fft_type tau3r;
-        fft_type tau3i;
-        fft_type tau4r;
-        fft_type tau4i;
-        fft_type tau5r;
-        fft_type tau5i;
-        fft_type tau6r;
-        fft_type tau6i;
-        fft_type tau7r;
-        fft_type tau7i;
-        fft_type c1;
-        fft_type c2;
-        fft_type c3;
-        fft_type s1;
-        fft_type s2;
-        fft_type s3;
+        double tau0r;
+        double tau0i;
+        double tau1r;
+        double tau1i;
+        double tau2r;
+        double tau2i;
+        double tau3r;
+        double tau3i;
+        double tau4r;
+        double tau4i;
+        double tau5r;
+        double tau5i;
+        double tau6r;
+        double tau6i;
+        double tau7r;
+        double tau7i;
+        double c1;
+        double c2;
+        double c3;
+        double s1;
+        double s2;
+        double s3;
         op[0].re = ip[0].re;
         op[0].im = ip[0].im;
 
@@ -587,32 +587,32 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
         op[0].im += tau0i + tau1i + tau2i;
 
     } else if (n == 8) {
-        fft_type tau0r;
-        fft_type tau0i;
-        fft_type tau1r;
-        fft_type tau1i;
-        fft_type tau2r;
-        fft_type tau2i;
-        fft_type tau3r;
-        fft_type tau3i;
-        fft_type tau4r;
-        fft_type tau4i;
-        fft_type tau5r;
-        fft_type tau5i;
-        fft_type tau6r;
-        fft_type tau6i;
-        fft_type tau7r;
-        fft_type tau7i;
-        fft_type tau8r;
-        fft_type tau8i;
-        fft_type tau9r;
-        fft_type tau9i;
-        fft_type c1;
-        fft_type s1;
-        fft_type temp1r;
-        fft_type temp1i;
-        fft_type temp2r;
-        fft_type temp2i;
+        double tau0r;
+        double tau0i;
+        double tau1r;
+        double tau1i;
+        double tau2r;
+        double tau2i;
+        double tau3r;
+        double tau3i;
+        double tau4r;
+        double tau4i;
+        double tau5r;
+        double tau5i;
+        double tau6r;
+        double tau6i;
+        double tau7r;
+        double tau7i;
+        double tau8r;
+        double tau8i;
+        double tau9r;
+        double tau9i;
+        double c1;
+        double s1;
+        double temp1r;
+        double temp1i;
+        double temp2r;
+        double temp2i;
         op[0].re = ip[0].re;
         op[0].im = ip[0].im;
 
@@ -743,12 +743,12 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
         int k;
         int tkm1;
         int ind;
-        fft_type wlr;
-        fft_type wli;
-        fft_type tau1r;
-        fft_type tau1i;
-        fft_type tau2r;
-        fft_type tau2i;
+        double wlr;
+        double wli;
+        double tau1r;
+        double tau1i;
+        double tau2r;
+        double tau2i;
         auto const m = n / 2;
         auto const ll = 2 * l;
         mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
@@ -779,22 +779,22 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
         int tkm1;
         int tkm2;
         int ind;
-        fft_type wlr;
-        fft_type wli;
-        fft_type wl2r;
-        fft_type wl2i;
-        fft_type tau0r;
-        fft_type tau0i;
-        fft_type tau1r;
-        fft_type tau1i;
-        fft_type tau2r;
-        fft_type tau2i;
-        fft_type ar;
-        fft_type ai;
-        fft_type br;
-        fft_type bi;
-        fft_type cr;
-        fft_type ci;
+        double wlr;
+        double wli;
+        double wl2r;
+        double wl2i;
+        double tau0r;
+        double tau0i;
+        double tau1r;
+        double tau1i;
+        double tau2r;
+        double tau2i;
+        double ar;
+        double ai;
+        double br;
+        double bi;
+        double cr;
+        double ci;
         auto const m = n / 3;
         auto const ll = 3 * l;
         mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
@@ -846,28 +846,28 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
         int tkm2;
         int tkm3;
         int ind;
-        fft_type wlr;
-        fft_type wli;
-        fft_type wl2r;
-        fft_type wl2i;
-        fft_type wl3r;
-        fft_type wl3i;
-        fft_type tau0r;
-        fft_type tau0i;
-        fft_type tau1r;
-        fft_type tau1i;
-        fft_type tau2r;
-        fft_type tau2i;
-        fft_type tau3r;
-        fft_type tau3i;
-        fft_type ar;
-        fft_type ai;
-        fft_type br;
-        fft_type bi;
-        fft_type cr;
-        fft_type ci;
-        fft_type dr;
-        fft_type di;
+        double wlr;
+        double wli;
+        double wl2r;
+        double wl2i;
+        double wl3r;
+        double wl3i;
+        double tau0r;
+        double tau0i;
+        double tau1r;
+        double tau1i;
+        double tau2r;
+        double tau2i;
+        double tau3r;
+        double tau3i;
+        double ar;
+        double ai;
+        double br;
+        double bi;
+        double cr;
+        double ci;
+        double dr;
+        double di;
         auto const m = n / 4;
         auto const ll = 4 * l;
         mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
@@ -976,42 +976,42 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
         int tkm3;
         int tkm4;
         int ind;
-        fft_type wlr;
-        fft_type wli;
-        fft_type wl2r;
-        fft_type wl2i;
-        fft_type wl3r;
-        fft_type wl3i;
-        fft_type wl4r;
-        fft_type wl4i;
-        fft_type tau0r;
-        fft_type tau0i;
-        fft_type tau1r;
-        fft_type tau1i;
-        fft_type tau2r;
-        fft_type tau2i;
-        fft_type tau3r;
-        fft_type tau3i;
-        fft_type ar;
-        fft_type ai;
-        fft_type br;
-        fft_type bi;
-        fft_type cr;
-        fft_type ci;
-        fft_type dr;
-        fft_type di;
-        fft_type er;
-        fft_type ei;
-        fft_type tau4r;
-        fft_type tau4i;
-        fft_type tau5r;
-        fft_type tau5i;
-        fft_type tau6r;
-        fft_type tau6i;
-        fft_type c1;
-        fft_type c2;
-        fft_type s1;
-        fft_type s2;
+        double wlr;
+        double wli;
+        double wl2r;
+        double wl2i;
+        double wl3r;
+        double wl3i;
+        double wl4r;
+        double wl4i;
+        double tau0r;
+        double tau0i;
+        double tau1r;
+        double tau1i;
+        double tau2r;
+        double tau2i;
+        double tau3r;
+        double tau3i;
+        double ar;
+        double ai;
+        double br;
+        double bi;
+        double cr;
+        double ci;
+        double dr;
+        double di;
+        double er;
+        double ei;
+        double tau4r;
+        double tau4i;
+        double tau5r;
+        double tau5i;
+        double tau6r;
+        double tau6i;
+        double c1;
+        double c2;
+        double s1;
+        double s2;
         auto const m = n / 5;
         auto const ll = 5 * l;
         mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
@@ -1198,54 +1198,54 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
         int tkm5;
         int tkm6;
         int ind;
-        fft_type wlr;
-        fft_type wli;
-        fft_type wl2r;
-        fft_type wl2i;
-        fft_type wl3r;
-        fft_type wl3i;
-        fft_type wl4r;
-        fft_type wl4i;
-        fft_type wl5r;
-        fft_type wl5i;
-        fft_type wl6r;
-        fft_type wl6i;
-        fft_type tau0r;
-        fft_type tau0i;
-        fft_type tau1r;
-        fft_type tau1i;
-        fft_type tau2r;
-        fft_type tau2i;
-        fft_type tau3r;
-        fft_type tau3i;
-        fft_type ar;
-        fft_type ai;
-        fft_type br;
-        fft_type bi;
-        fft_type cr;
-        fft_type ci;
-        fft_type dr;
-        fft_type di;
-        fft_type er;
-        fft_type ei;
-        fft_type fr;
-        fft_type fi;
-        fft_type gr;
-        fft_type gi;
-        fft_type tau4r;
-        fft_type tau4i;
-        fft_type tau5r;
-        fft_type tau5i;
-        fft_type tau6r;
-        fft_type tau6i;
-        fft_type tau7r;
-        fft_type tau7i;
-        fft_type c1;
-        fft_type c2;
-        fft_type c3;
-        fft_type s1;
-        fft_type s2;
-        fft_type s3;
+        double wlr;
+        double wli;
+        double wl2r;
+        double wl2i;
+        double wl3r;
+        double wl3i;
+        double wl4r;
+        double wl4i;
+        double wl5r;
+        double wl5i;
+        double wl6r;
+        double wl6i;
+        double tau0r;
+        double tau0i;
+        double tau1r;
+        double tau1i;
+        double tau2r;
+        double tau2i;
+        double tau3r;
+        double tau3i;
+        double ar;
+        double ai;
+        double br;
+        double bi;
+        double cr;
+        double ci;
+        double dr;
+        double di;
+        double er;
+        double ei;
+        double fr;
+        double fi;
+        double gr;
+        double gi;
+        double tau4r;
+        double tau4i;
+        double tau5r;
+        double tau5i;
+        double tau6r;
+        double tau6i;
+        double tau7r;
+        double tau7i;
+        double c1;
+        double c2;
+        double c3;
+        double s1;
+        double s2;
+        double s3;
         auto const m = n / 7;
         auto const ll = 7 * l;
         mixedRadixDitRec(op, ip, obj, sgn, m, ll, inc + 1);
@@ -1513,62 +1513,62 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
         int tkm6;
         int tkm7;
         int ind;
-        fft_type wlr;
-        fft_type wli;
-        fft_type wl2r;
-        fft_type wl2i;
-        fft_type wl3r;
-        fft_type wl3i;
-        fft_type wl4r;
-        fft_type wl4i;
-        fft_type wl5r;
-        fft_type wl5i;
-        fft_type wl6r;
-        fft_type wl6i;
-        fft_type wl7r;
-        fft_type wl7i;
-        fft_type tau0r;
-        fft_type tau0i;
-        fft_type tau1r;
-        fft_type tau1i;
-        fft_type tau2r;
-        fft_type tau2i;
-        fft_type tau3r;
-        fft_type tau3i;
-        fft_type ar;
-        fft_type ai;
-        fft_type br;
-        fft_type bi;
-        fft_type cr;
-        fft_type ci;
-        fft_type dr;
-        fft_type di;
-        fft_type er;
-        fft_type ei;
-        fft_type fr;
-        fft_type fi;
-        fft_type gr;
-        fft_type gi;
-        fft_type hr;
-        fft_type hi;
-        fft_type tau4r;
-        fft_type tau4i;
-        fft_type tau5r;
-        fft_type tau5i;
-        fft_type tau6r;
-        fft_type tau6i;
-        fft_type tau7r;
-        fft_type tau7i;
-        fft_type tau8r;
-        fft_type tau8i;
-        fft_type tau9r;
-        fft_type tau9i;
-        fft_type c1;
-        fft_type s1;
-        fft_type temp1r;
-        fft_type temp1i;
-        fft_type temp2r;
-        fft_type temp2i;
+        double wlr;
+        double wli;
+        double wl2r;
+        double wl2i;
+        double wl3r;
+        double wl3i;
+        double wl4r;
+        double wl4i;
+        double wl5r;
+        double wl5i;
+        double wl6r;
+        double wl6i;
+        double wl7r;
+        double wl7i;
+        double tau0r;
+        double tau0i;
+        double tau1r;
+        double tau1i;
+        double tau2r;
+        double tau2i;
+        double tau3r;
+        double tau3i;
+        double ar;
+        double ai;
+        double br;
+        double bi;
+        double cr;
+        double ci;
+        double dr;
+        double di;
+        double er;
+        double ei;
+        double fr;
+        double fi;
+        double gr;
+        double gi;
+        double hr;
+        double hi;
+        double tau4r;
+        double tau4i;
+        double tau5r;
+        double tau5i;
+        double tau6r;
+        double tau6i;
+        double tau7r;
+        double tau7i;
+        double tau8r;
+        double tau8i;
+        double tau9r;
+        double tau9i;
+        double c1;
+        double s1;
+        double temp1r;
+        double temp1i;
+        double temp2r;
+        double temp2i;
 
         auto const m = n / 8;
         auto const ll = 8 * l;
@@ -1751,18 +1751,18 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
     //     int v;
     //     int t;
     //     int tt;
-    //     fft_type temp1r;
-    //     fft_type temp1i;
-    //     fft_type temp2r;
-    //     fft_type temp2i;
-    //     auto wlr = std::make_unique<fft_type[]>(radix - 1);
-    //     auto wli = std::make_unique<fft_type[]>(radix - 1);
-    //     auto taur = std::make_unique<fft_type[]>(radix - 1);
-    //     auto taui = std::make_unique<fft_type[]>(radix - 1);
-    //     auto c1 = std::make_unique<fft_type[]>(radix - 1);
-    //     auto s1 = std::make_unique<fft_type[]>(radix - 1);
-    //     auto yr = std::make_unique<fft_type[]>(radix);
-    //     auto yi = std::make_unique<fft_type[]>(radix);
+    //     double temp1r;
+    //     double temp1i;
+    //     double temp2r;
+    //     double temp2i;
+    //     auto wlr = std::make_unique<double[]>(radix - 1);
+    //     auto wli = std::make_unique<double[]>(radix - 1);
+    //     auto taur = std::make_unique<double[]>(radix - 1);
+    //     auto taui = std::make_unique<double[]>(radix - 1);
+    //     auto c1 = std::make_unique<double[]>(radix - 1);
+    //     auto s1 = std::make_unique<double[]>(radix - 1);
+    //     auto yr = std::make_unique<double[]>(radix);
+    //     auto yi = std::make_unique<double[]>(radix);
 
     //     auto const m = N / radix;
     //     auto const ll = radix * l;
@@ -1845,11 +1845,11 @@ static auto mixedRadixDitRec(FftData* op, FftData* ip, const FFT* obj, int sgn, 
     // }
 }
 
-static auto bluesteinExp(FftData* hl, FftData* hlt, int len, int m) -> void
+static auto bluesteinExp(Complex* hl, Complex* hlt, int len, int m) -> void
 {
-    fft_type pi;
-    fft_type theta;
-    fft_type angle;
+    double pi;
+    double theta;
+    double angle;
     int l2;
     int len2;
     int i;
@@ -1881,14 +1881,14 @@ static auto bluesteinExp(FftData* hl, FftData* hlt, int len, int m) -> void
     }
 }
 
-static auto bluesteinFft(FftData* data, FftData* oup, FFT* obj, int sgn, int n) -> void
+static auto bluesteinFft(Complex* data, Complex* oup, FFT* obj, int sgn, int n) -> void
 {
 
     int m;
     int ii;
     int i;
-    fft_type scale;
-    fft_type temp;
+    double scale;
+    double temp;
 
     obj->lt = 0;
     auto k = (int)std::pow(2.0, ceil((double)log10((double)n) / log10((double)2.0)));
@@ -1903,11 +1903,11 @@ static auto bluesteinFft(FftData* data, FftData* oup, FFT* obj, int sgn, int n) 
     }
     obj->N = m;
 
-    auto yn = std::make_unique<FftData[]>(m);
-    auto hk = std::make_unique<FftData[]>(m);
-    auto tempop = std::make_unique<FftData[]>(m);
-    auto yno = std::make_unique<FftData[]>(m);
-    auto hlt = std::make_unique<FftData[]>(n);
+    auto yn = std::make_unique<Complex[]>(m);
+    auto hk = std::make_unique<Complex[]>(m);
+    auto tempop = std::make_unique<Complex[]>(m);
+    auto yno = std::make_unique<Complex[]>(m);
+    auto hlt = std::make_unique<Complex[]>(n);
 
     bluesteinExp(tempop.get(), hlt.get(), n, m);
     scale = 1.0 / m;
@@ -1983,7 +1983,7 @@ static auto bluesteinFft(FftData* data, FftData* oup, FFT* obj, int sgn, int n) 
     }
 }
 
-auto FFT::perform(FftData* inp, FftData* oup) -> void
+auto FFT::perform(Complex* inp, Complex* oup) -> void
 {
     if (lt == 0) {
         mixedRadixDitRec(oup, inp, this, sgn, N, 1, 0);
@@ -2005,18 +2005,18 @@ auto divideby(int m, int d) -> int
     return 0;
 }
 
-auto fftR2cExec(FftRealSet* obj, fft_type const* inp, FftData* oup) -> void
+auto fftR2cExec(FftRealSet* obj, double const* inp, Complex* oup) -> void
 {
     int i;
     int n2;
     int n;
-    fft_type temp1;
-    fft_type temp2;
+    double temp1;
+    double temp2;
     n2 = obj->cobj->N;
     n = n2 * 2;
 
-    auto cinp = std::make_unique<FftData[]>(n2);
-    auto coup = std::make_unique<FftData[]>(n2);
+    auto cinp = std::make_unique<Complex[]>(n2);
+    auto coup = std::make_unique<Complex[]>(n2);
 
     for (i = 0; i < n2; ++i) {
         cinp[i].re = inp[2 * i];
@@ -2044,16 +2044,16 @@ auto fftR2cExec(FftRealSet* obj, fft_type const* inp, FftData* oup) -> void
     }
 }
 
-auto fftC2rExec(FftRealSet* obj, FftData* inp, fft_type* oup) -> void
+auto fftC2rExec(FftRealSet* obj, Complex* inp, double* oup) -> void
 {
     int i;
     int n2;
-    fft_type temp1;
-    fft_type temp2;
+    double temp1;
+    double temp2;
     n2 = obj->cobj->N;
 
-    auto cinp = std::make_unique<FftData[]>(n2);
-    auto coup = std::make_unique<FftData[]>(n2);
+    auto cinp = std::make_unique<Complex[]>(n2);
+    auto coup = std::make_unique<Complex[]>(n2);
 
     for (i = 0; i < n2; ++i) {
         temp1 = -inp[i].im - inp[n2 - i].im;

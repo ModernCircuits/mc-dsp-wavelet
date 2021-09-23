@@ -55,13 +55,13 @@ auto convInit(int n, int l) -> std::unique_ptr<Convolution>
     return obj;
 }
 
-auto convDirect(fft_type const* inp1, int n, fft_type const* inp2, int l, fft_type* oup) -> void
+auto convDirect(double const* inp1, int n, double const* inp2, int l, double* oup) -> void
 {
 
     int k;
     int m;
-    fft_type t1;
-    fft_type tmin;
+    double t1;
+    double tmin;
 
     auto const mm = n + l - 1;
     auto i = 0;
@@ -105,7 +105,7 @@ auto convDirect(fft_type const* inp1, int n, fft_type const* inp2, int l, fft_ty
     }
 }
 
-auto convFft(Convolution const& obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup) -> void
+auto convFft(Convolution const& obj, double const* inp1, double const* inp2, double* oup) -> void
 {
 
     auto n = obj.clen;
@@ -113,12 +113,12 @@ auto convFft(Convolution const& obj, fft_type const* inp1, fft_type const* inp2,
     auto l2 = obj.ilen2;
     auto ls = l1 + l2 - 1;
 
-    auto a = std::make_unique<fft_type[]>(n);
-    auto b = std::make_unique<fft_type[]>(n);
-    auto c = std::make_unique<FftData[]>(n);
-    auto ao = std::make_unique<FftData[]>(n);
-    auto bo = std::make_unique<FftData[]>(n);
-    auto co = std::make_unique<fft_type[]>(n);
+    auto a = std::make_unique<double[]>(n);
+    auto b = std::make_unique<double[]>(n);
+    auto c = std::make_unique<Complex[]>(n);
+    auto ao = std::make_unique<Complex[]>(n);
+    auto bo = std::make_unique<Complex[]>(n);
+    auto co = std::make_unique<double[]>(n);
 
     for (auto i = 0; i < n; i++) {
         if (i < l1) {
@@ -152,7 +152,7 @@ auto convFft(Convolution const& obj, fft_type const* inp1, fft_type const* inp2,
 auto fftRealInit(int n, int sgn) -> std::unique_ptr<FftRealSet>
 {
     auto obj = std::make_unique<FftRealSet>();
-    obj->data = std::make_unique<FftData[]>(n / 2);
+    obj->data = std::make_unique<Complex[]>(n / 2);
     obj->cobj = std::make_unique<FFT>(n / 2, sgn);
 
     for (auto k = 0; k < n / 2; ++k) {

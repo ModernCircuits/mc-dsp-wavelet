@@ -18,9 +18,9 @@ auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
 
     auto obj = std::make_unique<FFT>(n, -1);
     auto w = std::make_unique<double[]>(n);
-    auto phiw = std::make_unique<FftData[]>(n);
-    auto psiw = std::make_unique<FftData[]>(n);
-    auto oup = std::make_unique<FftData[]>(n);
+    auto phiw = std::make_unique<Complex[]>(n);
+    auto psiw = std::make_unique<Complex[]>(n);
+    auto oup = std::make_unique<Complex[]>(n);
 
     auto const delta = 2 * (ub - lb) / PI2;
 

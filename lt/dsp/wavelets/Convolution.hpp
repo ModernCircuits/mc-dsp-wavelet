@@ -12,5 +12,5 @@ struct Convolution {
 
 auto convInit(int n, int l) -> std::unique_ptr<Convolution>;
 
-auto convDirect(fft_type const* inp1, int n, fft_type const* inp2, int l, fft_type* oup) -> void;
-auto convFft(Convolution const& obj, fft_type const* inp1, fft_type const* inp2, fft_type* oup) -> void;
+auto convDirect(double const* inp1, int n, double const* inp2, int l, double* oup) -> void;
+auto convFft(Convolution const& obj, double const* inp1, double const* inp2, double* oup) -> void;

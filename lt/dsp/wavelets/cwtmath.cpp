@@ -5,7 +5,7 @@
 #include <cstring>
 #include <memory>
 
-static auto nsfftFd(FFT* obj, FftData* inp, FftData* oup, double lb, double ub, double* w) -> void
+static auto nsfftFd(FFT* obj, Complex* inp, Complex* oup, double lb, double ub, double* w) -> void
 {
     auto const n = obj->N;
     auto const l = n / 2;
@@ -51,7 +51,7 @@ static auto nsfftFd(FFT* obj, FftData* inp, FftData* oup, double lb, double ub, 
     }
 }
 
-static auto nsfftBk(FFT* obj, FftData* inp, FftData* oup, double lb, double ub, double* t) -> void
+static auto nsfftBk(FFT* obj, Complex* inp, Complex* oup, double lb, double ub, double* t) -> void
 {
 
     auto const n = obj->N;
@@ -67,7 +67,7 @@ static auto nsfftBk(FFT* obj, FftData* inp, FftData* oup, double lb, double ub, 
     auto temp1 = std::make_unique<double[]>(l);
     auto temp2 = std::make_unique<double[]>(l);
     auto w = std::make_unique<double[]>(n);
-    auto inpt = std::make_unique<FftData[]>(n);
+    auto inpt = std::make_unique<Complex[]>(n);
 
     auto const delta = (ub - lb) / n;
     auto const den = 2 * (ub - lb);
@@ -108,7 +108,7 @@ static auto nsfftBk(FFT* obj, FftData* inp, FftData* oup, double lb, double ub, 
     }
 }
 
-auto nsfftExec(FFT* obj, FftData* inp, FftData* oup, double lb, double ub, double* w) -> void
+auto nsfftExec(FFT* obj, Complex* inp, Complex* oup, double lb, double ub, double* w) -> void
 {
     if (obj->sgn == 1) {
         nsfftFd(obj, inp, oup, lb, ub, w);

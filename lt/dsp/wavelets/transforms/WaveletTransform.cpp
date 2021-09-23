@@ -875,11 +875,11 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
     auto fftFd = std::make_unique<FFT>(n, 1);
     auto fftBd = std::make_unique<FFT>(n, -1);
 
-    auto sig = std::make_unique<FftData[]>(n);
-    auto cA = std::make_unique<FftData[]>(n);
-    auto cD = std::make_unique<FftData[]>(n);
-    auto lowPass = std::make_unique<FftData[]>(n);
-    auto highPass = std::make_unique<FftData[]>(n);
+    auto sig = std::make_unique<Complex[]>(n);
+    auto cA = std::make_unique<Complex[]>(n);
+    auto cD = std::make_unique<Complex[]>(n);
+    auto lowPass = std::make_unique<Complex[]>(n);
+    auto highPass = std::make_unique<Complex[]>(n);
     auto index = std::make_unique<int[]>(n);
 
     // N-point FFT of low pass and high pass filters
@@ -887,7 +887,7 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
     // Low Pass Filter
 
     for (auto i = 0; i < lenAvg; ++i) {
-        sig[i].re = (fft_type)wt.wave().lpd()[i] / s;
+        sig[i].re = (double)wt.wave().lpd()[i] / s;
         sig[i].im = 0.0;
     }
     for (auto i = lenAvg; i < n; ++i) {
@@ -900,7 +900,7 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
     // High Pass Filter
 
     for (auto i = 0; i < lenAvg; ++i) {
-        sig[i].re = (fft_type)wt.wave().hpd()[i] / s;
+        sig[i].re = (double)wt.wave().hpd()[i] / s;
         sig[i].im = 0.0;
     }
     for (auto i = lenAvg; i < n; ++i) {
@@ -912,11 +912,11 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
 
     // symmetric extension
     for (auto i = 0; i < tempLen; ++i) {
-        sig[i].re = (fft_type)inp[i];
+        sig[i].re = (double)inp[i];
         sig[i].im = 0.0;
     }
     for (auto i = tempLen; i < n; ++i) {
-        sig[i].re = (fft_type)inp[n - i - 1];
+        sig[i].re = (double)inp[n - i - 1];
         sig[i].im = 0.0;
     }
 
@@ -971,7 +971,7 @@ auto modwt(WaveletTransform& wt, double const* inp) -> void
     modwtFft(wt, inp);
 }
 
-static auto conjComplex(FftData* x, int n) -> void
+static auto conjComplex(Complex* x, int n) -> void
 {
     for (auto i = 0; i < n; ++i) {
         x[i].im *= (-1.0);
@@ -988,11 +988,11 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
     auto fftFd = std::make_unique<FFT>(n, 1);
     auto fftBd = std::make_unique<FFT>(n, -1);
 
-    auto sig = std::make_unique<FftData[]>(n);
-    auto cA = std::make_unique<FftData[]>(n);
-    auto cD = std::make_unique<FftData[]>(n);
-    auto lowPass = std::make_unique<FftData[]>(n);
-    auto highPass = std::make_unique<FftData[]>(n);
+    auto sig = std::make_unique<Complex[]>(n);
+    auto cA = std::make_unique<Complex[]>(n);
+    auto cD = std::make_unique<Complex[]>(n);
+    auto lowPass = std::make_unique<Complex[]>(n);
+    auto highPass = std::make_unique<Complex[]>(n);
     auto index = std::make_unique<int[]>(n);
 
     // N-point FFT of low pass and high pass filters
@@ -1000,7 +1000,7 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
     // Low Pass Filter
 
     for (auto i = 0; i < lenAvg; ++i) {
-        sig[i].re = (fft_type)wt.wave().lpd()[i] / s;
+        sig[i].re = (double)wt.wave().lpd()[i] / s;
         sig[i].im = 0.0;
     }
     for (auto i = lenAvg; i < n; ++i) {
@@ -1013,7 +1013,7 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
     // High Pass Filter
 
     for (auto i = 0; i < lenAvg; ++i) {
-        sig[i].re = (fft_type)wt.wave().hpd()[i] / s;
+        sig[i].re = (double)wt.wave().hpd()[i] / s;
         sig[i].im = 0.0;
     }
     for (auto i = lenAvg; i < n; ++i) {
@@ -1033,7 +1033,7 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
 
     //
     for (auto i = 0; i < n; ++i) {
-        sig[i].re = (fft_type)wt.output()[i];
+        sig[i].re = (double)wt.output()[i];
         sig[i].im = 0.0;
     }
 
