@@ -1,7 +1,7 @@
 #include "WaveletPacketTransform.hpp"
 
+#include "lt/dsp/convolution/Convolution.hpp"
 #include "lt/dsp/fft/FFT.hpp"
-#include "lt/dsp/wavelets/Convolution.hpp"
 #include "lt/dsp/wavelets/transforms/common.hpp"
 
 #include <cassert>

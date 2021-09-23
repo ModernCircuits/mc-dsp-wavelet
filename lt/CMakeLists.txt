@@ -13,6 +13,9 @@ target_sources(${CMAKE_PROJECT_NAME}
     PRIVATE
         core/AudioFile.h
 
+        dsp/convolution/Convolution.cpp
+        dsp/convolution/Convolution.hpp
+        dsp/convolution/ConvolutionMethod.hpp
         dsp/convolution/OverlapSave.cpp
         dsp/convolution/OverlapSave.hpp
 
@@ -20,9 +23,6 @@ target_sources(${CMAKE_PROJECT_NAME}
         dsp/fft/FFT.cpp
 
         dsp/wavelets.hpp
-        dsp/wavelets/Convolution.cpp
-        dsp/wavelets/Convolution.hpp
-        dsp/wavelets/ConvolutionMethod.hpp
         dsp/wavelets/Denoise.hpp
         dsp/wavelets/Denoise.cpp
         dsp/wavelets/SignalExtension.hpp
