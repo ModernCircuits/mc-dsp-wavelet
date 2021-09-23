@@ -56,7 +56,9 @@ auto relError(double const* data, double const* rec, int N) -> double;
 
 auto generateRnd() -> double;
 
-using ConvolutionTestData = std::vector<std::vector<double>>;
+template <typename T>
+using ConvolutionTestData = std::vector<std::vector<T>>;
 
 auto split(std::string const& s, char delim) -> std::vector<std::string>;
-auto loadConvolutionTestData(char const* filePath) -> ConvolutionTestData;
+auto loadConvolutionTestData(char const* filePath) -> ConvolutionTestData<double>;
+auto toFloat(ConvolutionTestData<double> const& d) -> ConvolutionTestData<float>;

@@ -1,6 +1,7 @@
 #include "WaveletTransform.hpp"
 
 #include "lt/dsp/convolution/FFTConvolver.hpp"
+#include "lt/dsp/convolution/convolute.hpp"
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/common.hpp"
 
@@ -330,16 +331,16 @@ auto WaveletTransform::detail(std::size_t level) const noexcept -> lt::span<doub
 static auto wconv(WaveletTransform& wt, double* sig, int n, double const* filt, int l, double* oup) -> void
 {
     if (wt.convMethod() == ConvolutionMethod::direct) {
-        FFTConvolver::direct(sig, n, filt, l, oup);
+        convolute(sig, n, filt, l, oup);
         return;
     }
 
     assert(wt.convMethod() == ConvolutionMethod::fft);
     if (wt.cfftset == 0) {
         wt.cobj = std::make_unique<FFTConvolver>(n, l);
-        wt.cobj->convolute(sig, filt, oup);
+        convolute(*wt.cobj, sig, filt, oup);
     } else {
-        wt.cobj->convolute(sig, filt, oup);
+        convolute(*wt.cobj, sig, filt, oup);
     }
 }
 

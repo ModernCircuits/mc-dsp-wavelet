@@ -2,14 +2,15 @@
 
 #include "testing.hpp"
 
-auto testDirectConvolve(std::vector<std::vector<double>> const& testData) -> bool
+template <typename T>
+auto testDirectConvolve(std::vector<std::vector<T>> const& testData) -> bool
 {
     auto const& signal = testData[0];
     auto const& patch = testData[1];
     auto const& expected = testData[2];
 
-    auto output = std::vector<double>(expected.size());
-    FFTConvolver::direct(data(signal), size(signal), data(patch), size(patch), data(output));
+    auto output = std::vector<T>(expected.size());
+    convolute(data(signal), size(signal), data(patch), size(patch), data(output));
     REQUIRE(approxEqual(output, expected));
     return true;
 }
@@ -27,7 +28,8 @@ auto main() -> int
         std::cout << "Testing: " << testFile << " ...\n";
         auto const testData = loadConvolutionTestData(testFile);
         REQUIRE(testData.size() == 4U);
-        REQUIRE(testDirectConvolve(testData));
+        REQUIRE(testDirectConvolve<double>(testData));
+        REQUIRE(testDirectConvolve<float>(toFloat(testData)));
         std::cout << "Testing: " << testFile << " done\n";
     }
 

@@ -119,7 +119,7 @@ auto split(std::string const& s, char delim) -> std::vector<std::string>
     return result;
 }
 
-auto loadConvolutionTestData(char const* filePath) -> ConvolutionTestData
+auto loadConvolutionTestData(char const* filePath) -> ConvolutionTestData<double>
 {
     auto parseLine = [](auto const& line) {
         auto splits = split(line, ' ');
@@ -132,13 +132,26 @@ auto loadConvolutionTestData(char const* filePath) -> ConvolutionTestData
 
     auto file = std::fstream { filePath, std::ios::in };
     auto tmp = std::string {};
-    auto result = ConvolutionTestData {};
+    auto result = ConvolutionTestData<double> {};
 
     if (file.is_open()) {
         while (std::getline(file, tmp)) {
             result.push_back(parseLine(tmp));
         }
         file.close();
+    }
+
+    return result;
+}
+
+auto toFloat(ConvolutionTestData<double> const& d) -> ConvolutionTestData<float>
+{
+    auto result = ConvolutionTestData<float> {};
+    for (auto const& line : d) {
+        auto& lineFloat = result.emplace_back();
+        for (auto value : line) {
+            lineFloat.push_back(static_cast<float>(value));
+        }
     }
 
     return result;

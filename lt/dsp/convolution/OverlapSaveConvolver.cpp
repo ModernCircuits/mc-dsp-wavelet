@@ -158,24 +158,19 @@ auto OverlapSaveConvolver::extractResult() -> DoubleSignal
 // This private method implements steps 3,4,5 of the algorithm. If the given flag is false,
 // it will perform a convolution (4a), and a cross-correlation (4b) otherwise.
 // Note the parallelization with OpenMP, which increases performance in supporting CPUs.
-auto OverlapSaveConvolver::execute(const bool crossCorrelate) -> void
+auto OverlapSaveConvolver::execute(bool const crossCorrelate) -> void
 {
-    auto operation = (crossCorrelate) ? spectralCorrelation : spectralConvolution;
-    // do ffts
-
     for (auto& forwardPlan : forwardPlans_) {
         forwardPlan->execute();
     }
 
-    // multiply spectra
+    auto operation = (crossCorrelate) ? spectralCorrelation : spectralConvolution;
     for (std::size_t i = 0; i < resultChunks_.size(); i++) {
         operation(*inputChunksComplex_.at(i), this->paddedPatchComplex_, *resultChunksComplex_.at(i));
     }
 
-    // do iffts
     for (std::size_t i = 0; i < resultChunks_.size(); i++) {
         backwardPlans_.at(i)->execute();
-
         auto& chunk = *resultChunks_.at(i);
         auto divideBy = [this](auto arg) { return arg / resultChunksize_; };
         std::transform(std::begin(chunk), std::end(chunk), std::begin(chunk), divideBy);

@@ -1,13 +1,14 @@
 #pragma once
 
+#include "lt/dsp/convolution/convolute.hpp"
 #include "lt/dsp/fft/FFT.hpp"
 
 struct FFTConvolver {
+    using value_type = double;
+
     FFTConvolver(std::size_t signalSize, std::size_t patchSize);
 
     auto convolute(double const* signal, double const* patch, double* output) const -> void;
-
-    static auto direct(double const* signal, std::size_t n, double const* patch, std::size_t l, double* output) noexcept -> void;
 
 private:
     std::size_t signalSize_;
