@@ -7,6 +7,8 @@
 #include <string>
 
 struct ComplexWaveletTransform {
+    ComplexWaveletTransform(char const* wave, double param, int siglength, double dt, int j);
+
     std::string wave; // Wavelet - morl/morlet,paul,dog/dgauss
     int siglength; // Length of Input Data
     int J; // Total Number of Scales
@@ -29,14 +31,11 @@ struct ComplexWaveletTransform {
     std::unique_ptr<double[]> params;
 };
 
-auto cwtInit(char const* wave, double param, int siglength, double dt, int j) -> ComplexWaveletTransform*;
-
-auto setCWTScales(ComplexWaveletTransform* wt, double s0, double dj, char const* type, int power) -> void;
-auto cwt(ComplexWaveletTransform* wt, double const* inp) -> void;
-auto icwt(ComplexWaveletTransform* wt, double* cwtop) -> void;
+auto setCWTScales(ComplexWaveletTransform& wt, double s0, double dj, char const* type, int power) -> void;
+auto cwt(ComplexWaveletTransform& wt, double const* inp) -> void;
+auto icwt(ComplexWaveletTransform& wt, double* cwtop) -> void;
 
 auto summary(ComplexWaveletTransform const& wt) -> void;
-auto cwtFree(ComplexWaveletTransform* object) -> void;
 
 auto cwavelet(double const* y, int n, double dt, int mother, double param, double s0, double dj, int jtot, int npad,
     double* wave, double const* scale, double* period, double* coi) -> void;

@@ -274,7 +274,6 @@ auto cwtReconstructionTest()
     double epsilon;
     int it1;
     int it2;
-    ComplexWaveletTransform* wt;
 
     char const* wave[3] {
         "morl",
@@ -340,7 +339,7 @@ auto cwtReconstructionTest()
     for (it1 = 0; it1 < 3; ++it1) {
         for (it2 = 0; it2 < 10; ++it2) {
 
-            wt = cwtInit(wave[it1], param[it1 * 10 + it2], n, dt, j);
+            auto wt = ComplexWaveletTransform { wave[it1], param[it1 * 10 + it2], n, dt, j };
 
             setCWTScales(wt, s0, dj, type, a0);
 
@@ -350,12 +349,10 @@ auto cwtReconstructionTest()
 
             // printf("\nWavelet : %s Parameter %g Error %g \n",
             // wave[it1],param[it1*10+it2],REL_Error(inp.get(),oup.get(), wt->siglength));
-            if (relError(inp.get(), oup.get(), wt->siglength) > epsilon) {
+            if (relError(inp.get(), oup.get(), wt.siglength) > epsilon) {
                 printf("\n ERROR : DWPT Reconstruction Unit Test Failed. Exiting. \n");
                 exit(-1);
             }
-
-            cwtFree(wt);
         }
     }
 }

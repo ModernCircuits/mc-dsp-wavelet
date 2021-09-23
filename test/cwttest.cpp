@@ -26,7 +26,6 @@ auto main() -> int
     double num;
     double reconMean;
     double reconVar;
-    ComplexWaveletTransform* wt;
 
     // Set Morlet wavelet. Other options "paul" and "dog"
     auto const* wave = "morlet";
@@ -41,7 +40,7 @@ auto main() -> int
     j = 11 * subscale; // Total Number of scales
     a0 = 2; //power
 
-    wt = cwtInit(wave, param, n, dt, j);
+    auto wt = ComplexWaveletTransform { wave, param, n, dt, j };
 
     auto const inp = readFileToVector("testData/sst_nino3.dat");
     auto oup = std::make_unique<double[]>(n);
@@ -50,15 +49,15 @@ auto main() -> int
 
     cwt(wt, inp.data());
 
-    std::printf("\n MEAN %g \n", wt->smean);
+    std::printf("\n MEAN %g \n", wt.smean);
 
     mn = 0.0;
 
     for (i = 0; i < n; ++i) {
-        mn += std::sqrt(wt->output[i].real() * wt->output[i].real() + wt->output[i].imag() * wt->output[i].imag());
+        mn += std::sqrt(wt.output[i].real() * wt.output[i].real() + wt.output[i].imag() * wt.output[i].imag());
     }
 
-    summary(*wt);
+    summary(wt);
 
     std::printf("\n abs mean %g \n", mn / n);
 
@@ -67,10 +66,10 @@ auto main() -> int
     nd = n / 2 - 1;
 
     std::printf("%-15s%-15s%-15s%-15s \n", "j", "Scale", "Period", "ABS(w)^2");
-    for (k = 0; k < wt->J; ++k) {
+    for (k = 0; k < wt.J; ++k) {
         iter = nd + k * n;
-        std::printf("%-15d%-15lf%-15lf%-15lf \n", k, wt->scale[k], wt->period[k],
-            wt->output[iter].real() * wt->output[iter].real() + wt->output[iter].imag() * wt->output[iter].imag());
+        std::printf("%-15d%-15lf%-15lf%-15lf \n", k, wt.scale[k], wt.period[k],
+            wt.output[iter].real() * wt.output[iter].real() + wt.output[iter].imag() * wt.output[iter].imag());
     }
 
     icwt(wt, oup.get());
@@ -85,7 +84,7 @@ auto main() -> int
     }
 
     for (i = 0; i < n; ++i) {
-        //std::printf("%g %g \n", oup[i] ,inp[i] - wt->smean);
+        //std::printf("%g %g \n", oup[i] ,inp[i] - wt.smean);
         td = inp[i];
         tn = oup[i] - td;
         num += (tn * tn);
@@ -100,6 +99,5 @@ auto main() -> int
     std::printf("\nVariance %g \n", reconVar);
     std::printf("\nMean %g \n", reconMean);
 
-    cwtFree(wt);
     return 0;
 }

@@ -493,34 +493,31 @@ auto morlet(int n, double lb, double ub, double* psi, double* t) -> void
     }
 }
 
-auto cwtInit(char const* wave, double param, int siglength, double dt, int j) -> ComplexWaveletTransform*
+ComplexWaveletTransform::ComplexWaveletTransform(char const* wave, double param, int siglength, double dt, int j)
 {
     int n;
     int nj2;
     int ibase2;
-    double s0 {};
-    double dj {};
+    double s0Tmp {};
+    double djTmp {};
     double t1;
-    int m;
-    int odd;
     char const* pdefault = "pow";
 
-    m = (int)param;
-    odd = 1;
-    if (2 * (m / 2) == m) {
+    auto const mm = (int)param;
+    auto odd = 1;
+    if (2 * (mm / 2) == mm) {
         odd = 0;
     }
 
     n = siglength;
     nj2 = 2 * n * j;
-    auto obj = std::make_unique<ComplexWaveletTransform>();
-    obj->params = std::make_unique<double[]>(nj2 + 2 * j + n);
+    this->params = std::make_unique<double[]>(nj2 + 2 * j + n);
 
-    int mother { 0 };
+    int motherTmp { 0 };
     if ((wave == "morlet"sv) || (wave == "morl"sv)) {
-        s0 = 2 * dt;
-        dj = 0.4875;
-        mother = 0;
+        s0Tmp = 2 * dt;
+        djTmp = 0.4875;
+        motherTmp = 0;
         if (param < 0.0) {
             printf("\n Morlet Wavelet Parameter should be >= 0 \n");
             exit(-1);
@@ -528,12 +525,12 @@ auto cwtInit(char const* wave, double param, int siglength, double dt, int j) ->
         if (param == 0) {
             param = 6.0;
         }
-        obj->wave = "morlet";
+        this->wave = "morlet";
 
     } else if (wave == "paul"sv) {
-        s0 = 2 * dt;
-        dj = 0.4875;
-        mother = 1;
+        s0Tmp = 2 * dt;
+        djTmp = 0.4875;
+        motherTmp = 1;
         if (param < 0 || param > 20) {
             printf("\n Paul Wavelet Parameter should be > 0 and <= 20 \n");
             exit(-1);
@@ -541,12 +538,12 @@ auto cwtInit(char const* wave, double param, int siglength, double dt, int j) ->
         if (param == 0) {
             param = 4.0;
         }
-        obj->wave = "paul";
+        this->wave = "paul";
 
     } else if ((wave == "dgauss"sv) || (wave == "dog"sv)) {
-        s0 = 2 * dt;
-        dj = 0.4875;
-        mother = 2;
+        s0Tmp = 2 * dt;
+        djTmp = 0.4875;
+        motherTmp = 2;
         if (param < 0 || odd == 1) {
             printf("\n DOG Wavelet Parameter should be > 0 and even \n");
             exit(-1);
@@ -554,99 +551,97 @@ auto cwtInit(char const* wave, double param, int siglength, double dt, int j) ->
         if (param == 0) {
             param = 2.0;
         }
-        obj->wave = "dog";
+        this->wave = "dog";
     }
 
-    obj->pow = 2;
-    obj->type = pdefault;
+    this->pow = 2;
+    this->type = pdefault;
 
-    obj->s0 = s0;
-    obj->dj = dj;
-    obj->dt = dt;
-    obj->J = j;
-    obj->siglength = siglength;
-    obj->sflag = 0;
-    obj->pflag = 1;
-    obj->mother = mother;
-    obj->m = param;
+    this->s0 = s0Tmp;
+    this->dj = djTmp;
+    this->dt = dt;
+    this->J = j;
+    this->siglength = siglength;
+    this->sflag = 0;
+    this->pflag = 1;
+    this->mother = motherTmp;
+    this->m = param;
 
     t1 = 0.499999 + std::log((double)n) / std::log(2.0);
     ibase2 = 1 + (int)t1;
 
-    obj->npad = (int)std::pow(2.0, (double)ibase2);
+    this->npad = (int)std::pow(2.0, (double)ibase2);
 
-    obj->output = (Complex<double>*)&obj->params[0];
-    obj->scale = &obj->params[nj2];
-    obj->period = &obj->params[nj2 + j];
-    obj->coi = &obj->params[nj2 + 2 * j];
+    this->output = (Complex<double>*)&this->params[0];
+    this->scale = &this->params[nj2];
+    this->period = &this->params[nj2 + j];
+    this->coi = &this->params[nj2 + 2 * j];
 
     for (auto i = 0; i < nj2 + 2 * j + n; ++i) {
-        obj->params[i] = 0.0;
+        this->params[i] = 0.0;
     }
-
-    return obj.release();
 }
 
-auto setCWTScales(ComplexWaveletTransform* wt, double s0, double dj, char const* type, int power) -> void
+auto setCWTScales(ComplexWaveletTransform& wt, double s0, double dj, char const* type, int power) -> void
 {
-    wt->type = type;
+    wt.type = type;
     //s0*std::pow(2.0, (double)(j - 1)*dj);
-    if ((wt->type == "pow"sv) || (wt->type == "power"sv)) {
-        for (auto i = 0; i < wt->J; ++i) {
-            wt->scale[i] = s0 * std::pow((double)power, (double)(i)*dj);
+    if ((wt.type == "pow"sv) || (wt.type == "power"sv)) {
+        for (auto i = 0; i < wt.J; ++i) {
+            wt.scale[i] = s0 * std::pow((double)power, (double)(i)*dj);
         }
-        wt->sflag = 1;
-        wt->pow = power;
+        wt.sflag = 1;
+        wt.pow = power;
 
-    } else if ((wt->type == "lin"sv) || (wt->type == "linear"sv)) {
-        for (auto i = 0; i < wt->J; ++i) {
-            wt->scale[i] = s0 + (double)i * dj;
+    } else if ((wt.type == "lin"sv) || (wt.type == "linear"sv)) {
+        for (auto i = 0; i < wt.J; ++i) {
+            wt.scale[i] = s0 + (double)i * dj;
         }
-        wt->sflag = 1;
+        wt.sflag = 1;
     } else {
         printf("\n Type accepts only two values : pow and lin\n");
         exit(-1);
     }
-    wt->s0 = s0;
-    wt->dj = dj;
+    wt.s0 = s0;
+    wt.dj = dj;
 }
 
-auto cwt(ComplexWaveletTransform* wt, double const* inp) -> void
+auto cwt(ComplexWaveletTransform& wt, double const* inp) -> void
 {
     int n;
     int npad;
     int nj2;
     int j;
     int j2;
-    n = wt->siglength;
-    if (wt->sflag == 0) {
-        for (auto i = 0; i < wt->J; ++i) {
-            wt->scale[i] = wt->s0 * std::pow(2.0, (double)(i)*wt->dj);
+    n = wt.siglength;
+    if (wt.sflag == 0) {
+        for (auto i = 0; i < wt.J; ++i) {
+            wt.scale[i] = wt.s0 * std::pow(2.0, (double)(i)*wt.dj);
         }
-        wt->sflag = 1;
+        wt.sflag = 1;
     }
 
-    if (wt->pflag == 0) {
+    if (wt.pflag == 0) {
         npad = n;
     } else {
-        npad = wt->npad;
+        npad = wt.npad;
     }
 
-    nj2 = 2 * n * wt->J;
-    j = wt->J;
+    nj2 = 2 * n * wt.J;
+    j = wt.J;
     j2 = 2 * j;
 
-    wt->smean = 0.0;
+    wt.smean = 0.0;
 
     for (auto i = 0; i < n; ++i) {
-        wt->smean += inp[i];
+        wt.smean += inp[i];
     }
-    wt->smean /= n;
+    wt.smean /= n;
 
-    cwavelet(inp, n, wt->dt, wt->mother, wt->m, wt->s0, wt->dj, wt->J, npad, wt->params.get(), wt->params.get() + nj2, wt->params.get() + nj2 + j, wt->params.get() + nj2 + j2);
+    cwavelet(inp, n, wt.dt, wt.mother, wt.m, wt.s0, wt.dj, wt.J, npad, wt.params.get(), wt.params.get() + nj2, wt.params.get() + nj2 + j, wt.params.get() + nj2 + j2);
 }
 
-auto icwt(ComplexWaveletTransform* wt, double* cwtop) -> void
+auto icwt(ComplexWaveletTransform& wt, double* cwtop) -> void
 {
     double psi;
     double cdel;
@@ -654,20 +649,20 @@ auto icwt(ComplexWaveletTransform* wt, double* cwtop) -> void
     int n;
     int nj2;
 
-    n = wt->siglength;
-    nj2 = n * 2 * wt->J;
+    n = wt.siglength;
+    nj2 = n * 2 * wt.J;
 
-    psi0(wt->mother, wt->m, &psi, &real);
-    cdel = cdelta(wt->mother, wt->m, psi);
+    psi0(wt.mother, wt.m, &psi, &real);
+    cdel = cdelta(wt.mother, wt.m, psi);
 
-    if (((wt->type == "pow"sv) || (wt->type == "power"sv)) && wt->pow == 2) {
-        icwavelet(wt->params.get(), n, wt->params.get() + nj2, wt->J, wt->dt, wt->dj, cdel, psi, cwtop);
+    if (((wt.type == "pow"sv) || (wt.type == "power"sv)) && wt.pow == 2) {
+        icwavelet(wt.params.get(), n, wt.params.get() + nj2, wt.J, wt.dt, wt.dj, cdel, psi, cwtop);
     } else {
         printf("Inverse CWT is only available for power of 2.0 scales \n");
         exit(-1);
     }
     for (auto i = 0; i < n; ++i) {
-        cwtop[i] += wt->smean;
+        cwtop[i] += wt.smean;
     }
 }
 
@@ -693,11 +688,6 @@ auto summary(ComplexWaveletTransform const& wt) -> void
     printf("\n");
     printf("The ith real value can be accessed using wt.output()[i].real() and imaginary value by wt.output()[i].imag() \n");
     printf("\n");
-}
-
-auto cwtFree(ComplexWaveletTransform* object) -> void
-{
-    delete object;
 }
 
 static auto factorial(int n) -> double
