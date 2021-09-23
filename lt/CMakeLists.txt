@@ -34,8 +34,6 @@ target_sources(${CMAKE_PROJECT_NAME}
         dsp/wavelets/filters/h.hpp
         dsp/wavelets/filters/meyer.hpp
         dsp/wavelets/filters/sym.hpp
-        dsp/wavelets/filters/utility.cpp
-        dsp/wavelets/filters/utility.hpp
 
         dsp/wavelets/transforms/common.cpp
         dsp/wavelets/transforms/common.hpp
