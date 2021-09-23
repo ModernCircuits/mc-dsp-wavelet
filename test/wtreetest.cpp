@@ -16,25 +16,24 @@ auto main() -> int
     }
     auto const j = 3;
 
-    WaveletTree* wt = wtreeInit(&obj, n, j);
-    setWTREEExtension(wt, "sym");
+    auto wt = WaveletTree(&obj, n, j);
+    wt.extension("sym");
 
     wtree(wt, inp.get());
-    summary(*wt);
+    summary(wt);
     auto const x = 3;
     auto const y = 5;
-    auto const len = getWTREENodelength(wt, x);
+    auto const len = wt.nodeLength(x);
     std::printf("\n %d", len);
     std::printf("\n");
     auto oup = std::make_unique<double[]>(len);
 
     std::printf("Node [%d %d] Coefficients : \n", x, y);
-    getWTREECoeffs(wt, x, y, oup.get(), len);
+    wt.coeffs(x, y, oup.get(), len);
     for (auto i = 0; i < len; ++i) {
         std::printf("%g ", oup[i]);
     }
     std::printf("\n");
 
-    wtreeFree(wt);
     return EXIT_SUCCESS;
 }
