@@ -44,10 +44,10 @@ public:
     int MaxIter; // Maximum Iterations J <= MaxIter
     int even; // even = 1 if signal is of even length. even = 0 otherwise
 
-    int N{}; //
+    int N {}; //
     int cfftset;
-    int zpad{};
-    int length[102]{};
+    int zpad {};
+    int length[102] {};
     std::unique_ptr<double[]> params;
 };
 

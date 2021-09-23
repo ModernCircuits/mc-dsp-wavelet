@@ -33,7 +33,7 @@ struct FFT {
     [[nodiscard]] auto size() const noexcept -> int { return size_; }
     auto size(int newSize) noexcept -> void { size_ = newSize; }
 
-    int factors[64]{};
+    int factors[64] {};
     int lf;
     int lt;
     std::unique_ptr<Complex<double>[]> data;

@@ -25,11 +25,11 @@ struct WaveletTree {
     int MaxIter; // Maximum Iterations J <= MaxIter
     int even; // even = 1 if signal is of even length. even = 0 otherwise
 
-    int N{}; //
+    int N {}; //
     int nodes;
     int cfftset;
-    int zpad{};
-    int length[102]{};
+    int zpad {};
+    int length[102] {};
     double* output;
     int* coeflength;
     std::unique_ptr<double[]> params;

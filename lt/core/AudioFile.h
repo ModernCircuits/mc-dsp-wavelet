@@ -205,8 +205,8 @@ private:
 
     //=============================================================
     AudioFileFormat audioFileFormat_;
-    uint32_t sampleRate_{};
-    int bitDepth_{};
+    uint32_t sampleRate_ {};
+    int bitDepth_ {};
     bool logErrorsToConsole_ { true };
 };
 

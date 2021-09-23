@@ -24,7 +24,7 @@ struct ComplexWaveletTransform {
     int npad;
     int mother;
     double m; // Wavelet parameter param
-    double smean{}; // Input Signal mean
+    double smean {}; // Input Signal mean
 
     Complex<double>* output;
     double* scale;
