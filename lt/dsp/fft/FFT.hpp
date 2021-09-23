@@ -30,8 +30,8 @@ struct FFT {
     std::unique_ptr<Complex<double>[]> data;
 };
 
-struct FftRealSet {
-    FftRealSet(int n, int sgn);
+struct RealFFT {
+    RealFFT(int n, int sgn);
 
     auto performRealToComplex(double const* inp, Complex<double>* oup) -> void;
     auto performComplexToReal(Complex<double> const* inp, double* oup) -> void;

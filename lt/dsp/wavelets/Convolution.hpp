@@ -3,8 +3,8 @@
 #include "lt/dsp/fft/FFT.hpp"
 
 struct Convolution {
-    std::unique_ptr<FftRealSet> fobj;
-    std::unique_ptr<FftRealSet> iobj;
+    std::unique_ptr<RealFFT> fobj;
+    std::unique_ptr<RealFFT> iobj;
     int ilen1;
     int ilen2;
     int clen;

@@ -49,8 +49,8 @@ auto convInit(int n, int l) -> std::unique_ptr<Convolution>
     obj->ilen1 = n;
     obj->ilen2 = l;
 
-    obj->fobj = std::make_unique<FftRealSet>(obj->clen, 1);
-    obj->iobj = std::make_unique<FftRealSet>(obj->clen, -1);
+    obj->fobj = std::make_unique<RealFFT>(obj->clen, 1);
+    obj->iobj = std::make_unique<RealFFT>(obj->clen, -1);
 
     return obj;
 }

@@ -2005,7 +2005,7 @@ auto divideby(int m, int d) -> int
     return 0;
 }
 
-FftRealSet::FftRealSet(int n, int sgn)
+RealFFT::RealFFT(int n, int sgn)
 {
     data = std::make_unique<Complex<double>[]>(n / 2);
     cobj = std::make_unique<FFT>(n / 2, sgn);
@@ -2017,7 +2017,7 @@ FftRealSet::FftRealSet(int n, int sgn)
     }
 }
 
-auto FftRealSet::performRealToComplex(double const* inp, Complex<double>* oup) -> void
+auto RealFFT::performRealToComplex(double const* inp, Complex<double>* oup) -> void
 {
     int i;
     int n2;
@@ -2056,7 +2056,7 @@ auto FftRealSet::performRealToComplex(double const* inp, Complex<double>* oup) -
     }
 }
 
-auto FftRealSet::performComplexToReal(Complex<double> const* inp, double* oup) -> void
+auto RealFFT::performComplexToReal(Complex<double> const* inp, double* oup) -> void
 {
     auto const n = static_cast<std::size_t>(cobj->N);
     auto cinp = std::make_unique<Complex<double>[]>(n);
