@@ -1,6 +1,8 @@
 #include "lt/dsp/convolution.hpp"
 
+#include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #define REQUIRE(e)                                                                         \
@@ -34,23 +36,71 @@ auto approxEqual(Container1 c1, Container2 c2, int epsilonFactor = 4) -> bool
     return approxEqual(std::begin(c1), std::end(c1), std::begin(c2), std::end(c2), epsilonFactor);
 }
 
+using ConvolutionTestData = std::vector<std::vector<double>>;
+
+auto split(std::string const& s, char delim) -> std::vector<std::string>
+{
+    auto result = std::vector<std::string> {};
+    auto ss = std::stringstream(s);
+    auto item = std::string {};
+
+    while (std::getline(ss, item, delim)) {
+        result.push_back(item);
+    }
+    return result;
+}
+
+auto loadConvolutionTestData(char const* filePath) -> ConvolutionTestData
+{
+    auto parseLine = [](auto const& line) {
+        auto splits = split(line, ' ');
+        auto values = std::vector<double> {};
+        for (auto const& s : splits) {
+            values.push_back(std::stod(s));
+        }
+        return values;
+    };
+
+    auto file = std::fstream { filePath, std::ios::in };
+    auto tmp = std::string {};
+    auto result = ConvolutionTestData {};
+
+    if (file.is_open()) {
+        while (std::getline(file, tmp)) {
+            result.push_back(parseLine(tmp));
+        }
+        file.close();
+    }
+
+    return result;
+}
+
 auto main() -> int
 {
-    // auto si = std::array {1.0, 2.0, 3.0};
-    // auto pi = std::array {0.0, 1.0, 0.5};
+    auto const testFiles = std::vector<char const*> {
+        "testData/conv_xcorr_01.txt",
+        "testData/conv_xcorr_02.txt",
+        "testData/conv_xcorr_03.txt",
+        "testData/conv_xcorr_04.txt",
+    };
 
-    auto si = std::array { 1.0, 1.0, 1.0, 1.0, 1.0 };
-    auto pi = std::array { 0.0, 1.0, 0.5, 1.0, 1.0 };
+    for (auto const* testFile : testFiles) {
+        std::cout << "Testing: " << testFile << "...\n";
+        auto testData = loadConvolutionTestData(testFile);
+        REQUIRE(testData.size() == 4U);
 
-    auto s = DoubleSignal { si.data(), si.size() };
-    auto p = DoubleSignal { pi.data(), pi.size() };
-    auto x = OverlapSave { s, p };
+        auto s = DoubleSignal { testData[0].data(), testData[0].size() };
+        auto p = DoubleSignal { testData[1].data(), testData[1].size() };
+        auto x = OverlapSave { s, p };
 
-    x.convolute();
-    REQUIRE(approxEqual(x.extractResult(), std::array { 0.0, 1.0, 1.5, 2.5, 3.5, 3.5, 2.5, 2.0, 1.0 }));
+        x.convolute();
+        REQUIRE(approxEqual(x.extractResult(), testData[2]));
 
-    x.crossCorrelate();
-    REQUIRE(approxEqual(x.extractResult(), std::array { 1.0, 2.0, 2.5, 3.5, 3.5, 2.5, 1.5, 1.0, 0.0 }));
+        x.crossCorrelate();
+        REQUIRE(approxEqual(x.extractResult(), testData[3]));
+
+        std::cout << "Testing: " << testFile << " done\n";
+    }
 
     return EXIT_SUCCESS;
 }
