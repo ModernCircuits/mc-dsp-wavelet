@@ -131,8 +131,8 @@ auto modwT2ReconstructionTest()
                         setDWT2Extension(wt, "per");
                     }
 
-                    auto wavecoeffs = modwt2(wt, inp.get());
-                    imodwt2(wt, wavecoeffs.get(), out.get());
+                    auto wavecoeffs = modwt(wt, inp.get());
+                    imodwt(wt, wavecoeffs.get(), out.get());
 
                     if (directFft == 0) {
                         epsilon = 1e-8;
@@ -151,7 +151,7 @@ auto modwT2ReconstructionTest()
     }
 }
 
-auto dwptReconstructionTest()
+auto dwtReconstructionTest()
 {
 
     WaveletPacketTransform* wt;
@@ -237,9 +237,9 @@ auto dwptReconstructionTest()
                         setDWPTEntropy(wt, "logenergy", 0);
                     }
 
-                    dwpt(wt, inp.get()); // Perform DWT
+                    dwt(wt, inp.get()); // Perform DWT
 
-                    idwpt(wt, out.get()); // Perform IDWT (if needed)
+                    idwt(wt, out.get()); // Perform IDWT (if needed)
                         // Test Reconstruction
 
                     // BOOST_CHECK_SMALL(RMS_Error(out.get(), inp.get(), wt->siglength), epsilon); //
@@ -574,7 +574,7 @@ auto main() -> int
     modwtReconstructionTest();
     printf("DONE \n");
     printf("Running DWPT ReconstructionTests ... ");
-    dwptReconstructionTest();
+    dwtReconstructionTest();
     printf("DONE \n");
     printf("Running CWT ReconstructionTests ... ");
     cwtReconstructionTest();

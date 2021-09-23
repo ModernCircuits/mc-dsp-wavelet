@@ -193,9 +193,9 @@ auto dwT2ReconstructionTest()
                         setDWT2Extension(wt, "per");
                     }
 
-                    auto wavecoeffs = dwt2(wt, inp.get()); // Perform DWT
+                    auto wavecoeffs = dwt(wt, inp.get()); // Perform DWT
 
-                    idwt2(wt, wavecoeffs.get(), out.get()); // Perform IDWT (if needed)
+                    idwt(wt, wavecoeffs.get(), out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
                     if (directFft == 0) {

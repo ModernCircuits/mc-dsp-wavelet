@@ -30,7 +30,7 @@ auto main() -> int
         }
     }
 
-    auto wavecoeffs = dwt2(wt, inp.get());
+    auto wavecoeffs = dwt(wt, inp.get());
 
     int ir { 0 };
     int ic { 0 };
@@ -38,7 +38,7 @@ auto main() -> int
 
     dispWT2Coeffs(cLL, ir, ic);
 
-    idwt2(wt, wavecoeffs.get(), oup.get());
+    idwt(wt, wavecoeffs.get(), oup.get());
 
     for (auto i = 0; i < rows * cols; ++i) {
         diff[i] = oup[i] - inp[i];

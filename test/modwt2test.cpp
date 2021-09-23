@@ -31,13 +31,13 @@ auto main() -> int
         }
     }
 
-    auto wavecoeffs = modwt2(wt, inp.get());
+    auto wavecoeffs = modwt(wt, inp.get());
 
     int ir { 0 };
     int ic { 0 };
     getWT2Coeffs(wt, wavecoeffs.get(), j, "A", &ir, &ic);
 
-    imodwt2(wt, wavecoeffs.get(), oup.get());
+    imodwt(wt, wavecoeffs.get(), oup.get());
 
     for (auto i = 0; i < n; ++i) {
         diff[i] = oup[i] - inp[i];

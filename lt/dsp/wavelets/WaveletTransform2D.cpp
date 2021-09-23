@@ -13,7 +13,7 @@ using namespace std::string_view_literals;
 
 namespace {
 
-auto idwt2Shift(int shift, int rows, int cols, double const* lpr, double const* hpr, int lf, double* a, double* h, double* v, double* d, double* oup) -> void
+auto idwtShift(int shift, int rows, int cols, double const* lpr, double const* hpr, int lf, double* a, double* h, double* v, double* d, double* oup) -> void
 {
     auto const n = rows > cols ? 2 * rows : 2 * cols;
     auto const dim1 = 2 * rows;
@@ -200,7 +200,7 @@ auto setDWT2Extension(WaveletTransform2D* wt, char const* extension) -> void
     }
 }
 
-auto dwt2(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>
+auto dwt(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>
 {
     int iter;
     int n;
@@ -356,7 +356,7 @@ auto dwt2(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>
     return wavecoeff;
 }
 
-auto idwt2(WaveletTransform2D* wt, double* wavecoeff, double* oup) -> void
+auto idwt(WaveletTransform2D* wt, double* wavecoeff, double* oup) -> void
 {
 
     int ir;
@@ -684,7 +684,7 @@ auto iswt2(WaveletTransform2D* wt, double const* wavecoeffs, double* oup) -> voi
                 ir++;
             }
             shift = 0;
-            idwt2Shift(shift, ir, ic, wt->wave->lpr(), wt->wave->hpr(), wt->wave->lpdLen(), a.get(), h.get(), v.get(), d.get(), oup1.get());
+            idwtShift(shift, ir, ic, wt->wave->lpr(), wt->wave->hpr(), wt->wave->lpdLen(), a.get(), h.get(), v.get(), d.get(), oup1.get());
             //oup2
             ir = 0;
             ic = 0;
@@ -702,7 +702,7 @@ auto iswt2(WaveletTransform2D* wt, double const* wavecoeffs, double* oup) -> voi
                 ir++;
             }
             shift = -1;
-            idwt2Shift(shift, ir, ic, wt->wave->lpr(), wt->wave->hpr(), wt->wave->lpdLen(), a.get(), h.get(), v.get(), d.get(), oup2.get());
+            idwtShift(shift, ir, ic, wt->wave->lpr(), wt->wave->hpr(), wt->wave->lpdLen(), a.get(), h.get(), v.get(), d.get(), oup2.get());
             // Shift oup1 and oup2. Then add them to get A.
             i1 = 0;
             for (auto i = it2; i < rows; i += m) {
@@ -717,7 +717,7 @@ auto iswt2(WaveletTransform2D* wt, double const* wavecoeffs, double* oup) -> voi
     }
 }
 
-auto modwt2(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>
+auto modwt(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>
 {
     int j;
     int iter;
@@ -817,7 +817,7 @@ auto modwt2(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>
     return wavecoeff;
 }
 
-auto imodwt2(WaveletTransform2D* wt, double* wavecoeff, double* oup) -> void
+auto imodwt(WaveletTransform2D* wt, double* wavecoeff, double* oup) -> void
 {
     int rows;
     int cols;

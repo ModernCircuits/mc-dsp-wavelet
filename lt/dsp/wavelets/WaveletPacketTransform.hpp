@@ -34,8 +34,9 @@ struct WaveletPacketTransform {
 
 auto wptInit(Wavelet* wave, int siglength, int j) -> WaveletPacketTransform*;
 
-auto dwpt(WaveletPacketTransform* wt, double const* inp) -> void;
-auto idwpt(WaveletPacketTransform* wt, double* dwtop) -> void;
+auto dwt(WaveletPacketTransform* wt, double const* inp) -> void;
+auto idwt(WaveletPacketTransform* wt, double* dwtop) -> void;
+
 auto setDWPTExtension(WaveletPacketTransform* wt, char const* extension) -> void;
 auto setDWPTEntropy(WaveletPacketTransform* wt, char const* entropy, double eparam) -> void;
 auto getDWPTNodelength(WaveletPacketTransform* wt, int x) -> int;

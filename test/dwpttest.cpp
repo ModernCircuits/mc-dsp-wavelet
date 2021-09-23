@@ -26,9 +26,9 @@ auto main() -> int
     setDWPTExtension(wt, "per");
     setDWPTEntropy(wt, "logenergy", 0);
 
-    dwpt(wt, inp.get());
+    dwt(wt, inp.get());
 
-    idwpt(wt, oup.get());
+    idwt(wt, oup.get());
 
     for (auto i = 0; i < n; ++i) {
         diff[i] = (inp[i] - oup[i]) / inp[i];
