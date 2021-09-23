@@ -34,11 +34,11 @@ auto main() -> int
     iswt(wt, out.get()); // Perform ISWT (if needed)
     // Test Reconstruction
 
-    for (auto i = 0; i < wt.siglength; ++i) {
+    for (auto i = 0; i < wt.signalLength(); ++i) {
         diff[i] = out[i] - inp[i];
     }
 
-    std::printf("\n MAX %g \n", absmax(diff.get(), wt.siglength)); // If Reconstruction succeeded then the output should be a small value.
+    std::printf("\n MAX %g \n", absmax(diff.get(), wt.signalLength())); // If Reconstruction succeeded then the output should be a small value.
 
     summary(wt); // Prints the full summary.
 

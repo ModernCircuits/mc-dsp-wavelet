@@ -107,11 +107,11 @@ auto swtReconstructionTest()
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt.siglength), epsilon); //
+                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt.signalLength()), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%g ",RMS_Error(out, inp, wt.siglength));
-                    err = rmsError(out.get(), inp.get(), wt.siglength);
+                    // printf("%g ",RMS_Error(out, inp, wt.signalLength()));
+                    err = rmsError(out.get(), inp.get(), wt.signalLength());
                     // printf("%d %d %g \n",direct_fft,sym_per,err);
                     if (err > epsilon) {
                         printf(
@@ -213,10 +213,10 @@ auto swT2ReconstructionTest()
                     } else {
                         epsilon = 1e-10;
                     }
-                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt.siglength), epsilon); //
+                    // BOOST_CHECK_SMALL(RMS_Error(out, inp, wt.signalLength()), epsilon); //
                     // If Reconstruction succeeded then the output should be a small value.
 
-                    // printf("%g ",RMS_Error(out, inp, wt.siglength));
+                    // printf("%g ",RMS_Error(out, inp, wt.signalLength()));
                     if (rmsError(out.get(), inp.get(), n) > epsilon) {
                         printf(
                             "\n ERROR : SWT2 Reconstruction Unit Test Failed. Exiting. \n");

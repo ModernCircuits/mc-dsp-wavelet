@@ -34,12 +34,12 @@ auto main() -> int
 
     imodwt(wt, out.get()); // Perform ISWT (if needed)
 
-    for (auto i = 0; i < wt.siglength; ++i) {
+    for (auto i = 0; i < wt.signalLength(); ++i) {
         diff[i] = out[i] - inp[i];
     }
 
     // If Reconstruction succeeded then the output should be a small value.
-    printf("\n MAX %g \n", absmax(diff.get(), wt.siglength));
+    printf("\n MAX %g \n", absmax(diff.get(), wt.signalLength()));
 
     summary(wt); // Prints the full summary.
 

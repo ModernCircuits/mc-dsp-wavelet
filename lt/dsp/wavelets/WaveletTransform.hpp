@@ -14,6 +14,7 @@ struct WaveletTransform {
 
     [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *wave_; }
     [[nodiscard]] auto levels() const noexcept -> int { return levels_; }
+    [[nodiscard]] auto signalLength() const noexcept -> int { return signalLength_; }
     [[nodiscard]] auto method() const noexcept -> std::string const& { return method_; }
 
     auto extension(SignalExtension ext) -> void;
@@ -29,6 +30,7 @@ struct WaveletTransform {
 private:
     Wavelet* wave_;
     int levels_;
+    int signalLength_;
     std::string method_;
     SignalExtension ext_;
     ConvolutionMethod cmethod_;
@@ -37,7 +39,6 @@ private:
 
 public:
     std::unique_ptr<FFTConvolver> convolver;
-    int siglength; // Length of the original signal.
     int modwtsiglength; // Modified signal length for MODWT
     int outlength; // Length of the output DWT vector
     int lenlength; // Length of the Output Dimension Vector "length"

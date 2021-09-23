@@ -72,7 +72,7 @@ auto modwtReconstructionTest()
                         epsilon = 1e-10;
                     }
 
-                    auto const err = rmsError(out.get(), inp.get(), wt.siglength);
+                    auto const err = rmsError(out.get(), inp.get(), wt.signalLength());
                     if (err > epsilon) {
                         printf("\n ERROR : DWT Reconstruction Unit Test Failed. Exiting. \n");
                         exit(-1);
@@ -237,15 +237,8 @@ auto dwtReconstructionTest()
                         setDWPTEntropy(wt, "logenergy", 0);
                     }
 
-                    dwt(wt, inp.get()); // Perform DWT
-
-                    idwt(wt, out.get()); // Perform IDWT (if needed)
-                        // Test Reconstruction
-
-                    // BOOST_CHECK_SMALL(RMS_Error(out.get(), inp.get(), wt->siglength), epsilon); //
-                    // If Reconstruction succeeded then the output should be a small value.
-
-                    // printf("%s %g \n",name,RMS_Error(out.get(), inp.get(), wt->siglength));
+                    dwt(wt, inp.get());
+                    idwt(wt, out.get());
 
                     if (rmsError(out.get(), inp.get(), wt->siglength) > epsilon) {
                         printf(

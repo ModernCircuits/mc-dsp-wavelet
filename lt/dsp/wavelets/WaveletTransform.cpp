@@ -242,7 +242,7 @@ WaveletTransform::WaveletTransform(Wavelet& w, char const* method, int siglength
         ext_ = SignalExtension::periodic;
     }
 
-    this->siglength = siglength;
+    this->signalLength_ = siglength;
     this->modwtsiglength = siglength;
     this->MaxIter = maxIter;
     method_ = method;
@@ -411,7 +411,7 @@ static auto dwt1(WaveletTransform& wt, double* sig, int lenSig, double* cA, doub
 auto dwt(WaveletTransform& wt, double const* inp) -> void
 {
 
-    auto tempLen = wt.siglength;
+    auto tempLen = wt.signalLength();
     auto const j = wt.levels();
 
     wt.length[j + 1] = tempLen;
@@ -421,7 +421,7 @@ auto dwt(WaveletTransform& wt, double const* inp) -> void
     auto orig2 = std::make_unique<double[]>(tempLen);
     auto orig = std::make_unique<double[]>(tempLen);
 
-    for (auto i = 0; i < wt.siglength; ++i) {
+    for (auto i = 0; i < wt.signalLength(); ++i) {
         orig[i] = inp[i];
     }
 
@@ -565,7 +565,7 @@ auto idwt(WaveletTransform& wt, double* dwtop) -> void
     auto j = wt.levels();
     auto u = 2;
     auto appLen = wt.length[0];
-    auto out = std::make_unique<double[]>(wt.siglength + 1);
+    auto out = std::make_unique<double[]>(wt.signalLength() + 1);
     if ((wt.extension() == SignalExtension::periodic) && (wt.convMethod() == ConvolutionMethod::fft)) {
         appLen = wt.length[0];
         detLen = wt.length[1];
@@ -687,7 +687,7 @@ auto idwt(WaveletTransform& wt, double* dwtop) -> void
         exit(-1);
     }
 
-    for (auto i = 0; i < wt.siglength; ++i) {
+    for (auto i = 0; i < wt.signalLength(); ++i) {
         dwtop[i] = out[i];
     }
 }
@@ -702,7 +702,7 @@ static auto swtFft(WaveletTransform& wt, double const* inp) -> void
 {
     int n { 0 };
 
-    auto tempLen = wt.siglength;
+    auto tempLen = wt.signalLength();
     auto j = wt.levels();
     wt.length[0] = wt.length[j] = tempLen;
     wt.outlength = wt.length[j + 1] = (j + 1) * tempLen;
@@ -779,7 +779,7 @@ static auto swtDirect(WaveletTransform& wt, double const* inp) -> void
     int m = 0;
     int lenacc = 0;
 
-    tempLen = wt.siglength;
+    tempLen = wt.signalLength();
     j = wt.levels();
     wt.length[0] = wt.length[j] = tempLen;
     wt.outlength = wt.length[j + 1] = (j + 1) * tempLen;
@@ -829,7 +829,7 @@ auto swt(WaveletTransform& wt, double const* inp) -> void
 
 auto iswt(WaveletTransform& wt, double* swtop) -> void
 {
-    auto n = wt.siglength;
+    auto n = wt.signalLength();
     auto j = wt.levels();
     auto u = 2;
     auto lf = wt.wave().lprLen();
@@ -983,7 +983,7 @@ static auto modwtDirect(WaveletTransform& wt, double const* inp) -> void
         exit(-1);
     }
 
-    auto tempLen = wt.siglength;
+    auto tempLen = wt.signalLength();
     auto j = wt.levels();
     wt.length[0] = wt.length[j] = tempLen;
     wt.outlength = wt.length[j + 1] = (j + 1) * tempLen;
@@ -1029,7 +1029,7 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
     double tmp1 = NAN;
     double tmp2 = NAN;
 
-    auto tempLen = wt.siglength;
+    auto tempLen = wt.signalLength();
     auto lenAvg = wt.wave().lpdLen();
     int n { 0 };
     if (wt.extension() == SignalExtension::symmetric) {
@@ -1241,7 +1241,7 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
         lenacc += n;
     }
 
-    for (auto i = 0; i < wt.siglength; ++i) {
+    for (auto i = 0; i < wt.signalLength(); ++i) {
         oup[i] = sig[i].real();
     }
 }
@@ -1276,7 +1276,7 @@ static auto imodwtPer(WaveletTransform& wt, int m, double const* cA, int lenCA, 
 
 static auto imodwtDirect(WaveletTransform& wt, double* dwtop) -> void
 {
-    auto n = wt.siglength;
+    auto n = wt.signalLength();
     auto lenacc = n;
 
     auto j = wt.levels();
@@ -1329,7 +1329,7 @@ auto summary(WaveletTransform const& wt) -> void
     printf("Signal Extension : %s \n", toString(wt.extension()).c_str());
     printf("Convolutional Method : %s \n", toString(wt.convMethod()).c_str());
     printf("Number of Decomposition Levels %d \n", wt.levels());
-    printf("Length of Input Signal %d \n", wt.siglength);
+    printf("Length of Input Signal %d \n", wt.signalLength());
     printf("Length of WT Output Vector %d \n", wt.outlength);
     printf("Wavelet Coefficients are contained in vector : %s \n", "output");
     printf("Approximation Coefficients \n");

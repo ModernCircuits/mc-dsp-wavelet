@@ -31,12 +31,12 @@ auto main() -> int
     idwt(wt, out.get());
 
     auto diff = std::make_unique<double[]>(n);
-    for (auto i = 0; i < wt.siglength; ++i) {
+    for (auto i = 0; i < wt.signalLength(); ++i) {
         diff[i] = out[i] - input[i];
     }
 
     // If Reconstruction succeeded then the output should be a small value.
-    printf("\n MAX %g \n", absmax(diff.get(), wt.siglength));
+    printf("\n MAX %g \n", absmax(diff.get(), wt.signalLength()));
 
     // Prints the full summary.
     summary(wt);
