@@ -45,7 +45,7 @@ auto main() -> int
     auto const inp = readFileToVector("testData/sst_nino3.dat");
     auto oup = std::make_unique<double[]>(n);
 
-    setCWTScales(wt, s0, dj, type, a0);
+    wt.scales(s0, dj, type, a0);
 
     cwt(wt, inp.data());
 
