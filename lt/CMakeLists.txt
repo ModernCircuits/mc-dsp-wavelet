@@ -26,8 +26,6 @@ target_sources(${CMAKE_PROJECT_NAME}
         dsp/wavelets/Denoise.hpp
         dsp/wavelets/Denoise.cpp
         dsp/wavelets/SignalExtension.hpp
-        dsp/wavelets/wavefunc.cpp
-        dsp/wavelets/wavefunc.h
         dsp/wavelets/Wavelet.cpp
         dsp/wavelets/Wavelet.hpp
 

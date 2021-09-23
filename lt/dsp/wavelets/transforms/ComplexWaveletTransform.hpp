@@ -3,7 +3,6 @@
 #include "tcb/span.hpp"
 
 #include "lt/dsp/convolution/Convolution.hpp"
-#include "lt/dsp/wavelets/wavefunc.h"
 
 #include <string>
 
@@ -47,3 +46,8 @@ auto psi0(int mother, double param, double* val, int* real) -> void;
 auto cdelta(int mother, double param, double psi0) -> double;
 
 auto icwavelet(double const* wave, int n, double* scale, int jtot, double dt, double dj, double cdelta, double psi0, double* oup) -> void;
+
+auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid) -> void;
+auto gauss(int n, int p, double lb, double ub, double* psi, double* t) -> void;
+auto mexhat(int n, double lb, double ub, double* psi, double* t) -> void;
+auto morlet(int n, double lb, double ub, double* psi, double* t) -> void;
