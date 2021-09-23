@@ -20,7 +20,7 @@ using Complex = std::complex<T>;
 struct FFT {
     FFT(int n, int sgn);
 
-    auto perform(Complex<double>* inp, Complex<double>* oup) -> void;
+    auto perform(Complex<double> const* inp, Complex<double>* oup) -> void;
 
     int N;
     int sgn;
@@ -31,13 +31,13 @@ struct FFT {
 };
 
 struct FftRealSet {
+    FftRealSet(int n, int sgn);
+
     std::unique_ptr<FFT> cobj;
     std::unique_ptr<Complex<double>[]> data;
 };
 
-auto fftRealInit(int n, int sgn) -> std::unique_ptr<FftRealSet>;
-
 auto fftR2cExec(FftRealSet* obj, double const* inp, Complex<double>* oup) -> void;
-auto fftC2rExec(FftRealSet* obj, Complex<double>* inp, double* oup) -> void;
+auto fftC2rExec(FftRealSet* obj, Complex<double> const* inp, double* oup) -> void;
 
 auto divideby(int m, int d) -> int;

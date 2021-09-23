@@ -245,7 +245,7 @@ FFT::FFT(int n, int sgn)
     }
 }
 
-static auto mixedRadixDitRec(Complex<double>* op, Complex<double>* ip, const FFT* obj, int sgn, int n, int l, int inc) -> void
+static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, const FFT* obj, int sgn, int n, int l, int inc) -> void
 {
 
     auto const radix = n > 1 ? obj->factors[inc] : 0;
@@ -1881,7 +1881,7 @@ static auto bluesteinExp(Complex<double>* hl, Complex<double>* hlt, int len, int
     }
 }
 
-static auto bluesteinFft(Complex<double>* data, Complex<double>* oup, FFT* obj, int sgn, int n) -> void
+static auto bluesteinFft(Complex<double> const* data, Complex<double>* oup, FFT* obj, int sgn, int n) -> void
 {
 
     int m;
@@ -1983,7 +1983,7 @@ static auto bluesteinFft(Complex<double>* data, Complex<double>* oup, FFT* obj, 
     }
 }
 
-auto FFT::perform(Complex<double>* inp, Complex<double>* oup) -> void
+auto FFT::perform(Complex<double> const* inp, Complex<double>* oup) -> void
 {
     if (lt == 0) {
         mixedRadixDitRec(oup, inp, this, sgn, N, 1, 0);
@@ -2003,6 +2003,18 @@ auto divideby(int m, int d) -> int
         return 1;
     }
     return 0;
+}
+
+FftRealSet::FftRealSet(int n, int sgn)
+{
+    data = std::make_unique<Complex<double>[]>(n / 2);
+    cobj = std::make_unique<FFT>(n / 2, sgn);
+
+    for (auto k = 0; k < n / 2; ++k) {
+        auto const theta = PI2 * k / n;
+        data[k].real(std::cos(theta));
+        data[k].imag(std::sin(theta));
+    }
 }
 
 auto fftR2cExec(FftRealSet* obj, double const* inp, Complex<double>* oup) -> void
@@ -2044,7 +2056,7 @@ auto fftR2cExec(FftRealSet* obj, double const* inp, Complex<double>* oup) -> voi
     }
 }
 
-auto fftC2rExec(FftRealSet* obj, Complex<double>* inp, double* oup) -> void
+auto fftC2rExec(FftRealSet* obj, Complex<double> const* inp, double* oup) -> void
 {
     int i;
     int n2;

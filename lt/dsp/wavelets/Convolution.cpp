@@ -49,8 +49,8 @@ auto convInit(int n, int l) -> std::unique_ptr<Convolution>
     obj->ilen1 = n;
     obj->ilen2 = l;
 
-    obj->fobj = fftRealInit(obj->clen, 1);
-    obj->iobj = fftRealInit(obj->clen, -1);
+    obj->fobj = std::make_unique<FftRealSet>(obj->clen, 1);
+    obj->iobj = std::make_unique<FftRealSet>(obj->clen, -1);
 
     return obj;
 }
@@ -149,19 +149,4 @@ auto convFft(Convolution const& obj, double const* inp1, double const* inp2, dou
     for (auto i = 0; i < ls; i++) {
         oup[i] = co[i] / n;
     }
-}
-
-auto fftRealInit(int n, int sgn) -> std::unique_ptr<FftRealSet>
-{
-    auto obj = std::make_unique<FftRealSet>();
-    obj->data = std::make_unique<Complex<double>[]>(n / 2);
-    obj->cobj = std::make_unique<FFT>(n / 2, sgn);
-
-    for (auto k = 0; k < n / 2; ++k) {
-        auto const theta = PI2 * k / n;
-        obj->data[k].real(std::cos(theta));
-        obj->data[k].imag(std::sin(theta));
-    }
-
-    return obj;
 }
