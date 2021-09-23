@@ -36,7 +36,7 @@ private:
     double* output_;
 
 public:
-    std::unique_ptr<FFTConvolver> cobj;
+    std::unique_ptr<FFTConvolver> convolver;
     int siglength; // Length of the original signal.
     int modwtsiglength; // Modified signal length for MODWT
     int outlength; // Length of the output DWT vector
