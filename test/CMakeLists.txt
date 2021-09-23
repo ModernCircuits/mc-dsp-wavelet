@@ -1,5 +1,6 @@
-add_library(wavelib_testdata testing.hpp testing.cpp)
+add_library(wavelib_testdata ${CMAKE_SOURCE_DIR}/lt/testing/test.cpp ${CMAKE_SOURCE_DIR}/lt/testing/test.hpp)
 target_include_directories(wavelib_testdata PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(wavelib_testdata PUBLIC wavelib)
 add_custom_command(
     TARGET
         wavelib_testdata

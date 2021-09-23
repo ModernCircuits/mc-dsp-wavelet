@@ -1,7 +1,8 @@
 #pragma once
 
+#include "lt/cmath.hpp"
+
 #include <algorithm>
-#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <limits>

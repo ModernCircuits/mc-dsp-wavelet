@@ -1,7 +1,7 @@
 #include "FFT.hpp"
 
 #include "lt/cassert.hpp"
-#include <cmath>
+#include "lt/cmath.hpp"
 #include <cstdio>
 #include <cstring>
 #include <memory>

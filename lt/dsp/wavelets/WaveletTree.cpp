@@ -3,7 +3,7 @@
 #include "lt/dsp/wavelets/common.hpp"
 
 #include "lt/cassert.hpp"
-#include <cmath>
+#include "lt/cmath.hpp"
 #include <string_view>
 
 using namespace std::string_view_literals;

@@ -1,9 +1,10 @@
+#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets.hpp"
 
-#include "readFileToVector.hpp"
-#include "testing.hpp"
+#include "lt/testing/test.hpp"
 
-#include <cmath>
+#include "readFileToVector.hpp"
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>

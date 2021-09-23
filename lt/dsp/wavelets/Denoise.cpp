@@ -1,13 +1,14 @@
 #include "Denoise.hpp"
 
+#include "lt/cmath.hpp"
 #include <algorithm>
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
 #include <numeric>
 #include <string_view>
+
 
 using namespace std::string_view_literals;
 

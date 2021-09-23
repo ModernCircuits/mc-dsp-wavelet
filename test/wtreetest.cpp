@@ -1,6 +1,6 @@
+#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets.hpp"
 
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>

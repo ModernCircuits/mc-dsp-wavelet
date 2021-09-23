@@ -1,6 +1,7 @@
 #include "lt/dsp/wavelets/Denoise.hpp"
+#include "lt/cmath.hpp"
 
-#include <cmath>
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>

@@ -5,7 +5,7 @@
 #include "lt/dsp/wavelets/common.hpp"
 
 #include "lt/cassert.hpp"
-#include <cmath>
+#include "lt/cmath.hpp"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -17,7 +17,7 @@ using namespace std::string_view_literals;
 namespace {
 #include "lt/dsp/fft/FFT.hpp"
 
-#include <cmath>
+#include "lt/cmath.hpp"
 #include <cstdio>
 #include <memory>
 

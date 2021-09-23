@@ -1,12 +1,12 @@
+#include "lt/cmath.hpp"
 #include "lt/core/AudioFile.h"
 #include "lt/dsp/convolution.hpp"
 #include "lt/dsp/wavelets.hpp"
 
+#include "lt/testing/test.hpp"
 #include "readFileToVector.hpp"
-#include "testing.hpp"
 
 #include <algorithm>
-#include <cmath>
 #include <numeric>
 #include <utility>
 

@@ -8,7 +8,7 @@
 #include "lt/dsp/wavelets/filters/sym.hpp"
 
 #define USE_MATH_DEFINES
-#include <cmath>
+#include "lt/cmath.hpp"
 #include <cstdio>
 #include <cstring>
 #include <memory>

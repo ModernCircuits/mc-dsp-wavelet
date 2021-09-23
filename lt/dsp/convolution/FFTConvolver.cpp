@@ -1,7 +1,7 @@
 #include "FFTConvolver.hpp"
 
+#include "lt/cmath.hpp"
 #include <algorithm>
-#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <memory>

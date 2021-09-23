@@ -1,8 +1,8 @@
+#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets.hpp"
 
 #include "readFileToVector.hpp"
 
-#include <cmath>
 #include <memory>
 
 auto main() -> int

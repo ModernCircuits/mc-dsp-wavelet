@@ -1,11 +1,8 @@
-/*
- * Copyright (c) 2016 Holger Nahrstaedt (TU Berlin)
- */
+#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets.hpp"
 
-#include "testing.hpp"
+#include "lt/testing/test.hpp"
 
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>

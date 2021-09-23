@@ -5,12 +5,13 @@
 
 #include "lt/dsp/wavelets.hpp"
 
+#include "lt/cmath.hpp"
 #include <cfloat>
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <string>
+
 
 struct DenoiseSet {
     int N {}; //signal length

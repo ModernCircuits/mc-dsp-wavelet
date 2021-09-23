@@ -1,8 +1,8 @@
+#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets/Denoise.hpp"
 
 #include "readFileToVector.hpp"
 
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>

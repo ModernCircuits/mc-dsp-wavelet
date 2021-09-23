@@ -2,9 +2,9 @@
 
 #include <fftw3.h>
 
+#include "lt/cmath.hpp"
 #include <algorithm>
 #include <array>
-#include <cmath>
 #include <cstring>
 #include <iostream>
 #include <iterator>

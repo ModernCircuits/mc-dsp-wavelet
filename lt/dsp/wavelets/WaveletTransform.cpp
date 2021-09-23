@@ -6,7 +6,7 @@
 #include "lt/dsp/wavelets/common.hpp"
 
 #include "lt/cassert.hpp"
-#include <cmath>
+#include "lt/cmath.hpp"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
