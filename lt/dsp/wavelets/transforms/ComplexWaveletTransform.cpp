@@ -96,7 +96,7 @@ auto cwtInit(char const* wave, double param, int siglength, double dt, int j) ->
 
     obj->npad = (int)std::pow(2.0, (double)ibase2);
 
-    obj->output = (Complex*)&obj->params[0];
+    obj->output = (Complex<double>*)&obj->params[0];
     obj->scale = &obj->params[nj2];
     obj->period = &obj->params[nj2 + j];
     obj->coi = &obj->params[nj2 + 2 * j];
@@ -212,7 +212,7 @@ auto summary(ComplexWaveletTransform const& wt) -> void
     printf("\n");
     printf("Complex CWT Output Vector is of size %d  const& %d stored in Row Major format \n", wt.J, wt.siglength);
     printf("\n");
-    printf("The ith real value can be accessed using wt.output()[i].re and imaginary value by wt.output()[i].im \n");
+    printf("The ith real value can be accessed using wt.output()[i].real() and imaginary value by wt.output()[i].imag() \n");
     printf("\n");
 }
 
@@ -276,7 +276,7 @@ static auto factorial(int n) -> double
 }
 
 static auto waveFunction(int nk, double dt, int mother, double param, double scale1, double const* kwave, double pi, double* period1,
-    double* coi1, Complex* daughter) -> void
+    double* coi1, Complex<double>* daughter) -> void
 {
 
     double norm;
@@ -298,11 +298,12 @@ static auto waveFunction(int nk, double dt, int mother, double param, double sca
         for (k = 1; k <= nk / 2 + 1; ++k) {
             temp = (scale1 * kwave[k - 1] - param);
             expnt = -0.5 * temp * temp;
-            daughter[k - 1].re = norm * std::exp(expnt);
-            daughter[k - 1].im = 0.0;
+            daughter[k - 1].real(norm * std::exp(expnt));
+            daughter[k - 1].imag(0.0);
         }
         for (k = nk / 2 + 2; k <= nk; ++k) {
-            daughter[k - 1].re = daughter[k - 1].im = 0.0;
+            daughter[k - 1].real(0.0);
+            daughter[k - 1].imag(0.0);
         }
         fourierFactor = (4.0 * pi) / (param + std::sqrt(2.0 + param * param));
         *period1 = scale1 * fourierFactor;
@@ -317,11 +318,12 @@ static auto waveFunction(int nk, double dt, int mother, double param, double sca
         for (k = 1; k <= nk / 2 + 1; ++k) {
             temp = scale1 * kwave[k - 1];
             expnt = -temp;
-            daughter[k - 1].re = norm * std::pow(temp, (double)m) * std::exp(expnt);
-            daughter[k - 1].im = 0.0;
+            daughter[k - 1].real(norm * std::pow(temp, (double)m) * std::exp(expnt));
+            daughter[k - 1].imag(0.0);
         }
         for (k = nk / 2 + 2; k <= nk; ++k) {
-            daughter[k - 1].re = daughter[k - 1].im = 0.0;
+            daughter[k - 1].real(0.0);
+            daughter[k - 1].imag(0.0);
         }
         fourierFactor = (4.0 * pi) / (2.0 * m + 1.0);
         *period1 = scale1 * fourierFactor;
@@ -350,14 +352,14 @@ static auto waveFunction(int nk, double dt, int mother, double param, double sca
         if (re == 1) {
             for (k = 1; k <= nk; ++k) {
                 temp = scale1 * kwave[k - 1];
-                daughter[k - 1].re = norm * std::pow(temp, (double)m) * std::exp(-0.50 * std::pow(temp, 2.0));
-                daughter[k - 1].im = 0.0;
+                daughter[k - 1].real(norm * std::pow(temp, (double)m) * std::exp(-0.50 * std::pow(temp, 2.0)));
+                daughter[k - 1].imag(0.0);
             }
         } else if (re == 0) {
             for (k = 1; k <= nk; ++k) {
                 temp = scale1 * kwave[k - 1];
-                daughter[k - 1].re = 0.0;
-                daughter[k - 1].im = norm * std::pow(temp, (double)m) * std::exp(-0.50 * std::pow(temp, 2.0));
+                daughter[k - 1].real(0.0);
+                daughter[k - 1].imag(norm * std::pow(temp, (double)m) * std::exp(-0.50 * std::pow(temp, 2.0)));
             }
         }
         fourierFactor = (2.0 * pi) * std::sqrt(2.0 / (2.0 * m + 1.0));
@@ -395,9 +397,9 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
     auto obj = std::make_unique<FFT>(npad, 1);
     auto iobj = std::make_unique<FFT>(npad, -1);
 
-    auto ypad = std::make_unique<Complex[]>(npad);
-    auto yfft = std::make_unique<Complex[]>(npad);
-    auto daughter = std::make_unique<Complex[]>(npad);
+    auto ypad = std::make_unique<Complex<double>[]>(npad);
+    auto yfft = std::make_unique<Complex<double>[]>(npad);
+    auto daughter = std::make_unique<Complex<double>[]>(npad);
     auto kwave = std::make_unique<double[]>(npad);
     ymean = 0.0;
 
@@ -408,12 +410,13 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
     ymean /= n;
 
     for (auto i = 0; i < n; ++i) {
-        ypad[i].re = y[i] - ymean;
-        ypad[i].im = 0.0;
+        ypad[i].real(y[i] - ymean);
+        ypad[i].imag(0.0);
     }
 
     for (auto i = n; i < npad; ++i) {
-        ypad[i].re = ypad[i].im = 0.0;
+        ypad[i].real(0.0);
+        ypad[i].imag(0.0);
     }
 
     // Find FFT of the input y (ypad)
@@ -421,8 +424,8 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
     obj->perform(ypad.get(), yfft.get());
 
     for (auto i = 0; i < npad; ++i) {
-        yfft[i].re /= (double)npad;
-        yfft[i].im /= (double)npad;
+        yfft[i].real(yfft[i].real() / (double)npad);
+        yfft[i].imag(yfft[i].imag() / (double)npad);
     }
 
     //Construct the wavenumber array
@@ -445,16 +448,16 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
         waveFunction(npad, dt, mother, param, scale1, kwave.get(), pi, &period1, &coi1, daughter.get());
         period[j - 1] = period1;
         for (k = 0; k < npad; ++k) {
-            tmp1 = daughter[k].re * yfft[k].re - daughter[k].im * yfft[k].im;
-            tmp2 = daughter[k].re * yfft[k].im + daughter[k].im * yfft[k].re;
-            daughter[k].re = tmp1;
-            daughter[k].im = tmp2;
+            tmp1 = daughter[k].real() * yfft[k].real() - daughter[k].imag() * yfft[k].imag();
+            tmp2 = daughter[k].real() * yfft[k].imag() + daughter[k].imag() * yfft[k].real();
+            daughter[k].real(tmp1);
+            daughter[k].imag(tmp2);
         }
         iobj->perform(daughter.get(), ypad.get());
         iter = 2 * (j - 1) * n;
         for (auto i = 0; i < n; ++i) {
-            wave[iter + 2 * i] = ypad[i].re;
-            wave[iter + 2 * i + 1] = ypad[i].im;
+            wave[iter + 2 * i] = ypad[i].real();
+            wave[iter + 2 * i + 1] = ypad[i].imag();
         }
     }
 

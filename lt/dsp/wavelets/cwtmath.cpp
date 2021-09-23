@@ -5,7 +5,7 @@
 #include <cstring>
 #include <memory>
 
-static auto nsfftFd(FFT* obj, Complex* inp, Complex* oup, double lb, double ub, double* w) -> void
+static auto nsfftFd(FFT* obj, Complex<double>* inp, Complex<double>* oup, double lb, double ub, double* w) -> void
 {
     auto const n = obj->N;
     auto const l = n / 2;
@@ -25,33 +25,33 @@ static auto nsfftFd(FFT* obj, Complex* inp, Complex* oup, double lb, double ub, 
     obj->perform(inp, oup);
 
     for (auto i = 0; i < l; ++i) {
-        temp1[i] = oup[i].re;
-        temp2[i] = oup[i].im;
+        temp1[i] = oup[i].real();
+        temp2[i] = oup[i].imag();
     }
 
     for (auto i = 0; i < n - l; ++i) {
-        oup[i].re = oup[i + l].re;
-        oup[i].im = oup[i + l].im;
+        oup[i].real(oup[i + l].real());
+        oup[i].imag(oup[i + l].imag());
     }
 
     for (auto i = 0; i < l; ++i) {
-        oup[n - l + i].re = temp1[i];
-        oup[n - l + i].im = temp2[i];
+        oup[n - l + i].real(temp1[i]);
+        oup[n - l + i].imag(temp2[i]);
     }
 
     auto const plb = PI2 * lb;
 
     for (auto i = 0; i < n; ++i) {
-        auto const tempr = oup[i].re;
-        auto const tempi = oup[i].im;
+        auto const tempr = oup[i].real();
+        auto const tempi = oup[i].imag();
         auto const theta = w[i] * plb;
 
-        oup[i].re = delta * (tempr * cos(theta) + tempi * sin(theta));
-        oup[i].im = delta * (tempi * cos(theta) - tempr * sin(theta));
+        oup[i].real(delta * (tempr * cos(theta) + tempi * sin(theta)));
+        oup[i].imag(delta * (tempi * cos(theta) - tempr * sin(theta)));
     }
 }
 
-static auto nsfftBk(FFT* obj, Complex* inp, Complex* oup, double lb, double ub, double* t) -> void
+static auto nsfftBk(FFT* obj, Complex<double>* inp, Complex<double>* oup, double lb, double ub, double* t) -> void
 {
 
     auto const n = obj->N;
@@ -67,7 +67,7 @@ static auto nsfftBk(FFT* obj, Complex* inp, Complex* oup, double lb, double ub, 
     auto temp1 = std::make_unique<double[]>(l);
     auto temp2 = std::make_unique<double[]>(l);
     auto w = std::make_unique<double[]>(n);
-    auto inpt = std::make_unique<Complex[]>(n);
+    auto inpt = std::make_unique<Complex<double>[]>(n);
 
     auto const delta = (ub - lb) / n;
     auto const den = 2 * (ub - lb);
@@ -82,23 +82,23 @@ static auto nsfftBk(FFT* obj, Complex* inp, Complex* oup, double lb, double ub, 
 
     for (auto i = 0; i < n; ++i) {
         auto const theta = w[i] * plb;
-        inpt[i].re = (inp[i].re * cos(theta) - inp[i].im * sin(theta)) / delta;
-        inpt[i].im = (inp[i].im * cos(theta) + inp[i].re * sin(theta)) / delta;
+        inpt[i].real((inp[i].real() * cos(theta) - inp[i].imag() * sin(theta)) / delta);
+        inpt[i].imag((inp[i].imag() * cos(theta) + inp[i].real() * sin(theta)) / delta);
     }
 
     for (auto i = 0; i < l; ++i) {
-        temp1[i] = inpt[i].re;
-        temp2[i] = inpt[i].im;
+        temp1[i] = inpt[i].real();
+        temp2[i] = inpt[i].imag();
     }
 
     for (auto i = 0; i < n - l; ++i) {
-        inpt[i].re = inpt[i + l].re;
-        inpt[i].im = inpt[i + l].im;
+        inpt[i].real(inpt[i + l].real());
+        inpt[i].imag(inpt[i + l].imag());
     }
 
     for (auto i = 0; i < l; ++i) {
-        inpt[n - l + i].re = temp1[i];
-        inpt[n - l + i].im = temp2[i];
+        inpt[n - l + i].real(temp1[i]);
+        inpt[n - l + i].imag(temp2[i]);
     }
 
     obj->perform(inpt.get(), oup);
@@ -108,7 +108,7 @@ static auto nsfftBk(FFT* obj, Complex* inp, Complex* oup, double lb, double ub, 
     }
 }
 
-auto nsfftExec(FFT* obj, Complex* inp, Complex* oup, double lb, double ub, double* w) -> void
+auto nsfftExec(FFT* obj, Complex<double>* inp, Complex<double>* oup, double lb, double ub, double* w) -> void
 {
     if (obj->sgn == 1) {
         nsfftFd(obj, inp, oup, lb, ub, w);

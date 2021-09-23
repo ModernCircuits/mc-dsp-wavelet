@@ -115,9 +115,9 @@ auto convFft(Convolution const& obj, double const* inp1, double const* inp2, dou
 
     auto a = std::make_unique<double[]>(n);
     auto b = std::make_unique<double[]>(n);
-    auto c = std::make_unique<Complex[]>(n);
-    auto ao = std::make_unique<Complex[]>(n);
-    auto bo = std::make_unique<Complex[]>(n);
+    auto c = std::make_unique<Complex<double>[]>(n);
+    auto ao = std::make_unique<Complex<double>[]>(n);
+    auto bo = std::make_unique<Complex<double>[]>(n);
     auto co = std::make_unique<double[]>(n);
 
     for (auto i = 0; i < n; i++) {
@@ -138,8 +138,10 @@ auto convFft(Convolution const& obj, double const* inp1, double const* inp2, dou
     fftR2cExec(obj.fobj.get(), b.get(), bo.get());
 
     for (auto i = 0; i < n; i++) {
-        c[i].re = ao[i].re * bo[i].re - ao[i].im * bo[i].im;
-        c[i].im = ao[i].im * bo[i].re + ao[i].re * bo[i].im;
+        c[i] = Complex<double> {
+            ao[i].real() * bo[i].real() - ao[i].imag() * bo[i].imag(),
+            ao[i].imag() * bo[i].real() + ao[i].real() * bo[i].imag(),
+        };
     }
 
     fftC2rExec(obj.iobj.get(), c.get(), co.get());
@@ -152,13 +154,13 @@ auto convFft(Convolution const& obj, double const* inp1, double const* inp2, dou
 auto fftRealInit(int n, int sgn) -> std::unique_ptr<FftRealSet>
 {
     auto obj = std::make_unique<FftRealSet>();
-    obj->data = std::make_unique<Complex[]>(n / 2);
+    obj->data = std::make_unique<Complex<double>[]>(n / 2);
     obj->cobj = std::make_unique<FFT>(n / 2, sgn);
 
     for (auto k = 0; k < n / 2; ++k) {
         auto const theta = PI2 * k / n;
-        obj->data[k].re = cos(theta);
-        obj->data[k].im = sin(theta);
+        obj->data[k].real(std::cos(theta));
+        obj->data[k].imag(std::sin(theta));
     }
 
     return obj;

@@ -55,7 +55,7 @@ auto main() -> int
     mn = 0.0;
 
     for (i = 0; i < n; ++i) {
-        mn += std::sqrt(wt->output[i].re * wt->output[i].re + wt->output[i].im * wt->output[i].im);
+        mn += std::sqrt(wt->output[i].real() * wt->output[i].real() + wt->output[i].imag() * wt->output[i].imag());
     }
 
     summary(*wt);
@@ -70,7 +70,7 @@ auto main() -> int
     for (k = 0; k < wt->J; ++k) {
         iter = nd + k * n;
         std::printf("%-15d%-15lf%-15lf%-15lf \n", k, wt->scale[k], wt->period[k],
-            wt->output[iter].re * wt->output[iter].re + wt->output[iter].im * wt->output[iter].im);
+            wt->output[iter].real() * wt->output[iter].real() + wt->output[iter].imag() * wt->output[iter].imag());
     }
 
     icwt(wt, oup.get());

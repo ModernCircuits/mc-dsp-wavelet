@@ -189,7 +189,7 @@ auto factor(int m, int* arr) -> int
     return i;
 }
 
-auto longvectorN(Complex* sig, int const* array, int tx) -> void
+auto longvectorN(Complex<double>* sig, int const* array, int tx) -> void
 {
     auto l = 1;
     auto ct = 0;
@@ -199,8 +199,8 @@ auto longvectorN(Complex* sig, int const* array, int tx) -> void
         auto const theta = -1.0 * PI2 / l;
         for (auto j = 0; j < ls; j++) {
             for (auto k = 0; k < array[tx - 1 - i] - 1; k++) {
-                sig[ct].re = cos((k + 1) * j * theta);
-                sig[ct].im = sin((k + 1) * j * theta);
+                sig[ct].real(cos((k + 1) * j * theta));
+                sig[ct].imag(sin((k + 1) * j * theta));
                 ct++;
             }
         }
@@ -216,7 +216,7 @@ FFT::FFT(int n, int sgn)
     auto const out = dividebyN(n);
 
     if (out == 1) {
-        this->data = makeZeros<Complex>(n);
+        this->data = makeZeros<Complex<double>>(n);
         this->lf = factor(n, this->factors);
         longvectorN(this->data.get(), this->factors, this->lf);
         twiLen = n;
@@ -231,7 +231,7 @@ FFT::FFT(int n, int sgn)
         } else {
             m = k;
         }
-        this->data = makeZeros<Complex>(m);
+        this->data = makeZeros<Complex<double>>(m);
         this->lf = factor(m, this->factors);
         longvectorN(this->data.get(), this->factors, this->lf);
         this->lt = 1;
@@ -240,38 +240,38 @@ FFT::FFT(int n, int sgn)
 
     if (sgn == -1) {
         for (auto ct = 0; ct < twiLen; ct++) {
-            (this->data.get() + ct)->im = -(this->data.get() + ct)->im;
+            (this->data.get() + ct)->imag(-(this->data.get() + ct)->imag());
         }
     }
 }
 
-static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, int n, int l, int inc) -> void
+static auto mixedRadixDitRec(Complex<double>* op, Complex<double>* ip, const FFT* obj, int sgn, int n, int l, int inc) -> void
 {
 
     auto const radix = n > 1 ? obj->factors[inc] : 0;
 
     if (n == 1) {
 
-        op[0].re = ip[0].re;
-        op[0].im = ip[0].im;
+        op[0].real(ip[0].real());
+        op[0].imag(ip[0].imag());
 
     } else if (n == 2) {
         double tau1r;
         double tau1i;
-        op[0].re = ip[0].re;
-        op[0].im = ip[0].im;
+        op[0].real(ip[0].real());
+        op[0].imag(ip[0].imag());
 
-        op[1].re = ip[l].re;
-        op[1].im = ip[l].im;
+        op[1].real(ip[l].real());
+        op[1].imag(ip[l].imag());
 
-        tau1r = op[0].re;
-        tau1i = op[0].im;
+        tau1r = op[0].real();
+        tau1i = op[0].imag();
 
-        op[0].re = tau1r + op[1].re;
-        op[0].im = tau1i + op[1].im;
+        op[0].real(tau1r + op[1].real());
+        op[0].imag(tau1i + op[1].imag());
 
-        op[1].re = tau1r - op[1].re;
-        op[1].im = tau1i - op[1].im;
+        op[1].real(tau1r - op[1].real());
+        op[1].imag(tau1i - op[1].imag());
 
     } else if (n == 3) {
         double tau0r;
@@ -280,32 +280,32 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         double tau1i;
         double tau2r;
         double tau2i;
-        op[0].re = ip[0].re;
-        op[0].im = ip[0].im;
+        op[0].real(ip[0].real());
+        op[0].imag(ip[0].imag());
 
-        op[1].re = ip[l].re;
-        op[1].im = ip[l].im;
+        op[1].real(ip[l].real());
+        op[1].imag(ip[l].imag());
 
-        op[2].re = ip[2 * l].re;
-        op[2].im = ip[2 * l].im;
+        op[2].real(ip[2 * l].real());
+        op[2].imag(ip[2 * l].imag());
 
-        tau0r = op[1].re + op[2].re;
-        tau0i = op[1].im + op[2].im;
+        tau0r = op[1].real() + op[2].real();
+        tau0i = op[1].imag() + op[2].imag();
 
-        tau1r = sgn * 0.86602540378 * (op[1].re - op[2].re);
-        tau1i = sgn * 0.86602540378 * (op[1].im - op[2].im);
+        tau1r = sgn * 0.86602540378 * (op[1].real() - op[2].real());
+        tau1i = sgn * 0.86602540378 * (op[1].imag() - op[2].imag());
 
-        tau2r = op[0].re - tau0r * 0.5000000000;
-        tau2i = op[0].im - tau0i * 0.5000000000;
+        tau2r = op[0].real() - tau0r * 0.5000000000;
+        tau2i = op[0].imag() - tau0i * 0.5000000000;
 
-        op[0].re = tau0r + op[0].re;
-        op[0].im = tau0i + op[0].im;
+        op[0].real(tau0r + op[0].real());
+        op[0].imag(tau0i + op[0].imag());
 
-        op[1].re = tau2r + tau1i;
-        op[1].im = tau2i - tau1r;
+        op[1].real(tau2r + tau1i);
+        op[1].imag(tau2i - tau1r);
 
-        op[2].re = tau2r - tau1i;
-        op[2].im = tau2i + tau1r;
+        op[2].real(tau2r - tau1i);
+        op[2].imag(tau2i + tau1r);
 
         return;
 
@@ -318,41 +318,41 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         double tau2i;
         double tau3r;
         double tau3i;
-        op[0].re = ip[0].re;
-        op[0].im = ip[0].im;
+        op[0].real(ip[0].real());
+        op[0].imag(ip[0].imag());
 
-        op[1].re = ip[l].re;
-        op[1].im = ip[l].im;
+        op[1].real(ip[l].real());
+        op[1].imag(ip[l].imag());
 
-        op[2].re = ip[2 * l].re;
-        op[2].im = ip[2 * l].im;
+        op[2].real(ip[2 * l].real());
+        op[2].imag(ip[2 * l].imag());
 
-        op[3].re = ip[3 * l].re;
-        op[3].im = ip[3 * l].im;
+        op[3].real(ip[3 * l].real());
+        op[3].imag(ip[3 * l].imag());
 
-        tau0r = op[0].re + op[2].re;
-        tau0i = op[0].im + op[2].im;
+        tau0r = op[0].real() + op[2].real();
+        tau0i = op[0].imag() + op[2].imag();
 
-        tau1r = op[0].re - op[2].re;
-        tau1i = op[0].im - op[2].im;
+        tau1r = op[0].real() - op[2].real();
+        tau1i = op[0].imag() - op[2].imag();
 
-        tau2r = op[1].re + op[3].re;
-        tau2i = op[1].im + op[3].im;
+        tau2r = op[1].real() + op[3].real();
+        tau2i = op[1].imag() + op[3].imag();
 
-        tau3r = sgn * (op[1].re - op[3].re);
-        tau3i = sgn * (op[1].im - op[3].im);
+        tau3r = sgn * (op[1].real() - op[3].real());
+        tau3i = sgn * (op[1].imag() - op[3].imag());
 
-        op[0].re = tau0r + tau2r;
-        op[0].im = tau0i + tau2i;
+        op[0].real(tau0r + tau2r);
+        op[0].imag(tau0i + tau2i);
 
-        op[1].re = tau1r + tau3i;
-        op[1].im = tau1i - tau3r;
+        op[1].real(tau1r + tau3i);
+        op[1].imag(tau1i - tau3r);
 
-        op[2].re = tau0r - tau2r;
-        op[2].im = tau0i - tau2i;
+        op[2].real(tau0r - tau2r);
+        op[2].imag(tau0i - tau2i);
 
-        op[3].re = tau1r - tau3i;
-        op[3].im = tau1i + tau3r;
+        op[3].real(tau1r - tau3i);
+        op[3].imag(tau1i + tau3r);
 
     } else if (n == 5) {
         double tau0r;
@@ -373,35 +373,35 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         double c2;
         double s1;
         double s2;
-        op[0].re = ip[0].re;
-        op[0].im = ip[0].im;
+        op[0].real(ip[0].real());
+        op[0].imag(ip[0].imag());
 
-        op[1].re = ip[l].re;
-        op[1].im = ip[l].im;
+        op[1].real(ip[l].real());
+        op[1].imag(ip[l].imag());
 
-        op[2].re = ip[2 * l].re;
-        op[2].im = ip[2 * l].im;
+        op[2].real(ip[2 * l].real());
+        op[2].imag(ip[2 * l].imag());
 
-        op[3].re = ip[3 * l].re;
-        op[3].im = ip[3 * l].im;
+        op[3].real(ip[3 * l].real());
+        op[3].imag(ip[3 * l].imag());
 
-        op[4].re = ip[4 * l].re;
-        op[4].im = ip[4 * l].im;
+        op[4].real(ip[4 * l].real());
+        op[4].imag(ip[4 * l].imag());
 
         c1 = 0.30901699437;
         c2 = -0.80901699437;
         s1 = 0.95105651629;
         s2 = 0.58778525229;
 
-        tau0r = op[1].re + op[4].re;
-        tau2r = op[1].re - op[4].re;
-        tau0i = op[1].im + op[4].im;
-        tau2i = op[1].im - op[4].im;
+        tau0r = op[1].real() + op[4].real();
+        tau2r = op[1].real() - op[4].real();
+        tau0i = op[1].imag() + op[4].imag();
+        tau2i = op[1].imag() - op[4].imag();
 
-        tau1r = op[2].re + op[3].re;
-        tau3r = op[2].re - op[3].re;
-        tau1i = op[2].im + op[3].im;
-        tau3i = op[2].im - op[3].im;
+        tau1r = op[2].real() + op[3].real();
+        tau3r = op[2].real() - op[3].real();
+        tau1i = op[2].imag() + op[3].imag();
+        tau3i = op[2].imag() - op[3].imag();
 
         tau4r = c1 * tau0r + c2 * tau1r;
         tau4i = c1 * tau0i + c2 * tau1i;
@@ -418,14 +418,14 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau5i = -s1 * tau2i - s2 * tau3i;
         }
 
-        tau6r = op[0].re + tau4r;
-        tau6i = op[0].im + tau4i;
+        tau6r = op[0].real() + tau4r;
+        tau6i = op[0].imag() + tau4i;
 
-        op[1].re = tau6r + tau5i;
-        op[1].im = tau6i - tau5r;
+        op[1].real(tau6r + tau5i);
+        op[1].imag(tau6i - tau5r);
 
-        op[4].re = tau6r - tau5i;
-        op[4].im = tau6i + tau5r;
+        op[4].real(tau6r - tau5i);
+        op[4].imag(tau6i + tau5r);
 
         tau4r = c2 * tau0r + c1 * tau1r;
         tau4i = c2 * tau0i + c1 * tau1i;
@@ -442,17 +442,17 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau5i = -s2 * tau2i + s1 * tau3i;
         }
 
-        tau6r = op[0].re + tau4r;
-        tau6i = op[0].im + tau4i;
+        tau6r = op[0].real() + tau4r;
+        tau6i = op[0].imag() + tau4i;
 
-        op[2].re = tau6r + tau5i;
-        op[2].im = tau6i - tau5r;
+        op[2].real(tau6r + tau5i);
+        op[2].imag(tau6i - tau5r);
 
-        op[3].re = tau6r - tau5i;
-        op[3].im = tau6i + tau5r;
+        op[3].real(tau6r - tau5i);
+        op[3].imag(tau6i + tau5r);
 
-        op[0].re += tau0r + tau1r;
-        op[0].im += tau0i + tau1i;
+        op[0].real(op[0].real() + tau0r + tau1r);
+        op[0].imag(op[0].imag() + tau0i + tau1i);
 
     } else if (n == 7) {
         double tau0r;
@@ -477,26 +477,26 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         double s1;
         double s2;
         double s3;
-        op[0].re = ip[0].re;
-        op[0].im = ip[0].im;
+        op[0].real(ip[0].real());
+        op[0].imag(ip[0].imag());
 
-        op[1].re = ip[l].re;
-        op[1].im = ip[l].im;
+        op[1].real(ip[l].real());
+        op[1].imag(ip[l].imag());
 
-        op[2].re = ip[2 * l].re;
-        op[2].im = ip[2 * l].im;
+        op[2].real(ip[2 * l].real());
+        op[2].imag(ip[2 * l].imag());
 
-        op[3].re = ip[3 * l].re;
-        op[3].im = ip[3 * l].im;
+        op[3].real(ip[3 * l].real());
+        op[3].imag(ip[3 * l].imag());
 
-        op[4].re = ip[4 * l].re;
-        op[4].im = ip[4 * l].im;
+        op[4].real(ip[4 * l].real());
+        op[4].imag(ip[4 * l].imag());
 
-        op[5].re = ip[5 * l].re;
-        op[5].im = ip[5 * l].im;
+        op[5].real(ip[5 * l].real());
+        op[5].imag(ip[5 * l].imag());
 
-        op[6].re = ip[6 * l].re;
-        op[6].im = ip[6 * l].im;
+        op[6].real(ip[6 * l].real());
+        op[6].imag(ip[6 * l].imag());
 
         c1 = 0.62348980185;
         c2 = -0.22252093395;
@@ -505,26 +505,26 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         s2 = 0.97492791218;
         s3 = 0.43388373911;
 
-        tau0r = op[1].re + op[6].re;
-        tau3r = op[1].re - op[6].re;
+        tau0r = op[1].real() + op[6].real();
+        tau3r = op[1].real() - op[6].real();
 
-        tau0i = op[1].im + op[6].im;
-        tau3i = op[1].im - op[6].im;
+        tau0i = op[1].imag() + op[6].imag();
+        tau3i = op[1].imag() - op[6].imag();
 
-        tau1r = op[2].re + op[5].re;
-        tau4r = op[2].re - op[5].re;
+        tau1r = op[2].real() + op[5].real();
+        tau4r = op[2].real() - op[5].real();
 
-        tau1i = op[2].im + op[5].im;
-        tau4i = op[2].im - op[5].im;
+        tau1i = op[2].imag() + op[5].imag();
+        tau4i = op[2].imag() - op[5].imag();
 
-        tau2r = op[3].re + op[4].re;
-        tau5r = op[3].re - op[4].re;
+        tau2r = op[3].real() + op[4].real();
+        tau5r = op[3].real() - op[4].real();
 
-        tau2i = op[3].im + op[4].im;
-        tau5i = op[3].im - op[4].im;
+        tau2i = op[3].imag() + op[4].imag();
+        tau5i = op[3].imag() - op[4].imag();
 
-        tau6r = op[0].re + c1 * tau0r + c2 * tau1r + c3 * tau2r;
-        tau6i = op[0].im + c1 * tau0i + c2 * tau1i + c3 * tau2i;
+        tau6r = op[0].real() + c1 * tau0r + c2 * tau1r + c3 * tau2r;
+        tau6i = op[0].imag() + c1 * tau0i + c2 * tau1i + c3 * tau2i;
 
         //tau7r = sgn * ( -s1 * tau3r - s2 * tau4r - s3 * tau5r);
         //tau7i = sgn * ( -s1 * tau3i - s2 * tau4i - s3 * tau5i);
@@ -538,14 +538,14 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau7i = s1 * tau3i + s2 * tau4i + s3 * tau5i;
         }
 
-        op[1].re = tau6r - tau7i;
-        op[6].re = tau6r + tau7i;
+        op[1].real(tau6r - tau7i);
+        op[6].real(tau6r + tau7i);
 
-        op[1].im = tau6i + tau7r;
-        op[6].im = tau6i - tau7r;
+        op[1].imag(tau6i + tau7r);
+        op[6].imag(tau6i - tau7r);
 
-        tau6r = op[0].re + c2 * tau0r + c3 * tau1r + c1 * tau2r;
-        tau6i = op[0].im + c2 * tau0i + c3 * tau1i + c1 * tau2i;
+        tau6r = op[0].real() + c2 * tau0r + c3 * tau1r + c1 * tau2r;
+        tau6i = op[0].imag() + c2 * tau0i + c3 * tau1i + c1 * tau2i;
 
         //tau7r = sgn * ( -s2 * tau3r + s3 * tau4r + s1 * tau5r);
         //tau7i = sgn * ( -s2 * tau3i + s3 * tau4i + s1 * tau5i);
@@ -558,13 +558,13 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau7i = s2 * tau3i - s3 * tau4i - s1 * tau5i;
         }
 
-        op[2].re = tau6r - tau7i;
-        op[5].re = tau6r + tau7i;
-        op[2].im = tau6i + tau7r;
-        op[5].im = tau6i - tau7r;
+        op[2].real(tau6r - tau7i);
+        op[5].real(tau6r + tau7i);
+        op[2].imag(tau6i + tau7r);
+        op[5].imag(tau6i - tau7r);
 
-        tau6r = op[0].re + c3 * tau0r + c1 * tau1r + c2 * tau2r;
-        tau6i = op[0].im + c3 * tau0i + c1 * tau1i + c2 * tau2i;
+        tau6r = op[0].real() + c3 * tau0r + c1 * tau1r + c2 * tau2r;
+        tau6i = op[0].imag() + c3 * tau0i + c1 * tau1i + c2 * tau2i;
 
         //tau7r = sgn * ( -s3 * tau3r + s1 * tau4r - s2 * tau5r);
         //tau7i = sgn * ( -s3 * tau3i + s1 * tau4i - s2 * tau5i);
@@ -578,13 +578,13 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau7i = s3 * tau3i - s1 * tau4i + s2 * tau5i;
         }
 
-        op[3].re = tau6r - tau7i;
-        op[4].re = tau6r + tau7i;
-        op[3].im = tau6i + tau7r;
-        op[4].im = tau6i - tau7r;
+        op[3].real(tau6r - tau7i);
+        op[4].real(tau6r + tau7i);
+        op[3].imag(tau6i + tau7r);
+        op[4].imag(tau6i - tau7r);
 
-        op[0].re += tau0r + tau1r + tau2r;
-        op[0].im += tau0i + tau1i + tau2i;
+        op[0].real(op[0].real() + tau0r + tau1r + tau2r);
+        op[0].imag(op[0].imag() + tau0i + tau1i + tau2i);
 
     } else if (n == 8) {
         double tau0r;
@@ -613,62 +613,62 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         double temp1i;
         double temp2r;
         double temp2i;
-        op[0].re = ip[0].re;
-        op[0].im = ip[0].im;
+        op[0].real(ip[0].real());
+        op[0].imag(ip[0].imag());
 
-        op[1].re = ip[l].re;
-        op[1].im = ip[l].im;
+        op[1].real(ip[l].real());
+        op[1].imag(ip[l].imag());
 
-        op[2].re = ip[2 * l].re;
-        op[2].im = ip[2 * l].im;
+        op[2].real(ip[2 * l].real());
+        op[2].imag(ip[2 * l].imag());
 
-        op[3].re = ip[3 * l].re;
-        op[3].im = ip[3 * l].im;
+        op[3].real(ip[3 * l].real());
+        op[3].imag(ip[3 * l].imag());
 
-        op[4].re = ip[4 * l].re;
-        op[4].im = ip[4 * l].im;
+        op[4].real(ip[4 * l].real());
+        op[4].imag(ip[4 * l].imag());
 
-        op[5].re = ip[5 * l].re;
-        op[5].im = ip[5 * l].im;
+        op[5].real(ip[5 * l].real());
+        op[5].imag(ip[5 * l].imag());
 
-        op[6].re = ip[6 * l].re;
-        op[6].im = ip[6 * l].im;
+        op[6].real(ip[6 * l].real());
+        op[6].imag(ip[6 * l].imag());
 
-        op[7].re = ip[7 * l].re;
-        op[7].im = ip[7 * l].im;
+        op[7].real(ip[7 * l].real());
+        op[7].imag(ip[7 * l].imag());
 
         c1 = 0.70710678118654752440084436210485;
         s1 = 0.70710678118654752440084436210485;
 
-        tau0r = op[0].re + op[4].re;
-        tau4r = op[0].re - op[4].re;
+        tau0r = op[0].real() + op[4].real();
+        tau4r = op[0].real() - op[4].real();
 
-        tau0i = op[0].im + op[4].im;
-        tau4i = op[0].im - op[4].im;
+        tau0i = op[0].imag() + op[4].imag();
+        tau4i = op[0].imag() - op[4].imag();
 
-        tau1r = op[1].re + op[7].re;
-        tau5r = op[1].re - op[7].re;
+        tau1r = op[1].real() + op[7].real();
+        tau5r = op[1].real() - op[7].real();
 
-        tau1i = op[1].im + op[7].im;
-        tau5i = op[1].im - op[7].im;
+        tau1i = op[1].imag() + op[7].imag();
+        tau5i = op[1].imag() - op[7].imag();
 
-        tau2r = op[3].re + op[5].re;
-        tau6r = op[3].re - op[5].re;
+        tau2r = op[3].real() + op[5].real();
+        tau6r = op[3].real() - op[5].real();
 
-        tau2i = op[3].im + op[5].im;
-        tau6i = op[3].im - op[5].im;
+        tau2i = op[3].imag() + op[5].imag();
+        tau6i = op[3].imag() - op[5].imag();
 
-        tau3r = op[2].re + op[6].re;
-        tau7r = op[2].re - op[6].re;
+        tau3r = op[2].real() + op[6].real();
+        tau7r = op[2].real() - op[6].real();
 
-        tau3i = op[2].im + op[6].im;
-        tau7i = op[2].im - op[6].im;
+        tau3i = op[2].imag() + op[6].imag();
+        tau7i = op[2].imag() - op[6].imag();
 
-        op[0].re = tau0r + tau1r + tau2r + tau3r;
-        op[0].im = tau0i + tau1i + tau2i + tau3i;
+        op[0].real(tau0r + tau1r + tau2r + tau3r);
+        op[0].imag(tau0i + tau1i + tau2i + tau3i);
 
-        op[4].re = tau0r - tau1r - tau2r + tau3r;
-        op[4].im = tau0i - tau1i - tau2i + tau3i;
+        op[4].real(tau0r - tau1r - tau2r + tau3r);
+        op[4].imag(tau0i - tau1i - tau2i + tau3i);
 
         temp1r = tau1r - tau2r;
         temp1i = tau1i - tau2i;
@@ -691,11 +691,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau9i = s1 * temp2i + tau7i;
         }
 
-        op[1].re = tau8r - tau9i;
-        op[1].im = tau8i + tau9r;
+        op[1].real(tau8r - tau9i);
+        op[1].imag(tau8i + tau9r);
 
-        op[7].re = tau8r + tau9i;
-        op[7].im = tau8i - tau9r;
+        op[7].real(tau8r + tau9i);
+        op[7].imag(tau8i - tau9r);
 
         tau8r = tau0r - tau3r;
         tau8i = tau0i - tau3i;
@@ -712,11 +712,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau9i = tau5i - tau6i;
         }
 
-        op[2].re = tau8r - tau9i;
-        op[2].im = tau8i + tau9r;
+        op[2].real(tau8r - tau9i);
+        op[2].imag(tau8i + tau9r);
 
-        op[6].re = tau8r + tau9i;
-        op[6].im = tau8i - tau9r;
+        op[6].real(tau8r + tau9i);
+        op[6].imag(tau8i - tau9r);
 
         tau8r = tau4r - c1 * temp1r;
         tau8i = tau4i - c1 * temp1i;
@@ -733,11 +733,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau9i = s1 * temp2i - tau7i;
         }
 
-        op[3].re = tau8r - tau9i;
-        op[3].im = tau8i + tau9r;
+        op[3].real(tau8r - tau9i);
+        op[3].imag(tau8i + tau9r);
 
-        op[5].re = tau8r + tau9i;
-        op[5].im = tau8i - tau9r;
+        op[5].real(tau8r + tau9i);
+        op[5].imag(tau8i - tau9r);
 
     } else if (radix == 2) {
         int k;
@@ -756,22 +756,22 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
 
         for (k = 0; k < m; k++) {
             ind = m - 1 + k;
-            wlr = (obj->data.get() + ind)->re;
-            wli = (obj->data.get() + ind)->im;
+            wlr = (obj->data.get() + ind)->real();
+            wli = (obj->data.get() + ind)->imag();
 
             tkm1 = k + m;
 
-            tau1r = op[k].re;
-            tau1i = op[k].im;
+            tau1r = op[k].real();
+            tau1i = op[k].imag();
 
-            tau2r = op[tkm1].re * wlr - op[tkm1].im * wli;
-            tau2i = op[tkm1].im * wlr + op[tkm1].re * wli;
+            tau2r = op[tkm1].real() * wlr - op[tkm1].imag() * wli;
+            tau2i = op[tkm1].imag() * wlr + op[tkm1].real() * wli;
 
-            op[k].re = tau1r + tau2r;
-            op[k].im = tau1i + tau2i;
+            op[k].real(tau1r + tau2r);
+            op[k].imag(tau1i + tau2i);
 
-            op[tkm1].re = tau1r - tau2r;
-            op[tkm1].im = tau1i - tau2i;
+            op[tkm1].real(tau1r - tau2r);
+            op[tkm1].imag(tau1i - tau2i);
         }
 
     } else if (radix == 3) {
@@ -804,22 +804,22 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
 
         for (k = 0; k < m; ++k) {
             ind = m - 1 + 2 * k;
-            wlr = (obj->data.get() + ind)->re;
-            wli = (obj->data.get() + ind)->im;
+            wlr = (obj->data.get() + ind)->real();
+            wli = (obj->data.get() + ind)->imag();
             ind++;
-            wl2r = (obj->data.get() + ind)->re;
-            wl2i = (obj->data.get() + ind)->im;
+            wl2r = (obj->data.get() + ind)->real();
+            wl2i = (obj->data.get() + ind)->imag();
             tkm1 = k + m;
             tkm2 = tkm1 + m;
 
-            ar = op[k].re;
-            ai = op[k].im;
+            ar = op[k].real();
+            ai = op[k].imag();
 
-            br = op[tkm1].re * wlr - op[tkm1].im * wli;
-            bi = op[tkm1].im * wlr + op[tkm1].re * wli;
+            br = op[tkm1].real() * wlr - op[tkm1].imag() * wli;
+            bi = op[tkm1].imag() * wlr + op[tkm1].real() * wli;
 
-            cr = op[tkm2].re * wl2r - op[tkm2].im * wl2i;
-            ci = op[tkm2].im * wl2r + op[tkm2].re * wl2i;
+            cr = op[tkm2].real() * wl2r - op[tkm2].imag() * wl2i;
+            ci = op[tkm2].imag() * wl2r + op[tkm2].real() * wl2i;
 
             tau0r = br + cr;
             tau0i = bi + ci;
@@ -830,14 +830,14 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau2r = ar - tau0r * 0.5000000000;
             tau2i = ai - tau0i * 0.5000000000;
 
-            op[k].re = ar + tau0r;
-            op[k].im = ai + tau0i;
+            op[k].real(ar + tau0r);
+            op[k].imag(ai + tau0i);
 
-            op[tkm1].re = tau2r + tau1i;
-            op[tkm1].im = tau2i - tau1r;
+            op[tkm1].real(tau2r + tau1i);
+            op[tkm1].imag(tau2i - tau1r);
 
-            op[tkm2].re = tau2r - tau1i;
-            op[tkm2].im = tau2i + tau1r;
+            op[tkm2].real(tau2r - tau1i);
+            op[tkm2].imag(tau2i + tau1r);
         }
 
     } else if (radix == 4) {
@@ -881,17 +881,17 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         tkm2 = tkm1 + m;
         tkm3 = tkm2 + m;
 
-        ar = op[0].re;
-        ai = op[0].im;
+        ar = op[0].real();
+        ai = op[0].imag();
 
-        br = op[tkm1].re;
-        bi = op[tkm1].im;
+        br = op[tkm1].real();
+        bi = op[tkm1].imag();
 
-        cr = op[tkm2].re;
-        ci = op[tkm2].im;
+        cr = op[tkm2].real();
+        ci = op[tkm2].imag();
 
-        dr = op[tkm3].re;
-        di = op[tkm3].im;
+        dr = op[tkm3].real();
+        di = op[tkm3].imag();
 
         tau0r = ar + cr;
         tau0i = ai + ci;
@@ -905,44 +905,44 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         tau3r = sgn * (br - dr);
         tau3i = sgn * (bi - di);
 
-        op[0].re = tau0r + tau2r;
-        op[0].im = tau0i + tau2i;
+        op[0].real(tau0r + tau2r);
+        op[0].imag(tau0i + tau2i);
 
-        op[tkm1].re = tau1r + tau3i;
-        op[tkm1].im = tau1i - tau3r;
+        op[tkm1].real(tau1r + tau3i);
+        op[tkm1].imag(tau1i - tau3r);
 
-        op[tkm2].re = tau0r - tau2r;
-        op[tkm2].im = tau0i - tau2i;
+        op[tkm2].real(tau0r - tau2r);
+        op[tkm2].imag(tau0i - tau2i);
 
-        op[tkm3].re = tau1r - tau3i;
-        op[tkm3].im = tau1i + tau3r;
+        op[tkm3].real(tau1r - tau3i);
+        op[tkm3].imag(tau1i + tau3r);
 
         for (k = 1; k < m; k++) {
             ind = m - 1 + 3 * k;
-            wlr = (obj->data.get() + ind)->re;
-            wli = (obj->data.get() + ind)->im;
+            wlr = (obj->data.get() + ind)->real();
+            wli = (obj->data.get() + ind)->imag();
             ind++;
-            wl2r = (obj->data.get() + ind)->re;
-            wl2i = (obj->data.get() + ind)->im;
+            wl2r = (obj->data.get() + ind)->real();
+            wl2i = (obj->data.get() + ind)->imag();
             ind++;
-            wl3r = (obj->data.get() + ind)->re;
-            wl3i = (obj->data.get() + ind)->im;
+            wl3r = (obj->data.get() + ind)->real();
+            wl3i = (obj->data.get() + ind)->imag();
 
             tkm1 = k + m;
             tkm2 = tkm1 + m;
             tkm3 = tkm2 + m;
 
-            ar = op[k].re;
-            ai = op[k].im;
+            ar = op[k].real();
+            ai = op[k].imag();
 
-            br = op[tkm1].re * wlr - op[tkm1].im * wli;
-            bi = op[tkm1].im * wlr + op[tkm1].re * wli;
+            br = op[tkm1].real() * wlr - op[tkm1].imag() * wli;
+            bi = op[tkm1].imag() * wlr + op[tkm1].real() * wli;
 
-            cr = op[tkm2].re * wl2r - op[tkm2].im * wl2i;
-            ci = op[tkm2].im * wl2r + op[tkm2].re * wl2i;
+            cr = op[tkm2].real() * wl2r - op[tkm2].imag() * wl2i;
+            ci = op[tkm2].imag() * wl2r + op[tkm2].real() * wl2i;
 
-            dr = op[tkm3].re * wl3r - op[tkm3].im * wl3i;
-            di = op[tkm3].im * wl3r + op[tkm3].re * wl3i;
+            dr = op[tkm3].real() * wl3r - op[tkm3].imag() * wl3i;
+            di = op[tkm3].imag() * wl3r + op[tkm3].real() * wl3i;
 
             tau0r = ar + cr;
             tau0i = ai + ci;
@@ -956,17 +956,17 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau3r = sgn * (br - dr);
             tau3i = sgn * (bi - di);
 
-            op[k].re = tau0r + tau2r;
-            op[k].im = tau0i + tau2i;
+            op[k].real(tau0r + tau2r);
+            op[k].imag(tau0i + tau2i);
 
-            op[tkm1].re = tau1r + tau3i;
-            op[tkm1].im = tau1i - tau3r;
+            op[tkm1].real(tau1r + tau3i);
+            op[tkm1].imag(tau1i - tau3r);
 
-            op[tkm2].re = tau0r - tau2r;
-            op[tkm2].im = tau0i - tau2i;
+            op[tkm2].real(tau0r - tau2r);
+            op[tkm2].imag(tau0i - tau2i);
 
-            op[tkm3].re = tau1r - tau3i;
-            op[tkm3].im = tau1i + tau3r;
+            op[tkm3].real(tau1r - tau3i);
+            op[tkm3].imag(tau1i + tau3r);
         }
 
     } else if (radix == 5) {
@@ -1031,20 +1031,20 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         tkm3 = tkm2 + m;
         tkm4 = tkm3 + m;
 
-        ar = op[0].re;
-        ai = op[0].im;
+        ar = op[0].real();
+        ai = op[0].imag();
 
-        br = op[tkm1].re;
-        bi = op[tkm1].im;
+        br = op[tkm1].real();
+        bi = op[tkm1].imag();
 
-        cr = op[tkm2].re;
-        ci = op[tkm2].im;
+        cr = op[tkm2].real();
+        ci = op[tkm2].imag();
 
-        dr = op[tkm3].re;
-        di = op[tkm3].im;
+        dr = op[tkm3].real();
+        di = op[tkm3].imag();
 
-        er = op[tkm4].re;
-        ei = op[tkm4].im;
+        er = op[tkm4].real();
+        ei = op[tkm4].imag();
 
         tau0r = br + er;
         tau0i = bi + ei;
@@ -1058,8 +1058,8 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         tau3r = cr - dr;
         tau3i = ci - di;
 
-        op[0].re = ar + tau0r + tau1r;
-        op[0].im = ai + tau0i + tau1i;
+        op[0].real(ar + tau0r + tau1r);
+        op[0].imag(ai + tau0i + tau1i);
 
         tau4r = c1 * tau0r + c2 * tau1r;
         tau4i = c1 * tau0i + c2 * tau1i;
@@ -1070,11 +1070,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         tau6r = ar + tau4r;
         tau6i = ai + tau4i;
 
-        op[tkm1].re = tau6r + tau5i;
-        op[tkm1].im = tau6i - tau5r;
+        op[tkm1].real(tau6r + tau5i);
+        op[tkm1].imag(tau6i - tau5r);
 
-        op[tkm4].re = tau6r - tau5i;
-        op[tkm4].im = tau6i + tau5r;
+        op[tkm4].real(tau6r - tau5i);
+        op[tkm4].imag(tau6i + tau5r);
 
         tau4r = c2 * tau0r + c1 * tau1r;
         tau4i = c2 * tau0i + c1 * tau1i;
@@ -1085,45 +1085,45 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         tau6r = ar + tau4r;
         tau6i = ai + tau4i;
 
-        op[tkm2].re = tau6r + tau5i;
-        op[tkm2].im = tau6i - tau5r;
+        op[tkm2].real(tau6r + tau5i);
+        op[tkm2].imag(tau6i - tau5r);
 
-        op[tkm3].re = tau6r - tau5i;
-        op[tkm3].im = tau6i + tau5r;
+        op[tkm3].real(tau6r - tau5i);
+        op[tkm3].imag(tau6i + tau5r);
 
         for (k = 1; k < m; k++) {
             ind = m - 1 + 4 * k;
-            wlr = (obj->data.get() + ind)->re;
-            wli = (obj->data.get() + ind)->im;
+            wlr = (obj->data.get() + ind)->real();
+            wli = (obj->data.get() + ind)->imag();
             ind++;
-            wl2r = (obj->data.get() + ind)->re;
-            wl2i = (obj->data.get() + ind)->im;
+            wl2r = (obj->data.get() + ind)->real();
+            wl2i = (obj->data.get() + ind)->imag();
             ind++;
-            wl3r = (obj->data.get() + ind)->re;
-            wl3i = (obj->data.get() + ind)->im;
+            wl3r = (obj->data.get() + ind)->real();
+            wl3i = (obj->data.get() + ind)->imag();
             ind++;
-            wl4r = (obj->data.get() + ind)->re;
-            wl4i = (obj->data.get() + ind)->im;
+            wl4r = (obj->data.get() + ind)->real();
+            wl4i = (obj->data.get() + ind)->imag();
 
             tkm1 = k + m;
             tkm2 = tkm1 + m;
             tkm3 = tkm2 + m;
             tkm4 = tkm3 + m;
 
-            ar = op[k].re;
-            ai = op[k].im;
+            ar = op[k].real();
+            ai = op[k].imag();
 
-            br = op[tkm1].re * wlr - op[tkm1].im * wli;
-            bi = op[tkm1].im * wlr + op[tkm1].re * wli;
+            br = op[tkm1].real() * wlr - op[tkm1].imag() * wli;
+            bi = op[tkm1].imag() * wlr + op[tkm1].real() * wli;
 
-            cr = op[tkm2].re * wl2r - op[tkm2].im * wl2i;
-            ci = op[tkm2].im * wl2r + op[tkm2].re * wl2i;
+            cr = op[tkm2].real() * wl2r - op[tkm2].imag() * wl2i;
+            ci = op[tkm2].imag() * wl2r + op[tkm2].real() * wl2i;
 
-            dr = op[tkm3].re * wl3r - op[tkm3].im * wl3i;
-            di = op[tkm3].im * wl3r + op[tkm3].re * wl3i;
+            dr = op[tkm3].real() * wl3r - op[tkm3].imag() * wl3i;
+            di = op[tkm3].imag() * wl3r + op[tkm3].real() * wl3i;
 
-            er = op[tkm4].re * wl4r - op[tkm4].im * wl4i;
-            ei = op[tkm4].im * wl4r + op[tkm4].re * wl4i;
+            er = op[tkm4].real() * wl4r - op[tkm4].imag() * wl4i;
+            ei = op[tkm4].imag() * wl4r + op[tkm4].real() * wl4i;
 
             tau0r = br + er;
             tau0i = bi + ei;
@@ -1137,8 +1137,8 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau3r = cr - dr;
             tau3i = ci - di;
 
-            op[k].re = ar + tau0r + tau1r;
-            op[k].im = ai + tau0i + tau1i;
+            op[k].real(ar + tau0r + tau1r);
+            op[k].imag(ai + tau0i + tau1i);
 
             tau4r = c1 * tau0r + c2 * tau1r;
             tau4i = c1 * tau0i + c2 * tau1i;
@@ -1158,11 +1158,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau6r = ar + tau4r;
             tau6i = ai + tau4i;
 
-            op[tkm1].re = tau6r + tau5i;
-            op[tkm1].im = tau6i - tau5r;
+            op[tkm1].real(tau6r + tau5i);
+            op[tkm1].imag(tau6i - tau5r);
 
-            op[tkm4].re = tau6r - tau5i;
-            op[tkm4].im = tau6i + tau5r;
+            op[tkm4].real(tau6r - tau5i);
+            op[tkm4].imag(tau6i + tau5r);
 
             tau4r = c2 * tau0r + c1 * tau1r;
             tau4i = c2 * tau0i + c1 * tau1i;
@@ -1182,11 +1182,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau6r = ar + tau4r;
             tau6i = ai + tau4i;
 
-            op[tkm2].re = tau6r + tau5i;
-            op[tkm2].im = tau6i - tau5r;
+            op[tkm2].real(tau6r + tau5i);
+            op[tkm2].imag(tau6i - tau5r);
 
-            op[tkm3].re = tau6r - tau5i;
-            op[tkm3].im = tau6i + tau5r;
+            op[tkm3].real(tau6r - tau5i);
+            op[tkm3].imag(tau6i + tau5r);
         }
 
     } else if (radix == 7) {
@@ -1271,26 +1271,26 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         tkm5 = tkm4 + m;
         tkm6 = tkm5 + m;
 
-        ar = op[0].re;
-        ai = op[0].im;
+        ar = op[0].real();
+        ai = op[0].imag();
 
-        br = op[tkm1].re;
-        bi = op[tkm1].im;
+        br = op[tkm1].real();
+        bi = op[tkm1].imag();
 
-        cr = op[tkm2].re;
-        ci = op[tkm2].im;
+        cr = op[tkm2].real();
+        ci = op[tkm2].imag();
 
-        dr = op[tkm3].re;
-        di = op[tkm3].im;
+        dr = op[tkm3].real();
+        di = op[tkm3].imag();
 
-        er = op[tkm4].re;
-        ei = op[tkm4].im;
+        er = op[tkm4].real();
+        ei = op[tkm4].imag();
 
-        fr = op[tkm5].re;
-        fi = op[tkm5].im;
+        fr = op[tkm5].real();
+        fi = op[tkm5].imag();
 
-        gr = op[tkm6].re;
-        gi = op[tkm6].im;
+        gr = op[tkm6].real();
+        gi = op[tkm6].imag();
 
         tau0r = br + gr;
         tau3r = br - gr;
@@ -1307,8 +1307,8 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
         tau2i = di + ei;
         tau5i = di - ei;
 
-        op[0].re = ar + tau0r + tau1r + tau2r;
-        op[0].im = ai + tau0i + tau1i + tau2i;
+        op[0].real(ar + tau0r + tau1r + tau2r);
+        op[0].imag(ai + tau0i + tau1i + tau2i);
 
         tau6r = ar + c1 * tau0r + c2 * tau1r + c3 * tau2r;
         tau6i = ai + c1 * tau0i + c2 * tau1i + c3 * tau2i;
@@ -1325,11 +1325,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau7i = s1 * tau3i + s2 * tau4i + s3 * tau5i;
         }
 
-        op[tkm1].re = tau6r - tau7i;
-        op[tkm1].im = tau6i + tau7r;
+        op[tkm1].real(tau6r - tau7i);
+        op[tkm1].imag(tau6i + tau7r);
 
-        op[tkm6].re = tau6r + tau7i;
-        op[tkm6].im = tau6i - tau7r;
+        op[tkm6].real(tau6r + tau7i);
+        op[tkm6].imag(tau6i - tau7r);
 
         tau6r = ar + c2 * tau0r + c3 * tau1r + c1 * tau2r;
         tau6i = ai + c2 * tau0i + c3 * tau1i + c1 * tau2i;
@@ -1346,11 +1346,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau7i = s2 * tau3i - s3 * tau4i - s1 * tau5i;
         }
 
-        op[tkm2].re = tau6r - tau7i;
-        op[tkm2].im = tau6i + tau7r;
+        op[tkm2].real(tau6r - tau7i);
+        op[tkm2].imag(tau6i + tau7r);
 
-        op[tkm5].re = tau6r + tau7i;
-        op[tkm5].im = tau6i - tau7r;
+        op[tkm5].real(tau6r + tau7i);
+        op[tkm5].imag(tau6i - tau7r);
 
         tau6r = ar + c3 * tau0r + c1 * tau1r + c2 * tau2r;
         tau6i = ai + c3 * tau0i + c1 * tau1i + c2 * tau2i;
@@ -1367,31 +1367,31 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau7i = s3 * tau3i - s1 * tau4i + s2 * tau5i;
         }
 
-        op[tkm3].re = tau6r - tau7i;
-        op[tkm3].im = tau6i + tau7r;
+        op[tkm3].real(tau6r - tau7i);
+        op[tkm3].imag(tau6i + tau7r);
 
-        op[tkm4].re = tau6r + tau7i;
-        op[tkm4].im = tau6i - tau7r;
+        op[tkm4].real(tau6r + tau7i);
+        op[tkm4].imag(tau6i - tau7r);
 
         for (k = 1; k < m; k++) {
             ind = m - 1 + 6 * k;
-            wlr = (obj->data.get() + ind)->re;
-            wli = (obj->data.get() + ind)->im;
+            wlr = (obj->data.get() + ind)->real();
+            wli = (obj->data.get() + ind)->imag();
             ind++;
-            wl2r = (obj->data.get() + ind)->re;
-            wl2i = (obj->data.get() + ind)->im;
+            wl2r = (obj->data.get() + ind)->real();
+            wl2i = (obj->data.get() + ind)->imag();
             ind++;
-            wl3r = (obj->data.get() + ind)->re;
-            wl3i = (obj->data.get() + ind)->im;
+            wl3r = (obj->data.get() + ind)->real();
+            wl3i = (obj->data.get() + ind)->imag();
             ind++;
-            wl4r = (obj->data.get() + ind)->re;
-            wl4i = (obj->data.get() + ind)->im;
+            wl4r = (obj->data.get() + ind)->real();
+            wl4i = (obj->data.get() + ind)->imag();
             ind++;
-            wl5r = (obj->data.get() + ind)->re;
-            wl5i = (obj->data.get() + ind)->im;
+            wl5r = (obj->data.get() + ind)->real();
+            wl5i = (obj->data.get() + ind)->imag();
             ind++;
-            wl6r = (obj->data.get() + ind)->re;
-            wl6i = (obj->data.get() + ind)->im;
+            wl6r = (obj->data.get() + ind)->real();
+            wl6i = (obj->data.get() + ind)->imag();
 
             tkm1 = k + m;
             tkm2 = tkm1 + m;
@@ -1400,26 +1400,26 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tkm5 = tkm4 + m;
             tkm6 = tkm5 + m;
 
-            ar = op[k].re;
-            ai = op[k].im;
+            ar = op[k].real();
+            ai = op[k].imag();
 
-            br = op[tkm1].re * wlr - op[tkm1].im * wli;
-            bi = op[tkm1].im * wlr + op[tkm1].re * wli;
+            br = op[tkm1].real() * wlr - op[tkm1].imag() * wli;
+            bi = op[tkm1].imag() * wlr + op[tkm1].real() * wli;
 
-            cr = op[tkm2].re * wl2r - op[tkm2].im * wl2i;
-            ci = op[tkm2].im * wl2r + op[tkm2].re * wl2i;
+            cr = op[tkm2].real() * wl2r - op[tkm2].imag() * wl2i;
+            ci = op[tkm2].imag() * wl2r + op[tkm2].real() * wl2i;
 
-            dr = op[tkm3].re * wl3r - op[tkm3].im * wl3i;
-            di = op[tkm3].im * wl3r + op[tkm3].re * wl3i;
+            dr = op[tkm3].real() * wl3r - op[tkm3].imag() * wl3i;
+            di = op[tkm3].imag() * wl3r + op[tkm3].real() * wl3i;
 
-            er = op[tkm4].re * wl4r - op[tkm4].im * wl4i;
-            ei = op[tkm4].im * wl4r + op[tkm4].re * wl4i;
+            er = op[tkm4].real() * wl4r - op[tkm4].imag() * wl4i;
+            ei = op[tkm4].imag() * wl4r + op[tkm4].real() * wl4i;
 
-            fr = op[tkm5].re * wl5r - op[tkm5].im * wl5i;
-            fi = op[tkm5].im * wl5r + op[tkm5].re * wl5i;
+            fr = op[tkm5].real() * wl5r - op[tkm5].imag() * wl5i;
+            fi = op[tkm5].imag() * wl5r + op[tkm5].real() * wl5i;
 
-            gr = op[tkm6].re * wl6r - op[tkm6].im * wl6i;
-            gi = op[tkm6].im * wl6r + op[tkm6].re * wl6i;
+            gr = op[tkm6].real() * wl6r - op[tkm6].imag() * wl6i;
+            gi = op[tkm6].imag() * wl6r + op[tkm6].real() * wl6i;
 
             tau0r = br + gr;
             tau3r = br - gr;
@@ -1436,8 +1436,8 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau2i = di + ei;
             tau5i = di - ei;
 
-            op[k].re = ar + tau0r + tau1r + tau2r;
-            op[k].im = ai + tau0i + tau1i + tau2i;
+            op[k].real(ar + tau0r + tau1r + tau2r);
+            op[k].imag(ai + tau0i + tau1i + tau2i);
 
             tau6r = ar + c1 * tau0r + c2 * tau1r + c3 * tau2r;
             tau6i = ai + c1 * tau0i + c2 * tau1i + c3 * tau2i;
@@ -1454,11 +1454,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
                 tau7i = s1 * tau3i + s2 * tau4i + s3 * tau5i;
             }
 
-            op[tkm1].re = tau6r - tau7i;
-            op[tkm1].im = tau6i + tau7r;
+            op[tkm1].real(tau6r - tau7i);
+            op[tkm1].imag(tau6i + tau7r);
 
-            op[tkm6].re = tau6r + tau7i;
-            op[tkm6].im = tau6i - tau7r;
+            op[tkm6].real(tau6r + tau7i);
+            op[tkm6].imag(tau6i - tau7r);
 
             tau6r = ar + c2 * tau0r + c3 * tau1r + c1 * tau2r;
             tau6i = ai + c2 * tau0i + c3 * tau1i + c1 * tau2i;
@@ -1475,11 +1475,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
                 tau7i = s2 * tau3i - s3 * tau4i - s1 * tau5i;
             }
 
-            op[tkm2].re = tau6r - tau7i;
-            op[tkm2].im = tau6i + tau7r;
+            op[tkm2].real(tau6r - tau7i);
+            op[tkm2].imag(tau6i + tau7r);
 
-            op[tkm5].re = tau6r + tau7i;
-            op[tkm5].im = tau6i - tau7r;
+            op[tkm5].real(tau6r + tau7i);
+            op[tkm5].imag(tau6i - tau7r);
 
             tau6r = ar + c3 * tau0r + c1 * tau1r + c2 * tau2r;
             tau6i = ai + c3 * tau0i + c1 * tau1i + c2 * tau2i;
@@ -1496,11 +1496,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
                 tau7i = s3 * tau3i - s1 * tau4i + s2 * tau5i;
             }
 
-            op[tkm3].re = tau6r - tau7i;
-            op[tkm3].im = tau6i + tau7r;
+            op[tkm3].real(tau6r - tau7i);
+            op[tkm3].imag(tau6i + tau7r);
 
-            op[tkm4].re = tau6r + tau7i;
-            op[tkm4].im = tau6i - tau7r;
+            op[tkm4].real(tau6r + tau7i);
+            op[tkm4].imag(tau6i - tau7r);
         }
 
     } else if (radix == 8) {
@@ -1587,26 +1587,26 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
 
         for (k = 0; k < m; k++) {
             ind = m - 1 + 7 * k;
-            wlr = (obj->data.get() + ind)->re;
-            wli = (obj->data.get() + ind)->im;
+            wlr = (obj->data.get() + ind)->real();
+            wli = (obj->data.get() + ind)->imag();
             ind++;
-            wl2r = (obj->data.get() + ind)->re;
-            wl2i = (obj->data.get() + ind)->im;
+            wl2r = (obj->data.get() + ind)->real();
+            wl2i = (obj->data.get() + ind)->imag();
             ind++;
-            wl3r = (obj->data.get() + ind)->re;
-            wl3i = (obj->data.get() + ind)->im;
+            wl3r = (obj->data.get() + ind)->real();
+            wl3i = (obj->data.get() + ind)->imag();
             ind++;
-            wl4r = (obj->data.get() + ind)->re;
-            wl4i = (obj->data.get() + ind)->im;
+            wl4r = (obj->data.get() + ind)->real();
+            wl4i = (obj->data.get() + ind)->imag();
             ind++;
-            wl5r = (obj->data.get() + ind)->re;
-            wl5i = (obj->data.get() + ind)->im;
+            wl5r = (obj->data.get() + ind)->real();
+            wl5i = (obj->data.get() + ind)->imag();
             ind++;
-            wl6r = (obj->data.get() + ind)->re;
-            wl6i = (obj->data.get() + ind)->im;
+            wl6r = (obj->data.get() + ind)->real();
+            wl6i = (obj->data.get() + ind)->imag();
             ind++;
-            wl7r = (obj->data.get() + ind)->re;
-            wl7i = (obj->data.get() + ind)->im;
+            wl7r = (obj->data.get() + ind)->real();
+            wl7i = (obj->data.get() + ind)->imag();
 
             tkm1 = k + m;
             tkm2 = tkm1 + m;
@@ -1616,29 +1616,29 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tkm6 = tkm5 + m;
             tkm7 = tkm6 + m;
 
-            ar = op[k].re;
-            ai = op[k].im;
+            ar = op[k].real();
+            ai = op[k].imag();
 
-            br = op[tkm1].re * wlr - op[tkm1].im * wli;
-            bi = op[tkm1].im * wlr + op[tkm1].re * wli;
+            br = op[tkm1].real() * wlr - op[tkm1].imag() * wli;
+            bi = op[tkm1].imag() * wlr + op[tkm1].real() * wli;
 
-            cr = op[tkm2].re * wl2r - op[tkm2].im * wl2i;
-            ci = op[tkm2].im * wl2r + op[tkm2].re * wl2i;
+            cr = op[tkm2].real() * wl2r - op[tkm2].imag() * wl2i;
+            ci = op[tkm2].imag() * wl2r + op[tkm2].real() * wl2i;
 
-            dr = op[tkm3].re * wl3r - op[tkm3].im * wl3i;
-            di = op[tkm3].im * wl3r + op[tkm3].re * wl3i;
+            dr = op[tkm3].real() * wl3r - op[tkm3].imag() * wl3i;
+            di = op[tkm3].imag() * wl3r + op[tkm3].real() * wl3i;
 
-            er = op[tkm4].re * wl4r - op[tkm4].im * wl4i;
-            ei = op[tkm4].im * wl4r + op[tkm4].re * wl4i;
+            er = op[tkm4].real() * wl4r - op[tkm4].imag() * wl4i;
+            ei = op[tkm4].imag() * wl4r + op[tkm4].real() * wl4i;
 
-            fr = op[tkm5].re * wl5r - op[tkm5].im * wl5i;
-            fi = op[tkm5].im * wl5r + op[tkm5].re * wl5i;
+            fr = op[tkm5].real() * wl5r - op[tkm5].imag() * wl5i;
+            fi = op[tkm5].imag() * wl5r + op[tkm5].real() * wl5i;
 
-            gr = op[tkm6].re * wl6r - op[tkm6].im * wl6i;
-            gi = op[tkm6].im * wl6r + op[tkm6].re * wl6i;
+            gr = op[tkm6].real() * wl6r - op[tkm6].imag() * wl6i;
+            gi = op[tkm6].imag() * wl6r + op[tkm6].real() * wl6i;
 
-            hr = op[tkm7].re * wl7r - op[tkm7].im * wl7i;
-            hi = op[tkm7].im * wl7r + op[tkm7].re * wl7i;
+            hr = op[tkm7].real() * wl7r - op[tkm7].imag() * wl7i;
+            hi = op[tkm7].imag() * wl7r + op[tkm7].real() * wl7i;
 
             tau0r = ar + er;
             tau4r = ar - er;
@@ -1660,11 +1660,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
             tau7i = ci - gi;
             tau3i = ci + gi;
 
-            op[k].re = tau0r + tau1r + tau2r + tau3r;
-            op[k].im = tau0i + tau1i + tau2i + tau3i;
+            op[k].real(tau0r + tau1r + tau2r + tau3r);
+            op[k].imag(tau0i + tau1i + tau2i + tau3i);
 
-            op[tkm4].re = tau0r - tau1r - tau2r + tau3r;
-            op[tkm4].im = tau0i - tau1i - tau2i + tau3i;
+            op[tkm4].real(tau0r - tau1r - tau2r + tau3r);
+            op[tkm4].imag(tau0i - tau1i - tau2i + tau3i);
 
             temp1r = tau1r - tau2r;
             temp1i = tau1i - tau2i;
@@ -1687,11 +1687,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
                 tau9i = s1 * temp2i + tau7i;
             }
 
-            op[tkm1].re = tau8r - tau9i;
-            op[tkm1].im = tau8i + tau9r;
+            op[tkm1].real(tau8r - tau9i);
+            op[tkm1].imag(tau8i + tau9r);
 
-            op[tkm7].re = tau8r + tau9i;
-            op[tkm7].im = tau8i - tau9r;
+            op[tkm7].real(tau8r + tau9i);
+            op[tkm7].imag(tau8i - tau9r);
 
             tau8r = tau0r - tau3r;
             tau8i = tau0i - tau3i;
@@ -1708,11 +1708,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
                 tau9i = tau5i - tau6i;
             }
 
-            op[tkm2].re = tau8r - tau9i;
-            op[tkm2].im = tau8i + tau9r;
+            op[tkm2].real(tau8r - tau9i);
+            op[tkm2].imag(tau8i + tau9r);
 
-            op[tkm6].re = tau8r + tau9i;
-            op[tkm6].im = tau8i - tau9r;
+            op[tkm6].real(tau8r + tau9i);
+            op[tkm6].imag(tau8i - tau9r);
 
             tau8r = tau4r - c1 * temp1r;
             tau8i = tau4i - c1 * temp1i;
@@ -1729,11 +1729,11 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
                 tau9i = s1 * temp2i - tau7i;
             }
 
-            op[tkm3].re = tau8r - tau9i;
-            op[tkm3].im = tau8i + tau9r;
+            op[tkm3].real(tau8r - tau9i);
+            op[tkm3].imag(tau8i + tau9r);
 
-            op[tkm5].re = tau8r + tau9i;
-            op[tkm5].im = tau8i - tau9r;
+            op[tkm5].real(tau8r + tau9i);
+            op[tkm5].imag(tau8i - tau9r);
         }
 
     } else {
@@ -1785,14 +1785,14 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
 
     //     for (k = 0; k < m; ++k) {
     //         ind = m - 1 + (radix - 1) * k;
-    //         yr[0] = op[k].re;
-    //         yi[0] = op[k].im;
+    //         yr[0] = op[k].real();
+    //         yi[0] = op[k].imag();
     //         for (i = 0; i < radix - 1; ++i) {
-    //             wlr[i] = (obj->data.get() + ind)->re;
-    //             wli[i] = (obj->data.get() + ind)->im;
+    //             wlr[i] = (obj->data.get() + ind)->real();
+    //             wli[i] = (obj->data.get() + ind)->imag();
     //             tkm = k + (i + 1) * m;
-    //             yr[i + 1] = op[tkm].re * wlr[i] - op[tkm].im * wli[i];
-    //             yi[i + 1] = op[tkm].im * wlr[i] + op[tkm].re * wli[i];
+    //             yr[i + 1] = op[tkm].real() * wlr[i] - op[tkm].imag() * wli[i];
+    //             yi[i + 1] = op[tkm].imag() * wlr[i] + op[tkm].real() * wli[i];
     //             ind++;
     //         }
 
@@ -1811,8 +1811,8 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
     //             temp1i += taui[i];
     //         }
 
-    //         op[k].re = temp1r;
-    //         op[k].im = temp1i;
+    //         op[k].real( temp1r);
+    //         op[k].imag( temp1i);
 
     //         for (u = 0; u < M; u++) {
     //             temp1r = yr[0];
@@ -1835,17 +1835,17 @@ static auto mixedRadixDitRec(Complex* op, Complex* ip, const FFT* obj, int sgn, 
     //             temp2r = sgn * temp2r;
     //             temp2i = sgn * temp2i;
 
-    //             op[k + (u + 1) * m].re = temp1r - temp2i;
-    //             op[k + (u + 1) * m].im = temp1i + temp2r;
+    //             op[k + (u + 1) * m].real( temp1r - temp2i);
+    //             op[k + (u + 1) * m].imag( temp1i + temp2r);
 
-    //             op[k + (radix - u - 1) * m].re = temp1r + temp2i;
-    //             op[k + (radix - u - 1) * m].im = temp1i - temp2r;
+    //             op[k + (radix - u - 1) * m].real( temp1r + temp2i);
+    //             op[k + (radix - u - 1) * m].imag( temp1i - temp2r);
     //         }
     //     }
     // }
 }
 
-static auto bluesteinExp(Complex* hl, Complex* hlt, int len, int m) -> void
+static auto bluesteinExp(Complex<double>* hl, Complex<double>* hlt, int len, int m) -> void
 {
     double pi;
     double theta;
@@ -1860,10 +1860,10 @@ static auto bluesteinExp(Complex* hl, Complex* hlt, int len, int m) -> void
 
     for (i = 0; i < len; ++i) {
         angle = theta * l2;
-        hlt[i].re = cos(angle);
-        hlt[i].im = sin(angle);
-        hl[i].re = hlt[i].re;
-        hl[i].im = hlt[i].im;
+        hlt[i].real(cos(angle));
+        hlt[i].imag(sin(angle));
+        hl[i].real(hlt[i].real());
+        hl[i].imag(hlt[i].imag());
         l2 += 2 * i + 1;
         while (l2 > len2) {
             l2 -= len2;
@@ -1871,17 +1871,17 @@ static auto bluesteinExp(Complex* hl, Complex* hlt, int len, int m) -> void
     }
 
     for (i = len; i < m - len + 1; i++) {
-        hl[i].re = 0.0;
-        hl[i].im = 0.0;
+        hl[i].real(0.0);
+        hl[i].imag(0.0);
     }
 
     for (i = m - len + 1; i < m; i++) {
-        hl[i].re = hlt[m - i].re;
-        hl[i].im = hlt[m - i].im;
+        hl[i].real(hlt[m - i].real());
+        hl[i].imag(hlt[m - i].imag());
     }
 }
 
-static auto bluesteinFft(Complex* data, Complex* oup, FFT* obj, int sgn, int n) -> void
+static auto bluesteinFft(Complex<double>* data, Complex<double>* oup, FFT* obj, int sgn, int n) -> void
 {
 
     int m;
@@ -1903,18 +1903,18 @@ static auto bluesteinFft(Complex* data, Complex* oup, FFT* obj, int sgn, int n) 
     }
     obj->N = m;
 
-    auto yn = std::make_unique<Complex[]>(m);
-    auto hk = std::make_unique<Complex[]>(m);
-    auto tempop = std::make_unique<Complex[]>(m);
-    auto yno = std::make_unique<Complex[]>(m);
-    auto hlt = std::make_unique<Complex[]>(n);
+    auto yn = std::make_unique<Complex<double>[]>(m);
+    auto hk = std::make_unique<Complex<double>[]>(m);
+    auto tempop = std::make_unique<Complex<double>[]>(m);
+    auto yno = std::make_unique<Complex<double>[]>(m);
+    auto hlt = std::make_unique<Complex<double>[]>(n);
 
     bluesteinExp(tempop.get(), hlt.get(), n, m);
     scale = 1.0 / m;
 
     for (ii = 0; ii < m; ++ii) {
-        tempop[ii].im *= scale;
-        tempop[ii].re *= scale;
+        tempop[ii].imag(tempop[ii].imag() * scale);
+        tempop[ii].real(tempop[ii].real() * scale);
     }
 
     //fft_set* obj = initialize_fft2(M,1);
@@ -1922,41 +1922,41 @@ static auto bluesteinFft(Complex* data, Complex* oup, FFT* obj, int sgn, int n) 
 
     if (sgn == 1) {
         for (i = 0; i < n; i++) {
-            tempop[i].re = data[i].re * hlt[i].re + data[i].im * hlt[i].im;
-            tempop[i].im = -data[i].re * hlt[i].im + data[i].im * hlt[i].re;
+            tempop[i].real(data[i].real() * hlt[i].real() + data[i].imag() * hlt[i].imag());
+            tempop[i].imag(-data[i].real() * hlt[i].imag() + data[i].imag() * hlt[i].real());
         }
     } else {
         for (i = 0; i < n; i++) {
-            tempop[i].re = data[i].re * hlt[i].re - data[i].im * hlt[i].im;
-            tempop[i].im = data[i].re * hlt[i].im + data[i].im * hlt[i].re;
+            tempop[i].real(data[i].real() * hlt[i].real() - data[i].imag() * hlt[i].imag());
+            tempop[i].imag(data[i].real() * hlt[i].imag() + data[i].imag() * hlt[i].real());
         }
     }
 
     for (i = n; i < m; i++) {
-        tempop[i].re = 0.0;
-        tempop[i].im = 0.0;
+        tempop[i].real(0.0);
+        tempop[i].imag(0.0);
     }
 
     obj->perform(tempop.get(), yn.get());
 
     if (sgn == 1) {
         for (i = 0; i < m; i++) {
-            temp = yn[i].re * hk[i].re - yn[i].im * hk[i].im;
-            yn[i].im = yn[i].re * hk[i].im + yn[i].im * hk[i].re;
-            yn[i].re = temp;
+            temp = yn[i].real() * hk[i].real() - yn[i].imag() * hk[i].imag();
+            yn[i].imag(yn[i].real() * hk[i].imag() + yn[i].imag() * hk[i].real());
+            yn[i].real(temp);
         }
     } else {
         for (i = 0; i < m; i++) {
-            temp = yn[i].re * hk[i].re + yn[i].im * hk[i].im;
-            yn[i].im = -yn[i].re * hk[i].im + yn[i].im * hk[i].re;
-            yn[i].re = temp;
+            temp = yn[i].real() * hk[i].real() + yn[i].imag() * hk[i].imag();
+            yn[i].imag(-yn[i].real() * hk[i].imag() + yn[i].imag() * hk[i].real());
+            yn[i].real(temp);
         }
     }
 
     //IFFT
 
     for (ii = 0; ii < m; ++ii) {
-        (obj->data.get() + ii)->im = -(obj->data.get() + ii)->im;
+        (obj->data.get() + ii)->imag(-(obj->data.get() + ii)->imag());
     }
 
     obj->sgn = -1 * sgn;
@@ -1965,13 +1965,13 @@ static auto bluesteinFft(Complex* data, Complex* oup, FFT* obj, int sgn, int n) 
 
     if (sgn == 1) {
         for (i = 0; i < n; i++) {
-            oup[i].re = yno[i].re * hlt[i].re + yno[i].im * hlt[i].im;
-            oup[i].im = -yno[i].re * hlt[i].im + yno[i].im * hlt[i].re;
+            oup[i].real(yno[i].real() * hlt[i].real() + yno[i].imag() * hlt[i].imag());
+            oup[i].imag(-yno[i].real() * hlt[i].imag() + yno[i].imag() * hlt[i].real());
         }
     } else {
         for (i = 0; i < n; i++) {
-            oup[i].re = yno[i].re * hlt[i].re - yno[i].im * hlt[i].im;
-            oup[i].im = yno[i].re * hlt[i].im + yno[i].im * hlt[i].re;
+            oup[i].real(yno[i].real() * hlt[i].real() - yno[i].imag() * hlt[i].imag());
+            oup[i].imag(yno[i].real() * hlt[i].imag() + yno[i].imag() * hlt[i].real());
         }
     }
 
@@ -1979,11 +1979,11 @@ static auto bluesteinFft(Complex* data, Complex* oup, FFT* obj, int sgn, int n) 
     obj->N = defN;
     obj->lt = defLt;
     for (ii = 0; ii < m; ++ii) {
-        (obj->data.get() + ii)->im = -(obj->data.get() + ii)->im;
+        (obj->data.get() + ii)->imag(-(obj->data.get() + ii)->imag());
     }
 }
 
-auto FFT::perform(Complex* inp, Complex* oup) -> void
+auto FFT::perform(Complex<double>* inp, Complex<double>* oup) -> void
 {
     if (lt == 0) {
         mixedRadixDitRec(oup, inp, this, sgn, N, 1, 0);
@@ -2005,7 +2005,7 @@ auto divideby(int m, int d) -> int
     return 0;
 }
 
-auto fftR2cExec(FftRealSet* obj, double const* inp, Complex* oup) -> void
+auto fftR2cExec(FftRealSet* obj, double const* inp, Complex<double>* oup) -> void
 {
     int i;
     int n2;
@@ -2015,36 +2015,36 @@ auto fftR2cExec(FftRealSet* obj, double const* inp, Complex* oup) -> void
     n2 = obj->cobj->N;
     n = n2 * 2;
 
-    auto cinp = std::make_unique<Complex[]>(n2);
-    auto coup = std::make_unique<Complex[]>(n2);
+    auto cinp = std::make_unique<Complex<double>[]>(n2);
+    auto coup = std::make_unique<Complex<double>[]>(n2);
 
     for (i = 0; i < n2; ++i) {
-        cinp[i].re = inp[2 * i];
-        cinp[i].im = inp[2 * i + 1];
+        cinp[i].real(inp[2 * i]);
+        cinp[i].imag(inp[2 * i + 1]);
     }
 
     obj->cobj->perform(cinp.get(), coup.get());
 
-    oup[0].re = coup[0].re + coup[0].im;
-    oup[0].im = 0.0;
+    oup[0].real(coup[0].real() + coup[0].imag());
+    oup[0].imag(0.0);
 
     for (i = 1; i < n2; ++i) {
-        temp1 = coup[i].im + coup[n2 - i].im;
-        temp2 = coup[n2 - i].re - coup[i].re;
-        oup[i].re = (coup[i].re + coup[n2 - i].re + (temp1 * obj->data[i].re) + (temp2 * obj->data[i].im)) / 2.0;
-        oup[i].im = (coup[i].im - coup[n2 - i].im + (temp2 * obj->data[i].re) - (temp1 * obj->data[i].im)) / 2.0;
+        temp1 = coup[i].imag() + coup[n2 - i].imag();
+        temp2 = coup[n2 - i].real() - coup[i].real();
+        oup[i].real((coup[i].real() + coup[n2 - i].real() + (temp1 * obj->data[i].real()) + (temp2 * obj->data[i].imag())) / 2.0);
+        oup[i].imag((coup[i].imag() - coup[n2 - i].imag() + (temp2 * obj->data[i].real()) - (temp1 * obj->data[i].imag())) / 2.0);
     }
 
-    oup[n2].re = coup[0].re - coup[0].im;
-    oup[n2].im = 0.0;
+    oup[n2].real(coup[0].real() - coup[0].imag());
+    oup[n2].imag(0.0);
 
     for (i = 1; i < n2; ++i) {
-        oup[n - i].re = oup[i].re;
-        oup[n - i].im = -oup[i].im;
+        oup[n - i].real(oup[i].real());
+        oup[n - i].imag(-oup[i].imag());
     }
 }
 
-auto fftC2rExec(FftRealSet* obj, Complex* inp, double* oup) -> void
+auto fftC2rExec(FftRealSet* obj, Complex<double>* inp, double* oup) -> void
 {
     int i;
     int n2;
@@ -2052,20 +2052,20 @@ auto fftC2rExec(FftRealSet* obj, Complex* inp, double* oup) -> void
     double temp2;
     n2 = obj->cobj->N;
 
-    auto cinp = std::make_unique<Complex[]>(n2);
-    auto coup = std::make_unique<Complex[]>(n2);
+    auto cinp = std::make_unique<Complex<double>[]>(n2);
+    auto coup = std::make_unique<Complex<double>[]>(n2);
 
     for (i = 0; i < n2; ++i) {
-        temp1 = -inp[i].im - inp[n2 - i].im;
-        temp2 = -inp[n2 - i].re + inp[i].re;
-        cinp[i].re = inp[i].re + inp[n2 - i].re + (temp1 * obj->data[i].re) - (temp2 * obj->data[i].im);
-        cinp[i].im = inp[i].im - inp[n2 - i].im + (temp2 * obj->data[i].re) + (temp1 * obj->data[i].im);
+        temp1 = -inp[i].imag() - inp[n2 - i].imag();
+        temp2 = -inp[n2 - i].real() + inp[i].real();
+        cinp[i].real(inp[i].real() + inp[n2 - i].real() + (temp1 * obj->data[i].real()) - (temp2 * obj->data[i].imag()));
+        cinp[i].imag(inp[i].imag() - inp[n2 - i].imag() + (temp2 * obj->data[i].real()) + (temp1 * obj->data[i].imag()));
     }
 
     obj->cobj->perform(cinp.get(), coup.get());
 
     for (i = 0; i < n2; ++i) {
-        oup[2 * i] = coup[i].re;
-        oup[2 * i + 1] = coup[i].im;
+        oup[2 * i] = coup[i].real();
+        oup[2 * i + 1] = coup[i].imag();
     }
 }

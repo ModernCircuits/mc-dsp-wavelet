@@ -18,9 +18,9 @@ auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
 
     auto obj = std::make_unique<FFT>(n, -1);
     auto w = std::make_unique<double[]>(n);
-    auto phiw = std::make_unique<Complex[]>(n);
-    auto psiw = std::make_unique<Complex[]>(n);
-    auto oup = std::make_unique<Complex[]>(n);
+    auto phiw = std::make_unique<Complex<double>[]>(n);
+    auto psiw = std::make_unique<Complex<double>[]>(n);
+    auto oup = std::make_unique<Complex<double>[]>(n);
 
     auto const delta = 2 * (ub - lb) / PI2;
 
@@ -30,14 +30,16 @@ auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
     for (auto i = 0; i < n; ++i) {
         w[i] = j / delta;
         j += 2.0;
-        psiw[i].re = psiw[i].im = 0.0;
-        phiw[i].re = phiw[i].im = 0.0;
+        psiw[i].real(0.0);
+        psiw[i].imag(0.0);
+        phiw[i].real(0.0);
+        phiw[i].imag(0.0);
     }
 
     for (auto i = 0; i < n; ++i) {
         auto const wf = fabs(w[i]);
         if (wf <= PI2 / 3.0) {
-            phiw[i].re = 1.0;
+            phiw[i].real(1.0);
         }
         if (wf > PI2 / 3.0 && wf <= 2 * PI2 / 3.0) {
             auto const x = (3 * wf / PI2) - 1.0;
@@ -46,12 +48,12 @@ auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
             auto const x4 = x3 * x;
             auto const v = x4 * (35 - 84 * x + 70 * x2 - 20 * x3);
             auto const theta = v * PI2 / 4.0;
-            auto const cs = cos(theta);
-            auto const sn = sin(theta);
+            auto const cs = std::cos(theta);
+            auto const sn = std::sin(theta);
 
-            phiw[i].re = cs;
-            psiw[i].re = cos(w[i] / 2.0) * sn;
-            psiw[i].im = sin(w[i] / 2.0) * sn;
+            phiw[i].real(cs);
+            psiw[i].real(std::cos(w[i] / 2.0) * sn);
+            psiw[i].imag(std::sin(w[i] / 2.0) * sn);
         }
         if (wf > 2.0 * PI2 / 3.0 && wf <= 4 * PI2 / 3.0) {
             auto const x = (1.5 * wf / PI2) - 1.0;
@@ -60,23 +62,23 @@ auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
             auto const x4 = x3 * x;
             auto const v = x4 * (35 - 84 * x + 70 * x2 - 20 * x3);
             auto const theta = v * PI2 / 4.0;
-            auto const cs = cos(theta);
+            auto const cs = std::cos(theta);
 
-            psiw[i].re = cos(w[i] / 2.0) * cs;
-            psiw[i].im = sin(w[i] / 2.0) * cs;
+            psiw[i].real(std::cos(w[i] / 2.0) * cs);
+            psiw[i].imag(std::sin(w[i] / 2.0) * cs);
         }
     }
 
     nsfftExec(obj.get(), phiw.get(), oup.get(), lb, ub, tgrid);
 
     for (auto i = 0; i < n; ++i) {
-        phi[i] = oup[i].re / n;
+        phi[i] = oup[i].real() / n;
     }
 
     nsfftExec(obj.get(), psiw.get(), oup.get(), lb, ub, tgrid);
 
     for (auto i = 0; i < n; ++i) {
-        psi[i] = oup[i].re / n;
+        psi[i] = oup[i].real() / n;
     }
 }
 
@@ -194,6 +196,6 @@ auto morlet(int n, double lb, double ub, double* psi, double* t) -> void
     }
 
     for (i = 0; i < n; ++i) {
-        psi[i] = std::exp(-t[i] * t[i] / 2.0) * cos(5 * t[i]);
+        psi[i] = std::exp(-t[i] * t[i] / 2.0) * std::cos(5 * t[i]);
     }
 }

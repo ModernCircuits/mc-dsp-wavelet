@@ -23,7 +23,7 @@ struct ComplexWaveletTransform {
     double m; // Wavelet parameter param
     double smean; // Input Signal mean
 
-    Complex* output;
+    Complex<double>* output;
     double* scale;
     double* period;
     double* coi;
