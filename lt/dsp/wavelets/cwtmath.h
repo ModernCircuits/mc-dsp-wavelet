@@ -1,7 +1,7 @@
 #ifndef CWTMATH_H_
 #define CWTMATH_H_
 
-#include "FFT.hpp"
+#include "lt/dsp/fft/FFT.hpp"
 #include "wtmath.h"
 
 /// \brief lb -lower bound, ub - upper bound, w - time or frequency grid (Size N)

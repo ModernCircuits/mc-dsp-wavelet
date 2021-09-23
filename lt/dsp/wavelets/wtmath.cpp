@@ -2,7 +2,7 @@
 
 #include "wtmath.h"
 
-#include "FFT.hpp"
+#include "lt/dsp/fft/FFT.hpp"
 
 #include <cmath>
 #include <cstdio>

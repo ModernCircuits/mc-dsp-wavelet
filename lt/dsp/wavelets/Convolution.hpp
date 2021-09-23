@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FFT.hpp"
+#include "lt/dsp/fft/FFT.hpp"
 
 struct Convolution {
     std::unique_ptr<FftRealSet> fobj;

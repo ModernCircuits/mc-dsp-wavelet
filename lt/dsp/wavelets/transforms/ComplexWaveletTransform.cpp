@@ -1,7 +1,7 @@
 #include "ComplexWaveletTransform.hpp"
 
+#include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/Convolution.hpp"
-#include "lt/dsp/wavelets/FFT.hpp"
 #include "lt/dsp/wavelets/wtmath.h"
 
 #include <cassert>

@@ -16,6 +16,9 @@ target_sources(${CMAKE_PROJECT_NAME}
         dsp/convolution/OverlapSave.cpp
         dsp/convolution/OverlapSave.hpp
 
+        dsp/fft/FFT.hpp
+        dsp/fft/FFT.cpp
+
         dsp/wavelets.hpp
         dsp/wavelets/Convolution.cpp
         dsp/wavelets/Convolution.hpp
@@ -24,8 +27,6 @@ target_sources(${CMAKE_PROJECT_NAME}
         dsp/wavelets/cwtmath.h
         dsp/wavelets/Denoise.hpp
         dsp/wavelets/Denoise.cpp
-        dsp/wavelets/FFT.hpp
-        dsp/wavelets/FFT.cpp
         dsp/wavelets/SignalExtension.hpp
         dsp/wavelets/wavefunc.cpp
         dsp/wavelets/wavefunc.h
