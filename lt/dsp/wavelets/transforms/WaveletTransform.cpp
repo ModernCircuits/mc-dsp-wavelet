@@ -330,17 +330,16 @@ auto WaveletTransform::detail(std::size_t level) const noexcept -> lt::span<doub
 static auto wconv(WaveletTransform& wt, double* sig, int n, double const* filt, int l, double* oup) -> void
 {
     if (wt.convMethod() == ConvolutionMethod::direct) {
-        convDirect(sig, n, filt, l, oup);
-    } else if (wt.convMethod() == ConvolutionMethod::fft) {
-        if (wt.cfftset == 0) {
-            wt.cobj = std::make_unique<Convolution>(n, l);
-            convFft(*wt.cobj, sig, filt, oup);
-        } else {
-            convFft(*wt.cobj, sig, filt, oup);
-        }
+        Convolution::direct(sig, n, filt, l, oup);
+        return;
+    }
+
+    assert(wt.convMethod() == ConvolutionMethod::fft);
+    if (wt.cfftset == 0) {
+        wt.cobj = std::make_unique<Convolution>(n, l);
+        wt.cobj->fft(sig, filt, oup);
     } else {
-        printf("Convolution Only accepts two methods - direct and fft");
-        exit(-1);
+        wt.cobj->fft(sig, filt, oup);
     }
 }
 
