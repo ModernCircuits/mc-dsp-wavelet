@@ -1,6 +1,6 @@
 #include "WaveletPacketTransform.hpp"
 
-#include "lt/dsp/convolution/Convolution.hpp"
+#include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/common.hpp"
 

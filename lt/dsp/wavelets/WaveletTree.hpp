@@ -2,14 +2,14 @@
 
 #include "tcb/span.hpp"
 
-#include "lt/dsp/convolution/Convolution.hpp"
+#include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/wavelets/Wavelet.hpp"
 
 #include <string>
 
 struct WaveletTree {
     Wavelet* wave;
-    Convolution* cobj;
+    FFTConvolver* cobj;
     std::string method;
     int siglength; // Length of the original signal.
     int outlength; // Length of the output DWT vector

@@ -1,6 +1,6 @@
 #include "Wavelet.hpp"
 
-#include "lt/dsp/convolution/Convolution.hpp"
+#include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/wavelets/filters/coif.hpp"
 #include "lt/dsp/wavelets/filters/daubechies.hpp"
 #include "lt/dsp/wavelets/filters/h.hpp"

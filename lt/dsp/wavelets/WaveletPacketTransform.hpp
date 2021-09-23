@@ -2,14 +2,14 @@
 
 #include "tcb/span.hpp"
 
-#include "lt/dsp/convolution/Convolution.hpp"
+#include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/wavelets/Wavelet.hpp"
 
 #include <string>
 
 struct WaveletPacketTransform {
     Wavelet* wave;
-    Convolution* cobj;
+    FFTConvolver* cobj;
     int siglength; // Length of the original signal.
     int outlength; // Length of the output DWT vector
     int lenlength; // Length of the Output Dimension Vector "length"

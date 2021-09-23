@@ -1,7 +1,7 @@
 #pragma once
 
-#include "lt/dsp/convolution/Convolution.hpp"
 #include "lt/dsp/convolution/ConvolutionMethod.hpp"
+#include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/ComplexWaveletTransform.hpp"
 #include "lt/dsp/wavelets/SignalExtension.hpp"

@@ -2,8 +2,8 @@
 
 #include "tcb/span.hpp"
 
-#include "lt/dsp/convolution/Convolution.hpp"
 #include "lt/dsp/convolution/ConvolutionMethod.hpp"
+#include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/wavelets/SignalExtension.hpp"
 #include "lt/dsp/wavelets/Wavelet.hpp"
 
@@ -36,7 +36,7 @@ private:
     double* output_;
 
 public:
-    std::unique_ptr<Convolution> cobj;
+    std::unique_ptr<FFTConvolver> cobj;
     int siglength; // Length of the original signal.
     int modwtsiglength; // Modified signal length for MODWT
     int outlength; // Length of the output DWT vector

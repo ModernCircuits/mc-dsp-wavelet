@@ -2,7 +2,7 @@
 
 #include "tcb/span.hpp"
 
-#include "lt/dsp/convolution/Convolution.hpp"
+#include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/wavelets/Wavelet.hpp"
 
 #include <string>

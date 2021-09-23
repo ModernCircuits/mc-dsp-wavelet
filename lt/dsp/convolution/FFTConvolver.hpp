@@ -2,8 +2,8 @@
 
 #include "lt/dsp/fft/FFT.hpp"
 
-struct Convolution {
-    Convolution(std::size_t signalSize, std::size_t patchSize);
+struct FFTConvolver {
+    FFTConvolver(std::size_t signalSize, std::size_t patchSize);
 
     auto fft(double const* signal, double const* patch, double* output) const -> void;
 

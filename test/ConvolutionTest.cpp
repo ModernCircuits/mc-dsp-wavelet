@@ -9,7 +9,7 @@ auto testDirectConvolve(std::vector<std::vector<double>> const& testData) -> boo
     auto const& expected = testData[2];
 
     auto output = std::vector<double>(expected.size());
-    Convolution::direct(data(signal), size(signal), data(patch), size(patch), data(output));
+    FFTConvolver::direct(data(signal), size(signal), data(patch), size(patch), data(output));
     REQUIRE(approxEqual(output, expected));
     return true;
 }

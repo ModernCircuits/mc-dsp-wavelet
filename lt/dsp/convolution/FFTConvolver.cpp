@@ -1,4 +1,4 @@
-#include "Convolution.hpp"
+#include "FFTConvolver.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -35,7 +35,7 @@ namespace {
 }
 }
 
-Convolution::Convolution(std::size_t signalSize, std::size_t patchSize)
+FFTConvolver::FFTConvolver(std::size_t signalSize, std::size_t patchSize)
     : signalSize_ { signalSize }
     , patchSize_ { patchSize }
     , totalSize_ { findnexte(signalSize + patchSize_ - 1U) }
@@ -44,7 +44,7 @@ Convolution::Convolution(std::size_t signalSize, std::size_t patchSize)
 {
 }
 
-auto Convolution::fft(double const* signal, double const* patch, double* output) const -> void
+auto FFTConvolver::fft(double const* signal, double const* patch, double* output) const -> void
 {
     std::fill(signalScratch_.get(), std::next(signalScratch_.get(), totalSize_), 0.0);
     std::fill(patchScratch_.get(), std::next(patchScratch_.get(), totalSize_), 0.0);
@@ -77,7 +77,7 @@ auto Convolution::fft(double const* signal, double const* patch, double* output)
     }
 }
 
-auto Convolution::direct(double const* signal, std::size_t n, double const* patch, std::size_t l, double* output) noexcept -> void
+auto FFTConvolver::direct(double const* signal, std::size_t n, double const* patch, std::size_t l, double* output) noexcept -> void
 {
     auto const mm = n + l - 1;
 

@@ -14,8 +14,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         core/AudioFile.h
 
         dsp/convolution.hpp
-        dsp/convolution/Convolution.cpp
-        dsp/convolution/Convolution.hpp
+        dsp/convolution/FFTConvolver.cpp
+        dsp/convolution/FFTConvolver.hpp
         dsp/convolution/ConvolutionMethod.hpp
         dsp/convolution/OverlapSave.cpp
         dsp/convolution/OverlapSave.hpp
