@@ -2017,14 +2017,14 @@ FftRealSet::FftRealSet(int n, int sgn)
     }
 }
 
-auto fftR2cExec(FftRealSet* obj, double const* inp, Complex<double>* oup) -> void
+auto FftRealSet::performRealToComplex(double const* inp, Complex<double>* oup) -> void
 {
     int i;
     int n2;
     int n;
     double temp1;
     double temp2;
-    n2 = obj->cobj->N;
+    n2 = cobj->N;
     n = n2 * 2;
 
     auto cinp = std::make_unique<Complex<double>[]>(n2);
@@ -2035,7 +2035,7 @@ auto fftR2cExec(FftRealSet* obj, double const* inp, Complex<double>* oup) -> voi
         cinp[i].imag(inp[2 * i + 1]);
     }
 
-    obj->cobj->perform(cinp.get(), coup.get());
+    cobj->perform(cinp.get(), coup.get());
 
     oup[0].real(coup[0].real() + coup[0].imag());
     oup[0].imag(0.0);
@@ -2043,8 +2043,8 @@ auto fftR2cExec(FftRealSet* obj, double const* inp, Complex<double>* oup) -> voi
     for (i = 1; i < n2; ++i) {
         temp1 = coup[i].imag() + coup[n2 - i].imag();
         temp2 = coup[n2 - i].real() - coup[i].real();
-        oup[i].real((coup[i].real() + coup[n2 - i].real() + (temp1 * obj->data[i].real()) + (temp2 * obj->data[i].imag())) / 2.0);
-        oup[i].imag((coup[i].imag() - coup[n2 - i].imag() + (temp2 * obj->data[i].real()) - (temp1 * obj->data[i].imag())) / 2.0);
+        oup[i].real((coup[i].real() + coup[n2 - i].real() + (temp1 * data[i].real()) + (temp2 * data[i].imag())) / 2.0);
+        oup[i].imag((coup[i].imag() - coup[n2 - i].imag() + (temp2 * data[i].real()) - (temp1 * data[i].imag())) / 2.0);
     }
 
     oup[n2].real(coup[0].real() - coup[0].imag());
@@ -2056,27 +2056,22 @@ auto fftR2cExec(FftRealSet* obj, double const* inp, Complex<double>* oup) -> voi
     }
 }
 
-auto fftC2rExec(FftRealSet* obj, Complex<double> const* inp, double* oup) -> void
+auto FftRealSet::performComplexToReal(Complex<double> const* inp, double* oup) -> void
 {
-    int i;
-    int n2;
-    double temp1;
-    double temp2;
-    n2 = obj->cobj->N;
+    auto const n = static_cast<std::size_t>(cobj->N);
+    auto cinp = std::make_unique<Complex<double>[]>(n);
+    auto coup = std::make_unique<Complex<double>[]>(n);
 
-    auto cinp = std::make_unique<Complex<double>[]>(n2);
-    auto coup = std::make_unique<Complex<double>[]>(n2);
-
-    for (i = 0; i < n2; ++i) {
-        temp1 = -inp[i].imag() - inp[n2 - i].imag();
-        temp2 = -inp[n2 - i].real() + inp[i].real();
-        cinp[i].real(inp[i].real() + inp[n2 - i].real() + (temp1 * obj->data[i].real()) - (temp2 * obj->data[i].imag()));
-        cinp[i].imag(inp[i].imag() - inp[n2 - i].imag() + (temp2 * obj->data[i].real()) + (temp1 * obj->data[i].imag()));
+    for (auto i = std::size_t { 0 }; i < n; ++i) {
+        auto const temp1 = -inp[i].imag() - inp[n - i].imag();
+        auto const temp2 = -inp[n - i].real() + inp[i].real();
+        cinp[i].real(inp[i].real() + inp[n - i].real() + (temp1 * data[i].real()) - (temp2 * data[i].imag()));
+        cinp[i].imag(inp[i].imag() - inp[n - i].imag() + (temp2 * data[i].real()) + (temp1 * data[i].imag()));
     }
 
-    obj->cobj->perform(cinp.get(), coup.get());
+    cobj->perform(cinp.get(), coup.get());
 
-    for (i = 0; i < n2; ++i) {
+    for (auto i = std::size_t { 0 }; i < n; ++i) {
         oup[2 * i] = coup[i].real();
         oup[2 * i + 1] = coup[i].imag();
     }

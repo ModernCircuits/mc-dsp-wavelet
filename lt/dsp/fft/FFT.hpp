@@ -33,11 +33,12 @@ struct FFT {
 struct FftRealSet {
     FftRealSet(int n, int sgn);
 
+    auto performRealToComplex(double const* inp, Complex<double>* oup) -> void;
+    auto performComplexToReal(Complex<double> const* inp, double* oup) -> void;
+
+private:
     std::unique_ptr<FFT> cobj;
     std::unique_ptr<Complex<double>[]> data;
 };
-
-auto fftR2cExec(FftRealSet* obj, double const* inp, Complex<double>* oup) -> void;
-auto fftC2rExec(FftRealSet* obj, Complex<double> const* inp, double* oup) -> void;
 
 auto divideby(int m, int d) -> int;

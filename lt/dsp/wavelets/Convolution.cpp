@@ -134,8 +134,8 @@ auto convFft(Convolution const& obj, double const* inp1, double const* inp2, dou
         }
     }
 
-    fftR2cExec(obj.fobj.get(), a.get(), ao.get());
-    fftR2cExec(obj.fobj.get(), b.get(), bo.get());
+    obj.fobj->performRealToComplex(a.get(), ao.get());
+    obj.fobj->performRealToComplex(b.get(), bo.get());
 
     for (auto i = 0; i < n; i++) {
         c[i] = Complex<double> {
@@ -144,7 +144,7 @@ auto convFft(Convolution const& obj, double const* inp1, double const* inp2, dou
         };
     }
 
-    fftC2rExec(obj.iobj.get(), c.get(), co.get());
+    obj.iobj->performComplexToReal(c.get(), co.get());
 
     for (auto i = 0; i < ls; i++) {
         oup[i] = co[i] / n;
