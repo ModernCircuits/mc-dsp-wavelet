@@ -1,4 +1,5 @@
 add_library(wavelib_testdata testing.hpp testing.cpp)
+target_include_directories(wavelib_testdata PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 add_custom_command(
     TARGET
         wavelib_testdata
@@ -15,6 +16,12 @@ function(wavelib_add_test _target)
     target_link_libraries(${_target} PRIVATE wavelib wavelib_testdata lt::CodeCoverage)
 endfunction()
 
+add_executable(bpm_detector "bpm_detector.cpp")
+target_link_libraries(bpm_detector PRIVATE wavelib wavelib_testdata lt::CodeCoverage)
+
+wavelib_add_test(ConvolutionTest)
+wavelib_add_test(OverlapSaveTest)
+
 wavelib_add_test(cwttest)
 wavelib_add_test(dwttest)
 wavelib_add_test(swttest)
@@ -29,7 +36,3 @@ wavelib_add_test(dwt_reconstruction)
 wavelib_add_test(swt_reconstruction)
 wavelib_add_test(denoisetest)
 wavelib_add_test(modwtdenoisetest)
-wavelib_add_test(OverlapSaveTest)
-
-add_executable(bpm_detector "bpm_detector.cpp")
-target_link_libraries(bpm_detector PRIVATE wavelib wavelib_testdata lt::CodeCoverage)
