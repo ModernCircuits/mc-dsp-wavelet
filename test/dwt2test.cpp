@@ -21,7 +21,7 @@ auto main() -> int
 
     auto const j = 3;
 
-    WaveletTransform2D* wt = wt2Init(obj, "dwt", rows, cols, j);
+    auto wt = WaveletTransform2D(obj, "dwt", rows, cols, j);
 
     for (auto i = 0; i < rows; ++i) {
         for (auto k = 0; k < cols; ++k) {
@@ -44,10 +44,8 @@ auto main() -> int
         diff[i] = oup[i] - inp[i];
     }
 
-    summary(*wt);
+    summary(wt);
     std::printf("Abs Max %g \n", absmax(diff.get(), rows * cols));
-
-    wt2Free(wt);
 
     return EXIT_SUCCESS;
 }

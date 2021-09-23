@@ -21,7 +21,7 @@ auto main() -> int
     auto diff = makeZeros<double>(n);
 
     auto j = 2;
-    WaveletTransform2D* wt = wt2Init(obj, "modwt", rows, cols, j);
+    auto wt = WaveletTransform2D(obj, "modwt", rows, cols, j);
 
     for (auto i = 0; i < rows; ++i) {
         for (auto k = 0; k < cols; ++k) {
@@ -43,9 +43,8 @@ auto main() -> int
         diff[i] = oup[i] - inp[i];
     }
 
-    summary(*wt);
+    summary(wt);
     printf("Abs Max %g \n", absmax(diff.get(), n));
 
-    wt2Free(wt);
     return 0;
 }

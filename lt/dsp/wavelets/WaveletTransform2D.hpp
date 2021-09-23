@@ -8,6 +8,8 @@
 #include <string>
 
 struct WaveletTransform2D {
+    WaveletTransform2D(Wavelet& wave, char const* method, int rows, int cols, int j);
+
     Wavelet* wave {};
     std::string method;
     int rows {}; // Matrix Number of rows
@@ -24,17 +26,14 @@ struct WaveletTransform2D {
     std::unique_ptr<int[]> params;
 };
 
-auto wt2Init(Wavelet& wave, char const* method, int rows, int cols, int j) -> WaveletTransform2D*;
-
-auto dwt(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>;
-auto idwt(WaveletTransform2D* wt, double* wavecoeff, double* oup) -> void;
-auto swt2(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>;
-auto iswt2(WaveletTransform2D* wt, double const* wavecoeffs, double* oup) -> void;
-auto modwt(WaveletTransform2D* wt, double* inp) -> std::unique_ptr<double[]>;
-auto imodwt(WaveletTransform2D* wt, double* wavecoeff, double* oup) -> void;
-auto getWT2Coeffs(WaveletTransform2D* wt, double* wcoeffs, int level, char const* type, int* rows, int* cols) -> double*;
-auto setDWT2Extension(WaveletTransform2D* wt, char const* extension) -> void;
+auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>;
+auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void;
+auto swt2(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>;
+auto iswt2(WaveletTransform2D& wt, double const* wavecoeffs, double* oup) -> void;
+auto modwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>;
+auto imodwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void;
+auto getWT2Coeffs(WaveletTransform2D& wt, double* wcoeffs, int level, char const* type, int* rows, int* cols) -> double*;
+auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void;
 auto dispWT2Coeffs(double* a, int row, int col) -> void;
 
 auto summary(WaveletTransform2D const& wt) -> void;
-auto wt2Free(WaveletTransform2D* wt) -> void;

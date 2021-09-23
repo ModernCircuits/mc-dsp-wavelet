@@ -126,10 +126,6 @@ auto swtReconstructionTest()
 
 auto swT2ReconstructionTest()
 {
-    WaveletTransform2D* wt = nullptr;
-    // int i;
-    // int k;
-    // int J;
 
     auto const rows = 512;
     auto const cols = 500;
@@ -196,7 +192,7 @@ auto swT2ReconstructionTest()
             for (auto& name : waveletNames) {
                 auto obj = Wavelet { name.c_str() };
                 for (auto j = 1; j < 3; j++) {
-                    wt = wt2Init(obj, "swt", rows, cols,
+                    auto wt = WaveletTransform2D(obj, "swt", rows, cols,
                         j); // Initialize the wavelet transform object
                     if (symPer == 0) {
                         setDWT2Extension(wt, "per"); // Options are "per"
@@ -222,7 +218,6 @@ auto swT2ReconstructionTest()
                             "\n ERROR : SWT2 Reconstruction Unit Test Failed. Exiting. \n");
                         exit(-1);
                     }
-                    wt2Free(wt);
                 }
             }
         }

@@ -82,7 +82,6 @@ auto modwtReconstructionTest()
 
 auto modwT2ReconstructionTest()
 {
-    WaveletTransform2D* wt = nullptr;
     int i = 0;
     int k = 0;
     int rows = 0;
@@ -123,7 +122,7 @@ auto modwT2ReconstructionTest()
             for (auto const& name : waveletNames) {
                 auto obj = Wavelet { name.c_str() };
                 for (auto j = 1; j < 3; j++) {
-                    wt = wt2Init(obj, "modwt", rows, cols, j);
+                    auto wt = WaveletTransform2D(obj, "modwt", rows, cols, j);
                     if (symPer == 0) {
                         setDWT2Extension(wt, "per");
                     }
@@ -141,7 +140,6 @@ auto modwT2ReconstructionTest()
                                "Exiting. \n");
                         exit(-1);
                     }
-                    wt2Free(wt);
                 }
             }
         }

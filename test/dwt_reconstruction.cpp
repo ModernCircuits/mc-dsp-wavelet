@@ -113,7 +113,6 @@ auto dwtReconstructionTest()
 
 auto dwT2ReconstructionTest()
 {
-    WaveletTransform2D* wt = nullptr;
     double epsilon = NAN;
 
     auto const rows = 256;
@@ -183,12 +182,10 @@ auto dwT2ReconstructionTest()
                 for (auto j = 1; j < 3; j++) {
                     // J = 3;
 
-                    wt = wt2Init(obj, "dwt", rows, cols,
+                    auto wt = WaveletTransform2D(obj, "dwt", rows, cols,
                         j); // Initialize the wavelet transform object
                     if (symPer == 0) {
-                        setDWT2Extension(wt,
-                            "sym"); // Options are "per" and "sym".
-                        // Symmetric is the default option
+                        setDWT2Extension(wt, "sym");
                     } else {
                         setDWT2Extension(wt, "per");
                     }
@@ -208,7 +205,6 @@ auto dwT2ReconstructionTest()
                         std::printf("\n ERROR : DWT2 Reconstruction Unit Test Failed. Exiting. \n");
                         std::exit(-1);
                     }
-                    wt2Free(wt);
                 }
             }
         }
