@@ -189,7 +189,7 @@ auto downsamp(double const* x, int lenx, int m, double* y) -> int
 
 }
 
-WaveletTransform::WaveletTransform(Wavelet& w, char const* method, int siglength, int j)
+WaveletTransform::WaveletTransform(Wavelet& w, char const* method, std::size_t siglength, std::size_t j)
     : wave_ { &w }
     , levels_ { j }
 

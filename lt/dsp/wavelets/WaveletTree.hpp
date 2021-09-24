@@ -8,7 +8,7 @@
 #include <string>
 
 struct WaveletTree {
-    WaveletTree(Wavelet* waveIn, int signalLength, int j);
+    WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t j);
 
     auto extension(char const* newExtension) noexcept -> void;
     [[nodiscard]] auto extension() const noexcept -> std::string const&;

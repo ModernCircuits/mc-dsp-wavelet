@@ -109,7 +109,7 @@ auto imodwtPerStride(int m, double const* cA, int lenCA, double const* cD, doubl
 
 }
 
-WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, int rows, int cols, int j)
+WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, std::size_t rows, std::size_t cols, std::size_t j)
 {
 
     auto const size = wave.size();
@@ -124,17 +124,17 @@ WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, int ro
         exit(-1);
     }
 
-    int sumacc { 0 };
-    if (j == 1) {
-        sumacc = 4;
-    } else if (j > 1) {
-        sumacc = j * 3 + 1;
+    std::size_t sumacc { 0 };
+    if (j == 1U) {
+        sumacc = 4U;
+    } else if (j > 1U) {
+        sumacc = j * 3U + 1U;
     } else {
         printf("Error : J should be >= 1 \n");
         exit(-1);
     }
 
-    this->params = std::make_unique<int[]>(2 * j + sumacc);
+    this->params = std::make_unique<int[]>(2U * j + sumacc);
     this->outlength = 0;
     if (method == nullptr) {
         this->ext = "per";

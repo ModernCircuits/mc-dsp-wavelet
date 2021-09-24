@@ -29,7 +29,7 @@ auto peakDetect(lt::span<double> data) -> std::size_t
 struct BpmDetect {
     BpmDetect(std::size_t n, std::size_t levels)
         : wave_ { "db4" }
-        , wt_ { wave_, "dwt", static_cast<int>(n), static_cast<int>(levels) }
+        , wt_ { wave_, "dwt", n, levels }
     {
         wt_.extension(SignalExtension::symmetric);
         wt_.convMethod(ConvolutionMethod::direct);

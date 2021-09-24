@@ -8,7 +8,7 @@
 #include <string>
 
 struct WaveletTransform2D {
-    WaveletTransform2D(Wavelet& wave, char const* method, int rows, int cols, int j);
+    WaveletTransform2D(Wavelet& wave, char const* method, std::size_t rows, std::size_t cols, std::size_t j);
 
     Wavelet* wave {};
     std::string method;

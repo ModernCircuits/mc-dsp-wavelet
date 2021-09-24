@@ -8,7 +8,7 @@
 #include <string>
 
 struct WaveletPacketTransform {
-    WaveletPacketTransform(Wavelet* wave, int siglength, int j);
+    WaveletPacketTransform(Wavelet* wave, std::size_t siglength, std::size_t j);
 
     Wavelet* wave {};
     FFTConvolver* cobj {};

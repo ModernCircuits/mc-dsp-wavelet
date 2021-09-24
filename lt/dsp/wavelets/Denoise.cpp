@@ -28,7 +28,7 @@ DenoiseSet::DenoiseSet(int length, int j, char const* name)
     cmethod = "direct";
 }
 
-auto visushrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void
+auto visushrink(double* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void
 {
     int dwtLen = 0;
     int sgn = 0;
@@ -130,7 +130,7 @@ auto visushrink(double* signal, int n, int j, char const* wname, char const* met
     }
 }
 
-auto sureshrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void
+auto sureshrink(double* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void
 {
     int filtLen = 0;
     int it = 0;
@@ -282,7 +282,7 @@ auto sureshrink(double* signal, int n, int j, char const* wname, char const* met
     }
 }
 
-auto modwtshrink(double* signal, int n, int j, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised) -> void
+auto modwtshrink(double* signal, std::size_t n, std::size_t j, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised) -> void
 {
     int sgn = 0;
     int it = 0;

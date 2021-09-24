@@ -91,7 +91,7 @@ auto costfunc(double* x, int n, char const* entropy, double p) -> double
 }
 }
 
-WaveletPacketTransform::WaveletPacketTransform(Wavelet* wave, int siglength, int j)
+WaveletPacketTransform::WaveletPacketTransform(Wavelet* wave, std::size_t siglength, std::size_t j)
 {
     auto const size = wave->size();
 

@@ -27,11 +27,11 @@ struct DenoiseSet {
     std::string dmethod; //Denoising Method -sureshrink or visushrink
 };
 
-auto visushrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void;
+auto visushrink(double* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void;
 
-auto sureshrink(double* signal, int n, int j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void;
+auto sureshrink(double* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void;
 
-auto modwtshrink(double* signal, int n, int j, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised) -> void;
+auto modwtshrink(double* signal, std::size_t n, std::size_t j, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised) -> void;
 
 auto denoise(DenoiseSet& obj, double* signal, double* denoised) -> void;
 

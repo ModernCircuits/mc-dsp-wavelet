@@ -10,7 +10,7 @@
 #include <string>
 
 struct WaveletTransform {
-    WaveletTransform(Wavelet& wave, char const* method, int siglength, int j);
+    WaveletTransform(Wavelet& wave, char const* method, std::size_t siglength, std::size_t j);
 
     [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *wave_; }
     [[nodiscard]] auto levels() const noexcept -> int { return levels_; }
@@ -29,8 +29,8 @@ struct WaveletTransform {
 
 private:
     Wavelet* wave_;
-    int levels_;
-    int signalLength_;
+    std::size_t levels_;
+    std::size_t signalLength_;
     std::string method_;
     SignalExtension ext_;
     ConvolutionMethod cmethod_;

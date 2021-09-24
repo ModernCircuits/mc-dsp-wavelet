@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 auto dwtPerStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen,
     double* cA, int lenCA, double* cD, int istride, int ostride) -> void;
 
@@ -20,4 +22,4 @@ auto idwtSymStride(double const* cA, int lenCA, double const* cD, double const* 
 
 auto testSWTlength(int n, int j) -> int;
 
-auto maxIterations(int sigLen, int filtLen) -> int;
+auto maxIterations(std::size_t sigLen, std::size_t filtLen) -> std::size_t;
