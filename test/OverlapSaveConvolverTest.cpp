@@ -13,7 +13,7 @@ auto main() -> int
 
     for (auto const* testFile : testFiles) {
         std::cout << "Testing: " << testFile << "...\n";
-        auto testData = loadConvolutionTestData(testFile);
+        auto testData = loadTestData(testFile);
         REQUIRE(testData.size() == 4U);
 
         auto s = DoubleSignal { testData[0].data(), testData[0].size() };

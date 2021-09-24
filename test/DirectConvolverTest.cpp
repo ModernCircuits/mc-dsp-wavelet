@@ -26,7 +26,7 @@ auto main() -> int
 
     for (auto const* testFile : testFiles) {
         std::cout << "Testing: " << testFile << " ...\n";
-        auto const testData = loadConvolutionTestData(testFile);
+        auto const testData = loadTestData(testFile);
         REQUIRE(testData.size() == 4U);
         REQUIRE(testDirectConvolve<double>(testData));
         REQUIRE(testDirectConvolve<float>(toFloat(testData)));
