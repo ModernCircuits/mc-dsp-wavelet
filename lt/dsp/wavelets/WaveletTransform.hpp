@@ -41,13 +41,12 @@ public:
     std::size_t modwtsiglength; // Modified signal length for MODWT
     std::size_t outlength; // Length of the output DWT vector
     std::size_t lenlength; // Length of the Output Dimension Vector "length"
-    int MaxIter; // Maximum Iterations J <= MaxIter
-    int even; // even = 1 if signal is of even length. even = 0 otherwise
+    std::size_t MaxIter; // Maximum Iterations J <= MaxIter
 
-    int N {}; //
-    int cfftset;
-    int zpad {};
-    int length[102] {};
+    std::size_t N {}; //
+    std::size_t cfftset;
+    std::size_t zpad {};
+    std::size_t length[102] {};
     std::unique_ptr<double[]> params;
 };
 

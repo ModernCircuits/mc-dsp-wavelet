@@ -31,7 +31,7 @@ auto main() -> int
 
     fmt::printf("Node [%d %d] Coefficients : \n", x, y);
     wt.coeffs(x, y, oup.get(), len);
-    for (auto i = 0; i < len; ++i) {
+    for (std::size_t i = 0; i < len; ++i) {
         fmt::printf("%g ", oup[i]);
     }
     fmt::printf("\n");

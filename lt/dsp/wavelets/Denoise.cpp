@@ -70,7 +70,7 @@ auto visushrink(double* signal, std::size_t n, std::size_t j, char const* wname,
             iter += wt.length[i];
         }
 
-        for (auto i = 0; i < dlen; ++i) {
+        for (std::size_t i = 0; i < dlen; ++i) {
             dout[i] = fabs(wt.output()[iter + i]);
         }
 
@@ -81,7 +81,7 @@ auto visushrink(double* signal, std::size_t n, std::size_t j, char const* wname,
     } else if (level == lt::string_view { "all" }) {
         for (it = 0; lt::cmp_less(it, j); ++it) {
             dlen = wt.length[it + 1];
-            for (auto i = 0; i < dlen; ++i) {
+            for (std::size_t i = 0; i < dlen; ++i) {
                 dout[i] = fabs(wt.output()[iter + i]);
             }
             sigma = median(dout.get(), dlen) / 0.6745;
@@ -102,13 +102,13 @@ auto visushrink(double* signal, std::size_t n, std::size_t j, char const* wname,
         td = std::sqrt(2.0 * std::log(dwtLen)) * sigma;
 
         if (thresh == lt::string_view { "hard" }) {
-            for (auto i = 0; i < dlen; ++i) {
+            for (std::size_t i = 0; i < dlen; ++i) {
                 if (fabs(wt.output()[iter + i]) < td) {
                     wt.output()[iter + i] = 0;
                 }
             }
         } else if (thresh == lt::string_view { "soft" }) {
-            for (auto i = 0; i < dlen; ++i) {
+            for (std::size_t i = 0; i < dlen; ++i) {
                 if (fabs(wt.output()[iter + i]) < td) {
                     wt.output()[iter + i] = 0;
                 } else {
@@ -332,7 +332,7 @@ auto modwtshrink(double* signal, std::size_t n, std::size_t j, char const* wname
 
     for (it = 0; lt::cmp_less(it, j); ++it) {
         dlen = wt.length[it + 1];
-        for (auto i = 0; i < dlen; ++i) {
+        for (std::size_t i = 0; i < dlen; ++i) {
             dout[i] = fabs(wt.output()[iter + i]);
         }
 
@@ -352,13 +352,13 @@ auto modwtshrink(double* signal, std::size_t n, std::size_t j, char const* wname
         td = std::sqrt(2.0 * llen / m) * sigma;
 
         if (thresh == lt::string_view { "hard" }) {
-            for (auto i = 0; i < dlen; ++i) {
+            for (std::size_t i = 0; i < dlen; ++i) {
                 if (fabs(wt.output()[iter + i]) < td) {
                     wt.output()[iter + i] = 0;
                 }
             }
         } else if (thresh == lt::string_view { "soft" }) {
-            for (auto i = 0; i < dlen; ++i) {
+            for (std::size_t i = 0; i < dlen; ++i) {
                 if (fabs(wt.output()[iter + i]) < td) {
                     wt.output()[iter + i] = 0;
                 } else {

@@ -43,20 +43,13 @@ WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t 
     this->MaxIter = maxIter;
     this->method = "dwt";
 
-    if (signalLength % 2 == 0) {
-        this->even = 1;
-    } else {
-        this->even = 0;
-    }
-
-    // this->cobj = nullptr;
     this->nodes = nodess;
 
     this->cfftset = 0;
     this->lenlength = j + 2;
     this->output = &this->params[0];
-    this->nodeLength_ = (int*)&this->params[signalLength * (j + 1) + elength];
-    this->coeflength = (int*)&this->params[signalLength * (j + 1) + elength + nodess];
+    this->nodeLength_ = (std::size_t*)&this->params[signalLength * (j + 1) + elength];
+    this->coeflength = (std::size_t*)&this->params[signalLength * (j + 1) + elength + nodess];
 
     for (auto i = 0; lt::cmp_less(i, signalLength * (j + 1) + elength + nodess + j + 1); ++i) {
         this->params[i] = 0.0;
@@ -142,7 +135,7 @@ static auto wtreeSym(WaveletTree& wt, double const* inp, int n, double* cA, int 
 
 auto wtree(WaveletTree& wt, double const* inp) -> void
 {
-    int iter = 0;
+    std::size_t iter = 0;
     int n = 0;
     int lp = 0;
     int p2 = 0;
@@ -162,7 +155,7 @@ auto wtree(WaveletTree& wt, double const* inp) -> void
 
     auto orig = std::make_unique<double[]>(tempLen);
 
-    for (auto i = 0; i < wt.siglength; ++i) {
+    for (std::size_t i = 0; i < wt.siglength; ++i) {
         orig[i] = inp[i];
     }
 
@@ -247,7 +240,7 @@ auto wtree(WaveletTree& wt, double const* inp) -> void
     t2 = wt.outlength - 2 * wt.length[j];
     p2 = 2;
     it1 = 0;
-    for (auto i = 0; i < j; ++i) {
+    for (std::size_t i = 0; i < j; ++i) {
         t = t2;
         for (k = 0; k < p2; ++k) {
             wt.nodeLength_[it1] = t;
@@ -260,13 +253,13 @@ auto wtree(WaveletTree& wt, double const* inp) -> void
 
     wt.coeflength[0] = wt.siglength;
 
-    for (auto i = 1; i < j + 1; ++i) {
+    for (std::size_t i = 1; i < j + 1; ++i) {
         wt.coeflength[i] = wt.length[j - i + 1];
     }
 }
 
 /// X - Level. All Nodes at any level have the same length
-auto WaveletTree::nodeLength(int x) -> int
+auto WaveletTree::nodeLength(std::size_t x) -> std::size_t
 {
     if (x <= 0 || x > J) {
         fmt::printf("X co-ordinate must be >= 1 and <= %d", J);
@@ -276,9 +269,9 @@ auto WaveletTree::nodeLength(int x) -> int
     return length[J - x + 1];
 }
 
-auto WaveletTree::coeffs(int x, int y, double* coeffs, int n) const -> void
+auto WaveletTree::coeffs(std::size_t x, std::size_t y, double* coeffs, std::size_t n) const -> void
 {
-    int ymax = 0;
+    std::size_t ymax = 0;
     int t = 0;
     int t2 = 0;
 
@@ -287,7 +280,7 @@ auto WaveletTree::coeffs(int x, int y, double* coeffs, int n) const -> void
         exit(-1);
     }
     ymax = 1;
-    for (auto i = 0; i < x; ++i) {
+    for (std::size_t i = 0; i < x; ++i) {
         ymax *= 2;
     }
 
@@ -303,7 +296,7 @@ auto WaveletTree::coeffs(int x, int y, double* coeffs, int n) const -> void
     } else {
         t = 0;
         t2 = 1;
-        for (auto i = 0; i < x - 1; ++i) {
+        for (std::size_t i = 0; i < x - 1; ++i) {
             t2 *= 2;
             t += t2;
         }
@@ -311,7 +304,7 @@ auto WaveletTree::coeffs(int x, int y, double* coeffs, int n) const -> void
 
     t += y;
     t2 = nodeLength_[t];
-    for (auto i = 0; i < n; ++i) {
+    for (std::size_t i = 0; i < n; ++i) {
         coeffs[i] = output[t2 + i];
     }
 }

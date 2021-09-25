@@ -132,12 +132,6 @@ WaveletPacketTransform::WaveletPacketTransform(Wavelet* wave, std::size_t siglen
     this->J = j;
     this->MaxIter = maxIter;
 
-    if (siglength % 2 == 0) {
-        this->even = 1;
-    } else {
-        this->even = 0;
-    }
-
     this->cobj = nullptr;
     this->nodes = nodess;
 

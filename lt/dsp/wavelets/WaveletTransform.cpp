@@ -176,16 +176,22 @@ auto downsamp(double const* x, int lenx, int m, double* y) -> int
 WaveletTransform::WaveletTransform(Wavelet& w, char const* method, std::size_t siglength, std::size_t j)
     : wave_ { &w }
     , levels_ { j }
-
+    , signalLength_ { siglength }
+    , method_ { method }
+    , cmethod_ { ConvolutionMethod::direct }
+    , convolver { nullptr }
+    , modwtsiglength { siglength }
+    , lenlength { levels_ + 2 }
+    , MaxIter { maxIterations(siglength, w.size()) }
+    , cfftset { 0 }
 {
     auto const size = w.size();
-    auto const maxIter = maxIterations(siglength, w.size());
 
     if (levels_ > 100) {
         throw std::invalid_argument("decomposition Iterations Cannot Exceed 100.");
     }
 
-    if (levels_ > maxIter) {
+    if (levels_ > MaxIter) {
         throw std::invalid_argument("signal Can only be iterated maxIter times using this wavelet");
     }
 
@@ -222,22 +228,6 @@ WaveletTransform::WaveletTransform(Wavelet& w, char const* method, std::size_t s
         ext_ = SignalExtension::periodic;
     }
 
-    this->signalLength_ = siglength;
-    this->modwtsiglength = siglength;
-    this->MaxIter = maxIter;
-    method_ = method;
-
-    if (siglength % 2 == 0) {
-        this->even = 1;
-    } else {
-        this->even = 0;
-    }
-
-    this->convolver = nullptr;
-
-    this->cmethod_ = ConvolutionMethod::direct;
-    this->cfftset = 0;
-    this->lenlength = levels_ + 2;
     this->output_ = &this->params[0];
     if ((method == lt::string_view { "dwt" }) || (method == lt::string_view { "DWT" })) {
         for (std::size_t i = 0; i < siglength + 2 * levels() * (size + 1); ++i) {
@@ -428,11 +418,11 @@ auto dwt(WaveletTransform& wt, double const* inp) -> void
             }
             tempLen = wt.length[j - iter];
             if (iter == j - 1) {
-                for (auto i = 0; i < lenCA; ++i) {
+                for (std::size_t i = 0; i < lenCA; ++i) {
                     wt.params[i] = orig2[i];
                 }
             } else {
-                for (auto i = 0; i < lenCA; ++i) {
+                for (std::size_t i = 0; i < lenCA; ++i) {
                     orig[i] = orig2[i];
                 }
             }
@@ -461,11 +451,11 @@ auto dwt(WaveletTransform& wt, double const* inp) -> void
             tempLen = wt.length[j - iter];
 
             if (iter == j - 1) {
-                for (auto i = 0; i < lenCA; ++i) {
+                for (std::size_t i = 0; i < lenCA; ++i) {
                     wt.params[i] = orig2[i];
                 }
             } else {
-                for (auto i = 0; i < lenCA; ++i) {
+                for (std::size_t i = 0; i < lenCA; ++i) {
                     orig[i] = orig2[i];
                 }
             }
@@ -550,7 +540,7 @@ auto idwt(WaveletTransform& wt, double* dwtop) -> void
         auto xHp = std::make_unique<double[]>((n + 2 * lf - 1));
         iter = appLen;
 
-        for (auto i = 0; i < appLen; ++i) {
+        for (std::size_t i = 0; i < appLen; ++i) {
             out[i] = wt.output()[i];
         }
 
@@ -576,7 +566,7 @@ auto idwt(WaveletTransform& wt, double* dwtop) -> void
         auto xLp = std::make_unique<double[]>((n + 2 * lf - 1));
         iter = appLen;
 
-        for (auto i = 0; i < appLen; ++i) {
+        for (std::size_t i = 0; i < appLen; ++i) {
             out[i] = wt.output()[i];
         }
 
@@ -599,7 +589,7 @@ auto idwt(WaveletTransform& wt, double* dwtop) -> void
         auto xLp = std::make_unique<double[]>((n + 2 * lf - 1));
         iter = appLen;
 
-        for (auto i = 0; i < appLen; ++i) {
+        for (std::size_t i = 0; i < appLen; ++i) {
             out[i] = wt.output()[i];
         }
 
@@ -621,7 +611,7 @@ auto idwt(WaveletTransform& wt, double* dwtop) -> void
         auto xLp = std::make_unique<double[]>((n + lf - 1));
         auto xHp = std::make_unique<double[]>((n + lf - 1));
 
-        for (auto i = 0; i < appLen; ++i) {
+        for (std::size_t i = 0; i < appLen; ++i) {
             out[i] = wt.output()[i];
         }
 
