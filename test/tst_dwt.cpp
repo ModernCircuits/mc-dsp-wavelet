@@ -311,7 +311,7 @@ auto cwtReconstructionTest()
 
     for (it1 = 0; it1 < 3; ++it1) {
         for (it2 = 0; it2 < 10; ++it2) {
-            auto wt = ComplexWaveletTransform { wave[it1], param[it1 * 10 + it2], n, dt, j };
+            auto wt = ContinuousWaveletTransform { wave[it1], param[it1 * 10 + it2], n, dt, j };
             wt.scales(s0, dj, type, a0);
             cwt(wt, inp.get());
             icwt(wt, oup.get());

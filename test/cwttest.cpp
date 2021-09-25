@@ -42,7 +42,7 @@ auto main() -> int
     j = 11 * subscale; // Total Number of scales
     a0 = 2; //power
 
-    auto wt = ComplexWaveletTransform { wave, param, n, dt, j };
+    auto wt = ContinuousWaveletTransform { wave, param, n, dt, j };
 
     auto const inp = readFileToVector("testData/sst_nino3.dat");
     auto oup = std::make_unique<double[]>(n);

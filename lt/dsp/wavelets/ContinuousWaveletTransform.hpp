@@ -5,8 +5,8 @@
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
-struct ComplexWaveletTransform {
-    ComplexWaveletTransform(char const* wave, double param, int siglength, double dt, int j);
+struct ContinuousWaveletTransform {
+    ContinuousWaveletTransform(char const* wave, double param, int siglength, double dt, int j);
 
     [[nodiscard]] auto wave() const noexcept -> std::string const& { return wave_; }
     auto scales(double s0, double dj, char const* type, int power) -> void;
@@ -36,10 +36,10 @@ private:
     std::string wave_;
 };
 
-auto cwt(ComplexWaveletTransform& wt, double const* inp) -> void;
-auto icwt(ComplexWaveletTransform& wt, double* cwtop) -> void;
+auto cwt(ContinuousWaveletTransform& wt, double const* inp) -> void;
+auto icwt(ContinuousWaveletTransform& wt, double* cwtop) -> void;
 
-auto summary(ComplexWaveletTransform const& wt) -> void;
+auto summary(ContinuousWaveletTransform const& wt) -> void;
 
 auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid) -> void;
 auto gauss(int n, int p, double lb, double ub, double* psi, double* t) -> void;

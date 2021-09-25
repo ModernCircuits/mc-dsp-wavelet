@@ -1,4 +1,4 @@
-#include "ComplexWaveletTransform.hpp"
+#include "ContinuousWaveletTransform.hpp"
 
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/fft/FFT.hpp"
@@ -693,7 +693,7 @@ auto icwavelet(double const* wave, int n, double* scale, int jtot, double dt, do
     }
 }
 
-ComplexWaveletTransform::ComplexWaveletTransform(char const* wave, double param, int siglength, double dtIn, int j)
+ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, double param, int siglength, double dtIn, int j)
 {
 
     double s0Tmp {};
@@ -779,7 +779,7 @@ ComplexWaveletTransform::ComplexWaveletTransform(char const* wave, double param,
     }
 }
 
-auto ComplexWaveletTransform::scales(double newS0, double newDj, char const* newType, int power) -> void
+auto ContinuousWaveletTransform::scales(double newS0, double newDj, char const* newType, int power) -> void
 {
     type = newType;
     //newS0*std::pow(2.0, (double)(j - 1)*newDj);
@@ -803,7 +803,7 @@ auto ComplexWaveletTransform::scales(double newS0, double newDj, char const* new
     dj = newDj;
 }
 
-auto cwt(ComplexWaveletTransform& wt, double const* inp) -> void
+auto cwt(ContinuousWaveletTransform& wt, double const* inp) -> void
 {
     int n = 0;
     int npad = 0;
@@ -838,7 +838,7 @@ auto cwt(ComplexWaveletTransform& wt, double const* inp) -> void
     cwavelet(inp, n, wt.dt, wt.mother, wt.m, wt.s0, wt.dj, wt.J, npad, wt.params.get(), wt.params.get() + nj2, wt.params.get() + nj2 + j, wt.params.get() + nj2 + j2);
 }
 
-auto icwt(ComplexWaveletTransform& wt, double* cwtop) -> void
+auto icwt(ContinuousWaveletTransform& wt, double* cwtop) -> void
 {
     double psi = NAN;
     double cdel = NAN;
@@ -863,7 +863,7 @@ auto icwt(ComplexWaveletTransform& wt, double* cwtop) -> void
     }
 }
 
-auto summary(ComplexWaveletTransform const& wt) -> void
+auto summary(ContinuousWaveletTransform const& wt) -> void
 {
     fmt::printf("\nWavelet : %s Parameter %lf \n", wt.wave().c_str(), wt.m);
     fmt::printf("\nLength of Input Signal : %d \n", wt.signalLength);

@@ -29,8 +29,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         dsp/wavelets.hpp
         dsp/wavelets/common.cpp
         dsp/wavelets/common.hpp
-        dsp/wavelets/ComplexWaveletTransform.cpp
-        dsp/wavelets/ComplexWaveletTransform.hpp
+        dsp/wavelets/ContinuousWaveletTransform.cpp
+        dsp/wavelets/ContinuousWaveletTransform.hpp
         dsp/wavelets/Denoise.hpp
         dsp/wavelets/Denoise.cpp
         dsp/wavelets/SignalExtension.hpp
