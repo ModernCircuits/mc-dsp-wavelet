@@ -71,7 +71,7 @@ static auto wtreePer(WaveletTree& wt, double const* inp, int n, double* cA, int 
     int t = 0;
     int lenAvg = 0;
 
-    lenAvg = wt.wave->lpdLen();
+    lenAvg = wt.wave->lpd().size();
     l2 = lenAvg / 2;
     isodd = n % 2;
 
@@ -119,7 +119,7 @@ static auto wtreeSym(WaveletTree& wt, double const* inp, int n, double* cA, int 
     int t = 0;
     int lenAvg = 0;
 
-    lenAvg = wt.wave->lpdLen();
+    lenAvg = wt.wave->lpd().size();
 
     for (auto i = 0; i < lenCA; ++i) {
         t = 2 * i + 1;
@@ -171,7 +171,7 @@ auto wtree(WaveletTree& wt, double const* inp) -> void
     }
 
     n = tempLen;
-    lp = wt.wave->lpdLen();
+    lp = wt.wave->lpd().size();
 
     if (wt.extension() == lt::string_view { "per" }) {
         auto i = j;

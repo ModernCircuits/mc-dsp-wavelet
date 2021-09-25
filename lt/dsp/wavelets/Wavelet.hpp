@@ -8,18 +8,13 @@
 struct Wavelet {
     explicit Wavelet(char const* wname);
 
-    [[nodiscard]] auto size() const noexcept -> int { return static_cast<int>(size_); }
+    [[nodiscard]] auto size() const noexcept -> std::size_t { return size_; }
     [[nodiscard]] auto name() const noexcept -> std::string const& { return name_; }
 
-    [[nodiscard]] auto lpd() const noexcept -> double const* { return lpd_.data(); }
-    [[nodiscard]] auto hpd() const noexcept -> double const* { return hpd_.data(); }
-    [[nodiscard]] auto lpr() const noexcept -> double const* { return lpr_.data(); }
-    [[nodiscard]] auto hpr() const noexcept -> double const* { return hpr_.data(); }
-
-    [[nodiscard]] auto lpdLen() const noexcept -> int { return static_cast<int>(lpd_.size()); }
-    [[nodiscard]] auto hpdLen() const noexcept -> int { return static_cast<int>(hpd_.size()); }
-    [[nodiscard]] auto lprLen() const noexcept -> int { return static_cast<int>(lpr_.size()); }
-    [[nodiscard]] auto hprLen() const noexcept -> int { return static_cast<int>(hpr_.size()); }
+    [[nodiscard]] auto lpd() const noexcept -> lt::span<double> { return lpd_; }
+    [[nodiscard]] auto hpd() const noexcept -> lt::span<double> { return hpd_; }
+    [[nodiscard]] auto lpr() const noexcept -> lt::span<double> { return lpr_; }
+    [[nodiscard]] auto hpr() const noexcept -> lt::span<double> { return hpr_; }
 
 private:
     std::string name_;

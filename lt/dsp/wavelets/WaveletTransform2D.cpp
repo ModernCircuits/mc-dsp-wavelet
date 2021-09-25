@@ -218,7 +218,7 @@ auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
 
     auto rowsN = wt.rows;
     auto colsN = wt.cols;
-    auto lp = wt.wave->lpdLen();
+    auto lp = wt.wave->lpd().size();
     auto clen = j * 3;
 
     if (wt.ext == lt::string_view { "per" }) {
@@ -251,7 +251,7 @@ auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
             cdim = rowsI * colsI;
             // Row filtering and column subsampling
             for (auto i = 0; i < ir; ++i) {
-                dwtPerStride(orig + i * ic, ic, wt.wave->lpd(), wt.wave->hpd(), lp, lpDn1.get() + i * colsI, colsI, hpDn1.get() + i * colsI, istride, ostride);
+                dwtPerStride(orig + i * ic, ic, wt.wave->lpd().data(), wt.wave->hpd().data(), lp, lpDn1.get() + i * colsI, colsI, hpDn1.get() + i * colsI, istride, ostride);
             }
 
             // Column Filtering and Row subsampling
@@ -269,11 +269,11 @@ auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
             ostride = ic;
 
             for (auto i = 0; i < ic; ++i) {
-                dwtPerStride(lpDn1.get() + i, ir, wt.wave->lpd(), wt.wave->hpd(), lp, wavecoeff.get() + aLL + i, rowsI, wavecoeff.get() + aLH + i, istride, ostride);
+                dwtPerStride(lpDn1.get() + i, ir, wt.wave->lpd().data(), wt.wave->hpd().data(), lp, wavecoeff.get() + aLL + i, rowsI, wavecoeff.get() + aLH + i, istride, ostride);
             }
 
             for (auto i = 0; i < ic; ++i) {
-                dwtPerStride(hpDn1.get() + i, ir, wt.wave->lpd(), wt.wave->hpd(), lp, wavecoeff.get() + aHL + i, rowsI, wavecoeff.get() + aHH + i, istride, ostride);
+                dwtPerStride(hpDn1.get() + i, ir, wt.wave->lpd().data(), wt.wave->hpd().data(), lp, wavecoeff.get() + aHL + i, rowsI, wavecoeff.get() + aHH + i, istride, ostride);
             }
 
             ir = rowsI;
@@ -318,7 +318,7 @@ auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
         cdim = rowsI * colsI;
         // Row filtering and column subsampling
         for (auto i = 0; i < ir; ++i) {
-            dwtSymStride(orig + i * ic, ic, wt.wave->lpd(), wt.wave->hpd(), lp, lpDn1.get() + i * colsI, colsI, hpDn1.get() + i * colsI, istride, ostride);
+            dwtSymStride(orig + i * ic, ic, wt.wave->lpd().data(), wt.wave->hpd().data(), lp, lpDn1.get() + i * colsI, colsI, hpDn1.get() + i * colsI, istride, ostride);
         }
 
         // Column Filtering and Row subsampling
@@ -335,11 +335,11 @@ auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
         ostride = ic;
 
         for (auto i = 0; i < ic; ++i) {
-            dwtSymStride(lpDn1.get() + i, ir, wt.wave->lpd(), wt.wave->hpd(), lp, wavecoeff.get() + aLL + i, rowsI, wavecoeff.get() + aLH + i, istride, ostride);
+            dwtSymStride(lpDn1.get() + i, ir, wt.wave->lpd().data(), wt.wave->hpd().data(), lp, wavecoeff.get() + aLL + i, rowsI, wavecoeff.get() + aLH + i, istride, ostride);
         }
 
         for (auto i = 0; i < ic; ++i) {
-            dwtSymStride(hpDn1.get() + i, ir, wt.wave->lpd(), wt.wave->hpd(), lp, wavecoeff.get() + aHL + i, rowsI, wavecoeff.get() + aHH + i, istride, ostride);
+            dwtSymStride(hpDn1.get() + i, ir, wt.wave->lpd().data(), wt.wave->hpd().data(), lp, wavecoeff.get() + aHL + i, rowsI, wavecoeff.get() + aHH + i, istride, ostride);
         }
 
         ir = rowsI;
@@ -373,7 +373,7 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
 
     if (wt.ext == lt::string_view { "per" }) {
         auto const n = rows > cols ? 2 * rows : 2 * cols;
-        auto const lf = (wt.wave->lprLen() + wt.wave->hprLen()) / 2;
+        auto const lf = (wt.wave->lpr().size() + wt.wave->hpr().size()) / 2;
 
         auto idx = j;
         auto dim1 = wt.dimensions[0];
@@ -402,13 +402,13 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
             aHL = wt.coeffaccess[iter * 3 + 2];
             aHH = wt.coeffaccess[iter * 3 + 3];
             for (auto i = 0; i < ic; ++i) {
-                idwtPerStride(orig + i, ir, wavecoeff + aLH + i, wt.wave->lpr(), wt.wave->hpr(), lf, xLp.get(), istride, ostride);
+                idwtPerStride(orig + i, ir, wavecoeff + aLH + i, wt.wave->lpr().data(), wt.wave->hpr().data(), lf, xLp.get(), istride, ostride);
 
                 for (k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
                     cL[(k - lf / 2 + 1) * ic + i] = xLp[k];
                 }
 
-                idwtPerStride(wavecoeff + aHL + i, ir, wavecoeff + aHH + i, wt.wave->lpr(), wt.wave->hpr(), lf, xLp.get(), istride, ostride);
+                idwtPerStride(wavecoeff + aHL + i, ir, wavecoeff + aHH + i, wt.wave->lpr().data(), wt.wave->hpr().data(), lf, xLp.get(), istride, ostride);
 
                 for (k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
                     cH[(k - lf / 2 + 1) * ic + i] = xLp[k];
@@ -420,7 +420,7 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
             ostride = 1;
 
             for (auto i = 0; i < ir; ++i) {
-                idwtPerStride(cL.get() + i * ic, ic, cH.get() + i * ic, wt.wave->lpr(), wt.wave->hpr(), lf, xLp.get(), istride, ostride);
+                idwtPerStride(cL.get() + i * ic, ic, cH.get() + i * ic, wt.wave->lpr().data(), wt.wave->hpr().data(), lf, xLp.get(), istride, ostride);
 
                 for (k = lf / 2 - 1; k < 2 * ic + lf / 2 - 1; ++k) {
                     out[(k - lf / 2 + 1) + i * ic * 2] = xLp[k];
@@ -449,7 +449,7 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
     LT_ASSERT(wt.ext == lt::string_view { "sym" });
 
     auto const n = rows > cols ? 2 * rows - 1 : 2 * cols - 1;
-    auto const lf = (wt.wave->lprLen() + wt.wave->hprLen()) / 2;
+    auto const lf = (wt.wave->lpr().size() + wt.wave->hpr().size()) / 2;
 
     auto idx = j;
     auto dim1 = wt.dimensions[0];
@@ -478,13 +478,13 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
         aHL = wt.coeffaccess[iter * 3 + 2];
         aHH = wt.coeffaccess[iter * 3 + 3];
         for (auto i = 0; i < ic; ++i) {
-            idwtSymStride(orig + i, ir, wavecoeff + aLH + i, wt.wave->lpr(), wt.wave->hpr(), lf, xLp.get(), istride, ostride);
+            idwtSymStride(orig + i, ir, wavecoeff + aLH + i, wt.wave->lpr().data(), wt.wave->hpr().data(), lf, xLp.get(), istride, ostride);
 
             for (k = lf - 2; k < 2 * ir; ++k) {
                 cL[(k - lf + 2) * ic + i] = xLp[k];
             }
 
-            idwtSymStride(wavecoeff + aHL + i, ir, wavecoeff + aHH + i, wt.wave->lpr(), wt.wave->hpr(), lf, xLp.get(), istride, ostride);
+            idwtSymStride(wavecoeff + aHL + i, ir, wavecoeff + aHH + i, wt.wave->lpr().data(), wt.wave->hpr().data(), lf, xLp.get(), istride, ostride);
 
             for (k = lf - 2; k < 2 * ir; ++k) {
                 cH[(k - lf + 2) * ic + i] = xLp[k];
@@ -496,7 +496,7 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
         ostride = 1;
 
         for (auto i = 0; i < ir; ++i) {
-            idwtSymStride(cL.get() + i * ic, ic, cH.get() + i * ic, wt.wave->lpr(), wt.wave->hpr(), lf, xLp.get(), istride, ostride);
+            idwtSymStride(cL.get() + i * ic, ic, cH.get() + i * ic, wt.wave->lpr().data(), wt.wave->hpr().data(), lf, xLp.get(), istride, ostride);
 
             for (k = lf - 2; k < 2 * ic; ++k) {
                 out[(k - lf + 2) + i * ic * 2] = xLp[k];
@@ -550,7 +550,7 @@ auto swt2(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
 
     rowsN = wt.rows;
     colsN = wt.cols;
-    lp = wt.wave->lpdLen();
+    lp = wt.wave->lpd().size();
     clen = j * 3;
 
     auto idx = 2 * j;
@@ -583,7 +583,7 @@ auto swt2(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
         cdim = rowsI * colsI;
         // Row filtering and column subsampling
         for (auto i = 0; i < ir; ++i) {
-            swtPerStride(m, orig + i * ic, ic, wt.wave->lpd(), wt.wave->hpd(), lp, lpDn1.get() + i * colsI, colsI, hpDn1.get() + i * colsI, istride, ostride);
+            swtPerStride(m, orig + i * ic, ic, wt.wave->lpd().data(), wt.wave->hpd().data(), lp, lpDn1.get() + i * colsI, colsI, hpDn1.get() + i * colsI, istride, ostride);
         }
         // Column Filtering and Row subsampling
         aHH = n - cdim;
@@ -599,11 +599,11 @@ auto swt2(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
         istride = ic;
         ostride = ic;
         for (auto i = 0; i < ic; ++i) {
-            swtPerStride(m, lpDn1.get() + i, ir, wt.wave->lpd(), wt.wave->hpd(), lp, wavecoeff.get() + aLL + i, rowsI, wavecoeff.get() + aLH + i, istride, ostride);
+            swtPerStride(m, lpDn1.get() + i, ir, wt.wave->lpd().data(), wt.wave->hpd().data(), lp, wavecoeff.get() + aLL + i, rowsI, wavecoeff.get() + aLH + i, istride, ostride);
         }
 
         for (auto i = 0; i < ic; ++i) {
-            swtPerStride(m, hpDn1.get() + i, ir, wt.wave->lpd(), wt.wave->hpd(), lp, wavecoeff.get() + aHL + i, rowsI, wavecoeff.get() + aHH + i, istride, ostride);
+            swtPerStride(m, hpDn1.get() + i, ir, wt.wave->lpd().data(), wt.wave->hpd().data(), lp, wavecoeff.get() + aHL + i, rowsI, wavecoeff.get() + aHH + i, istride, ostride);
         }
 
         ir = rowsI;
@@ -639,7 +639,7 @@ auto iswt2(WaveletTransform2D& wt, double const* wavecoeffs, double* oup) -> voi
     j = wt.J;
     rows = wt.rows;
     cols = wt.cols;
-    lf = wt.wave->lpdLen();
+    lf = wt.wave->lpd().size();
 
     auto a = makeZeros<double>((rows + lf) * (cols + lf));
     auto h = makeZeros<double>((rows + lf) * (cols + lf));
@@ -680,7 +680,7 @@ auto iswt2(WaveletTransform2D& wt, double const* wavecoeffs, double* oup) -> voi
                 ir++;
             }
             shift = 0;
-            idwtShift(shift, ir, ic, wt.wave->lpr(), wt.wave->hpr(), wt.wave->lpdLen(), a.get(), h.get(), v.get(), d.get(), oup1.get());
+            idwtShift(shift, ir, ic, wt.wave->lpr().data(), wt.wave->hpr().data(), wt.wave->lpd().size(), a.get(), h.get(), v.get(), d.get(), oup1.get());
             //oup2
             ir = 0;
             ic = 0;
@@ -698,7 +698,7 @@ auto iswt2(WaveletTransform2D& wt, double const* wavecoeffs, double* oup) -> voi
                 ir++;
             }
             shift = -1;
-            idwtShift(shift, ir, ic, wt.wave->lpr(), wt.wave->hpr(), wt.wave->lpdLen(), a.get(), h.get(), v.get(), d.get(), oup2.get());
+            idwtShift(shift, ir, ic, wt.wave->lpr().data(), wt.wave->hpr().data(), wt.wave->lpd().size(), a.get(), h.get(), v.get(), d.get(), oup2.get());
             // Shift oup1 and oup2. Then add them to get A.
             i1 = 0;
             for (auto i = it2; i < rows; i += m) {
@@ -743,7 +743,7 @@ auto modwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
 
     rowsN = wt.rows;
     colsN = wt.cols;
-    lp = wt.wave->lpdLen();
+    lp = wt.wave->lpd().size();
     clen = j * 3;
 
     auto idx = 2 * j;
@@ -839,7 +839,7 @@ auto imodwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
 
     m = (int)std::pow(2.0, (double)j - 1.0);
     // N = rows > cols ? rows : cols;
-    lf = (wt.wave->lprLen() + wt.wave->hprLen()) / 2;
+    lf = (wt.wave->lpr().size() + wt.wave->hpr().size()) / 2;
 
     auto filt = makeZeros<double>(2 * lf);
     s = std::sqrt(2.0);

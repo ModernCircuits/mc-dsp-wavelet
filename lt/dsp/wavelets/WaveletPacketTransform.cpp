@@ -103,7 +103,7 @@ WaveletPacketTransform::WaveletPacketTransform(Wavelet* wave, std::size_t siglen
     }
     auto temp = 1;
     auto nodess = 0;
-    for (auto i = 0; i < j; ++i) {
+    for (std::size_t i = 0; i < j; ++i) {
         temp *= 2;
         nodess += temp;
     }
@@ -162,7 +162,7 @@ static auto dwtPer(WaveletPacketTransform& wt, double const* inp, int n, double*
     int t = 0;
     int lenAvg = 0;
 
-    lenAvg = wt.wave->lpdLen();
+    lenAvg = wt.wave->lpd().size();
     l2 = lenAvg / 2;
     isodd = n % 2;
 
@@ -210,7 +210,7 @@ static auto dwtSym(WaveletPacketTransform& wt, double const* inp, int n, double*
     int t = 0;
     int lenAvg = 0;
 
-    lenAvg = wt.wave->lpdLen();
+    lenAvg = wt.wave->lpd().size();
 
     for (auto i = 0; i < lenCA; ++i) {
         t = 2 * i + 1;
@@ -287,7 +287,7 @@ auto dwt(WaveletPacketTransform& wt, double const* inp) -> void
     }
 
     auto n = tempLen;
-    auto lp = wt.wave->lpdLen();
+    auto lp = wt.wave->lpd().size();
     // p2 = 1;
 
     //set eparam value here
@@ -481,7 +481,7 @@ static auto idwtPer(WaveletPacketTransform& wt, double const* cA, int lenCA, dou
     int t = 0;
     int l2 = 0;
 
-    lenAvg = (wt.wave->lprLen() + wt.wave->hprLen()) / 2;
+    lenAvg = (wt.wave->lpr().size() + wt.wave->hpr().size()) / 2;
     l2 = lenAvg / 2;
     m = -2;
     n = -1;
@@ -509,7 +509,7 @@ static auto idwtPer(WaveletPacketTransform& wt, double const* cA, int lenCA, dou
 
 static auto idwtSym(WaveletPacketTransform& wt, double const* cA, int lenCA, double const* cD, double* x) -> void
 {
-    auto lenAvg = (wt.wave->lprLen() + wt.wave->hprLen()) / 2;
+    auto lenAvg = (wt.wave->lpr().size() + wt.wave->hpr().size()) / 2;
     auto m = -2;
     auto n = -1;
 
@@ -538,7 +538,7 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
     auto j = wt.J;
     auto appLen = wt.length[0];
     auto powJ = ipow2(j);
-    auto lf = (wt.wave->lprLen() + wt.wave->hprLen()) / 2;
+    auto lf = (wt.wave->lpr().size() + wt.wave->hpr().size()) / 2;
     auto xlen = powJ * (appLen + 2 * lf);
 
     auto xLp = std::make_unique<double[]>(2 * (wt.length[j] + lf));
