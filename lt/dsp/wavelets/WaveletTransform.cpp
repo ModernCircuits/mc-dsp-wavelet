@@ -7,11 +7,10 @@
 
 #include "lt/cassert.hpp"
 #include "lt/cmath.hpp"
-#include "lt/format.hpp"
-#include "lt/string_view.hpp"
-
 #include "lt/cstdlib.hpp"
 #include "lt/cstring.hpp"
+#include "lt/format.hpp"
+#include "lt/string_view.hpp"
 
 namespace {
 
@@ -50,29 +49,23 @@ auto upsamp(double const* x, int lenx, int m, double* y) -> int
     return n;
 }
 
+// Returns even numbered output. Last value is set to zero
 auto upsamp2(double const* x, int lenx, int m, double* y) -> int
 {
-    int n = 0;
-    int i = 0;
-    int j = 0;
-    int k = 0;
-    // upsamp2 returns even numbered output. Last value is set to zero
     if (m < 0) {
         return -1;
     }
 
     if (m == 0) {
-        for (i = 0; i < lenx; ++i) {
-            y[i] = x[i];
-        }
+        std::copy(x, x + static_cast<std::size_t>(lenx), y);
         return lenx;
     }
 
-    n = m * lenx;
-    j = 1;
-    k = 0;
+    auto const n = m * lenx;
+    auto j = 1;
+    auto k = 0;
 
-    for (i = 0; i < n; ++i) {
+    for (auto i = 0; i < n; ++i) {
         j--;
         y[i] = 0.0;
         if (j == 0) {
@@ -87,14 +80,7 @@ auto upsamp2(double const* x, int lenx, int m, double* y) -> int
 
 auto isign(int n) -> int
 {
-    int m = 0;
-    if (n >= 0) {
-        m = 1;
-    } else {
-        m = -1;
-    }
-
-    return m;
+    return n >= 0 ? 1 : (-1);
 }
 
 auto circshift(double* array, int n, int l) -> void
@@ -107,9 +93,8 @@ auto circshift(double* array, int n, int l) -> void
     }
 
     auto temp = makeZeros<double>(l);
-    for (auto i = 0; i < l; ++i) {
-        temp[i] = array[i];
-    }
+    std::copy(array, array + static_cast<std::size_t>(l), temp.get());
+
     for (auto i = 0; i < n - l; ++i) {
         array[i] = array[i + l];
     }
