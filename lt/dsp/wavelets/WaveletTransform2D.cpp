@@ -170,7 +170,7 @@ WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, std::s
 
     this->dimensions = &this->params[0];
     this->coeffaccess = &this->params[2 * j];
-    for (auto i = 0; i < (2 * j + sumacc); ++i) {
+    for (std::size_t i = 0; i < (2 * j + sumacc); ++i) {
         this->params[i] = 0;
     }
 }

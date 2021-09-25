@@ -240,15 +240,15 @@ WaveletTransform::WaveletTransform(Wavelet& w, char const* method, std::size_t s
     this->lenlength = levels_ + 2;
     this->output_ = &this->params[0];
     if ((method == lt::string_view { "dwt" }) || (method == lt::string_view { "DWT" })) {
-        for (auto i = 0; i < siglength + 2 * levels() * (size + 1); ++i) {
+        for (std::size_t i = 0; i < siglength + 2 * levels() * (size + 1); ++i) {
             this->params[i] = 0.0;
         }
     } else if ((method == lt::string_view { "swt" }) || (method == lt::string_view { "SWT" })) {
-        for (auto i = 0; i < siglength * (levels() + 1); ++i) {
+        for (std::size_t i = 0; i < siglength * (levels() + 1); ++i) {
             this->params[i] = 0.0;
         }
     } else if ((method == lt::string_view { "MODWT" }) || (method == lt::string_view { "modwt" })) {
-        for (auto i = 0; i < siglength * 2 * (levels() + 1); ++i) {
+        for (std::size_t i = 0; i < siglength * 2 * (levels() + 1); ++i) {
             this->params[i] = 0.0;
         }
     }
@@ -690,7 +690,7 @@ static auto swtFft(WaveletTransform& wt, double const* inp) -> void
 
     m = 1;
 
-    for (auto i = 0; i < tempLen; ++i) {
+    for (std::size_t i = 0; i < tempLen; ++i) {
         wt.params[i] = inp[i];
     }
 
@@ -731,7 +731,7 @@ static auto swtFft(WaveletTransform& wt, double const* inp) -> void
             wt.cfftset = 0;
         }
 
-        for (auto i = 0; i < tempLen; ++i) {
+        for (std::size_t i = 0; i < tempLen; ++i) {
             wt.params[i] = cA[n + i];
             wt.params[lenacc + i] = cD[n + i];
         }
@@ -757,7 +757,7 @@ static auto swtDirect(WaveletTransform& wt, double const* inp) -> void
 
     m = 1;
 
-    for (auto i = 0; i < tempLen; ++i) {
+    for (std::size_t i = 0; i < tempLen; ++i) {
         wt.params[i] = inp[i];
     }
 
@@ -771,7 +771,7 @@ static auto swtDirect(WaveletTransform& wt, double const* inp) -> void
 
         swtPer(wt, m, wt.params.get(), tempLen, cA.get(), tempLen, cD.get());
 
-        for (auto i = 0; i < tempLen; ++i) {
+        for (std::size_t i = 0; i < tempLen; ++i) {
             wt.params[i] = cA[i];
             wt.params[lenacc + i] = cD[i];
         }
@@ -792,7 +792,7 @@ auto swt(WaveletTransform& wt, double const* inp) -> void
 auto iswt(WaveletTransform& wt, double* swtop) -> void
 {
     auto n = wt.signalLength();
-    auto j = wt.levels();
+    auto j = static_cast<std::size_t>(wt.levels());
     auto u = 2;
     auto lf = wt.wave().lprLen();
 
@@ -810,17 +810,17 @@ auto iswt(WaveletTransform& wt, double* swtop) -> void
     auto oup00 = std::make_unique<double[]>(n);
     auto oup01 = std::make_unique<double[]>(n);
 
-    for (auto iter = 0; iter < j; ++iter) {
-        for (auto i = 0; i < n; ++i) {
+    for (std::size_t iter = 0; iter < j; ++iter) {
+        for (std::size_t i = 0; i < n; ++i) {
             swtop[i] = 0.0;
         }
         if (iter == 0) {
-            for (auto i = 0; i < n; ++i) {
+            for (std::size_t i = 0; i < n; ++i) {
                 appxSig[i] = wt.output()[i];
                 detSig[i] = wt.output()[n + i];
             }
         } else {
-            for (auto i = 0; i < n; ++i) {
+            for (std::size_t i = 0; i < n; ++i) {
                 detSig[i] = wt.output()[(iter + 1) * n + i];
             }
         }
@@ -829,7 +829,7 @@ auto iswt(WaveletTransform& wt, double* swtop) -> void
 
         for (auto count = 0; count < value; count++) {
             auto len = 0;
-            for (auto index = count; index < n; index += value) {
+            for (std::size_t index = count; index < n; index += value) {
                 appx1[len] = appxSig[index];
                 det1[len] = detSig[index];
                 len++;
@@ -895,12 +895,12 @@ auto iswt(WaveletTransform& wt, double* swtop) -> void
 
             auto index2 = 0;
 
-            for (auto index = count; index < n; index += value) {
+            for (auto index = static_cast<std::size_t>(count); index < n; index += value) {
                 swtop[index] = (oup00[index2] + oup01[index2]) / 2.0;
                 index2++;
             }
         }
-        for (auto i = 0; i < n; ++i) {
+        for (std::size_t i = 0; i < n; ++i) {
             appxSig[i] = swtop[i];
         }
     }
@@ -943,11 +943,11 @@ static auto modwtDirect(WaveletTransform& wt, double const* inp) -> void
     }
 
     auto tempLen = wt.signalLength();
-    auto j = wt.levels();
+    auto j = static_cast<std::size_t>(wt.levels());
     wt.length[0] = wt.length[j] = tempLen;
     wt.outlength = wt.length[j + 1] = (j + 1) * tempLen;
     auto m = 1;
-    for (auto iter = 1; iter < j; ++iter) {
+    for (std::size_t iter = 1; iter < j; ++iter) {
         m = 2 * m;
         wt.length[iter] = tempLen;
     }
@@ -957,13 +957,13 @@ static auto modwtDirect(WaveletTransform& wt, double const* inp) -> void
 
     m = 1;
 
-    for (auto i = 0; i < tempLen; ++i) {
+    for (std::size_t i = 0; i < tempLen; ++i) {
         wt.params[i] = inp[i];
     }
 
     auto lenacc = wt.outlength;
 
-    for (auto iter = 0; iter < j; ++iter) {
+    for (std::size_t iter = 0; iter < j; ++iter) {
         lenacc -= tempLen;
         if (iter > 0) {
             m = 2 * m;
@@ -971,7 +971,7 @@ static auto modwtDirect(WaveletTransform& wt, double const* inp) -> void
 
         modwtPer(wt, m, wt.params.get(), cA.get(), tempLen, cD.get());
 
-        for (auto i = 0; i < tempLen; ++i) {
+        for (std::size_t i = 0; i < tempLen; ++i) {
             wt.params[i] = cA[i];
             wt.params[lenacc + i] = cD[i];
         }
@@ -989,8 +989,8 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
     double tmp2 = NAN;
 
     auto tempLen = wt.signalLength();
-    auto lenAvg = wt.wave().lpdLen();
-    int n { 0 };
+    auto lenAvg = static_cast<std::size_t>(wt.wave().lpdLen());
+    std::size_t n { 0 };
     if (wt.extension() == SignalExtension::symmetric) {
         n = 2 * tempLen;
     } else if (wt.extension() == SignalExtension::periodic) {
@@ -1020,7 +1020,7 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
 
     // Low Pass Filter
 
-    for (auto i = 0; i < lenAvg; ++i) {
+    for (std::size_t i = 0; i < lenAvg; ++i) {
         sig[i].real((double)wt.wave().lpd()[i] / s);
         sig[i].imag(0.0);
     }
@@ -1033,11 +1033,11 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
 
     // High Pass Filter
 
-    for (auto i = 0; i < lenAvg; ++i) {
+    for (std::size_t i = 0; i < lenAvg; ++i) {
         sig[i].real((double)wt.wave().hpd()[i] / s);
         sig[i].imag(0.0);
     }
-    for (auto i = lenAvg; i < n; ++i) {
+    for (std::size_t i = lenAvg; i < n; ++i) {
         sig[i].real(0.0);
         sig[i].imag(0.0);
     }
@@ -1045,11 +1045,11 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
     fftFd->perform(sig.get(), highPass.get());
 
     // symmetric extension
-    for (auto i = 0; i < tempLen; ++i) {
+    for (std::size_t i = 0; i < tempLen; ++i) {
         sig[i].real((double)inp[i]);
         sig[i].imag(0.0);
     }
-    for (auto i = tempLen; i < n; ++i) {
+    for (std::size_t i = tempLen; i < n; ++i) {
         sig[i].real((double)inp[n - i - 1]);
         sig[i].imag(0.0);
     }
@@ -1065,11 +1065,11 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
     for (iter = 0; iter < j; ++iter) {
         lenacc -= n;
 
-        for (auto i = 0; i < n; ++i) {
+        for (std::size_t i = 0; i < n; ++i) {
             index[i] = (m * i) % n;
         }
 
-        for (auto i = 0; i < n; ++i) {
+        for (std::size_t i = 0; i < n; ++i) {
             tmp1 = cA[i].real();
             tmp2 = cA[i].imag();
             cA[i].real(lowPass[index[i]].real() * tmp1 - lowPass[index[i]].imag() * tmp2);
@@ -1081,7 +1081,7 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
 
         fftBd->perform(cD.get(), sig.get());
 
-        for (auto i = 0; i < n; ++i) {
+        for (std::size_t i = 0; i < n; ++i) {
             wt.params[lenacc + i] = sig[i].real() / n;
         }
 
@@ -1090,7 +1090,7 @@ static auto modwtFft(WaveletTransform& wt, double const* inp) -> void
 
     fftBd->perform(cA.get(), sig.get());
 
-    for (auto i = 0; i < n; ++i) {
+    for (std::size_t i = 0; i < n; ++i) {
         wt.params[i] = sig[i].real() / n;
     }
 }
@@ -1115,8 +1115,8 @@ static auto conjComplex(Complex<double>* x, int n) -> void
 auto imodwtFft(WaveletTransform& wt, double* oup) -> void
 {
     auto n = wt.modwtsiglength;
-    auto lenAvg = wt.wave().lpdLen();
-    auto j = wt.levels();
+    auto lenAvg = static_cast<std::size_t>(wt.wave().lpdLen());
+    auto j = static_cast<std::size_t>(wt.levels());
 
     auto s = std::sqrt(2.0);
     auto fftFd = std::make_unique<FFT>(n, FFT::forward);
@@ -1133,11 +1133,11 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
 
     // Low Pass Filter
 
-    for (auto i = 0; i < lenAvg; ++i) {
+    for (std::size_t i = 0; i < lenAvg; ++i) {
         sig[i].real((double)wt.wave().lpd()[i] / s);
         sig[i].imag(0.0);
     }
-    for (auto i = lenAvg; i < n; ++i) {
+    for (std::size_t i = lenAvg; i < n; ++i) {
         sig[i].real(0.0);
         sig[i].imag(0.0);
     }
@@ -1146,11 +1146,11 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
 
     // High Pass Filter
 
-    for (auto i = 0; i < lenAvg; ++i) {
+    for (std::size_t i = 0; i < lenAvg; ++i) {
         sig[i].real((double)wt.wave().hpd()[i] / s);
         sig[i].imag(0.0);
     }
-    for (auto i = lenAvg; i < n; ++i) {
+    for (std::size_t i = lenAvg; i < n; ++i) {
         sig[i].real(0.0);
         sig[i].imag(0.0);
     }
@@ -1166,24 +1166,24 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
     auto lenacc = n;
 
     //
-    for (auto i = 0; i < n; ++i) {
+    for (std::size_t i = 0; i < n; ++i) {
         sig[i].real((double)wt.output()[i]);
         sig[i].imag(0.0);
     }
 
-    for (auto iter = 0; iter < j; ++iter) {
+    for (std::size_t iter = 0; iter < j; ++iter) {
         fftFd->perform(sig.get(), cA.get());
-        for (auto i = 0; i < n; ++i) {
+        for (std::size_t i = 0; i < n; ++i) {
             sig[i].real(wt.output()[lenacc + i]);
             sig[i].imag(0.0);
         }
         fftFd->perform(sig.get(), cD.get());
 
-        for (auto i = 0; i < n; ++i) {
+        for (std::size_t i = 0; i < n; ++i) {
             index[i] = (m * i) % n;
         }
 
-        for (auto i = 0; i < n; ++i) {
+        for (std::size_t i = 0; i < n; ++i) {
             auto const tmp1 = cA[i].real();
             auto const tmp2 = cA[i].imag();
             cA[i].real(lowPass[index[i]].real() * tmp1 - lowPass[index[i]].imag() * tmp2 + highPass[index[i]].real() * cD[i].real() - highPass[index[i]].imag() * cD[i].imag());
@@ -1192,7 +1192,7 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
 
         fftBd->perform(cA.get(), sig.get());
 
-        for (auto i = 0; i < n; ++i) {
+        for (std::size_t i = 0; i < n; ++i) {
             sig[i].real(sig[i].real() / n);
             sig[i].imag(sig[i].imag() / n);
         }
@@ -1236,29 +1236,29 @@ static auto imodwtDirect(WaveletTransform& wt, double* dwtop) -> void
     auto n = wt.signalLength();
     auto lenacc = n;
 
-    auto j = wt.levels();
+    auto j = static_cast<std::size_t>(wt.levels());
     auto m = (int)std::pow(2.0, (double)j - 1.0);
 
     auto x = std::make_unique<double[]>(n);
 
-    for (auto i = 0; i < n; ++i) {
+    for (std::size_t i = 0; i < n; ++i) {
         dwtop[i] = wt.output()[i];
     }
 
-    for (auto iter = 0; iter < j; ++iter) {
+    for (std::size_t iter = 0; iter < j; ++iter) {
         if (iter > 0) {
             m = m / 2;
         }
         imodwtPer(wt, m, dwtop, n, wt.params.get() + lenacc, x.get());
         /*
-		for (auto j = lf - 1; j < N; ++j) {
+		for (std::size_t j = lf - 1; j < N; ++j) {
 			dwtop[j - lf + 1] = X[j];
 		}
-		for (auto j = 0; j < lf - 1; ++j) {
+		for (std::size_t j = 0; j < lf - 1; ++j) {
 			dwtop[N - lf + 1 + j] = X[j];
 		}
 		*/
-        for (auto jj = 0; jj < n; ++jj) {
+        for (std::size_t jj = 0; jj < n; ++jj) {
             dwtop[jj] = x[jj];
         }
 

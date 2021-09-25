@@ -69,7 +69,7 @@ conan_cmake_configure(
         fftw:simd=avx
 )
 conan_cmake_autodetect(settings)
-conan_cmake_install(PATH_OR_REFERENCE . BUILD missing REMOTE conancenter SETTINGS ${settings})
+conan_cmake_install(PATH_OR_REFERENCE . BUILD outdated REMOTE conancenter SETTINGS ${settings})
 
 find_package(Boost 1.77 REQUIRED)
 find_package(FFTW3 REQUIRED)
