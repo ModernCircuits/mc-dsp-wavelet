@@ -3,17 +3,8 @@
 #include <type_traits>
 #include <utility>
 
-#if defined(__cpp_lib_integer_comparison_functions)
-namespace lt {
-using std::cmp_equal;
-using std::cmp_greater;
-using std::cmp_greater_equal;
-using std::cmp_less;
-using std::cmp_less_equal;
-using std::cmp_not_equal;
-} // namespace lt
-#else
-namespace lt {
+#if not defined(__cpp_lib_integer_comparison_functions)
+namespace std { // NOLINT(cert-dcl58-cpp)
 template <typename T, typename U>
 constexpr auto cmp_equal(T t, U u) noexcept -> bool // NOLINT(readability-identifier-naming)
 {

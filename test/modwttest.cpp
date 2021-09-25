@@ -28,14 +28,14 @@ auto main() -> int
     // Use wt_summary to find out how to extract appx and detail coefficients
     modwt(wt, inp.data()); // Perform MODWT
 
-    for (auto i = 0; lt::cmp_less(i, wt.outlength); ++i) {
+    for (auto i = 0; std::cmp_less(i, wt.outlength); ++i) {
         fmt::printf("%g ", wt.output()[i]);
     }
 
     imodwt(wt, out.get()); // Perform ISWT (if needed)
 
     auto diff = std::make_unique<double[]>(n);
-    for (auto i = 0; lt::cmp_less(i, wt.signalLength()); ++i) {
+    for (auto i = 0; std::cmp_less(i, wt.signalLength()); ++i) {
         diff[i] = out[i] - inp[i];
     }
 

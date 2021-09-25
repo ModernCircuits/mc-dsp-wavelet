@@ -590,7 +590,7 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
                             out2[k] = wt.output[index + detLen + k];
                         }
                         idwtPer(wt, out.get(), detLen, out2.get(), xLp.get());
-                        for (k = lf / 2 - 1; lt::cmp_less(k, 2 * detLen + lf / 2 - 1); ++k) {
+                        for (k = lf / 2 - 1; std::cmp_less(k, 2 * detLen + lf / 2 - 1); ++k) {
                             x[index3 + k - lf / 2 + 1] = xLp[k];
                         }
                         index += 2 * detLen;
@@ -604,7 +604,7 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
                             out2[k] = x[index4 + k];
                         }
                         idwtPer(wt, out.get(), detLen, out2.get(), xLp.get());
-                        for (k = lf / 2 - 1; lt::cmp_less(k, 2 * detLen + lf / 2 - 1); ++k) {
+                        for (k = lf / 2 - 1; std::cmp_less(k, 2 * detLen + lf / 2 - 1); ++k) {
                             x[index3 + k - lf / 2 + 1] = xLp[k];
                         }
                         index += detLen;
@@ -617,7 +617,7 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
                             out2[k] = wt.output[index + k];
                         }
                         idwtPer(wt, out.get(), detLen, out2.get(), xLp.get());
-                        for (k = lf / 2 - 1; lt::cmp_less(k, 2 * detLen + lf / 2 - 1); ++k) {
+                        for (k = lf / 2 - 1; std::cmp_less(k, 2 * detLen + lf / 2 - 1); ++k) {
                             x[index3 + k - lf / 2 + 1] = xLp[k];
                         }
                         index += detLen;
@@ -630,7 +630,7 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
                             out2[k] = x[index4 + indexp + k];
                         }
                         idwtPer(wt, out.get(), detLen, out2.get(), xLp.get());
-                        for (k = lf / 2 - 1; lt::cmp_less(k, 2 * detLen + lf / 2 - 1); ++k) {
+                        for (k = lf / 2 - 1; std::cmp_less(k, 2 * detLen + lf / 2 - 1); ++k) {
                             x[index3 + k - lf / 2 + 1] = xLp[k];
                         }
                         index4 += 2 * indexp;
