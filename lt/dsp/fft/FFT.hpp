@@ -4,7 +4,7 @@
 #include "lt/complex.hpp"
 #include "lt/memory.hpp"
 
-#define PI2 6.28318530717958647692528676655900577
+constexpr auto Pi2 = 6.28318530717958647692528676655900577;
 
 struct FFT {
     enum Direction {

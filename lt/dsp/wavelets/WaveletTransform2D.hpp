@@ -9,10 +9,12 @@
 struct WaveletTransform2D {
     WaveletTransform2D(Wavelet& wave, char const* method, std::size_t rows, std::size_t cols, std::size_t j);
 
-    Wavelet* wave {};
-    std::string method;
-    int rows {}; // Matrix Number of rows
-    int cols {}; // Matrix Number of columns
+    [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *wave_; }
+    [[nodiscard]] auto method() const noexcept -> std::string const& { return method_; }
+
+    [[nodiscard]] auto rows() const noexcept -> int { return rows_; }
+    [[nodiscard]] auto cols() const noexcept -> int { return cols_; }
+
     int outlength {}; // Length of the output DWT vector
     int J {}; // Number of decomposition Levels
     int MaxIter {}; // Maximum Iterations J <= MaxIter
@@ -23,6 +25,12 @@ struct WaveletTransform2D {
     int* dimensions {};
     int* coeffaccess {};
     std::unique_ptr<int[]> params;
+
+private:
+    Wavelet* wave_ { nullptr };
+    int rows_ { 0 }; // Matrix Number of rows
+    int cols_ { 0 }; // Matrix Number of columns
+    std::string method_;
 };
 
 auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>;

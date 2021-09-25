@@ -196,7 +196,7 @@ auto longvectorN(Complex<double>* sig, int const* array, int tx) -> void
     for (auto i = 0; i < tx; i++) {
         l = l * array[tx - 1 - i];
         auto const ls = l / array[tx - 1 - i];
-        auto const theta = -1.0 * PI2 / l;
+        auto const theta = -1.0 * Pi2 / l;
         for (auto j = 0; j < ls; j++) {
             for (auto k = 0; k < array[tx - 1 - i] - 1; k++) {
                 sig[ct].real(cos((k + 1) * j * theta));
@@ -1763,8 +1763,8 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
     //     M = (radix - 1) / 2;
 
     //     for (i = 1; i < M + 1; ++i) {
-    //         c1[i - 1] = cos(i * PI2 / radix);
-    //         s1[i - 1] = sin(i * PI2 / radix);
+    //         c1[i - 1] = cos(i * Pi2 / radix);
+    //         s1[i - 1] = sin(i * Pi2 / radix);
     //     }
 
     //     for (i = 0; i < M; ++i) {
@@ -1999,7 +1999,7 @@ RealFFT::RealFFT(int n, FFT::Direction direction)
     cobj_ = std::make_unique<FFT>(n / 2, direction);
 
     for (auto k = 0; k < n / 2; ++k) {
-        auto const theta = PI2 * k / n;
+        auto const theta = Pi2 * k / n;
         data_[k].real(std::cos(theta));
         data_[k].imag(std::sin(theta));
     }

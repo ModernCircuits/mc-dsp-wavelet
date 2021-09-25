@@ -519,9 +519,9 @@ static auto idwtSym(WaveletPacketTransform& wt, double const* cA, int lenCA, dou
         n += 2;
         x[m] = 0.0;
         x[n] = 0.0;
-        for (std::size_t l = 0; l < lenAvg / 2; ++l) {
+        for (auto l = 0; l < static_cast<int>(lenAvg) / 2; ++l) {
             auto const t = 2 * l;
-            if ((i - l) >= 0 && lt::cmp_less(i - l, lenCA)) {
+            if ((i - l) >= 0 && i - l < lenCA) {
                 x[m] += wt.wave().lpr()[t] * cA[i - l] + wt.wave().hpr()[t] * cD[i - l];
                 x[n] += wt.wave().lpr()[t + 1] * cA[i - l] + wt.wave().hpr()[t + 1] * cD[i - l];
             }
