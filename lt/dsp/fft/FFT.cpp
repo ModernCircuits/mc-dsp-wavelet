@@ -263,12 +263,6 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         op[1] = tau1 - op[1];
 
     } else if (n == 3) {
-        double tau0r = NAN;
-        double tau0i = NAN;
-        double tau1r = NAN;
-        double tau1i = NAN;
-        double tau2r = NAN;
-        double tau2i = NAN;
         op[0].real(ip[0].real());
         op[0].imag(ip[0].imag());
 
@@ -278,14 +272,14 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         op[2].real(ip[2 * l].real());
         op[2].imag(ip[2 * l].imag());
 
-        tau0r = op[1].real() + op[2].real();
-        tau0i = op[1].imag() + op[2].imag();
+        auto tau0r = op[1].real() + op[2].real();
+        auto tau0i = op[1].imag() + op[2].imag();
 
-        tau1r = sgn * 0.86602540378 * (op[1].real() - op[2].real());
-        tau1i = sgn * 0.86602540378 * (op[1].imag() - op[2].imag());
+        auto tau1r = sgn * 0.86602540378 * (op[1].real() - op[2].real());
+        auto tau1i = sgn * 0.86602540378 * (op[1].imag() - op[2].imag());
 
-        tau2r = op[0].real() - tau0r * 0.5000000000;
-        tau2i = op[0].imag() - tau0i * 0.5000000000;
+        auto tau2r = op[0].real() - tau0r * 0.5000000000;
+        auto tau2i = op[0].imag() - tau0i * 0.5000000000;
 
         op[0].real(tau0r + op[0].real());
         op[0].imag(tau0i + op[0].imag());
@@ -299,14 +293,7 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         return;
 
     } else if (n == 4) {
-        double tau0r = NAN;
-        double tau0i = NAN;
-        double tau1r = NAN;
-        double tau1i = NAN;
-        double tau2r = NAN;
-        double tau2i = NAN;
-        double tau3r = NAN;
-        double tau3i = NAN;
+
         op[0].real(ip[0].real());
         op[0].imag(ip[0].imag());
 
@@ -319,17 +306,17 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         op[3].real(ip[3 * l].real());
         op[3].imag(ip[3 * l].imag());
 
-        tau0r = op[0].real() + op[2].real();
-        tau0i = op[0].imag() + op[2].imag();
+        auto const tau0r = op[0].real() + op[2].real();
+        auto const tau0i = op[0].imag() + op[2].imag();
 
-        tau1r = op[0].real() - op[2].real();
-        tau1i = op[0].imag() - op[2].imag();
+        auto const tau1r = op[0].real() - op[2].real();
+        auto const tau1i = op[0].imag() - op[2].imag();
 
-        tau2r = op[1].real() + op[3].real();
-        tau2i = op[1].imag() + op[3].imag();
+        auto const tau2r = op[1].real() + op[3].real();
+        auto const tau2i = op[1].imag() + op[3].imag();
 
-        tau3r = sgn * (op[1].real() - op[3].real());
-        tau3i = sgn * (op[1].imag() - op[3].imag());
+        auto const tau3r = sgn * (op[1].real() - op[3].real());
+        auto const tau3i = sgn * (op[1].imag() - op[3].imag());
 
         op[0].real(tau0r + tau2r);
         op[0].imag(tau0i + tau2i);
@@ -344,24 +331,12 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         op[3].imag(tau1i + tau3r);
 
     } else if (n == 5) {
-        double tau0r = NAN;
-        double tau0i = NAN;
-        double tau1r = NAN;
-        double tau1i = NAN;
-        double tau2r = NAN;
-        double tau2i = NAN;
-        double tau3r = NAN;
-        double tau3i = NAN;
         double tau4r = NAN;
         double tau4i = NAN;
         double tau5r = NAN;
         double tau5i = NAN;
         double tau6r = NAN;
         double tau6i = NAN;
-        double c1 = NAN;
-        double c2 = NAN;
-        double s1 = NAN;
-        double s2 = NAN;
         op[0].real(ip[0].real());
         op[0].imag(ip[0].imag());
 
@@ -377,20 +352,20 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         op[4].real(ip[4 * l].real());
         op[4].imag(ip[4 * l].imag());
 
-        c1 = 0.30901699437;
-        c2 = -0.80901699437;
-        s1 = 0.95105651629;
-        s2 = 0.58778525229;
+        auto const c1 = 0.30901699437;
+        auto const c2 = -0.80901699437;
+        auto const s1 = 0.95105651629;
+        auto const s2 = 0.58778525229;
 
-        tau0r = op[1].real() + op[4].real();
-        tau2r = op[1].real() - op[4].real();
-        tau0i = op[1].imag() + op[4].imag();
-        tau2i = op[1].imag() - op[4].imag();
+        auto const tau0r = op[1].real() + op[4].real();
+        auto const tau2r = op[1].real() - op[4].real();
+        auto const tau0i = op[1].imag() + op[4].imag();
+        auto const tau2i = op[1].imag() - op[4].imag();
 
-        tau1r = op[2].real() + op[3].real();
-        tau3r = op[2].real() - op[3].real();
-        tau1i = op[2].imag() + op[3].imag();
-        tau3i = op[2].imag() - op[3].imag();
+        auto const tau1r = op[2].real() + op[3].real();
+        auto const tau3r = op[2].real() - op[3].real();
+        auto const tau1i = op[2].imag() + op[3].imag();
+        auto const tau3i = op[2].imag() - op[3].imag();
 
         tau4r = c1 * tau0r + c2 * tau1r;
         tau4i = c1 * tau0i + c2 * tau1i;
@@ -444,28 +419,10 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         op[0].imag(op[0].imag() + tau0i + tau1i);
 
     } else if (n == 7) {
-        double tau0r = NAN;
-        double tau0i = NAN;
-        double tau1r = NAN;
-        double tau1i = NAN;
-        double tau2r = NAN;
-        double tau2i = NAN;
-        double tau3r = NAN;
-        double tau3i = NAN;
-        double tau4r = NAN;
-        double tau4i = NAN;
-        double tau5r = NAN;
-        double tau5i = NAN;
         double tau6r = NAN;
         double tau6i = NAN;
         double tau7r = NAN;
         double tau7i = NAN;
-        double c1 = NAN;
-        double c2 = NAN;
-        double c3 = NAN;
-        double s1 = NAN;
-        double s2 = NAN;
-        double s3 = NAN;
         op[0].real(ip[0].real());
         op[0].imag(ip[0].imag());
 
@@ -487,30 +444,30 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         op[6].real(ip[6 * l].real());
         op[6].imag(ip[6 * l].imag());
 
-        c1 = 0.62348980185;
-        c2 = -0.22252093395;
-        c3 = -0.9009688679;
-        s1 = 0.78183148246;
-        s2 = 0.97492791218;
-        s3 = 0.43388373911;
+        auto const c1 = 0.62348980185;
+        auto const c2 = -0.22252093395;
+        auto const c3 = -0.9009688679;
+        auto const s1 = 0.78183148246;
+        auto const s2 = 0.97492791218;
+        auto const s3 = 0.43388373911;
 
-        tau0r = op[1].real() + op[6].real();
-        tau3r = op[1].real() - op[6].real();
+        auto const tau0r = op[1].real() + op[6].real();
+        auto const tau3r = op[1].real() - op[6].real();
 
-        tau0i = op[1].imag() + op[6].imag();
-        tau3i = op[1].imag() - op[6].imag();
+        auto const tau0i = op[1].imag() + op[6].imag();
+        auto const tau3i = op[1].imag() - op[6].imag();
 
-        tau1r = op[2].real() + op[5].real();
-        tau4r = op[2].real() - op[5].real();
+        auto const tau1r = op[2].real() + op[5].real();
+        auto const tau4r = op[2].real() - op[5].real();
 
-        tau1i = op[2].imag() + op[5].imag();
-        tau4i = op[2].imag() - op[5].imag();
+        auto const tau1i = op[2].imag() + op[5].imag();
+        auto const tau4i = op[2].imag() - op[5].imag();
 
-        tau2r = op[3].real() + op[4].real();
-        tau5r = op[3].real() - op[4].real();
+        auto const tau2r = op[3].real() + op[4].real();
+        auto const tau5r = op[3].real() - op[4].real();
 
-        tau2i = op[3].imag() + op[4].imag();
-        tau5i = op[3].imag() - op[4].imag();
+        auto const tau2i = op[3].imag() + op[4].imag();
+        auto const tau5i = op[3].imag() - op[4].imag();
 
         tau6r = op[0].real() + c1 * tau0r + c2 * tau1r + c3 * tau2r;
         tau6i = op[0].imag() + c1 * tau0i + c2 * tau1i + c3 * tau2i;
@@ -576,32 +533,10 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         op[0].imag(op[0].imag() + tau0i + tau1i + tau2i);
 
     } else if (n == 8) {
-        double tau0r = NAN;
-        double tau0i = NAN;
-        double tau1r = NAN;
-        double tau1i = NAN;
-        double tau2r = NAN;
-        double tau2i = NAN;
-        double tau3r = NAN;
-        double tau3i = NAN;
-        double tau4r = NAN;
-        double tau4i = NAN;
-        double tau5r = NAN;
-        double tau5i = NAN;
-        double tau6r = NAN;
-        double tau6i = NAN;
-        double tau7r = NAN;
-        double tau7i = NAN;
         double tau8r = NAN;
         double tau8i = NAN;
         double tau9r = NAN;
         double tau9i = NAN;
-        double c1 = NAN;
-        double s1 = NAN;
-        double temp1r = NAN;
-        double temp1i = NAN;
-        double temp2r = NAN;
-        double temp2i = NAN;
         op[0].real(ip[0].real());
         op[0].imag(ip[0].imag());
 
@@ -626,32 +561,32 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         op[7].real(ip[7 * l].real());
         op[7].imag(ip[7 * l].imag());
 
-        c1 = 0.70710678118654752440084436210485;
-        s1 = 0.70710678118654752440084436210485;
+        auto const c1 = 0.70710678118654752440084436210485;
+        auto const s1 = 0.70710678118654752440084436210485;
 
-        tau0r = op[0].real() + op[4].real();
-        tau4r = op[0].real() - op[4].real();
+        auto const tau0r = op[0].real() + op[4].real();
+        auto const tau4r = op[0].real() - op[4].real();
 
-        tau0i = op[0].imag() + op[4].imag();
-        tau4i = op[0].imag() - op[4].imag();
+        auto const tau0i = op[0].imag() + op[4].imag();
+        auto const tau4i = op[0].imag() - op[4].imag();
 
-        tau1r = op[1].real() + op[7].real();
-        tau5r = op[1].real() - op[7].real();
+        auto const tau1r = op[1].real() + op[7].real();
+        auto const tau5r = op[1].real() - op[7].real();
 
-        tau1i = op[1].imag() + op[7].imag();
-        tau5i = op[1].imag() - op[7].imag();
+        auto const tau1i = op[1].imag() + op[7].imag();
+        auto const tau5i = op[1].imag() - op[7].imag();
 
-        tau2r = op[3].real() + op[5].real();
-        tau6r = op[3].real() - op[5].real();
+        auto const tau2r = op[3].real() + op[5].real();
+        auto const tau6r = op[3].real() - op[5].real();
 
-        tau2i = op[3].imag() + op[5].imag();
-        tau6i = op[3].imag() - op[5].imag();
+        auto const tau2i = op[3].imag() + op[5].imag();
+        auto const tau6i = op[3].imag() - op[5].imag();
 
-        tau3r = op[2].real() + op[6].real();
-        tau7r = op[2].real() - op[6].real();
+        auto const tau3r = op[2].real() + op[6].real();
+        auto const tau7r = op[2].real() - op[6].real();
 
-        tau3i = op[2].imag() + op[6].imag();
-        tau7i = op[2].imag() - op[6].imag();
+        auto const tau3i = op[2].imag() + op[6].imag();
+        auto const tau7i = op[2].imag() - op[6].imag();
 
         op[0].real(tau0r + tau1r + tau2r + tau3r);
         op[0].imag(tau0i + tau1i + tau2i + tau3i);
@@ -659,11 +594,11 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         op[4].real(tau0r - tau1r - tau2r + tau3r);
         op[4].imag(tau0i - tau1i - tau2i + tau3i);
 
-        temp1r = tau1r - tau2r;
-        temp1i = tau1i - tau2i;
+        auto const temp1r = tau1r - tau2r;
+        auto const temp1i = tau1i - tau2i;
 
-        temp2r = tau5r + tau6r;
-        temp2i = tau5i + tau6i;
+        auto const temp2r = tau5r + tau6r;
+        auto const temp2i = tau5i + tau6i;
 
         tau8r = tau4r + c1 * temp1r;
         tau8i = tau4i + c1 * temp1i;
