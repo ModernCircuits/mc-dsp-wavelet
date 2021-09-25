@@ -19,6 +19,7 @@ else ()
                     -Wshadow
                     -Wunused-parameter
                     -Wnarrowing
+                    -Wno-sign-compare
                     # -Wconversion
                     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
                         # -Weverything

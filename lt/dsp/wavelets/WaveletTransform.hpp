@@ -1,12 +1,11 @@
 #pragma once
 
-#include "tcb/span.hpp"
-
 #include "lt/dsp/convolution/ConvolutionMethod.hpp"
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/wavelets/SignalExtension.hpp"
 #include "lt/dsp/wavelets/Wavelet.hpp"
 
+#include "lt/span.hpp"
 #include "lt/string.hpp"
 
 struct WaveletTransform {

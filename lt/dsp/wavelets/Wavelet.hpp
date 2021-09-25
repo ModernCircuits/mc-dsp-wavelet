@@ -1,8 +1,7 @@
 #pragma once
 
-#include "tcb/span.hpp"
-
 #include "lt/memory.hpp"
+#include "lt/span.hpp"
 #include "lt/string.hpp"
 
 struct Wavelet {
