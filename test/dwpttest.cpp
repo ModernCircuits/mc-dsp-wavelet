@@ -38,7 +38,7 @@ auto main() -> int
     summary(wt);
 
     // If Reconstruction succeeded then the output should be a small value.
-    fmt::printf("\n MAX %g \n", absmax(diff.get(), wt.siglength));
+    fmt::printf("\n MAX %g \n", absmax(diff.get(), wt.signalLength()));
 
     return 0;
 }

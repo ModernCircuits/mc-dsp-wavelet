@@ -225,7 +225,7 @@ auto dwtReconstructionTest()
                     dwt(wt, inp.get());
                     idwt(wt, out.get());
 
-                    REQUIRE(rmsError(out.get(), inp.get(), wt.siglength) <= epsilon);
+                    REQUIRE(rmsError(out.get(), inp.get(), wt.signalLength()) <= epsilon);
                 }
             }
         }

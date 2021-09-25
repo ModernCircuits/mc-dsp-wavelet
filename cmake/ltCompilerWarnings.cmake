@@ -19,9 +19,11 @@ else ()
                     -Wshadow
                     -Wunused-parameter
                     -Wnarrowing
+                    -Wshadow
                     # -Wno-sign-compare
                     # -Wconversion
                     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
+                        -Wshadow-all
                         # -Weverything
                         # -Wno-c++98-compat-pedantic
                         # -Wno-documentation-unknown-command

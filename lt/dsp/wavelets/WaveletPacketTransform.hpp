@@ -9,9 +9,10 @@
 struct WaveletPacketTransform {
     WaveletPacketTransform(Wavelet* wave, std::size_t siglength, std::size_t j);
 
-    Wavelet* wave {};
+    [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *wave_; }
+    [[nodiscard]] auto signalLength() const noexcept -> int { return signalLength_; }
+
     FFTConvolver* cobj {};
-    int siglength {}; // Length of the original signal.
     int outlength {}; // Length of the output DWT vector
     int lenlength {}; // Length of the Output Dimension Vector "length"
     int J {}; // Number of decomposition Levels
@@ -31,6 +32,10 @@ struct WaveletPacketTransform {
     int* numnodeslevel {};
     int* coeflength {};
     std::unique_ptr<double[]> params;
+
+private:
+    Wavelet* wave_ { nullptr };
+    int signalLength_ {}; // Length of the original signal.
 };
 
 auto dwt(WaveletPacketTransform& wt, double const* inp) -> void;
