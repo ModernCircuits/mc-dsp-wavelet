@@ -70,6 +70,7 @@ conan_cmake_configure(
 conan_cmake_autodetect(settings)
 conan_cmake_install(PATH_OR_REFERENCE . BUILD missing REMOTE conancenter SETTINGS ${settings})
 
+find_package(Boost 1.77 REQUIRED)
 find_package(FFTW3 REQUIRED)
 find_package(coz-profiler REQUIRED)
 

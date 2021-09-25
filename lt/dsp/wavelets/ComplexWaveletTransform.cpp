@@ -1,25 +1,18 @@
 #include "ComplexWaveletTransform.hpp"
 
+#include "lt/cassert.hpp"
+#include "lt/cmath.hpp"
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/common.hpp"
+#include "lt/string_view.hpp"
 
-#include "lt/cassert.hpp"
-#include "lt/cmath.hpp"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
-#include <string_view>
-
-using namespace std::string_view_literals;
 
 namespace {
-#include "lt/dsp/fft/FFT.hpp"
-
-#include "lt/cmath.hpp"
-#include <cstdio>
-#include <memory>
 
 namespace {
 
@@ -717,7 +710,7 @@ ComplexWaveletTransform::ComplexWaveletTransform(char const* wave, double param,
     params = std::make_unique<double[]>(nj2 + 2 * j + n);
 
     int motherTmp { 0 };
-    if ((wave == "morlet"sv) || (wave == "morl"sv)) {
+    if ((wave == lt::string_view { "morlet" }) || (wave == lt::string_view { "morl" })) {
         s0Tmp = 2 * dtIn;
         djTmp = 0.4875;
         motherTmp = 0;
@@ -730,7 +723,7 @@ ComplexWaveletTransform::ComplexWaveletTransform(char const* wave, double param,
         }
         wave_ = "morlet";
 
-    } else if (wave == "paul"sv) {
+    } else if (wave == lt::string_view { "paul" }) {
         s0Tmp = 2 * dtIn;
         djTmp = 0.4875;
         motherTmp = 1;
@@ -743,7 +736,7 @@ ComplexWaveletTransform::ComplexWaveletTransform(char const* wave, double param,
         }
         wave_ = "paul";
 
-    } else if ((wave == "dgauss"sv) || (wave == "dog"sv)) {
+    } else if ((wave == lt::string_view { "dgauss" }) || (wave == lt::string_view { "dog" })) {
         s0Tmp = 2 * dtIn;
         djTmp = 0.4875;
         motherTmp = 2;
@@ -789,14 +782,14 @@ auto ComplexWaveletTransform::scales(double newS0, double newDj, char const* new
 {
     type = newType;
     //newS0*std::pow(2.0, (double)(j - 1)*newDj);
-    if ((type == "pow"sv) || (type == "power"sv)) {
+    if ((type == "pow") || (type == "power")) {
         for (auto i = 0; i < J; ++i) {
             scale[i] = newS0 * std::pow((double)power, (double)(i)*newDj);
         }
         sflag = 1;
         pow = power;
 
-    } else if ((type == "lin"sv) || (type == "linear"sv)) {
+    } else if ((type == "lin") || (type == "linear")) {
         for (auto i = 0; i < J; ++i) {
             scale[i] = newS0 + (double)i * newDj;
         }
@@ -858,7 +851,7 @@ auto icwt(ComplexWaveletTransform& wt, double* cwtop) -> void
     psi0(wt.mother, wt.m, &psi, &real);
     cdel = cdelta(wt.mother, wt.m, psi);
 
-    if (((wt.type == "pow"sv) || (wt.type == "power"sv)) && wt.pow == 2) {
+    if (((wt.type == "pow") || (wt.type == "power")) && wt.pow == 2) {
         icwavelet(wt.params.get(), n, wt.params.get() + nj2, wt.J, wt.dt, wt.dj, cdel, psi, cwtop);
     } else {
         printf("Inverse CWT is only available for power of 2.0 scales \n");

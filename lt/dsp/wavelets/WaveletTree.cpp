@@ -4,9 +4,7 @@
 
 #include "lt/cassert.hpp"
 #include "lt/cmath.hpp"
-#include <string_view>
-
-using namespace std::string_view_literals;
+#include "lt/string_view.hpp"
 
 WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t j)
     : wave { waveIn }
@@ -172,7 +170,7 @@ auto wtree(WaveletTree& wt, double const* inp) -> void
     n = tempLen;
     lp = wt.wave->lpdLen();
 
-    if (wt.extension() == "per"sv) {
+    if (wt.extension() == lt::string_view { "per" }) {
         auto i = j;
         p2 = 2;
         while (i > 0) {
@@ -203,7 +201,7 @@ auto wtree(WaveletTree& wt, double const* inp) -> void
             p2 = 2 * p2;
             np = n2;
         }
-    } else if (wt.extension() == "sym"sv) {
+    } else if (wt.extension() == lt::string_view { "sym" }) {
         auto i = j;
         p2 = 2;
         while (i > 0) {
@@ -317,7 +315,7 @@ auto WaveletTree::coeffs(int x, int y, double* coeffs, int n) const -> void
 
 auto WaveletTree::extension(char const* newExtension) noexcept -> void
 {
-    LT_ASSERT((newExtension == "sym"sv) || (newExtension == "per"sv));
+    LT_ASSERT((newExtension == lt::string_view { "sym" }) || (newExtension == lt::string_view { "per" }));
     ext_ = newExtension;
 }
 

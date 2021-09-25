@@ -3,6 +3,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
 target_link_libraries(${CMAKE_PROJECT_NAME}
     PUBLIC
         lt::Span
+        Boost::headers
         FFTW3::fftw3
         coz::coz
         lt::CompilerOptions

@@ -3,13 +3,11 @@
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/common.hpp"
+#include "lt/string_view.hpp"
 
 #include "lt/cassert.hpp"
 #include "lt/cmath.hpp"
 #include <cstring>
-#include <string_view>
-
-using namespace std::string_view_literals;
 
 namespace {
 
@@ -138,16 +136,16 @@ WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, std::s
     this->outlength = 0;
     if (method == nullptr) {
         this->ext = "per";
-    } else if ((method == "dwt"sv) || (method == "DWT"sv)) {
+    } else if ((method == lt::string_view { "dwt" }) || (method == lt::string_view { "DWT" })) {
         this->ext = "per";
-    } else if ((method == "swt"sv) || (method == "SWT"sv)) {
+    } else if ((method == lt::string_view { "swt" }) || (method == lt::string_view { "SWT" })) {
         if ((testSWTlength(rows, j) == 0) || (testSWTlength(cols, j) == 0)) {
             printf("\n For SWT data rows and columns must be a multiple of 2^J. \n");
             exit(-1);
         }
 
         this->ext = "per";
-    } else if ((method == "modwt"sv) || (method == "MODWT"sv)) {
+    } else if ((method == lt::string_view { "MODWT" }) || (method == lt::string_view { "modwt" })) {
         if (strstr(wave.name().c_str(), "haar") == nullptr) {
             if (strstr(wave.name().c_str(), "db") == nullptr) {
                 if (strstr(wave.name().c_str(), "sym") == nullptr) {
@@ -178,17 +176,17 @@ WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, std::s
 
 auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void
 {
-    if (wt.method == "dwt"sv) {
-        if (extension == "sym"sv) {
+    if (wt.method == lt::string_view { "dwt" }) {
+        if (extension == lt::string_view { "sym" }) {
             wt.ext = "sym";
-        } else if (extension == "per"sv) {
+        } else if (extension == lt::string_view { "per" }) {
             wt.ext = "per";
         } else {
             printf("Signal extension can be either per or sym");
             exit(-1);
         }
-    } else if ((wt.method == "swt"sv) || (wt.method == "modwt")) {
-        if (extension == "per"sv) {
+    } else if ((wt.method == lt::string_view { "swt" }) || (wt.method == "modwt")) {
+        if (extension == lt::string_view { "per" }) {
             wt.ext = "per";
         } else {
             printf("Signal extension can only be per");
@@ -222,7 +220,7 @@ auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
     auto lp = wt.wave->lpdLen();
     auto clen = j * 3;
 
-    if (wt.ext == "per"sv) {
+    if (wt.ext == lt::string_view { "per" }) {
         auto idx = 2 * j;
         while (idx > 0) {
             rowsN = (int)ceil((double)rowsN / 2.0);
@@ -286,7 +284,7 @@ auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
         return wavecoeff;
     }
 
-    LT_ASSERT(wt.ext == "sym"sv);
+    LT_ASSERT(wt.ext == lt::string_view { "sym" });
 
     auto idx = 2 * j;
     while (idx > 0) {
@@ -372,7 +370,7 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
     auto const cols = wt.cols;
     auto const j = wt.J;
 
-    if (wt.ext == "per"sv) {
+    if (wt.ext == lt::string_view { "per" }) {
         auto const n = rows > cols ? 2 * rows : 2 * cols;
         auto const lf = (wt.wave->lprLen() + wt.wave->hprLen()) / 2;
 
@@ -447,7 +445,7 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
 
         return;
     }
-    LT_ASSERT(wt.ext == "sym"sv);
+    LT_ASSERT(wt.ext == lt::string_view { "sym" });
 
     auto const n = rows > cols ? 2 * rows - 1 : 2 * cols - 1;
     auto const lf = (wt.wave->lprLen() + wt.wave->hprLen()) / 2;

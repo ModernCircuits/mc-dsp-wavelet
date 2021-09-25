@@ -3,15 +3,13 @@
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/common.hpp"
+#include "lt/string_view.hpp"
 
 #include "lt/cassert.hpp"
 #include "lt/cmath.hpp"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <string_view>
-
-using namespace std::string_view_literals;
 
 namespace {
 auto entropyS(double const* x, int n) -> double
@@ -71,16 +69,17 @@ auto entropyL(double const* x, int n) -> double
 
 auto costfunc(double* x, int n, char const* entropy, double p) -> double
 {
-    if (entropy == "shannon"sv) {
+    auto e = lt::string_view { entropy };
+    if (e == "shannon") {
         return entropyS(x, n);
     }
-    if (entropy == "threshold"sv) {
+    if (e == "threshold") {
         return entropyT(x, n, p);
     }
-    if (entropy == "norm"sv) {
+    if (e == "norm") {
         return entropyN(x, n, p);
     }
-    if ((entropy == "logenergy"sv) || (entropy == "log energy"sv) || (entropy == "energy"sv)) {
+    if ((e == "logenergy") || (e == "log energy") || (e == "energy")) {
         return entropyL(x, n);
     }
 
@@ -293,7 +292,7 @@ auto dwt(WaveletPacketTransform& wt, double const* inp) -> void
     //set eparam value here
     wt.costvalues[0] = costfunc(orig.get(), wt.siglength, wt.entropy.c_str(), eparam);
     auto it2 = 1;
-    if (wt.ext == "per"sv) {
+    if (wt.ext == lt::string_view { "per" }) {
         auto i = jj;
         p2 = 2;
         while (i > 0) {
@@ -328,7 +327,7 @@ auto dwt(WaveletPacketTransform& wt, double const* inp) -> void
             p2 = 2 * p2;
             np = n2;
         }
-    } else if (wt.ext == "sym"sv) {
+    } else if (wt.ext == lt::string_view { "sym" }) {
         auto i = jj;
         p2 = 2;
         while (i > 0) {
@@ -571,7 +570,7 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
             ptemp[i] = 0;
         }
 
-        if (wt.ext == "per"sv) {
+        if (wt.ext == lt::string_view { "per" }) {
             index = 0;
             for (auto i = 0; i < j; ++i) {
                 auto p = ipow2(j - i - 1);
@@ -652,7 +651,7 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
                 indexp = index2;
             }
 
-        } else if (wt.ext == "sym"sv) {
+        } else if (wt.ext == lt::string_view { "sym" }) {
             index = 0;
 
             for (auto i = 0; i < j; ++i) {
@@ -758,9 +757,9 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
 
 auto setDWPTExtension(WaveletPacketTransform& wt, char const* extension) -> void
 {
-    if (extension == "sym"sv) {
+    if (extension == lt::string_view { "sym" }) {
         wt.ext = "sym";
-    } else if (extension == "per"sv) {
+    } else if (extension == lt::string_view { "per" }) {
         wt.ext = "per";
     } else {
         throw std::invalid_argument("Signal extension can be either per or sym");
