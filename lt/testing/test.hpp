@@ -11,6 +11,7 @@
 #include <type_traits>
 #include <vector>
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define REQUIRE(e)                                                                         \
     do {                                                                                   \
         if (!(e)) {                                                                        \

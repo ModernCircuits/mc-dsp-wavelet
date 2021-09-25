@@ -23,9 +23,9 @@ struct WaveletTransform {
     auto convMethod(ConvolutionMethod method) -> void;
     [[nodiscard]] auto convMethod() const noexcept -> ConvolutionMethod { return cmethod_; }
 
-    [[nodiscard]] auto output() const noexcept -> lt::span<double>;
-    [[nodiscard]] auto approx() const noexcept -> lt::span<double>;
-    [[nodiscard]] auto detail(std::size_t level) const noexcept -> lt::span<double>;
+    [[nodiscard]] auto output() const -> lt::span<double>;
+    [[nodiscard]] auto approx() const -> lt::span<double>;
+    [[nodiscard]] auto detail(std::size_t level) const -> lt::span<double>;
 
 private:
     Wavelet* wave_;

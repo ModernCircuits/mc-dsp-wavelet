@@ -198,13 +198,11 @@ WaveletTransform::WaveletTransform(Wavelet& w, char const* method, std::size_t s
     auto const maxIter = maxIterations(siglength, w.size());
 
     if (levels_ > 100) {
-        printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
-        exit(-1);
+        throw std::invalid_argument("decomposition Iterations Cannot Exceed 100.");
     }
 
     if (levels_ > maxIter) {
-        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", maxIter);
-        exit(-1);
+        throw std::invalid_argument("signal Can only be iterated maxIter times using this wavelet");
     }
 
     if (method == nullptr) {
@@ -217,8 +215,7 @@ WaveletTransform::WaveletTransform(Wavelet& w, char const* method, std::size_t s
         ext_ = SignalExtension::symmetric;
     } else if ((method == "swt"sv) || (method == "SWT"sv)) {
         if (testSWTlength(siglength, levels_) == 0) {
-            printf("\n For SWT the signal length must be a multiple of 2^levels_. \n");
-            exit(-1);
+            throw std::invalid_argument("For SWT the signal length must be a multiple of 2^levels");
         }
 
         this->params = std::make_unique<double[]>(siglength * (levels_ + 1));
@@ -230,8 +227,7 @@ WaveletTransform::WaveletTransform(Wavelet& w, char const* method, std::size_t s
             if (strstr(w.name().c_str(), "db") == nullptr) {
                 if (strstr(w.name().c_str(), "sym") == nullptr) {
                     if (strstr(w.name().c_str(), "coif") == nullptr) {
-                        printf("\n MODWT is only implemented for orthogonal wavelet families - db, sym and coif \n");
-                        exit(-1);
+                        throw std::invalid_argument("MODWT is only implemented for orthogonal wavelet families - db, sym and coif");
                     }
                 }
             }
@@ -285,12 +281,12 @@ auto WaveletTransform::extension(SignalExtension ext) -> void
     ext_ = ext;
 }
 
-auto WaveletTransform::output() const noexcept -> lt::span<double>
+auto WaveletTransform::output() const -> lt::span<double>
 {
     return lt::span<double> { output_, static_cast<std::size_t>(outlength) };
 }
 
-auto WaveletTransform::approx() const noexcept -> lt::span<double>
+auto WaveletTransform::approx() const -> lt::span<double>
 {
     /*
 	Wavelet decomposition is stored as
@@ -302,7 +298,7 @@ auto WaveletTransform::approx() const noexcept -> lt::span<double>
     return lt::span<double>(output_, static_cast<size_t>(length[0]));
 }
 
-auto WaveletTransform::detail(std::size_t level) const noexcept -> lt::span<double>
+auto WaveletTransform::detail(std::size_t level) const -> lt::span<double>
 {
     /*
 	returns Detail coefficents at the jth level where j = J,J-1,...,1
@@ -316,8 +312,7 @@ auto WaveletTransform::detail(std::size_t level) const noexcept -> lt::span<doub
 	*/
 
     if (level > static_cast<std::size_t>(levels()) || level < 1U) {
-        printf("The decomposition only has 1,..,%d levels", levels());
-        exit(-1);
+        throw std::invalid_argument("The decomposition only has 1,..,%d levels");
     }
 
     auto iter = length[0];
@@ -370,8 +365,7 @@ static auto dwt1(WaveletTransform& wt, double* sig, int lenSig, double* cA, doub
             wt.convolver = std::make_unique<FFTConvolver>(lenSig + lenAvg, wt.wave().lpdLen());
             wt.cfftset = 1;
         } else if (!(wt.wave().lpdLen() == wt.wave().hpdLen())) {
-            printf("Decomposition Filters must have the same length.");
-            exit(-1);
+            throw std::invalid_argument("decomposition filters must have the same length.");
         }
 
         wconv(wt, signal.get(), lenSig + lenAvg, wt.wave().lpd(), wt.wave().lpdLen(), cAUndec.get());
@@ -389,8 +383,7 @@ static auto dwt1(WaveletTransform& wt, double* sig, int lenSig, double* cA, doub
             wt.convolver = std::make_unique<FFTConvolver>(lenSig + 2 * (lf - 1), lf);
             wt.cfftset = 1;
         } else if (!(wt.wave().lpdLen() == wt.wave().hpdLen())) {
-            printf("Decomposition Filters must have the same length.");
-            exit(-1);
+            throw std::invalid_argument("decomposition filters must have the same length.");
         }
 
         wconv(wt, signal.get(), lenSig + 2 * (lf - 1), wt.wave().lpd(), wt.wave().lpdLen(), cAUndec.get());
@@ -398,8 +391,7 @@ static auto dwt1(WaveletTransform& wt, double* sig, int lenSig, double* cA, doub
         wconv(wt, signal.get(), lenSig + 2 * (lf - 1), wt.wave().hpd(), wt.wave().hpdLen(), cAUndec.get());
         downsamp(cAUndec.get() + lf, lenSig + lf - 2, d, cD);
     } else {
-        printf("Signal extension can be either per or sym");
-        exit(-1);
+        throw std::invalid_argument("Signal extension can be either per or sym");
     }
 
     if (wt.wave().lpdLen() == wt.wave().hpdLen() && (wt.convMethod() == ConvolutionMethod::fft)) {
@@ -497,8 +489,7 @@ auto dwt(WaveletTransform& wt, double const* inp) -> void
             }
         }
     } else {
-        printf("Signal extension can be either per or sym");
-        exit(-1);
+        throw std::invalid_argument("Signal extension can be either per or sym");
     }
 }
 
@@ -518,8 +509,7 @@ static auto idwt1(WaveletTransform& wt, double* temp, double* cAUp, double* cA, 
         wt.convolver = std::make_unique<FFTConvolver>(n2, lenAvg);
         wt.cfftset = 1;
     } else if (!(wt.wave().lprLen() == wt.wave().hprLen())) {
-        printf("Decomposition Filters must have the same length.");
-        exit(-1);
+        throw std::invalid_argument("Decomposition Filters must have the same length");
     }
 
     wconv(wt, temp, n2, wt.wave().lpr(), lenAvg, xLp);
@@ -664,8 +654,7 @@ auto idwt(WaveletTransform& wt, double* dwtop) -> void
                 wt.convolver = std::make_unique<FFTConvolver>(n2, lf);
                 wt.cfftset = 1;
             } else if (!(wt.wave().lprLen() == wt.wave().hprLen())) {
-                printf("Decomposition Filters must have the same length.");
-                exit(-1);
+                throw std::invalid_argument("Decomposition Filters must have the same length");
             }
 
             wconv(wt, cAUp.get(), n2, wt.wave().lpr(), lf, xLp.get());
@@ -683,8 +672,7 @@ auto idwt(WaveletTransform& wt, double* dwtop) -> void
         }
 
     } else {
-        printf("Signal extension can be either per or sym");
-        exit(-1);
+        throw std::invalid_argument("Signal extension can be either per or sym");
     }
 
     for (auto i = 0; i < wt.signalLength(); ++i) {
@@ -751,8 +739,7 @@ static auto swtFft(WaveletTransform& wt, double const* inp) -> void
             wt.convolver = std::make_unique<FFTConvolver>(n + tempLen + (tempLen % 2), n);
             wt.cfftset = 1;
         } else if (!(wt.wave().lpdLen() == wt.wave().hpdLen())) {
-            printf("Decomposition Filters must have the same length.");
-            exit(-1);
+            throw std::invalid_argument("Decomposition Filters must have the same length");
         }
 
         wconv(wt, sig.get(), n + tempLen + (tempLen % 2), lowPass.get(), n, cA.get());
@@ -822,8 +809,7 @@ auto swt(WaveletTransform& wt, double const* inp) -> void
     } else if ((wt.method() == "swt"sv) && (wt.convMethod() == ConvolutionMethod::fft)) {
         swtFft(wt, inp);
     } else {
-        printf("SWT Only accepts two methods - direct and fft");
-        exit(-1);
+        throw std::invalid_argument("SWT Only accepts two methods - direct and fft");
     }
 }
 
@@ -893,8 +879,7 @@ auto iswt(WaveletTransform& wt, double* swtop) -> void
                 wt.convolver = std::make_unique<FFTConvolver>(n1, lf);
                 wt.cfftset = 1;
             } else if (!(wt.wave().lpdLen() == wt.wave().hpdLen())) {
-                printf("Decomposition Filters must have the same length.");
-                exit(-1);
+                throw std::invalid_argument("Decomposition Filters must have the same length");
             }
 
             wconv(wt, cL0.get(), n1, wt.wave().lpr(), lf, oup00L.get());
@@ -978,9 +963,7 @@ static auto modwtPer(WaveletTransform& wt, int m, double const* inp, double* cA,
 static auto modwtDirect(WaveletTransform& wt, double const* inp) -> void
 {
     if (wt.extension() != SignalExtension::periodic) {
-        printf("MODWT direct method only uses periodic extension per. \n");
-        printf(" Use MODWT fft method for symmetric extension sym \n");
-        exit(-1);
+        throw std::invalid_argument("MODWT direct method only uses periodic extension per.");
     }
 
     auto tempLen = wt.signalLength();

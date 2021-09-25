@@ -58,38 +58,28 @@ static auto corrcoef(int n, double const* x, double const* y) -> double
 
 auto main() -> int
 {
+    char const* wname = "db5";
+    char const* method = "dwt";
+    char const* ext = "sym";
+    char const* thresh = "soft";
+    char const* level = "all";
 
-    int i = 0;
-    int n = 0;
-    int j = 0;
-    FILE* ifp = nullptr;
+    auto* ifp = std::fopen("testData/pieceregular1024.txt", "r");
+    auto i = 0;
+    if (ifp == nullptr) {
+        std::printf("Cannot Open File");
+        std::exit(EXIT_FAILURE);
+    }
 
     double temp[2400];
-
-    char const* wname = "db5";
-    char const* method = "dwt"; // Available - dwt, swt and modwt. modwt works only with modwtshrink. The other two methods work with
-    // visushrink and sureshrink
-    char const* ext = "sym"; // sym and per work with dwt. swt and modwt only use per extension when called through denoise.
-    // You can use sy extension if you directly call modwtshrink with cmethod set to fft. See modwtdenoisetest.c file
-    char const* thresh = "soft"; // soft or hard
-    char const* level = "all"; // noise estimation at "first" or "all" levels. modwt only has the option of "all"
-
-    ifp = fopen("testData/pieceregular1024.txt", "r");
-    i = 0;
-    if (ifp == nullptr) {
-        printf("Cannot Open File");
-        exit(100);
-    }
-
-    while (feof(ifp) == 0) {
-        fscanf(ifp, "%lf \n", &temp[i]);
+    while (std::feof(ifp) == 0) {
+        std::fscanf(ifp, "%lf \n", &temp[i]);
         i++;
     }
+    std::fclose(ifp);
 
-    fclose(ifp);
-
-    n = i;
-    j = 4;
+    auto n = i;
+    auto j = 4;
 
     auto inp = std::make_unique<double[]>(n);
     auto oup = std::make_unique<double[]>(n);
@@ -99,19 +89,19 @@ auto main() -> int
         sig[i] = temp[i];
     }
 
-    ifp = fopen("testData/PieceRegular10.txt", "r");
+    ifp = std::fopen("testData/PieceRegular10.txt", "r");
     i = 0;
     if (ifp == nullptr) {
-        printf("Cannot Open File");
-        exit(100);
+        std::printf("Cannot Open File");
+        std::exit(EXIT_FAILURE);
     }
 
-    while (feof(ifp) == 0) {
-        fscanf(ifp, "%lf \n", &temp[i]);
+    while (std::feof(ifp) == 0) {
+        std::fscanf(ifp, "%lf \n", &temp[i]);
         i++;
     }
 
-    fclose(ifp);
+    std::fclose(ifp);
 
     for (i = 0; i < n; ++i) {
         inp[i] = temp[i];
@@ -131,15 +121,15 @@ auto main() -> int
     //visushrink(inp.get(),N,J,wname,method,ext,thresh,level,oup.get());
     //sureshrink(inp.get(),N,J,wname,method,ext,thresh,level,oup.get());
     // modwtshrink(sig.get(),N,J,wname,cmethod,ext,thresh,oup.get()); See modwtdenoisetest.c
-    //ofp = fopen("testData/denoiseds.txt", "w");
+    //ofp = std::fopen("testData/denoiseds.txt", "w");
 
-    printf("Signal - Noisy Signal Stats \n");
-    printf("RMSE %g\n", rmse(n, sig.get(), inp.get()));
-    printf("Corr Coeff %g\n", corrcoef(n, sig.get(), inp.get()));
+    std::printf("Signal - Noisy Signal Stats \n");
+    std::printf("RMSE %g\n", rmse(n, sig.get(), inp.get()));
+    std::printf("Corr Coeff %g\n", corrcoef(n, sig.get(), inp.get()));
 
-    printf("Signal - DeNoised Signal Stats \n");
-    printf("RMSE %g\n", rmse(n, sig.get(), oup.get()));
-    printf("Corr Coeff %g\n", corrcoef(n, sig.get(), oup.get()));
+    std::printf("Signal - DeNoised Signal Stats \n");
+    std::printf("RMSE %g\n", rmse(n, sig.get(), oup.get()));
+    std::printf("Corr Coeff %g\n", corrcoef(n, sig.get(), oup.get()));
 
     return 0;
 }

@@ -253,27 +253,14 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
     auto const sgn = direction == FFT::forward ? 1 : (-1);
 
     if (n == 1) {
-
-        op[0].real(ip[0].real());
-        op[0].imag(ip[0].imag());
-
+        op[0] = ip[0];
     } else if (n == 2) {
-        double tau1r = NAN;
-        double tau1i = NAN;
-        op[0].real(ip[0].real());
-        op[0].imag(ip[0].imag());
+        op[0] = ip[0];
+        op[1] = ip[l];
 
-        op[1].real(ip[l].real());
-        op[1].imag(ip[l].imag());
-
-        tau1r = op[0].real();
-        tau1i = op[0].imag();
-
-        op[0].real(tau1r + op[1].real());
-        op[0].imag(tau1i + op[1].imag());
-
-        op[1].real(tau1r - op[1].real());
-        op[1].imag(tau1i - op[1].imag());
+        auto const tau1 = op[0];
+        op[0] = tau1 + op[1];
+        op[1] = tau1 - op[1];
 
     } else if (n == 3) {
         double tau0r = NAN;

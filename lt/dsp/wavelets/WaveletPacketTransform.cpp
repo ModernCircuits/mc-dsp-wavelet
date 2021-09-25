@@ -29,8 +29,7 @@ auto entropyS(double const* x, int n) -> double
 auto entropyT(double* x, int n, double t) -> double
 {
     if (t < 0) {
-        std::printf("Threshold value must be >= 0");
-        std::exit(1);
+        throw std::invalid_argument("Threshold value must be >= 0");
     }
 
     auto val = 0.0;
@@ -46,8 +45,7 @@ auto entropyT(double* x, int n, double t) -> double
 auto entropyN(double* x, int n, double p) -> double
 {
     if (p < 1) {
-        std::printf("Norm power value must be >= 1");
-        std::exit(1);
+        throw std::invalid_argument("Norm power value must be >= 1");
     }
 
     auto val = 0.0;
@@ -96,14 +94,12 @@ WaveletPacketTransform::WaveletPacketTransform(Wavelet* wave, std::size_t siglen
     auto const size = wave->size();
 
     if (j > 100) {
-        printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
-        exit(-1);
+        throw std::invalid_argument("Decomposition Iterations Cannot Exceed 100");
     }
 
     auto const maxIter = maxIterations(siglength, size);
     if (j > maxIter) {
-        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", maxIter);
-        exit(-1);
+        throw std::invalid_argument("Signal Can only be iterated maxIter times using this wavelet");
     }
     auto temp = 1;
     auto nodess = 0;
@@ -369,10 +365,8 @@ auto dwt(WaveletPacketTransform& wt, double const* inp) -> void
             p2 = 2 * p2;
             np = n2;
         }
-
     } else {
-        printf("Signal extension can be either per or sym");
-        exit(-1);
+        throw std::invalid_argument("Signal extension can be either per or sym");
     }
 
     jj = wt.J;
@@ -472,8 +466,7 @@ auto dwt(WaveletPacketTransform& wt, double const* inp) -> void
 auto getDWPTNodelength(WaveletPacketTransform& wt, int x) -> int
 {
     if (x <= 0 || x > wt.J) {
-        printf("X co-ordinate must be >= 1 and <= %d", wt.J);
-        exit(-1);
+        throw std::invalid_argument("X co-ordinate must be >= 1 and <= wt.J");
     }
 
     return wt.length[wt.J - x + 1];
@@ -754,8 +747,7 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
             //free(X_lp);
 
         } else {
-            printf("Signal extension can be either per or sym");
-            exit(-1);
+            throw std::invalid_argument("Signal extension can be either per or sym");
         }
 
         for (auto i = 0; i < wt.siglength; ++i) {
@@ -771,8 +763,7 @@ auto setDWPTExtension(WaveletPacketTransform& wt, char const* extension) -> void
     } else if (extension == "per"sv) {
         wt.ext = "per";
     } else {
-        printf("Signal extension can be either per or sym");
-        exit(-1);
+        throw std::invalid_argument("Signal extension can be either per or sym");
     }
 }
 
@@ -789,8 +780,7 @@ auto setDWPTEntropy(WaveletPacketTransform& wt, char const* entropy, double epar
     } else if ((strcmp(entropy, "logenergy") == 0) || (strcmp(entropy, "log energy") == 0) || (strcmp(entropy, "energy") == 0)) {
         wt.entropy = "logenergy";
     } else {
-        printf("Entropy should be one of shannon, threshold, norm or logenergy");
-        exit(-1);
+        throw std::invalid_argument("Entropy should be one of shannon, threshold, norm or logenergy");
     }
 }
 
