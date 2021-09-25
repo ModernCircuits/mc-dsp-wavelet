@@ -1,21 +1,10 @@
 #pragma once
 
-#include <algorithm>
-#include <complex>
-#include <memory>
+#include "lt/algorithm.hpp"
+#include "lt/complex.hpp"
+#include "lt/memory.hpp"
 
 #define PI2 6.28318530717958647692528676655900577
-
-template <typename T>
-auto makeZeros(std::size_t length) -> std::unique_ptr<T[]>
-{
-    auto ptr = std::make_unique<T[]>(length);
-    std::fill(ptr.get(), ptr.get() + length, T {});
-    return ptr;
-}
-
-template <typename T>
-using Complex = std::complex<T>;
 
 struct FFT {
     enum Direction {

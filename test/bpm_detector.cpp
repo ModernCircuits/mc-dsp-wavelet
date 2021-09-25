@@ -8,9 +8,9 @@
 #include "lt/testing/test.hpp"
 #include "readFileToVector.hpp"
 
-#include <algorithm>
-#include <numeric>
-#include <utility>
+#include "lt/algorithm.hpp"
+#include "lt/numeric.hpp"
+#include "lt/utility.hpp"
 
 template <typename It>
 auto mean(It f, It l) -> double

@@ -1,14 +1,12 @@
 #include "lt/dsp/wavelets.hpp"
 
 #include "lt/cmath.hpp"
+#include "lt/cstdlib.hpp"
+#include "lt/cstring.hpp"
 #include "lt/format.hpp"
+#include "lt/memory.hpp"
 
 #include "lt/testing/test.hpp"
-
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
-#include <memory>
 
 auto main() -> int
 {

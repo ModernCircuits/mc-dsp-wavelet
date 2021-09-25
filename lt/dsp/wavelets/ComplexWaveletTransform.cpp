@@ -9,9 +9,9 @@
 #include "lt/format.hpp"
 #include "lt/string_view.hpp"
 
-#include <cstdlib>
-#include <cstring>
-#include <memory>
+#include "lt/cstdlib.hpp"
+#include "lt/cstring.hpp"
+#include "lt/memory.hpp"
 
 namespace {
 

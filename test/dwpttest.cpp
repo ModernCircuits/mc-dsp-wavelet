@@ -5,9 +5,9 @@
 
 #include "lt/testing/test.hpp"
 
-#include <cstdlib>
-#include <cstring>
-#include <memory>
+#include "lt/cstdlib.hpp"
+#include "lt/cstring.hpp"
+#include "lt/memory.hpp"
 
 auto main() -> int
 {

@@ -11,8 +11,8 @@
 #include "lt/format.hpp"
 #include "lt/string_view.hpp"
 
-#include <cstring>
-#include <memory>
+#include "lt/cstring.hpp"
+#include "lt/memory.hpp"
 
 namespace {
 auto copy(double const* in, int n, double* out)

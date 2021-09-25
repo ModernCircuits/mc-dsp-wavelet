@@ -7,7 +7,7 @@
 #include "lt/dsp/wavelets/SignalExtension.hpp"
 #include "lt/dsp/wavelets/Wavelet.hpp"
 
-#include <string>
+#include "lt/string.hpp"
 
 struct WaveletTransform {
     WaveletTransform(Wavelet& wave, char const* method, std::size_t siglength, std::size_t j);

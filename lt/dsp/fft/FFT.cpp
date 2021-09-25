@@ -4,7 +4,7 @@
 #include "lt/cmath.hpp"
 #include "lt/format.hpp"
 
-#include <memory>
+#include "lt/memory.hpp"
 
 namespace {
 auto dividebyN(int n) -> int

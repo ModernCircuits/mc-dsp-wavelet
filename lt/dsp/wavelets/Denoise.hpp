@@ -7,10 +7,10 @@
 
 #include "lt/cmath.hpp"
 
+#include "lt/cstdlib.hpp"
+#include "lt/cstring.hpp"
+#include "lt/string.hpp"
 #include <cfloat>
-#include <cstdlib>
-#include <cstring>
-#include <string>
 
 struct DenoiseSet {
     DenoiseSet(int length, int j, char const* name);

@@ -5,7 +5,7 @@
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/wavelets/Wavelet.hpp"
 
-#include <string>
+#include "lt/string.hpp"
 
 struct WaveletPacketTransform {
     WaveletPacketTransform(Wavelet* wave, std::size_t siglength, std::size_t j);

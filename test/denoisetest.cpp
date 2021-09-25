@@ -3,9 +3,10 @@
 #include "lt/cmath.hpp"
 #include "lt/format.hpp"
 
-#include <cstdlib>
-#include <cstring>
-#include <memory>
+#include "lt/cstdlib.hpp"
+#include "lt/cstring.hpp"
+#include "lt/memory.hpp"
+
 
 static auto rmse(int n, double const* x, double const* y) -> double
 {

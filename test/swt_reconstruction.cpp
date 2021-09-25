@@ -1,13 +1,13 @@
-#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets.hpp"
 
-#include "lt/testing/test.hpp"
+#include "lt/cmath.hpp"
+#include "lt/cstdlib.hpp"
+#include "lt/cstring.hpp"
+#include "lt/format.hpp"
+#include "lt/random.hpp"
+#include "lt/vector.hpp"
 
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <random>
-#include <vector>
+#include "lt/testing/test.hpp"
 
 auto swtReconstructionTest()
 {
@@ -204,13 +204,13 @@ auto swT2ReconstructionTest()
 
 auto main() -> int
 {
-    std::cout << "Running SWT ReconstructionTests ... ";
+    fmt::print("Running SWT ReconstructionTests ... ");
     swtReconstructionTest();
-    std::cout << "DONE \n";
+    fmt::print("DONE \n");
 
-    std::cout << "Running SWT2 ReconstructionTests ... ";
+    fmt::print("Running SWT2 ReconstructionTests ... ");
     swT2ReconstructionTest();
-    std::cout << "DONE \n";
+    fmt::print("DONE \n");
 
     return EXIT_SUCCESS;
 }

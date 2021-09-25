@@ -1,16 +1,14 @@
 #pragma once
 
-#include <fftw3.h>
-
+#include "lt/algorithm.hpp"
+#include "lt/array.hpp"
 #include "lt/cmath.hpp"
+#include "lt/cstring.hpp"
+#include "lt/iterator.hpp"
+#include "lt/memory.hpp"
+#include "lt/vector.hpp"
 
-#include <algorithm>
-#include <array>
-#include <cstring>
-#include <iostream>
-#include <iterator>
-#include <memory>
-#include <vector>
+#include "fftw3.h"
 
 /// This is an abstract base class that provides some basic, type-independent functionality for
 /// any container that should behave as a signal. It is not intended to be instantiated directly.

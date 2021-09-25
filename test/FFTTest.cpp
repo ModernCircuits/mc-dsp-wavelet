@@ -1,5 +1,7 @@
 #include "lt/dsp/fft.hpp"
 
+#include "lt/format.hpp"
+
 #include "lt/testing/test.hpp"
 
 struct FFTRealToComplexTestCase {
@@ -32,7 +34,7 @@ auto main() -> int
     };
 
     for (auto const* testFile : testFiles) {
-        std::cout << "Testing: " << testFile << "...\n";
+        fmt::print("Testing: {0} ...\n", testFile);
         auto testCase = readFFTRealToComplexTestData(testFile);
 
         auto fft = RealFFT { static_cast<int>(testCase.input.size()), FFT::forward };
@@ -40,7 +42,7 @@ auto main() -> int
         fft.performRealToComplex(data(testCase.input), data(output));
         REQUIRE(std::equal(begin(output), end(output), begin(testCase.expected), closeEnough));
 
-        std::cout << "Testing: " << testFile << " done\n";
+        fmt::print("Testing: {0} done\n", testFile);
     }
 
     return EXIT_SUCCESS;

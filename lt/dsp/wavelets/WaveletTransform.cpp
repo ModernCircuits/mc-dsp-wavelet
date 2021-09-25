@@ -10,8 +10,8 @@
 #include "lt/format.hpp"
 #include "lt/string_view.hpp"
 
-#include <cstdlib>
-#include <cstring>
+#include "lt/cstdlib.hpp"
+#include "lt/cstring.hpp"
 
 namespace {
 

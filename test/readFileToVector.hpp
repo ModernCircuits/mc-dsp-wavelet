@@ -2,9 +2,9 @@
 
 #include "lt/format.hpp"
 
-#include <cstdlib>
-#include <iterator>
-#include <vector>
+#include "lt/cstdlib.hpp"
+#include "lt/iterator.hpp"
+#include "lt/vector.hpp"
 
 inline auto readFileToVector(char const* filePath) -> std::vector<double>
 {

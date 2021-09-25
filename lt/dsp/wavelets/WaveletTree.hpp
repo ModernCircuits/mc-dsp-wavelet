@@ -5,7 +5,7 @@
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/wavelets/Wavelet.hpp"
 
-#include <string>
+#include "lt/string.hpp"
 
 struct WaveletTree {
     WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t j);

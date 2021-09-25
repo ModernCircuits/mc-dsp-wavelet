@@ -1,9 +1,9 @@
 #include "lt/cmath.hpp"
+#include "lt/random.hpp"
 
 #include "lt/testing/test.hpp"
 
-#include <cstdlib>
-#include <random>
+#include "lt/cstdlib.hpp"
 
 auto absmax(double* array, int n) -> double
 {

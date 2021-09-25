@@ -6,9 +6,9 @@
 #include "lt/testing/test.hpp"
 #include "readFileToVector.hpp"
 
-#include <cstdlib>
-#include <cstring>
-#include <memory>
+#include "lt/cstdlib.hpp"
+#include "lt/cstring.hpp"
+#include "lt/memory.hpp"
 
 auto main() -> int
 {

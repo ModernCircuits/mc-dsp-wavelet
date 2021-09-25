@@ -5,8 +5,8 @@
 
 #include "lt/testing/test.hpp"
 
-#include <cstdlib>
-#include <cstring>
+#include "lt/cstdlib.hpp"
+#include "lt/cstring.hpp"
 
 auto main() -> int
 {

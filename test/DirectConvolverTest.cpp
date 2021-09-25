@@ -1,5 +1,6 @@
 #include "lt/dsp/convolution.hpp"
 
+#include "lt/format.hpp"
 #include "lt/testing/test.hpp"
 
 template <typename T>
@@ -25,12 +26,12 @@ auto main() -> int
     };
 
     for (auto const* testFile : testFiles) {
-        std::cout << "Testing: " << testFile << " ...\n";
+        fmt::print("Testing: {0} ...\n", testFile);
         auto const testData = loadTestData(testFile);
         REQUIRE(testData.size() == 4U);
         REQUIRE(testDirectConvolve<double>(testData));
         REQUIRE(testDirectConvolve<float>(toFloat(testData)));
-        std::cout << "Testing: " << testFile << " done\n";
+        fmt::print("Testing: {0} done\n", testFile);
     }
 
     return EXIT_SUCCESS;

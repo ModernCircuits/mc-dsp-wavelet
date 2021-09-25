@@ -3,9 +3,9 @@
 #include "lt/cmath.hpp"
 #include "lt/format.hpp"
 
-#include <cstdlib>
-#include <cstring>
-#include <memory>
+#include "lt/cstdlib.hpp"
+#include "lt/cstring.hpp"
+#include "lt/memory.hpp"
 
 auto main() -> int
 {

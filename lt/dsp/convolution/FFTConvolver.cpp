@@ -2,8 +2,8 @@
 
 #include "lt/cmath.hpp"
 
-#include <algorithm>
-#include <memory>
+#include "lt/algorithm.hpp"
+#include "lt/memory.hpp"
 
 namespace {
 [[nodiscard]] auto factorf(std::size_t m) -> std::size_t

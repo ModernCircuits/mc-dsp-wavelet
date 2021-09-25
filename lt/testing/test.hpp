@@ -1,23 +1,22 @@
 #pragma once
 
+#include "lt/algorithm.hpp"
 #include "lt/cmath.hpp"
+#include "lt/string.hpp"
+#include "lt/vector.hpp"
 
-#include <algorithm>
-#include <fstream>
-#include <iostream>
-#include <limits>
-#include <sstream>
-#include <string>
-#include <type_traits>
-#include <vector>
+#include "lt/fstream.hpp"
+#include "lt/limits.hpp"
+#include "lt/sstream.hpp"
+#include "lt/type_traits.hpp"
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define REQUIRE(e)                                                                         \
-    do {                                                                                   \
-        if (!(e)) {                                                                        \
-            std::cerr << "TEST ASSERTION FAILED: " << __FILE__ << ":" << __LINE__ << '\n'; \
-            std::exit(EXIT_FAILURE);                                                       \
-        }                                                                                  \
+#define REQUIRE(e)                                                              \
+    do {                                                                        \
+        if (!(e)) {                                                             \
+            fmt::print("TEST ASSERTION FAILED: {0}:{1}\n", __FILE__, __LINE__); \
+            std::exit(EXIT_FAILURE);                                            \
+        }                                                                       \
     } while (false)
 
 template <typename It1, typename It2>

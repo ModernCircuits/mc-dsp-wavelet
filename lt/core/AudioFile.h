@@ -23,16 +23,16 @@
 #ifndef AS_AudioFile_h
 #define AS_AudioFile_h
 
+#include "lt/algorithm.hpp"
 #include "lt/cassert.hpp"
-#include <algorithm>
-#include <cstring>
-#include <fstream>
+#include "lt/cstring.hpp"
+#include "lt/fstream.hpp"
+#include "lt/iterator.hpp"
+#include "lt/limits.hpp"
+#include "lt/string.hpp"
+#include "lt/vector.hpp"
 #include <iostream>
-#include <iterator>
-#include <limits>
-#include <string>
 #include <unordered_map>
-#include <vector>
 
 // disable some warnings on Windows
 #if defined(_MSC_VER)

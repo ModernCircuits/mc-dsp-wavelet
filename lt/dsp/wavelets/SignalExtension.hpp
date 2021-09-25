@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include "lt/string.hpp"
 
 enum struct SignalExtension {
     periodic,

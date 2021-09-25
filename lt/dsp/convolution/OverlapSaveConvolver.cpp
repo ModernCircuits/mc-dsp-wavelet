@@ -1,8 +1,9 @@
 #include "OverlapSaveConvolver.hpp"
 
+#include "lt/algorithm.hpp"
 #include "lt/cassert.hpp"
 
-#include <cstring>
+#include "lt/cstring.hpp"
 
 namespace {
 constexpr auto REAL = 0U; // NOLINT

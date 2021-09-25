@@ -4,7 +4,7 @@
 
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 
-#include <string>
+#include "lt/string.hpp"
 
 struct ComplexWaveletTransform {
     ComplexWaveletTransform(char const* wave, double param, int siglength, double dt, int j);

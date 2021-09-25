@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstddef>
+#include "lt/cstddef.hpp"
 
 auto dwtPerStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen,
     double* cA, int lenCA, double* cD, int istride, int ostride) -> void;

@@ -1,5 +1,7 @@
 #include "lt/dsp/convolution.hpp"
 
+#include "lt/format.hpp"
+
 #include "lt/testing/test.hpp"
 
 auto main() -> int
@@ -12,7 +14,7 @@ auto main() -> int
     };
 
     for (auto const* testFile : testFiles) {
-        std::cout << "Testing: " << testFile << "...\n";
+        fmt::print("Testing: {0} ...\n", testFile);
         auto testData = loadTestData(testFile);
         REQUIRE(testData.size() == 4U);
 
@@ -26,7 +28,7 @@ auto main() -> int
         x.crossCorrelate();
         REQUIRE(approxEqual(x.extractResult(), testData[3]));
 
-        std::cout << "Testing: " << testFile << " done\n";
+        fmt::print("Testing: {0} done\n", testFile);
     }
 
     return EXIT_SUCCESS;

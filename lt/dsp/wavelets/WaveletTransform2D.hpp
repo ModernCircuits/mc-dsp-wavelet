@@ -5,7 +5,7 @@
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/wavelets/Wavelet.hpp"
 
-#include <string>
+#include "lt/string.hpp"
 
 struct WaveletTransform2D {
     WaveletTransform2D(Wavelet& wave, char const* method, std::size_t rows, std::size_t cols, std::size_t j);

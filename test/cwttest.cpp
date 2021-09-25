@@ -5,7 +5,7 @@
 
 #include "readFileToVector.hpp"
 
-#include <memory>
+#include "lt/memory.hpp"
 
 auto main() -> int
 {

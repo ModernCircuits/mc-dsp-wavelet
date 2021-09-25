@@ -2,8 +2,8 @@
 
 #include "tcb/span.hpp"
 
-#include <memory>
-#include <string>
+#include "lt/memory.hpp"
+#include "lt/string.hpp"
 
 struct Wavelet {
     explicit Wavelet(char const* wname);

@@ -9,7 +9,7 @@
 #include "lt/format.hpp"
 #include "lt/string_view.hpp"
 
-#include <cstring>
+#include "lt/cstring.hpp"
 
 namespace {
 
