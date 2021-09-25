@@ -42,18 +42,18 @@ auto approxEqual(Container1 c1, Container2 c2, int epsilonFactor = 4) -> bool
     return approxEqual(std::begin(c1), std::end(c1), std::begin(c2), std::end(c2), epsilonFactor);
 }
 
-auto absmax(double* array, int N) -> double;
-auto sum1(double const* array, int N) -> double;
-auto sum2(double const* array, int N) -> double;
-auto sum3(double const* array, int N) -> double;
+auto absmax(double* array, int n) -> double;
+auto sum1(double const* array, int n) -> double;
+auto sum2(double const* array, int n) -> double;
+auto sum3(double const* array, int n) -> double;
 
 // np.sum(w[2*m:(2*N+2*m)]*w[0:2*N])
-auto sum4(double const* array, int N) -> double;
+auto sum4(double const* array, int n) -> double;
 // np.sum(w[2 * m:(2 * N)] * w[0:2 * N - 2 * m])
-auto sum5(double const* array, int N, int m) -> double;
+auto sum5(double const* array, int n, int m) -> double;
 
-auto rmsError(double const* data, double const* rec, int N) -> double;
-auto relError(double const* data, double const* rec, int N) -> double;
+auto rmsError(double const* data, double const* rec, int n) -> double;
+auto relError(double const* data, double const* rec, int n) -> double;
 
 auto generateRnd() -> double;
 
