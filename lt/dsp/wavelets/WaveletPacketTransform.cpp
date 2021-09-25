@@ -6,11 +6,11 @@
 
 #include "lt/cassert.hpp"
 #include "lt/cmath.hpp"
-#include "lt/format.hpp"
-#include "lt/string_view.hpp"
-
 #include "lt/cstdlib.hpp"
 #include "lt/cstring.hpp"
+#include "lt/format.hpp"
+#include "lt/string_view.hpp"
+#include "lt/utility.hpp"
 
 namespace {
 auto entropyS(double const* x, int n) -> double
@@ -112,7 +112,7 @@ WaveletPacketTransform::WaveletPacketTransform(Wavelet* wave, std::size_t siglen
     auto p2 = 2;
     auto n = siglength;
     auto lp = size;
-    auto elength = 0;
+    std::size_t elength = 0;
     while (idx > 0) {
         n = n + lp - 2;
         n = (int)ceil((double)n / 2.0);
@@ -149,7 +149,7 @@ WaveletPacketTransform::WaveletPacketTransform(Wavelet* wave, std::size_t siglen
     this->numnodeslevel = (int*)&this->params[elength + 4 * nodes + 4];
     this->coeflength = (int*)&this->params[elength + 4 * nodes + j + 5];
 
-    for (auto i = 0; i < elength + 4 * nodes + 2 * j + 6; ++i) {
+    for (std::size_t i = 0; i < elength + 4 * nodes + 2 * j + 6; ++i) {
         this->params[i] = 0.0;
     }
 }
@@ -519,9 +519,9 @@ static auto idwtSym(WaveletPacketTransform& wt, double const* cA, int lenCA, dou
         n += 2;
         x[m] = 0.0;
         x[n] = 0.0;
-        for (auto l = 0; l < lenAvg / 2; ++l) {
+        for (std::size_t l = 0; l < lenAvg / 2; ++l) {
             auto const t = 2 * l;
-            if ((i - l) >= 0 && (i - l) < lenCA) {
+            if ((i - l) >= 0 && lt::cmp_less(i - l, lenCA)) {
                 x[m] += wt.wave->lpr()[t] * cA[i - l] + wt.wave->hpr()[t] * cD[i - l];
                 x[n] += wt.wave->lpr()[t + 1] * cA[i - l] + wt.wave->hpr()[t + 1] * cD[i - l];
             }
@@ -562,7 +562,7 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
             n1 += llb;
         }
 
-        for (auto i = 0; i < xlen; ++i) {
+        for (std::size_t i = 0; i < xlen; ++i) {
             x[i] = 0.0;
         }
 
@@ -596,7 +596,7 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
                             out2[k] = wt.output[index + detLen + k];
                         }
                         idwtPer(wt, out.get(), detLen, out2.get(), xLp.get());
-                        for (k = lf / 2 - 1; k < 2 * detLen + lf / 2 - 1; ++k) {
+                        for (k = lf / 2 - 1; lt::cmp_less(k, 2 * detLen + lf / 2 - 1); ++k) {
                             x[index3 + k - lf / 2 + 1] = xLp[k];
                         }
                         index += 2 * detLen;
@@ -610,7 +610,7 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
                             out2[k] = x[index4 + k];
                         }
                         idwtPer(wt, out.get(), detLen, out2.get(), xLp.get());
-                        for (k = lf / 2 - 1; k < 2 * detLen + lf / 2 - 1; ++k) {
+                        for (k = lf / 2 - 1; lt::cmp_less(k, 2 * detLen + lf / 2 - 1); ++k) {
                             x[index3 + k - lf / 2 + 1] = xLp[k];
                         }
                         index += detLen;
@@ -623,7 +623,7 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
                             out2[k] = wt.output[index + k];
                         }
                         idwtPer(wt, out.get(), detLen, out2.get(), xLp.get());
-                        for (k = lf / 2 - 1; k < 2 * detLen + lf / 2 - 1; ++k) {
+                        for (k = lf / 2 - 1; lt::cmp_less(k, 2 * detLen + lf / 2 - 1); ++k) {
                             x[index3 + k - lf / 2 + 1] = xLp[k];
                         }
                         index += detLen;
@@ -636,7 +636,7 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
                             out2[k] = x[index4 + indexp + k];
                         }
                         idwtPer(wt, out.get(), detLen, out2.get(), xLp.get());
-                        for (k = lf / 2 - 1; k < 2 * detLen + lf / 2 - 1; ++k) {
+                        for (k = lf / 2 - 1; lt::cmp_less(k, 2 * detLen + lf / 2 - 1); ++k) {
                             x[index3 + k - lf / 2 + 1] = xLp[k];
                         }
                         index4 += 2 * indexp;

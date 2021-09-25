@@ -6,10 +6,10 @@
 
 #include "lt/cassert.hpp"
 #include "lt/cmath.hpp"
+#include "lt/cstring.hpp"
 #include "lt/format.hpp"
 #include "lt/string_view.hpp"
-
-#include "lt/cstring.hpp"
+#include "lt/utility.hpp"
 
 namespace {
 
@@ -404,13 +404,13 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
             for (auto i = 0; i < ic; ++i) {
                 idwtPerStride(orig + i, ir, wavecoeff + aLH + i, wt.wave->lpr().data(), wt.wave->hpr().data(), lf, xLp.get(), istride, ostride);
 
-                for (k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
+                for (k = lf / 2 - 1; lt::cmp_less(k, 2 * ir + lf / 2 - 1); ++k) {
                     cL[(k - lf / 2 + 1) * ic + i] = xLp[k];
                 }
 
                 idwtPerStride(wavecoeff + aHL + i, ir, wavecoeff + aHH + i, wt.wave->lpr().data(), wt.wave->hpr().data(), lf, xLp.get(), istride, ostride);
 
-                for (k = lf / 2 - 1; k < 2 * ir + lf / 2 - 1; ++k) {
+                for (k = lf / 2 - 1; lt::cmp_less(k, 2 * ir + lf / 2 - 1); ++k) {
                     cH[(k - lf / 2 + 1) * ic + i] = xLp[k];
                 }
             }
@@ -422,7 +422,7 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
             for (auto i = 0; i < ir; ++i) {
                 idwtPerStride(cL.get() + i * ic, ic, cH.get() + i * ic, wt.wave->lpr().data(), wt.wave->hpr().data(), lf, xLp.get(), istride, ostride);
 
-                for (k = lf / 2 - 1; k < 2 * ic + lf / 2 - 1; ++k) {
+                for (k = lf / 2 - 1; lt::cmp_less(k, 2 * ic + lf / 2 - 1); ++k) {
                     out[(k - lf / 2 + 1) + i * ic * 2] = xLp[k];
                 }
             }

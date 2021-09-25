@@ -8,11 +8,11 @@
 #include "lt/dsp/wavelets/filters/sym.hpp"
 
 #include "lt/cmath.hpp"
-#include "lt/format.hpp"
-#include "lt/string_view.hpp"
-
 #include "lt/cstring.hpp"
+#include "lt/format.hpp"
 #include "lt/memory.hpp"
+#include "lt/string_view.hpp"
+#include "lt/utility.hpp"
 
 namespace {
 auto copy(double const* in, int n, double* out)
@@ -1229,25 +1229,25 @@ auto summary(Wavelet const& obj) -> void
     fmt::printf("\n");
     fmt::printf("Wavelet Filters \n");
     fmt::printf("lpd: [");
-    for (auto i = 0; i < n - 1; ++i) {
+    for (std::size_t i = 0; i < n - 1; ++i) {
         fmt::printf("%g,", obj.lpd()[i]);
     }
     fmt::printf("%g", obj.lpd()[n - 1]);
     fmt::printf("] \n");
     fmt::printf("hpd: [");
-    for (auto i = 0; i < n - 1; ++i) {
+    for (std::size_t i = 0; i < n - 1; ++i) {
         fmt::printf("%g,", obj.hpd()[i]);
     }
     fmt::printf("%g", obj.hpd()[n - 1]);
     fmt::printf("] \n");
     fmt::printf("lpr: [");
-    for (auto i = 0; i < n - 1; ++i) {
+    for (std::size_t i = 0; i < n - 1; ++i) {
         fmt::printf("%g,", obj.lpr()[i]);
     }
     fmt::printf("%g", obj.lpr()[n - 1]);
     fmt::printf("] \n");
     fmt::printf("hpr: [");
-    for (auto i = 0; i < n - 1; ++i) {
+    for (std::size_t i = 0; i < n - 1; ++i) {
         fmt::printf("%g,", obj.hpr()[i]);
     }
     fmt::printf("%g", obj.hpr()[n - 1]);
