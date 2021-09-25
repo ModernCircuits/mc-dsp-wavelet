@@ -1,14 +1,14 @@
 #include "lt/dsp/wavelets.hpp"
 
 #include "lt/cmath.hpp"
+#include "lt/cstdlib.hpp"
+#include "lt/cstring.hpp"
 #include "lt/format.hpp"
+#include "lt/memory.hpp"
+#include "lt/utility.hpp"
 
 #include "lt/testing/test.hpp"
 #include "readFileToVector.hpp"
-
-#include "lt/cstdlib.hpp"
-#include "lt/cstring.hpp"
-#include "lt/memory.hpp"
 
 auto main() -> int
 {
@@ -24,7 +24,7 @@ auto main() -> int
     // Use wt_summary to find out how to extract appx and detail coefficients
     dwt(wt, input.data());
 
-    for (auto i = 0; i < wt.outlength; ++i) {
+    for (auto i = 0; lt::cmp_less(i, wt.outlength); ++i) {
         fmt::printf("%g ", wt.output()[i]);
     }
 
@@ -32,7 +32,7 @@ auto main() -> int
     idwt(wt, out.get());
 
     auto diff = std::make_unique<double[]>(n);
-    for (auto i = 0; i < wt.signalLength(); ++i) {
+    for (auto i = 0; lt::cmp_less(i, wt.signalLength()); ++i) {
         diff[i] = out[i] - input[i];
     }
 
