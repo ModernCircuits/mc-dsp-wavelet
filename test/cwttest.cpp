@@ -1,5 +1,7 @@
-#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets.hpp"
+
+#include "lt/cmath.hpp"
+#include "lt/format.hpp"
 
 #include "readFileToVector.hpp"
 
@@ -49,7 +51,7 @@ auto main() -> int
 
     cwt(wt, inp.data());
 
-    std::printf("\n MEAN %g \n", wt.smean);
+    fmt::printf("\n MEAN %g \n", wt.smean);
 
     mn = 0.0;
 
@@ -59,32 +61,32 @@ auto main() -> int
 
     summary(wt);
 
-    std::printf("\n abs mean %g \n", mn / n);
+    fmt::printf("\n abs mean %g \n", mn / n);
 
-    std::printf("\n\n");
-    std::printf("Let CWT w = w(j, n/2 - 1) where n = %d\n\n", n);
+    fmt::printf("\n\n");
+    fmt::printf("Let CWT w = w(j, n/2 - 1) where n = %d\n\n", n);
     nd = n / 2 - 1;
 
-    std::printf("%-15s%-15s%-15s%-15s \n", "j", "Scale", "Period", "ABS(w)^2");
+    fmt::printf("%-15s%-15s%-15s%-15s \n", "j", "Scale", "Period", "ABS(w)^2");
     for (k = 0; k < wt.J; ++k) {
         iter = nd + k * n;
-        std::printf("%-15d%-15lf%-15lf%-15lf \n", k, wt.scale[k], wt.period[k],
+        fmt::printf("%-15d%-15lf%-15lf%-15lf \n", k, wt.scale[k], wt.period[k],
             wt.output[iter].real() * wt.output[iter].real() + wt.output[iter].imag() * wt.output[iter].imag());
     }
 
     icwt(wt, oup.get());
 
     num = den = reconMean = 0.0;
-    std::printf("\n\n");
-    std::printf("Signal Reconstruction\n");
-    std::printf("%-15s%-15s%-15s \n", "i", "Input(i)", "Output(i)");
+    fmt::printf("\n\n");
+    fmt::printf("Signal Reconstruction\n");
+    fmt::printf("%-15s%-15s%-15s \n", "i", "Input(i)", "Output(i)");
 
     for (i = n - 10; i < n; ++i) {
-        std::printf("%-15d%-15lf%-15lf \n", i, inp[i], oup[i]);
+        fmt::printf("%-15d%-15lf%-15lf \n", i, inp[i], oup[i]);
     }
 
     for (i = 0; i < n; ++i) {
-        //std::printf("%g %g \n", oup[i] ,inp[i] - wt.smean);
+        //fmt::printf("%g %g \n", oup[i] ,inp[i] - wt.smean);
         td = inp[i];
         tn = oup[i] - td;
         num += (tn * tn);
@@ -95,9 +97,9 @@ auto main() -> int
     reconVar = std::sqrt(num / n);
     reconMean /= n;
 
-    std::printf("\nRMS Error %g \n", std::sqrt(num) / std::sqrt(den));
-    std::printf("\nVariance %g \n", reconVar);
-    std::printf("\nMean %g \n", reconMean);
+    fmt::printf("\nRMS Error %g \n", std::sqrt(num) / std::sqrt(den));
+    fmt::printf("\nVariance %g \n", reconVar);
+    fmt::printf("\nMean %g \n", reconMean);
 
     return 0;
 }

@@ -3,11 +3,12 @@
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/common.hpp"
-#include "lt/string_view.hpp"
 
 #include "lt/cassert.hpp"
 #include "lt/cmath.hpp"
-#include <cstdio>
+#include "lt/format.hpp"
+#include "lt/string_view.hpp"
+
 #include <cstdlib>
 #include <cstring>
 
@@ -83,7 +84,7 @@ auto costfunc(double* x, int n, char const* entropy, double p) -> double
         return entropyL(x, n);
     }
 
-    std::printf("Entropy must be one of shannon, threshold, norm or energy");
+    fmt::printf("Entropy must be one of shannon, threshold, norm or energy");
     return 0.0;
 }
 }
@@ -792,22 +793,22 @@ auto summary(WaveletPacketTransform const& wt) -> void
     int it2 = 0;
     j = wt.J;
     summary(*wt.wave);
-    printf("\n");
-    printf("Signal Extension : %s \n", wt.ext.c_str());
-    printf("\n");
-    printf("Entropy : %s \n", wt.entropy.c_str());
-    printf("\n");
-    printf("Number of Decomposition Levels %d \n", wt.J);
-    printf("\n");
-    printf("Number of Active Nodes %d \n", wt.nodes);
-    printf("\n");
-    printf("Length of Input Signal %d \n", wt.siglength);
-    printf("\n");
-    printf("Length of WT Output Vector %d \n", wt.outlength);
-    printf("\n");
-    printf("Wavelet Coefficients are contained in vector : %s \n", "output");
-    printf("\n");
-    printf("Coefficients Access \n");
+    fmt::printf("\n");
+    fmt::printf("Signal Extension : %s \n", wt.ext.c_str());
+    fmt::printf("\n");
+    fmt::printf("Entropy : %s \n", wt.entropy.c_str());
+    fmt::printf("\n");
+    fmt::printf("Number of Decomposition Levels %d \n", wt.J);
+    fmt::printf("\n");
+    fmt::printf("Number of Active Nodes %d \n", wt.nodes);
+    fmt::printf("\n");
+    fmt::printf("Length of Input Signal %d \n", wt.siglength);
+    fmt::printf("\n");
+    fmt::printf("Length of WT Output Vector %d \n", wt.outlength);
+    fmt::printf("\n");
+    fmt::printf("Wavelet Coefficients are contained in vector : %s \n", "output");
+    fmt::printf("\n");
+    fmt::printf("Coefficients Access \n");
     it1 = 1;
     it2 = 0;
     for (auto i = 0; i < j; ++i) {
@@ -818,11 +819,11 @@ auto summary(WaveletPacketTransform const& wt) -> void
         it1 -= p2;
         for (k = 0; k < p2; ++k) {
             if (wt.basisvector[it1 + k] == 1) {
-                printf("Node %d %d Access : output[%d] Length : %d \n", i, k, it2, wt.length[j - i + 1]);
+                fmt::printf("Node %d %d Access : output[%d] Length : %d \n", i, k, it2, wt.length[j - i + 1]);
                 it2 += wt.length[j - i + 1];
             }
         }
     }
 
-    printf("\n");
+    fmt::printf("\n");
 }

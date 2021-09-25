@@ -1,7 +1,8 @@
-#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets.hpp"
 
-#include <cstdio>
+#include "lt/cmath.hpp"
+#include "lt/format.hpp"
+
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -24,16 +25,16 @@ auto main() -> int
     auto const x = 3;
     auto const y = 5;
     auto const len = wt.nodeLength(x);
-    std::printf("\n %d", len);
-    std::printf("\n");
+    fmt::printf("\n %d", len);
+    fmt::printf("\n");
     auto oup = std::make_unique<double[]>(len);
 
-    std::printf("Node [%d %d] Coefficients : \n", x, y);
+    fmt::printf("Node [%d %d] Coefficients : \n", x, y);
     wt.coeffs(x, y, oup.get(), len);
     for (auto i = 0; i < len; ++i) {
-        std::printf("%g ", oup[i]);
+        fmt::printf("%g ", oup[i]);
     }
-    std::printf("\n");
+    fmt::printf("\n");
 
     return EXIT_SUCCESS;
 }

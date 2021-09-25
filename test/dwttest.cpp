@@ -1,10 +1,11 @@
-#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets.hpp"
+
+#include "lt/cmath.hpp"
+#include "lt/format.hpp"
 
 #include "lt/testing/test.hpp"
 #include "readFileToVector.hpp"
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -24,7 +25,7 @@ auto main() -> int
     dwt(wt, input.data());
 
     for (auto i = 0; i < wt.outlength; ++i) {
-        printf("%g ", wt.output()[i]);
+        fmt::printf("%g ", wt.output()[i]);
     }
 
     auto out = std::make_unique<double[]>(n);
@@ -36,7 +37,7 @@ auto main() -> int
     }
 
     // If Reconstruction succeeded then the output should be a small value.
-    printf("\n MAX %g \n", absmax(diff.get(), wt.signalLength()));
+    fmt::printf("\n MAX %g \n", absmax(diff.get(), wt.signalLength()));
 
     // Prints the full summary.
     summary(wt);

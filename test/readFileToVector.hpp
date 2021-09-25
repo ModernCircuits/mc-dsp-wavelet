@@ -1,6 +1,7 @@
 #pragma once
 
-#include <cstdio>
+#include "lt/format.hpp"
+
 #include <cstdlib>
 #include <iterator>
 #include <vector>
@@ -9,7 +10,7 @@ inline auto readFileToVector(char const* filePath) -> std::vector<double>
 {
     auto* ifp = std::fopen(filePath, "r");
     if (ifp == nullptr) {
-        std::printf("Cannot Open File: %s\n", filePath);
+        fmt::printf("Cannot Open File: %s\n", filePath);
         std::exit(EXIT_FAILURE);
     }
 

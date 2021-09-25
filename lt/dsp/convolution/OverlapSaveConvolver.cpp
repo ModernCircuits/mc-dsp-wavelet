@@ -2,6 +2,8 @@
 
 #include "lt/cassert.hpp"
 
+#include <cstring>
+
 namespace {
 constexpr auto REAL = 0U; // NOLINT
 constexpr auto IMAG = 1U; // NOLINT

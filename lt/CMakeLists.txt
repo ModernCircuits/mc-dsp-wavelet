@@ -5,6 +5,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         lt::Span
         Boost::headers
         FFTW3::fftw3
+        fmt::fmt
         coz::coz
         lt::CompilerOptions
         lt::CompilerWarnings

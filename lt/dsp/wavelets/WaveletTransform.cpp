@@ -4,11 +4,12 @@
 #include "lt/dsp/convolution/convolute.hpp"
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/common.hpp"
-#include "lt/string_view.hpp"
 
 #include "lt/cassert.hpp"
 #include "lt/cmath.hpp"
-#include <cstdio>
+#include "lt/format.hpp"
+#include "lt/string_view.hpp"
+
 #include <cstdlib>
 #include <cstring>
 
@@ -1305,21 +1306,21 @@ auto summary(WaveletTransform const& wt) -> void
     int t = 0;
     j = wt.levels();
     summary(wt.wave());
-    printf("\n");
-    printf("Wavelet Transform : %s \n", wt.method().c_str());
-    printf("Signal Extension : %s \n", toString(wt.extension()).c_str());
-    printf("Convolutional Method : %s \n", toString(wt.convMethod()).c_str());
-    printf("Number of Decomposition Levels %d \n", wt.levels());
-    printf("Length of Input Signal %d \n", wt.signalLength());
-    printf("Length of WT Output Vector %d \n", wt.outlength);
-    printf("Wavelet Coefficients are contained in vector : %s \n", "output");
-    printf("Approximation Coefficients \n");
-    printf("Level %d Access : output[%d] Length : %d \n", j, 0, wt.length[0]);
-    printf("Detail Coefficients \n");
+    fmt::printf("\n");
+    fmt::printf("Wavelet Transform : %s \n", wt.method().c_str());
+    fmt::printf("Signal Extension : %s \n", toString(wt.extension()).c_str());
+    fmt::printf("Convolutional Method : %s \n", toString(wt.convMethod()).c_str());
+    fmt::printf("Number of Decomposition Levels %d \n", wt.levels());
+    fmt::printf("Length of Input Signal %d \n", wt.signalLength());
+    fmt::printf("Length of WT Output Vector %d \n", wt.outlength);
+    fmt::printf("Wavelet Coefficients are contained in vector : %s \n", "output");
+    fmt::printf("Approximation Coefficients \n");
+    fmt::printf("Level %d Access : output[%d] Length : %d \n", j, 0, wt.length[0]);
+    fmt::printf("Detail Coefficients \n");
     t = wt.length[0];
     for (auto i = 0; i < j; ++i) {
-        printf("Level %d Access : output[%d] Length : %d \n", j - i, t, wt.length[i + 1]);
+        fmt::printf("Level %d Access : output[%d] Length : %d \n", j - i, t, wt.length[i + 1]);
         t += wt.length[i + 1];
     }
-    printf("\n");
+    fmt::printf("\n");
 }

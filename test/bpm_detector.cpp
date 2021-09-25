@@ -1,7 +1,9 @@
-#include "lt/cmath.hpp"
 #include "lt/core/AudioFile.h"
 #include "lt/dsp/convolution.hpp"
 #include "lt/dsp/wavelets.hpp"
+
+#include "lt/cmath.hpp"
+#include "lt/format.hpp"
 
 #include "lt/testing/test.hpp"
 #include "readFileToVector.hpp"
@@ -161,7 +163,7 @@ auto mode(lt::span<double> arr) -> double
 auto main(int argc, char** argv) -> int
 {
     if (argc != 2) {
-        std::puts("no file path provided");
+        fmt::print("no file path provided");
         return EXIT_FAILURE;
     }
 
@@ -183,7 +185,7 @@ auto main(int argc, char** argv) -> int
     auto bpms = std::vector<double> {};
     for (auto windowNdx { 0U }; windowNdx < maxWindowIndex; ++windowNdx) {
         if (sampsNdx + windowSize >= std::size(channel)) {
-            std::puts("ERROR");
+            fmt::print("ERROR");
             continue;
         }
 
@@ -191,7 +193,7 @@ auto main(int argc, char** argv) -> int
         auto subBuffer = channel.subspan(sampsNdx, windowSize);
         auto bpm = detector.perform(subBuffer, fs);
 
-        printf("BPM:%.1f\n", std::round(bpm));
+        fmt::printf("BPM:%.1f\n", std::round(bpm));
         if (bpm == 0.0) {
             continue;
         }
@@ -203,7 +205,7 @@ auto main(int argc, char** argv) -> int
     auto outOfRange = [](auto b) { return b < 100.0 || b > 200.0; };
     bpms.erase(std::remove_if(begin(bpms), end(bpms), outOfRange), end(bpms));
 
-    std::printf("Detected BPM (median): %.1f\n", std::round(median(bpms)));
-    std::printf("Detected BPM (mode): %.1f\n", std::round(mode(bpms)));
+    fmt::printf("Detected BPM (median): %.1f\n", std::round(median(bpms)));
+    fmt::printf("Detected BPM (mode): %.1f\n", std::round(mode(bpms)));
     return 0;
 }

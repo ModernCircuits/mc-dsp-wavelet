@@ -1,9 +1,10 @@
-#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets.hpp"
+
+#include "lt/cmath.hpp"
+#include "lt/format.hpp"
 
 #include "lt/testing/test.hpp"
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -37,7 +38,7 @@ auto main() -> int
     summary(wt);
 
     // If Reconstruction succeeded then the output should be a small value.
-    printf("\n MAX %g \n", absmax(diff.get(), wt.siglength));
+    fmt::printf("\n MAX %g \n", absmax(diff.get(), wt.siglength));
 
     return 0;
 }

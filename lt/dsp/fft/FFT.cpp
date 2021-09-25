@@ -2,8 +2,8 @@
 
 #include "lt/cassert.hpp"
 #include "lt/cmath.hpp"
-#include <cstdio>
-#include <cstring>
+#include "lt/format.hpp"
+
 #include <memory>
 
 namespace {
@@ -1726,7 +1726,7 @@ static auto mixedRadixDitRec(Complex<double>* op, Complex<double> const* ip, con
         }
 
     } else {
-        std::puts("Should never be reached");
+        fmt::print("Should never be reached");
         std::exit(EXIT_FAILURE);
     }
 

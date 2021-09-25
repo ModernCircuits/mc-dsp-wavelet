@@ -3,10 +3,12 @@
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/common.hpp"
-#include "lt/string_view.hpp"
 
 #include "lt/cassert.hpp"
 #include "lt/cmath.hpp"
+#include "lt/format.hpp"
+#include "lt/string_view.hpp"
+
 #include <cstring>
 
 namespace {
@@ -118,8 +120,7 @@ WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, std::s
     auto const maxIter = (maxRows < maxCols) ? maxRows : maxCols;
 
     if (j > maxIter) {
-        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", maxIter);
-        exit(-1);
+        fmt::print("\nError - The Signal Can only be iterated {0} times using this wavelet. Exiting\n", maxIter);
     }
 
     std::size_t sumacc { 0 };
@@ -128,7 +129,7 @@ WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, std::s
     } else if (j > 1U) {
         sumacc = j * 3U + 1U;
     } else {
-        printf("Error : J should be >= 1 \n");
+        fmt::print("Error : J should be >= 1 \n");
         exit(-1);
     }
 
@@ -140,7 +141,7 @@ WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, std::s
         this->ext = "per";
     } else if ((method == lt::string_view { "swt" }) || (method == lt::string_view { "SWT" })) {
         if ((testSWTlength(rows, j) == 0) || (testSWTlength(cols, j) == 0)) {
-            printf("\n For SWT data rows and columns must be a multiple of 2^J. \n");
+            fmt::print("\n For SWT data rows and columns must be a multiple of 2^J. \n");
             exit(-1);
         }
 
@@ -150,7 +151,7 @@ WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, std::s
             if (strstr(wave.name().c_str(), "db") == nullptr) {
                 if (strstr(wave.name().c_str(), "sym") == nullptr) {
                     if (strstr(wave.name().c_str(), "coif") == nullptr) {
-                        printf("\n MODWT is only implemented for orthogonal wavelet families - db, sym and coif \n");
+                        fmt::print("\n MODWT is only implemented for orthogonal wavelet families - db, sym and coif \n");
                         exit(-1);
                     }
                 }
@@ -182,14 +183,14 @@ auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void
         } else if (extension == lt::string_view { "per" }) {
             wt.ext = "per";
         } else {
-            printf("Signal extension can be either per or sym");
+            fmt::printf("Signal extension can be either per or sym");
             exit(-1);
         }
     } else if ((wt.method == lt::string_view { "swt" }) || (wt.method == "modwt")) {
         if (extension == lt::string_view { "per" }) {
             wt.ext = "per";
         } else {
-            printf("Signal extension can only be per");
+            fmt::printf("Signal extension can only be per");
             exit(-1);
         }
     }
@@ -888,12 +889,12 @@ auto getWT2Coeffs(WaveletTransform2D& wt, double* wcoeffs, int level, char const
     // Error Check
 
     if (level > j || level < 1) {
-        printf("Error : The data is decomposed into %d levels so the acceptable values of level are between 1 and %d", j, j);
+        fmt::printf("Error : The data is decomposed into %d levels so the acceptable values of level are between 1 and %d", j, j);
         exit(-1);
     }
 
     if ((strcmp(type, "A") == 0) && level != j) {
-        printf("Approximation Coefficients are only available for level %d", j);
+        fmt::printf("Approximation Coefficients are only available for level %d", j);
         exit(-1);
     }
 
@@ -910,7 +911,7 @@ auto getWT2Coeffs(WaveletTransform2D& wt, double* wcoeffs, int level, char const
         t = 3;
         iter = t;
     } else {
-        printf("Only four types of coefficients are accessible A, H, V and D \n");
+        fmt::printf("Only four types of coefficients are accessible A, H, V and D \n");
         exit(-1);
     }
 
@@ -925,14 +926,14 @@ auto getWT2Coeffs(WaveletTransform2D& wt, double* wcoeffs, int level, char const
 
 auto dispWT2Coeffs(double* a, int row, int col) -> void
 {
-    printf("\n MATRIX Order : %d X %d \n \n", row, col);
+    fmt::printf("\n MATRIX Order : %d X %d \n \n", row, col);
 
     for (auto i = 0; i < row; i++) {
-        printf("R%d: ", i);
+        fmt::printf("R%d: ", i);
         for (auto j = 0; j < col; j++) {
-            printf("%g ", a[i * col + j]);
+            fmt::printf("%g ", a[i * col + j]);
         }
-        printf(":R%d \n", i);
+        fmt::printf(":R%d \n", i);
     }
 }
 
@@ -945,37 +946,37 @@ auto summary(WaveletTransform2D const& wt) -> void
     int vsize = 0;
     j = wt.J;
     summary(*wt.wave);
-    printf("\n");
-    printf("Wavelet Transform : %s \n", wt.method.c_str());
-    printf("\n");
-    printf("Signal Extension : %s \n", wt.ext.c_str());
-    printf("\n");
-    printf("Number of Decomposition Levels %d \n", wt.J);
-    printf("\n");
-    printf("Input Signal Rows %d \n", wt.rows);
-    printf("\n");
-    printf("Input Signal Cols %d \n", wt.cols);
-    printf("\n");
-    printf("Length of Wavelet Coefficients Vector %d \n", wt.outlength);
-    printf("\n");
+    fmt::printf("\n");
+    fmt::printf("Wavelet Transform : %s \n", wt.method.c_str());
+    fmt::printf("\n");
+    fmt::printf("Signal Extension : %s \n", wt.ext.c_str());
+    fmt::printf("\n");
+    fmt::printf("Number of Decomposition Levels %d \n", wt.J);
+    fmt::printf("\n");
+    fmt::printf("Input Signal Rows %d \n", wt.rows);
+    fmt::printf("\n");
+    fmt::printf("Input Signal Cols %d \n", wt.cols);
+    fmt::printf("\n");
+    fmt::printf("Length of Wavelet Coefficients Vector %d \n", wt.outlength);
+    fmt::printf("\n");
     t = 0;
     for (auto i = j; i > 0; --i) {
         rows = wt.dimensions[2 * (j - i)];
         cols = wt.dimensions[2 * (j - i) + 1];
         vsize = rows * cols;
-        printf("Level %d Decomposition Rows :%d Columns:%d Vector Size (Rows*Cols):%d \n", i, rows, cols, vsize);
-        printf("Access Row values stored at wt.dimensions[%d]\n", 2 * (j - i));
-        printf("Access Column values stored at wt.dimensions[%d]\n\n", 2 * (j - i) + 1);
+        fmt::printf("Level %d Decomposition Rows :%d Columns:%d Vector Size (Rows*Cols):%d \n", i, rows, cols, vsize);
+        fmt::printf("Access Row values stored at wt.dimensions[%d]\n", 2 * (j - i));
+        fmt::printf("Access Column values stored at wt.dimensions[%d]\n\n", 2 * (j - i) + 1);
 
         if (i == j) {
-            printf("Approximation Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n", t, wt.coeffaccess[t], vsize);
+            fmt::printf("Approximation Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n", t, wt.coeffaccess[t], vsize);
         }
 
         t += 1;
-        printf("Horizontal Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n", t, wt.coeffaccess[t], vsize);
+        fmt::printf("Horizontal Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n", t, wt.coeffaccess[t], vsize);
         t += 1;
-        printf("Vertical Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n", t, wt.coeffaccess[t], vsize);
+        fmt::printf("Vertical Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n", t, wt.coeffaccess[t], vsize);
         t += 1;
-        printf("Diagonal Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n\n", t, wt.coeffaccess[t], vsize);
+        fmt::printf("Diagonal Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n\n", t, wt.coeffaccess[t], vsize);
     }
 }

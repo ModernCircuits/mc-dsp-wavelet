@@ -1,11 +1,12 @@
-#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets.hpp"
+
+#include "lt/cmath.hpp"
+#include "lt/format.hpp"
 
 #include "lt/testing/test.hpp"
 
 #include "readFileToVector.hpp"
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -29,7 +30,7 @@ auto main() -> int
     //SWT output can be accessed using wt.output vector. Use wt_summary to find out how to extract appx and detail coefficients
 
     for (auto i = 0; i < wt.outlength; ++i) {
-        std::printf("%g ", wt.output()[i]);
+        fmt::printf("%g ", wt.output()[i]);
     }
 
     iswt(wt, out.get()); // Perform ISWT (if needed)
@@ -39,7 +40,7 @@ auto main() -> int
         diff[i] = out[i] - inp[i];
     }
 
-    std::printf("\n MAX %g \n", absmax(diff.get(), wt.signalLength())); // If Reconstruction succeeded then the output should be a small value.
+    fmt::printf("\n MAX %g \n", absmax(diff.get(), wt.signalLength())); // If Reconstruction succeeded then the output should be a small value.
 
     summary(wt); // Prints the full summary.
 

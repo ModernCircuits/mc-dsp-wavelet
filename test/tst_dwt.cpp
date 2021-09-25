@@ -1,9 +1,10 @@
-#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets.hpp"
+
+#include "lt/cmath.hpp"
+#include "lt/format.hpp"
 
 #include "lt/testing/test.hpp"
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -504,34 +505,34 @@ auto rBiorCoefTests()
 
 auto main() -> int
 {
-    printf("Running Unit Tests : \n \n");
-    printf("Running DBCoefTests ... ");
+    fmt::printf("Running Unit Tests : \n \n");
+    fmt::printf("Running DBCoefTests ... ");
     dbCoefTests();
-    printf("DONE \n");
-    printf("Running CoifCoefTests ... ");
+    fmt::printf("DONE \n");
+    fmt::printf("Running CoifCoefTests ... ");
     coifCoefTests();
-    printf("DONE \n");
-    printf("Running SymCoefTests ... ");
+    fmt::printf("DONE \n");
+    fmt::printf("Running SymCoefTests ... ");
     symCoefTests();
-    printf("DONE \n");
-    printf("Running BiorCoefTests ... ");
+    fmt::printf("DONE \n");
+    fmt::printf("Running BiorCoefTests ... ");
     biorCoefTests();
-    printf("DONE \n");
-    printf("Running RBiorCoefTests ... ");
+    fmt::printf("DONE \n");
+    fmt::printf("Running RBiorCoefTests ... ");
     rBiorCoefTests();
-    printf("DONE \n");
-    printf("Running MODWT ReconstructionTests ... ");
+    fmt::printf("DONE \n");
+    fmt::printf("Running MODWT ReconstructionTests ... ");
     modwtReconstructionTest();
-    printf("DONE \n");
-    printf("Running DWPT ReconstructionTests ... ");
+    fmt::printf("DONE \n");
+    fmt::printf("Running DWPT ReconstructionTests ... ");
     dwtReconstructionTest();
-    printf("DONE \n");
-    printf("Running CWT ReconstructionTests ... ");
+    fmt::printf("DONE \n");
+    fmt::printf("Running CWT ReconstructionTests ... ");
     cwtReconstructionTest();
-    printf("DONE \n");
-    printf("Running MODWT2 ReconstructionTests ... ");
+    fmt::printf("DONE \n");
+    fmt::printf("Running MODWT2 ReconstructionTests ... ");
     modwT2ReconstructionTest();
-    printf("DONE \n");
-    printf("\n\nUnit Tests Successful\n\n");
+    fmt::printf("DONE \n");
+    fmt::printf("\n\nUnit Tests Successful\n\n");
     return 0;
 }

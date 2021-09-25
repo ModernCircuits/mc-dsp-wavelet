@@ -1,13 +1,14 @@
 #include "ComplexWaveletTransform.hpp"
 
-#include "lt/cassert.hpp"
-#include "lt/cmath.hpp"
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/fft/FFT.hpp"
 #include "lt/dsp/wavelets/common.hpp"
+
+#include "lt/cassert.hpp"
+#include "lt/cmath.hpp"
+#include "lt/format.hpp"
 #include "lt/string_view.hpp"
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -63,7 +64,7 @@ namespace {
         };
 
         if (n > 40 || n < 0) {
-            printf("This program is only valid for 0 <= N <= 40 \n");
+            fmt::print("This program is only valid for 0 <= N <= 40 \n");
             return -1.0;
         }
 
@@ -125,7 +126,7 @@ namespace {
         auto const m = divideby(n, 2);
 
         if (m == 0) {
-            printf("The Non-Standard FFT Length must be a power of 2");
+            fmt::printf("The Non-Standard FFT Length must be a power of 2");
             exit(1);
         }
 
@@ -459,7 +460,7 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
     pi = 4.0 * std::atan(1.0);
 
     if (npad < n) {
-        printf("npad must be >= N \n");
+        fmt::printf("npad must be >= N \n");
         exit(-1);
     }
 
@@ -715,7 +716,7 @@ ComplexWaveletTransform::ComplexWaveletTransform(char const* wave, double param,
         djTmp = 0.4875;
         motherTmp = 0;
         if (param < 0.0) {
-            printf("\n Morlet Wavelet Parameter should be >= 0 \n");
+            fmt::printf("\n Morlet Wavelet Parameter should be >= 0 \n");
             exit(-1);
         }
         if (param == 0) {
@@ -728,7 +729,7 @@ ComplexWaveletTransform::ComplexWaveletTransform(char const* wave, double param,
         djTmp = 0.4875;
         motherTmp = 1;
         if (param < 0 || param > 20) {
-            printf("\n Paul Wavelet Parameter should be > 0 and <= 20 \n");
+            fmt::printf("\n Paul Wavelet Parameter should be > 0 and <= 20 \n");
             exit(-1);
         }
         if (param == 0) {
@@ -741,7 +742,7 @@ ComplexWaveletTransform::ComplexWaveletTransform(char const* wave, double param,
         djTmp = 0.4875;
         motherTmp = 2;
         if (param < 0 || odd == 1) {
-            printf("\n DOG Wavelet Parameter should be > 0 and even \n");
+            fmt::printf("\n DOG Wavelet Parameter should be > 0 and even \n");
             exit(-1);
         }
         if (param == 0) {
@@ -795,7 +796,7 @@ auto ComplexWaveletTransform::scales(double newS0, double newDj, char const* new
         }
         sflag = 1;
     } else {
-        printf("\n Type accepts only two values : pow and lin\n");
+        fmt::printf("\n Type accepts only two values : pow and lin\n");
         exit(-1);
     }
     s0 = newS0;
@@ -854,7 +855,7 @@ auto icwt(ComplexWaveletTransform& wt, double* cwtop) -> void
     if (((wt.type == "pow") || (wt.type == "power")) && wt.pow == 2) {
         icwavelet(wt.params.get(), n, wt.params.get() + nj2, wt.J, wt.dt, wt.dj, cdel, psi, cwtop);
     } else {
-        printf("Inverse CWT is only available for power of 2.0 scales \n");
+        fmt::printf("Inverse CWT is only available for power of 2.0 scales \n");
         exit(-1);
     }
     for (auto i = 0; i < n; ++i) {
@@ -864,27 +865,27 @@ auto icwt(ComplexWaveletTransform& wt, double* cwtop) -> void
 
 auto summary(ComplexWaveletTransform const& wt) -> void
 {
-    printf("\nWavelet : %s Parameter %lf \n", wt.wave().c_str(), wt.m);
-    printf("\nLength of Input Signal : %d \n", wt.signalLength);
-    printf("\nSampling Rate : %g \n", wt.dt);
-    printf("\nTotal Number of Scales : %d \n", wt.J);
-    printf("\nSmallest Scale (s0) : %lf \n", wt.s0);
-    printf("\nSeparation Between Scales (dj) %lf \n", wt.dj);
-    printf("\nScale Type %s \n", wt.type.c_str());
-    printf("\nComplex CWT Output Vector is of size %d  const& %d stored in Row Major format \n", wt.J, wt.signalLength);
-    printf("\nThe ith real value can be accessed using wt.output()[i].real() and imaginary value by wt.output()[i].imag() \n");
-    printf("\n");
+    fmt::printf("\nWavelet : %s Parameter %lf \n", wt.wave().c_str(), wt.m);
+    fmt::printf("\nLength of Input Signal : %d \n", wt.signalLength);
+    fmt::printf("\nSampling Rate : %g \n", wt.dt);
+    fmt::printf("\nTotal Number of Scales : %d \n", wt.J);
+    fmt::printf("\nSmallest Scale (s0) : %lf \n", wt.s0);
+    fmt::printf("\nSeparation Between Scales (dj) %lf \n", wt.dj);
+    fmt::printf("\nScale Type %s \n", wt.type.c_str());
+    fmt::printf("\nComplex CWT Output Vector is of size %d  const& %d stored in Row Major format \n", wt.J, wt.signalLength);
+    fmt::printf("\nThe ith real value can be accessed using wt.output()[i].real() and imaginary value by wt.output()[i].imag() \n");
+    fmt::printf("\n");
 }
 
 auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid) -> void
 {
     auto const m = divideby(n, 2);
     if (m == 0) {
-        printf("Size of Wavelet must be a power of 2");
+        fmt::printf("Size of Wavelet must be a power of 2");
         exit(1);
     }
     if (lb >= ub) {
-        printf("upper bound must be greater than lower bound");
+        fmt::printf("upper bound must be greater than lower bound");
         exit(1);
     }
 
@@ -964,7 +965,7 @@ auto gauss(int n, int p, double lb, double ub, double* psi, double* t) -> void
     int i = 0;
 
     if (lb >= ub) {
-        printf("upper bound must be greater than lower bound");
+        fmt::printf("upper bound must be greater than lower bound");
         exit(1);
     }
 
@@ -985,7 +986,7 @@ auto gauss(int n, int p, double lb, double ub, double* psi, double* t) -> void
 
     num /= den;
 
-    //printf("\n%g\n",num);
+    //fmt::printf("\n%g\n",num);
 
     if (p == 1) {
         for (i = 0; i < n; ++i) {
@@ -1040,7 +1041,7 @@ auto gauss(int n, int p, double lb, double ub, double* psi, double* t) -> void
             psi[i] = (t4 * t4 * t2 - 45.0 * t4 * t4 + 630.0 * t4 * t2 - 3150.0 * t4 + 4725.0 * t2 - 945.0) * std::exp(-t2 / 2.0) * num;
         }
     } else {
-        printf("\n The Gaussian Derivative Wavelet is only available for Derivatives 1 to 10");
+        fmt::printf("\n The Gaussian Derivative Wavelet is only available for Derivatives 1 to 10");
         exit(1);
     }
 }
@@ -1056,7 +1057,7 @@ auto morlet(int n, double lb, double ub, double* psi, double* t) -> void
     double delta = NAN;
 
     if (lb >= ub) {
-        printf("upper bound must be greater than lower bound");
+        fmt::printf("upper bound must be greater than lower bound");
         exit(1);
     }
 

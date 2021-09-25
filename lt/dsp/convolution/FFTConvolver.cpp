@@ -1,9 +1,8 @@
 #include "FFTConvolver.hpp"
 
 #include "lt/cmath.hpp"
+
 #include <algorithm>
-#include <cstdio>
-#include <cstring>
 #include <memory>
 
 namespace {

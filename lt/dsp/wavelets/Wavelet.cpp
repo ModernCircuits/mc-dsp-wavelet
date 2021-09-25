@@ -6,11 +6,11 @@
 #include "lt/dsp/wavelets/filters/h.hpp"
 #include "lt/dsp/wavelets/filters/meyer.hpp"
 #include "lt/dsp/wavelets/filters/sym.hpp"
+
+#include "lt/cmath.hpp"
+#include "lt/format.hpp"
 #include "lt/string_view.hpp"
 
-#define USE_MATH_DEFINES
-#include "lt/cmath.hpp"
-#include <cstdio>
 #include <cstring>
 #include <memory>
 
@@ -66,7 +66,7 @@ auto waveletFilterLength(char const* name) -> int
 
         n = atoi(newStr.get());
         if (n > 38) {
-            printf("\n Filter Not in Database \n");
+            fmt::printf("\n Filter Not in Database \n");
             return -1;
         }
 
@@ -184,7 +184,7 @@ auto waveletFilterLength(char const* name) -> int
 
         n = atoi(newStr.get());
         if (n > 17) {
-            printf("\n Filter Not in Database \n");
+            fmt::printf("\n Filter Not in Database \n");
             return -1;
         }
 
@@ -198,7 +198,7 @@ auto waveletFilterLength(char const* name) -> int
 
         n = atoi(newStr.get());
         if (n > 20 || n < 2) {
-            printf("\n Filter Not in Database \n");
+            fmt::printf("\n Filter Not in Database \n");
             return -1;
         }
 
@@ -207,7 +207,7 @@ auto waveletFilterLength(char const* name) -> int
     if (strcmp(name, "meyer") == 0) {
         return 102;
     }
-    printf("\n Filter Not in Database \n");
+    fmt::printf("\n Filter Not in Database \n");
     return -1;
 }
 
@@ -1200,7 +1200,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
         return n;
     }
 
-    printf("\n Filter Not in Database \n");
+    fmt::printf("\n Filter Not in Database \n");
     return -1;
 }
 
@@ -1224,32 +1224,32 @@ Wavelet::Wavelet(char const* name)
 auto summary(Wavelet const& obj) -> void
 {
     auto const n = obj.size();
-    printf("\n");
-    printf("Wavelet Name: %s \n", obj.name().c_str());
-    printf("\n");
-    printf("Wavelet Filters \n");
-    printf("lpd: [");
+    fmt::printf("\n");
+    fmt::printf("Wavelet Name: %s \n", obj.name().c_str());
+    fmt::printf("\n");
+    fmt::printf("Wavelet Filters \n");
+    fmt::printf("lpd: [");
     for (auto i = 0; i < n - 1; ++i) {
-        printf("%g,", obj.lpd()[i]);
+        fmt::printf("%g,", obj.lpd()[i]);
     }
-    printf("%g", obj.lpd()[n - 1]);
-    printf("] \n");
-    printf("hpd: [");
+    fmt::printf("%g", obj.lpd()[n - 1]);
+    fmt::printf("] \n");
+    fmt::printf("hpd: [");
     for (auto i = 0; i < n - 1; ++i) {
-        printf("%g,", obj.hpd()[i]);
+        fmt::printf("%g,", obj.hpd()[i]);
     }
-    printf("%g", obj.hpd()[n - 1]);
-    printf("] \n");
-    printf("lpr: [");
+    fmt::printf("%g", obj.hpd()[n - 1]);
+    fmt::printf("] \n");
+    fmt::printf("lpr: [");
     for (auto i = 0; i < n - 1; ++i) {
-        printf("%g,", obj.lpr()[i]);
+        fmt::printf("%g,", obj.lpr()[i]);
     }
-    printf("%g", obj.lpr()[n - 1]);
-    printf("] \n");
-    printf("hpr: [");
+    fmt::printf("%g", obj.lpr()[n - 1]);
+    fmt::printf("] \n");
+    fmt::printf("hpr: [");
     for (auto i = 0; i < n - 1; ++i) {
-        printf("%g,", obj.hpr()[i]);
+        fmt::printf("%g,", obj.hpr()[i]);
     }
-    printf("%g", obj.hpr()[n - 1]);
-    printf("] \n");
+    fmt::printf("%g", obj.hpr()[n - 1]);
+    fmt::printf("] \n");
 }

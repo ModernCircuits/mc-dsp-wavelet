@@ -58,8 +58,9 @@ conan_add_remote(NAME conancenter URL https://center.conan.io)
 conan_cmake_configure(
     REQUIRES
         boost/1.77.0
-        coz/cci.20210322
         fftw/3.3.9
+        fmt/8.0.1
+        coz/cci.20210322
     GENERATORS
         cmake_find_package
     OPTIONS
@@ -72,6 +73,7 @@ conan_cmake_install(PATH_OR_REFERENCE . BUILD missing REMOTE conancenter SETTING
 
 find_package(Boost 1.77 REQUIRED)
 find_package(FFTW3 REQUIRED)
+find_package(fmt REQUIRED)
 find_package(coz-profiler REQUIRED)
 
 add_subdirectory(3rd_party/span)

@@ -1,9 +1,10 @@
-#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets.hpp"
+
+#include "lt/cmath.hpp"
+#include "lt/format.hpp"
 
 #include "lt/testing/test.hpp"
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -46,7 +47,7 @@ auto main() -> int
     }
 
     summary(wt);
-    std::printf("Abs Max %g \n", absmax(diff.get(), n));
+    fmt::printf("Abs Max %g \n", absmax(diff.get(), n));
 
     return 0;
 }

@@ -3,7 +3,6 @@
 
 #include "lt/testing/test.hpp"
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>

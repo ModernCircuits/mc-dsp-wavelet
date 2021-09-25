@@ -4,6 +4,7 @@
 
 #include "lt/cassert.hpp"
 #include "lt/cmath.hpp"
+#include "lt/format.hpp"
 #include "lt/string_view.hpp"
 
 WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t j)
@@ -13,11 +14,12 @@ WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t 
     auto const maxIter = maxIterations(signalLength, size);
 
     if (j > 100) {
-        printf("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
+        fmt::print("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
         exit(-1);
     }
     if (j > maxIter) {
-        printf("\n Error - The Signal Can only be iterated %d times using this wavelet. Exiting\n", maxIter);
+
+        fmt::print("\n Error - The Signal Can only be iterated {0} times using this wavelet. Exiting\n", maxIter);
         exit(-1);
     }
 
@@ -236,7 +238,7 @@ auto wtree(WaveletTree& wt, double const* inp) -> void
         }
 
     } else {
-        printf("Signal extension can be either per or sym");
+        fmt::printf("Signal extension can be either per or sym");
         exit(-1);
     }
 
@@ -266,7 +268,7 @@ auto wtree(WaveletTree& wt, double const* inp) -> void
 auto WaveletTree::nodeLength(int x) -> int
 {
     if (x <= 0 || x > J) {
-        printf("X co-ordinate must be >= 1 and <= %d", J);
+        fmt::printf("X co-ordinate must be >= 1 and <= %d", J);
         exit(-1);
     }
 
@@ -280,7 +282,7 @@ auto WaveletTree::coeffs(int x, int y, double* coeffs, int n) const -> void
     int t2 = 0;
 
     if (x <= 0 || x > J) {
-        printf("X co-ordinate must be >= 1 and <= %d", J);
+        fmt::printf("X co-ordinate must be >= 1 and <= %d", J);
         exit(-1);
     }
     ymax = 1;
@@ -291,7 +293,7 @@ auto WaveletTree::coeffs(int x, int y, double* coeffs, int n) const -> void
     ymax -= 1;
 
     if (y < 0 || y > ymax) {
-        printf("Y co-ordinate must be >= 0 and <= %d", ymax);
+        fmt::printf("Y co-ordinate must be >= 0 and <= %d", ymax);
         exit(-1);
     }
 
@@ -332,28 +334,28 @@ auto summary(WaveletTree const& wt) -> void
     int t = 0;
     j = wt.J;
     summary(*wt.wave);
-    printf("\n");
-    printf("Wavelet Transform : %s \n", wt.method.c_str());
-    printf("\n");
-    printf("Signal Extension : %s \n", wt.extension().c_str());
-    printf("\n");
-    printf("Number of Decomposition Levels %d \n", wt.J);
-    printf("\n");
-    printf("Length of Input Signal %d \n", wt.siglength);
-    printf("\n");
-    printf("Length of WT Output Vector %d \n", wt.outlength);
-    printf("\n");
-    printf("Wavelet Coefficients are contained in vector : %s \n", "output");
-    printf("\n");
-    printf("Coefficients Access \n");
+    fmt::printf("\n");
+    fmt::printf("Wavelet Transform : %s \n", wt.method.c_str());
+    fmt::printf("\n");
+    fmt::printf("Signal Extension : %s \n", wt.extension().c_str());
+    fmt::printf("\n");
+    fmt::printf("Number of Decomposition Levels %d \n", wt.J);
+    fmt::printf("\n");
+    fmt::printf("Length of Input Signal %d \n", wt.siglength);
+    fmt::printf("\n");
+    fmt::printf("Length of WT Output Vector %d \n", wt.outlength);
+    fmt::printf("\n");
+    fmt::printf("Wavelet Coefficients are contained in vector : %s \n", "output");
+    fmt::printf("\n");
+    fmt::printf("Coefficients Access \n");
     t = 0;
     p2 = 2;
     for (auto i = 0; i < j; ++i) {
         for (k = 0; k < p2; ++k) {
-            printf("Node %d %d Access : output[%d] Length : %d \n", i + 1, k, wt.nodeLength_[t], wt.length[j - i]);
+            fmt::printf("Node %d %d Access : output[%d] Length : %d \n", i + 1, k, wt.nodeLength_[t], wt.length[j - i]);
             t++;
         }
         p2 *= 2;
     }
-    printf("\n");
+    fmt::printf("\n");
 }

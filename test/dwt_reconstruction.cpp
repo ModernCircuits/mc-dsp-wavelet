@@ -1,9 +1,10 @@
-#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets.hpp"
+
+#include "lt/cmath.hpp"
+#include "lt/format.hpp"
 
 #include "lt/testing/test.hpp"
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -206,11 +207,11 @@ auto dwT2ReconstructionTest()
 
 auto main() -> int
 {
-    std::printf("Running DWT ReconstructionTests ... ");
+    fmt::printf("Running DWT ReconstructionTests ... ");
     dwtReconstructionTest();
-    std::printf("DONE \n");
-    std::printf("Running DWT2 ReconstructionTests ... ");
+    fmt::printf("DONE \n");
+    fmt::printf("Running DWT2 ReconstructionTests ... ");
     dwT2ReconstructionTest();
-    std::printf("DONE \n");
+    fmt::printf("DONE \n");
     return 0;
 }

@@ -1,9 +1,10 @@
-#include "lt/cmath.hpp"
 #include "lt/dsp/wavelets/Denoise.hpp"
+
+#include "lt/cmath.hpp"
+#include "lt/format.hpp"
 
 #include "readFileToVector.hpp"
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -76,13 +77,13 @@ auto main() -> int
 
     modwtshrink(sig.data(), n, j, wname, cmethod, ext, thresh, out.get());
 
-    printf("Signal - Noisy Signal Stats \n");
-    printf("RMSE %g\n", rmse(n, sig.data(), inp.data()));
-    printf("Corr Coeff %g\n", corrcoef(n, sig.data(), inp.data()));
+    fmt::printf("Signal - Noisy Signal Stats \n");
+    fmt::printf("RMSE %g\n", rmse(n, sig.data(), inp.data()));
+    fmt::printf("Corr Coeff %g\n", corrcoef(n, sig.data(), inp.data()));
 
-    printf("Signal - DeNoised Signal Stats \n");
-    printf("RMSE %g\n", rmse(n, sig.data(), out.get()));
-    printf("Corr Coeff %g\n", corrcoef(n, sig.data(), out.get()));
+    fmt::printf("Signal - DeNoised Signal Stats \n");
+    fmt::printf("RMSE %g\n", rmse(n, sig.data(), out.get()));
+    fmt::printf("Corr Coeff %g\n", corrcoef(n, sig.data(), out.get()));
 
     return 0;
 }

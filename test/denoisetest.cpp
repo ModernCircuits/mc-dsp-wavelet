@@ -1,7 +1,8 @@
 #include "lt/dsp/wavelets/Denoise.hpp"
-#include "lt/cmath.hpp"
 
-#include <cstdio>
+#include "lt/cmath.hpp"
+#include "lt/format.hpp"
+
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -67,7 +68,7 @@ auto main() -> int
     auto* ifp = std::fopen("testData/pieceregular1024.txt", "r");
     auto i = 0;
     if (ifp == nullptr) {
-        std::printf("Cannot Open File");
+        fmt::printf("Cannot Open File");
         std::exit(EXIT_FAILURE);
     }
 
@@ -92,7 +93,7 @@ auto main() -> int
     ifp = std::fopen("testData/PieceRegular10.txt", "r");
     i = 0;
     if (ifp == nullptr) {
-        std::printf("Cannot Open File");
+        fmt::printf("Cannot Open File");
         std::exit(EXIT_FAILURE);
     }
 
@@ -123,13 +124,13 @@ auto main() -> int
     // modwtshrink(sig.get(),N,J,wname,cmethod,ext,thresh,oup.get()); See modwtdenoisetest.c
     //ofp = std::fopen("testData/denoiseds.txt", "w");
 
-    std::printf("Signal - Noisy Signal Stats \n");
-    std::printf("RMSE %g\n", rmse(n, sig.get(), inp.get()));
-    std::printf("Corr Coeff %g\n", corrcoef(n, sig.get(), inp.get()));
+    fmt::printf("Signal - Noisy Signal Stats \n");
+    fmt::printf("RMSE %g\n", rmse(n, sig.get(), inp.get()));
+    fmt::printf("Corr Coeff %g\n", corrcoef(n, sig.get(), inp.get()));
 
-    std::printf("Signal - DeNoised Signal Stats \n");
-    std::printf("RMSE %g\n", rmse(n, sig.get(), oup.get()));
-    std::printf("Corr Coeff %g\n", corrcoef(n, sig.get(), oup.get()));
+    fmt::printf("Signal - DeNoised Signal Stats \n");
+    fmt::printf("RMSE %g\n", rmse(n, sig.get(), oup.get()));
+    fmt::printf("Corr Coeff %g\n", corrcoef(n, sig.get(), oup.get()));
 
     return 0;
 }

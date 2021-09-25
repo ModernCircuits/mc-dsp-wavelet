@@ -6,8 +6,8 @@
 #include "lt/dsp/wavelets.hpp"
 
 #include "lt/cmath.hpp"
+
 #include <cfloat>
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <string>
