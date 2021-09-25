@@ -397,9 +397,7 @@ auto dwt(WaveletTransform& wt, double const* inp) -> void
     auto orig2 = std::make_unique<double[]>(tempLen);
     auto orig = std::make_unique<double[]>(tempLen);
 
-    for (auto i = 0; i < wt.signalLength(); ++i) {
-        orig[i] = inp[i];
-    }
+    std::copy(inp, inp + wt.signalLength(), orig.get());
 
     if (wt.zpad == 1) {
         orig[tempLen - 1] = orig[tempLen - 2];
@@ -659,9 +657,7 @@ auto idwt(WaveletTransform& wt, double* dwtop) -> void
         throw std::invalid_argument("Signal extension can be either per or sym");
     }
 
-    for (auto i = 0; i < wt.signalLength(); ++i) {
-        dwtop[i] = out[i];
-    }
+    std::copy(out.get(), out.get() + wt.signalLength(), dwtop);
 }
 
 static auto swtPer(WaveletTransform& wt, int m, double* inp, int n, double* cA, int lenCA, double* cD) -> void
@@ -744,18 +740,14 @@ static auto swtFft(WaveletTransform& wt, double const* inp) -> void
 
 static auto swtDirect(WaveletTransform& wt, double const* inp) -> void
 {
-    int j = 0;
-    int tempLen = 0;
-    int iter = 0;
-    int m = 0;
-    int lenacc = 0;
+    auto tempLen = wt.signalLength();
+    auto j = wt.levels();
 
-    tempLen = wt.signalLength();
-    j = wt.levels();
     wt.length[0] = wt.length[j] = tempLen;
     wt.outlength = wt.length[j + 1] = (j + 1) * tempLen;
-    m = 1;
-    for (iter = 1; iter < j; ++iter) {
+
+    auto m = 1;
+    for (auto iter = 1; iter < j; ++iter) {
         m = 2 * m;
         wt.length[iter] = tempLen;
     }
@@ -769,9 +761,9 @@ static auto swtDirect(WaveletTransform& wt, double const* inp) -> void
         wt.params[i] = inp[i];
     }
 
-    lenacc = wt.outlength;
+    auto lenacc = wt.outlength;
 
-    for (iter = 0; iter < j; ++iter) {
+    for (auto iter = 0; iter < j; ++iter) {
         lenacc -= tempLen;
         if (iter > 0) {
             m = 2 * m;
@@ -1208,9 +1200,7 @@ auto imodwtFft(WaveletTransform& wt, double* oup) -> void
         lenacc += n;
     }
 
-    for (auto i = 0; i < wt.signalLength(); ++i) {
-        oup[i] = sig[i].real();
-    }
+    std::transform(sig.get(), sig.get() + wt.signalLength(), oup, [](auto c) { return c.real(); });
 }
 
 static auto imodwtPer(WaveletTransform& wt, int m, double const* cA, int lenCA, double const* cD, double* x) -> void

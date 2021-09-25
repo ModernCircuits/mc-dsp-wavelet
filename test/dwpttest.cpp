@@ -12,14 +12,14 @@
 auto main() -> int
 {
     auto obj = Wavelet { "db4" };
-    auto const n = 788 + 23;
-    auto const j = 4;
+    auto const n = std::size_t { 788 + 23 };
+    auto const j = std::size_t { 4 };
 
     auto inp = std::make_unique<double[]>(n);
     auto oup = std::make_unique<double[]>(n);
     auto diff = std::make_unique<double[]>(n);
 
-    for (auto i = 1; i < n + 1; ++i) {
+    for (std::size_t i = 1; i < n + 1; ++i) {
         inp[i - 1] = i;
     }
 
@@ -31,7 +31,7 @@ auto main() -> int
 
     idwt(wt, oup.get());
 
-    for (auto i = 0; i < n; ++i) {
+    for (std::size_t i = 0; i < n; ++i) {
         diff[i] = (inp[i] - oup[i]) / inp[i];
     }
 

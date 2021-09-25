@@ -13,8 +13,8 @@ struct WaveletTransform {
     WaveletTransform(Wavelet& wave, char const* method, std::size_t siglength, std::size_t j);
 
     [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *wave_; }
-    [[nodiscard]] auto levels() const noexcept -> int { return levels_; }
-    [[nodiscard]] auto signalLength() const noexcept -> int { return signalLength_; }
+    [[nodiscard]] auto levels() const noexcept -> int { return static_cast<int>(levels_); }
+    [[nodiscard]] auto signalLength() const noexcept -> std::size_t { return signalLength_; }
     [[nodiscard]] auto method() const noexcept -> std::string const& { return method_; }
 
     auto extension(SignalExtension ext) -> void;
@@ -39,9 +39,9 @@ private:
 
 public:
     std::unique_ptr<FFTConvolver> convolver;
-    int modwtsiglength; // Modified signal length for MODWT
-    int outlength; // Length of the output DWT vector
-    int lenlength; // Length of the Output Dimension Vector "length"
+    std::size_t modwtsiglength; // Modified signal length for MODWT
+    std::size_t outlength; // Length of the output DWT vector
+    std::size_t lenlength; // Length of the Output Dimension Vector "length"
     int MaxIter; // Maximum Iterations J <= MaxIter
     int even; // even = 1 if signal is of even length. even = 0 otherwise
 

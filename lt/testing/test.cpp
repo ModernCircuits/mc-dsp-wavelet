@@ -5,95 +5,75 @@
 
 #include "lt/cstdlib.hpp"
 
-auto absmax(double* array, int n) -> double
+auto absmax(double* array, std::size_t n) -> double
 {
-    double max = NAN;
-    int i = 0;
-
-    max = 0.0;
-    for (i = 0; i < n; ++i) {
+    auto max = 0.0;
+    for (auto i = std::size_t { 0 }; i < n; ++i) {
         if (fabs(array[i]) >= max) {
             max = fabs(array[i]);
         }
     }
-
     return max;
 }
 
-auto sum1(double const* array, int n) -> double
+auto sum1(double const* array, std::size_t n) -> double
 {
-    double sum = NAN;
-    int i = 0;
-
-    sum = 0.0;
-    for (i = 0; i < n; ++i) {
+    auto sum = 0.0;
+    for (auto i = std::size_t { 0 }; i < n; ++i) {
         sum += array[i];
     }
     return sum;
 }
-auto sum2(double const* array, int n) -> double
-{
-    double sum = NAN;
-    int i = 0;
 
-    sum = 0.0;
-    for (i = 0; i < n; i += 2) {
+auto sum2(double const* array, std::size_t n) -> double
+{
+    auto sum = 0.0;
+    for (std::size_t i = 0; i < n; i += 2) {
         sum += array[i];
     }
     return sum;
 }
-auto sum3(double const* array, int n) -> double
+auto sum3(double const* array, std::size_t n) -> double
 {
-    double sum = NAN;
-    int i = 0;
-
-    sum = 0.0;
-    for (i = 1; i < n; i += 2) {
+    auto sum = 0.0;
+    for (std::size_t i = 1; i < n; i += 2) {
         sum += array[i];
     }
     return sum;
 }
 // np.sum(w[2*m:(2*N+2*m)]*w[0:2*N])
-auto sum4(double const* array, int n) -> double
+auto sum4(double const* array, std::size_t n) -> double
 {
-    double sum = NAN;
-    int i = 0;
-
-    sum = 0.0;
-    for (i = 0; i < n; i += 1) {
+    auto sum = 0.0;
+    for (std::size_t i = 0; i < n; i += 1) {
         sum += array[i] * array[i];
     }
     return sum;
 }
 // np.sum(w[2 * m:(2 * N)] * w[0:2 * N - 2 * m])
-auto sum5(double const* array, int n, int m) -> double
+auto sum5(double const* array, std::size_t n, std::size_t m) -> double
 {
-    double sum = NAN;
-    int i = 0;
-
-    sum = 0.0;
-    for (i = 2 * m; i < n; i += 1) {
+    auto sum = 0.0;
+    for (std::size_t i = 2 * m; i < n; i += 1) {
         sum += array[i] * array[i - 2 * m];
     }
     return sum;
 }
 
-auto rmsError(double const* data, double const* rec, int n) -> double
+auto rmsError(double const* data, double const* rec, std::size_t n) -> double
 {
-    int i = 0;
     double sum = 0;
-    for (i = 0; i < n; ++i) {
+    for (std::size_t i = 0; i < n; ++i) {
         sum += (data[i] - rec[i]) * (data[i] - rec[i]);
     }
     return std::sqrt(sum / ((double)n - 1));
 }
 
-auto relError(double const* data, double const* rec, int n) -> double
+auto relError(double const* data, double const* rec, std::size_t n) -> double
 {
-    int i = 0;
     double sum1 = 0;
     double sum2 = 0;
-    for (i = 0; i < n; ++i) {
+    for (std::size_t i = 0; i < n; ++i) {
         sum1 += (data[i] - rec[i]) * (data[i] - rec[i]);
         sum2 += data[i] * data[i];
     }

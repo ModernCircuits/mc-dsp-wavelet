@@ -14,14 +14,14 @@
 auto main() -> int
 {
     auto obj = Wavelet { "bior3.5" };
-    auto const n = 256;
+    auto const n = std::size_t { 256 };
 
     auto const inp = readFileToVector("testData/signal.txt");
 
     auto out = std::make_unique<double[]>(n);
     auto diff = std::make_unique<double[]>(n);
 
-    auto const j = 1;
+    auto const j = std::size_t { 1 };
 
     auto wt = WaveletTransform(obj, "swt", n, j); // Initialize the wavelet transform object
     wt.convMethod(ConvolutionMethod::direct);
@@ -29,14 +29,14 @@ auto main() -> int
     swt(wt, inp.data()); // Perform SWT
     //SWT output can be accessed using wt.output vector. Use wt_summary to find out how to extract appx and detail coefficients
 
-    for (auto i = 0; i < wt.outlength; ++i) {
+    for (std::size_t i = 0; i < wt.outlength; ++i) {
         fmt::printf("%g ", wt.output()[i]);
     }
 
     iswt(wt, out.get()); // Perform ISWT (if needed)
     // Test Reconstruction
 
-    for (auto i = 0; i < wt.signalLength(); ++i) {
+    for (std::size_t i = 0; i < wt.signalLength(); ++i) {
         diff[i] = out[i] - inp[i];
     }
 

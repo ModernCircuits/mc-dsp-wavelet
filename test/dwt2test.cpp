@@ -12,20 +12,20 @@ auto main() -> int
 {
     auto obj = Wavelet { "db2" };
 
-    auto rows = 32;
-    auto cols = 30;
+    auto rows = std::size_t { 32 };
+    auto cols = std::size_t { 30 };
     auto n = rows * cols;
 
     auto inp = makeZeros<double>(n);
     auto oup = makeZeros<double>(n);
     auto diff = makeZeros<double>(n);
 
-    auto const j = 3;
+    auto const j = std::size_t { 3 };
 
     auto wt = WaveletTransform2D(obj, "dwt", rows, cols, j);
 
-    for (auto i = 0; i < rows; ++i) {
-        for (auto k = 0; k < cols; ++k) {
+    for (std::size_t i = 0; i < rows; ++i) {
+        for (std::size_t k = 0; k < cols; ++k) {
             inp[i * cols + k] = generateRnd();
             oup[i * cols + k] = 0.0;
         }
@@ -41,7 +41,7 @@ auto main() -> int
 
     idwt(wt, wavecoeffs.get(), oup.get());
 
-    for (auto i = 0; i < rows * cols; ++i) {
+    for (std::size_t i = 0; i < rows * cols; ++i) {
         diff[i] = oup[i] - inp[i];
     }
 
