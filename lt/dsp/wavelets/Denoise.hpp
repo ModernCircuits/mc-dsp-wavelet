@@ -1,16 +1,12 @@
-/// \copyright Copyright (c) 2017, Rafat Hussain
-
-#ifndef WAUXLIB_H_
-#define WAUXLIB_H_
+#pragma once
 
 #include "lt/dsp/wavelets.hpp"
 
+#include "lt/cfloat.hpp"
 #include "lt/cmath.hpp"
-
 #include "lt/cstdlib.hpp"
 #include "lt/cstring.hpp"
 #include "lt/string.hpp"
-#include <cfloat>
 
 struct DenoiseSet {
     DenoiseSet(int length, int j, char const* name);
@@ -46,5 +42,3 @@ auto setDenoiseParameters(DenoiseSet& obj, char const* thresh, char const* level
 auto median(double* x, int n) -> double;
 
 auto minindex(double const* arr, int n) -> int;
-
-#endif /* WAUXLIB_H_ */
