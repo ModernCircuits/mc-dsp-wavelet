@@ -105,7 +105,7 @@ namespace {
             oup[n - l + i].imag(temp2[i]);
         }
 
-        auto const plb = Pi2 * lb;
+        auto const plb = pi2 * lb;
 
         for (auto i = 0; i < n; ++i) {
             auto const tempr = oup[i].real();
@@ -144,7 +144,7 @@ namespace {
             j += 2;
         }
 
-        auto const plb = Pi2 * lb;
+        auto const plb = pi2 * lb;
 
         for (auto i = 0; i < n; ++i) {
             auto const theta = w[i] * plb;
@@ -895,7 +895,7 @@ auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
     auto psiw = std::make_unique<Complex<double>[]>(n);
     auto oup = std::make_unique<Complex<double>[]>(n);
 
-    auto const delta = 2 * (ub - lb) / Pi2;
+    auto const delta = 2 * (ub - lb) / pi2;
 
     auto j = (double)n;
     j *= -1.0;
@@ -911,16 +911,16 @@ auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
 
     for (auto i = 0; i < n; ++i) {
         auto const wf = fabs(w[i]);
-        if (wf <= Pi2 / 3.0) {
+        if (wf <= pi2 / 3.0) {
             phiw[i].real(1.0);
         }
-        if (wf > Pi2 / 3.0 && wf <= 2 * Pi2 / 3.0) {
-            auto const x = (3 * wf / Pi2) - 1.0;
+        if (wf > pi2 / 3.0 && wf <= 2 * pi2 / 3.0) {
+            auto const x = (3 * wf / pi2) - 1.0;
             auto const x2 = x * x;
             auto const x3 = x2 * x;
             auto const x4 = x3 * x;
             auto const v = x4 * (35 - 84 * x + 70 * x2 - 20 * x3);
-            auto const theta = v * Pi2 / 4.0;
+            auto const theta = v * pi2 / 4.0;
             auto const cs = std::cos(theta);
             auto const sn = std::sin(theta);
 
@@ -928,13 +928,13 @@ auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
             psiw[i].real(std::cos(w[i] / 2.0) * sn);
             psiw[i].imag(std::sin(w[i] / 2.0) * sn);
         }
-        if (wf > 2.0 * Pi2 / 3.0 && wf <= 4 * Pi2 / 3.0) {
-            auto const x = (1.5 * wf / Pi2) - 1.0;
+        if (wf > 2.0 * pi2 / 3.0 && wf <= 4 * pi2 / 3.0) {
+            auto const x = (1.5 * wf / pi2) - 1.0;
             auto const x2 = x * x;
             auto const x3 = x2 * x;
             auto const x4 = x3 * x;
             auto const v = x4 * (35 - 84 * x + 70 * x2 - 20 * x3);
-            auto const theta = v * Pi2 / 4.0;
+            auto const theta = v * pi2 / 4.0;
             auto const cs = std::cos(theta);
 
             psiw[i].real(std::cos(w[i] / 2.0) * cs);

@@ -196,7 +196,7 @@ auto longvectorN(Complex<double>* sig, int const* array, int tx) -> void
     for (auto i = 0; i < tx; i++) {
         l = l * array[tx - 1 - i];
         auto const ls = l / array[tx - 1 - i];
-        auto const theta = -1.0 * Pi2 / l;
+        auto const theta = -1.0 * pi2 / l;
         for (auto j = 0; j < ls; j++) {
             for (auto k = 0; k < array[tx - 1 - i] - 1; k++) {
                 sig[ct].real(cos((k + 1) * j * theta));
@@ -1934,7 +1934,7 @@ RealFFT::RealFFT(int n, FFT::Direction direction)
     cobj_ = std::make_unique<FFT>(n / 2, direction);
 
     for (auto k = 0; k < n / 2; ++k) {
-        auto const theta = Pi2 * k / n;
+        auto const theta = pi2 * k / n;
         data_[k].real(std::cos(theta));
         data_[k].imag(std::sin(theta));
     }
