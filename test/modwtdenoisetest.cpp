@@ -9,7 +9,6 @@
 #include "lt/cstring.hpp"
 #include "lt/memory.hpp"
 
-
 static auto rmse(int n, double const* x, double const* y) -> double
 {
     double rms = NAN;
