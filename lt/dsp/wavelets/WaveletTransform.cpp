@@ -14,29 +14,19 @@
 
 namespace {
 
-auto upsamp(double const* x, int lenx, int m, double* y) -> int
+auto upsamp(double const* x, int lenx, int m, double* y) -> void
 {
-    int n = 0;
-    int i = 0;
-    int j = 0;
-    int k = 0;
-
-    if (m < 0) {
-        return -1;
-    }
+    LT_ASSERT(m >= 0);
 
     if (m == 0) {
-        for (i = 0; i < lenx; ++i) {
-            y[i] = x[i];
-        }
-        return lenx;
+        std::copy(x, x + static_cast<std::size_t>(lenx), y);
     }
 
-    n = m * (lenx - 1) + 1;
-    j = 1;
-    k = 0;
+    auto j = 1;
+    auto k = 0;
 
-    for (i = 0; i < n; ++i) {
+    auto const n = m * (lenx - 1) + 1;
+    for (auto i = 0; i < n; ++i) {
         j--;
         y[i] = 0.0;
         if (j == 0) {
@@ -45,20 +35,15 @@ auto upsamp(double const* x, int lenx, int m, double* y) -> int
             j = m;
         }
     }
-
-    return n;
 }
 
 // Returns even numbered output. Last value is set to zero
-auto upsamp2(double const* x, int lenx, int m, double* y) -> int
+auto upsamp2(double const* x, int lenx, int m, double* y) -> void
 {
-    if (m < 0) {
-        return -1;
-    }
+    LT_ASSERT(m >= 0);
 
     if (m == 0) {
         std::copy(x, x + static_cast<std::size_t>(lenx), y);
-        return lenx;
     }
 
     auto const n = m * lenx;
@@ -74,8 +59,6 @@ auto upsamp2(double const* x, int lenx, int m, double* y) -> int
             j = m;
         }
     }
-
-    return n;
 }
 
 auto isign(int n) -> int
@@ -105,21 +88,15 @@ auto circshift(double* array, int n, int l) -> void
 
 auto perExt(double const* sig, int len, int a, double* oup) -> int
 {
-    int i = 0;
-    int len2 = 0;
-    double temp1 = NAN;
-    double temp2 = NAN;
-    for (i = 0; i < len; ++i) {
-        oup[a + i] = sig[i];
-    }
-    len2 = len;
+    std::copy(sig, sig + len, oup + a);
+    auto len2 = len;
     if ((len % 2) != 0) {
         len2 = len + 1;
         oup[a + len] = sig[len - 1];
     }
-    for (i = 0; i < a; ++i) {
-        temp1 = oup[a + i];
-        temp2 = oup[a + len2 - 1 - i];
+    for (auto i = 0; i < a; ++i) {
+        auto const temp1 = oup[a + i];
+        auto const temp2 = oup[a + len2 - 1 - i];
         oup[a - 1 - i] = temp2;
         oup[len2 + a + i] = temp1;
     }
@@ -128,47 +105,28 @@ auto perExt(double const* sig, int len, int a, double* oup) -> int
 
 auto symmExt(double const* sig, int len, int a, double* oup) -> int
 {
-    int i = 0;
-    int len2 = 0;
-    double temp1 = NAN;
-    double temp2 = NAN;
     // oup is of length len + 2 * a
-    for (i = 0; i < len; ++i) {
-        oup[a + i] = sig[i];
-    }
-    len2 = len;
-    for (i = 0; i < a; ++i) {
-        temp1 = oup[a + i];
-        temp2 = oup[a + len2 - 1 - i];
+    std::copy(sig, sig + len, oup + a);
+    auto const newLength = len;
+    for (auto i = 0; i < a; ++i) {
+        auto const temp1 = oup[a + i];
+        auto const temp2 = oup[a + newLength - 1 - i];
         oup[a - 1 - i] = temp1;
-        oup[len2 + a + i] = temp2;
+        oup[newLength + a + i] = temp2;
     }
-
-    return len2;
+    return newLength;
 }
 
-auto downsamp(double const* x, int lenx, int m, double* y) -> int
+auto downsamp(double const* x, std::size_t lenx, std::size_t m, double* y) -> void
 {
-    int n = 0;
-    int i = 0;
-
-    if (m < 0) {
-        return -1;
-    }
     if (m == 0) {
-        for (i = 0; i < lenx; ++i) {
-            y[i] = x[i];
-        }
-        return lenx;
+        std::copy(x, x + static_cast<std::size_t>(lenx), y);
     }
 
-    n = (lenx - 1) / m + 1;
-
-    for (i = 0; i < n; ++i) {
+    auto const n = (lenx - 1U) / m + 1U;
+    for (std::size_t i = 0; i < n; ++i) {
         y[i] = x[i * m];
     }
-
-    return n;
 }
 
 }
@@ -327,8 +285,6 @@ static auto dwtSym(WaveletTransform& wt, double* inp, int n, double* cA, int len
 
 static auto dwt1(WaveletTransform& wt, double* sig, int lenSig, double* cA, double* cD) -> void
 {
-    constexpr auto d = 2;
-
     if (wt.extension() == SignalExtension::periodic) {
         auto lenAvg = (wt.wave().lpd().size() + wt.wave().hpd().size()) / 2;
         auto signal = std::make_unique<double[]>(lenSig + lenAvg + (lenSig % 2));
@@ -343,9 +299,9 @@ static auto dwt1(WaveletTransform& wt, double* sig, int lenSig, double* cA, doub
         }
 
         wconv(wt, signal.get(), lenSig + lenAvg, wt.wave().lpd().data(), wt.wave().lpd().size(), cAUndec.get());
-        downsamp(cAUndec.get() + lenAvg, lenSig, d, cA);
+        downsamp(cAUndec.get() + lenAvg, static_cast<std::size_t>(lenSig), 2U, cA);
         wconv(wt, signal.get(), lenSig + lenAvg, wt.wave().hpd().data(), wt.wave().hpd().size(), cAUndec.get());
-        downsamp(cAUndec.get() + lenAvg, lenSig, d, cD);
+        downsamp(cAUndec.get() + lenAvg, static_cast<std::size_t>(lenSig), 2U, cD);
 
     } else if (wt.extension() == SignalExtension::symmetric) {
         auto lf = wt.wave().lpd().size(); // lpd and hpd have the same length
@@ -361,9 +317,9 @@ static auto dwt1(WaveletTransform& wt, double* sig, int lenSig, double* cA, doub
         }
 
         wconv(wt, signal.get(), lenSig + 2 * (lf - 1), wt.wave().lpd().data(), wt.wave().lpd().size(), cAUndec.get());
-        downsamp(cAUndec.get() + lf, lenSig + lf - 2, d, cA);
+        downsamp(cAUndec.get() + lf, static_cast<std::size_t>(lenSig + lf - 2), 2, cA);
         wconv(wt, signal.get(), lenSig + 2 * (lf - 1), wt.wave().hpd().data(), wt.wave().hpd().size(), cAUndec.get());
-        downsamp(cAUndec.get() + lf, lenSig + lf - 2, d, cD);
+        downsamp(cAUndec.get() + lf, static_cast<std::size_t>(lenSig + lf - 2), 2, cD);
     } else {
         throw std::invalid_argument("Signal extension can be either per or sym");
     }
