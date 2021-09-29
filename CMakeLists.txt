@@ -25,14 +25,14 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CheckCXXCompilerFlag)
 
     if (MSVC)
-        check_cxx_compiler_flag("/arch:AVX" COMPILER_AVX_SUPPORTED)
-        if (COMPILER_AVX_SUPPORTED)
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
-        endif ()
+        # check_cxx_compiler_flag("/arch:AVX" COMPILER_AVX_SUPPORTED)
+        # if (COMPILER_AVX_SUPPORTED)
+        #     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
+        # endif ()
     else ()
-        check_cxx_compiler_flag("-mavx" COMPILER_AVX_SUPPORTED)
-        if (COMPILER_AVX_SUPPORTED)
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx")
+        check_cxx_compiler_flag("-msse2" COMPILER_SSE2_SUPPORTED)
+        if (COMPILER_SSE2_SUPPORTED)
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2")
         endif ()
     endif ()
 
@@ -82,7 +82,7 @@ conan_cmake_configure(
         boost:without_type_erasure=True
         boost:without_wave=True
         fftw:precision=double
-        fftw:simd=avx
+        fftw:simd=sse2
         kissfft:datatype=double
 )
 conan_cmake_autodetect(settings)
