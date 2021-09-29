@@ -61,12 +61,14 @@ conan_cmake_configure(
         fftw/3.3.9
         fmt/8.0.1
         coz/cci.20210322
+        kissfft/131.1.0
     GENERATORS
         cmake_find_package
     OPTIONS
         boost:header_only=True
         fftw:precision=double
         fftw:simd=avx
+        kissfft:datatype=double
 )
 conan_cmake_autodetect(settings)
 conan_cmake_install(PATH_OR_REFERENCE . BUILD outdated REMOTE conancenter SETTINGS ${settings})
@@ -75,6 +77,7 @@ find_package(Boost 1.77 REQUIRED)
 find_package(FFTW3 REQUIRED)
 find_package(fmt REQUIRED)
 find_package(coz-profiler REQUIRED)
+find_package(kissfft REQUIRED)
 
 add_subdirectory(3rd_party/span)
 
