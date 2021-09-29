@@ -4,6 +4,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     PUBLIC
         lt::Span
         Boost::headers
+        Boost::filesystem
+        Boost::json
         FFTW3::fftw3
         kissfft::kissfft-double
         fmt::fmt
@@ -14,6 +16,36 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 )
 target_sources(${CMAKE_PROJECT_NAME}
     PRIVATE
+        "algorithm.hpp"
+        "array.hpp"
+        "bit.hpp"
+        "cassert.hpp"
+        "cfloat.hpp"
+        "cmath.hpp"
+        "complex.hpp"
+        "cstddef.hpp"
+        "cstdlib.hpp"
+        "cstring.hpp"
+        "filesystem.hpp"
+        "format.hpp"
+        "fstream.hpp"
+        "functional.hpp"
+        "iterator.hpp"
+        "limits.hpp"
+        "memory.hpp"
+        "numbers.hpp"
+        "numeric.hpp"
+        "optional.hpp"
+        "random.hpp"
+        "span.hpp"
+        "sstream.hpp"
+        "string.hpp"
+        "string_view.hpp"
+        "type_traits.hpp"
+        "unordered_map.hpp"
+        "utility.hpp"
+        "vector.hpp"
+
         core/AudioFile.h
 
         dsp/convolution.hpp

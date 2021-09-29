@@ -65,7 +65,22 @@ conan_cmake_configure(
     GENERATORS
         cmake_find_package
     OPTIONS
-        boost:header_only=True
+        boost:system_no_deprecated=True
+        boost:asio_no_deprecated=True
+        boost:filesystem_no_deprecated=True
+        boost:without_context=True
+        boost:without_contract=True
+        boost:without_coroutine=True
+        boost:without_fiber=True
+        boost:without_graph=True
+        boost:without_graph_parallel=True
+        boost:without_iostreams=True
+        boost:without_log=True
+        boost:without_regex=True
+        boost:without_serialization=True
+        boost:without_test=True
+        boost:without_type_erasure=True
+        boost:without_wave=True
         fftw:precision=double
         fftw:simd=avx
         kissfft:datatype=double
@@ -73,7 +88,7 @@ conan_cmake_configure(
 conan_cmake_autodetect(settings)
 conan_cmake_install(PATH_OR_REFERENCE . BUILD outdated REMOTE conancenter SETTINGS ${settings})
 
-find_package(Boost 1.77 REQUIRED)
+find_package(Boost 1.77 REQUIRED filesystem json)
 find_package(FFTW3 REQUIRED)
 find_package(fmt REQUIRED)
 find_package(coz-profiler REQUIRED)

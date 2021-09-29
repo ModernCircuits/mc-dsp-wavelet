@@ -24,6 +24,7 @@ wavelib_add_test(FFTTest)
 wavelib_add_test(DirectConvolverTest)
 wavelib_add_test(OverlapSaveConvolverTest)
 wavelib_add_test(WindowTest)
+wavelib_add_test(StdHeadersTest)
 
 wavelib_add_test(cwttest)
 wavelib_add_test(dwttest)
