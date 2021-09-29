@@ -1,16 +1,15 @@
 #include "lt/cmath.hpp"
+#include "lt/cstdlib.hpp"
 #include "lt/random.hpp"
 
 #include "lt/testing/test.hpp"
-
-#include "lt/cstdlib.hpp"
 
 auto absmax(float* array, std::size_t n) -> float
 {
     auto max = 0.0;
     for (auto i = std::size_t { 0 }; i < n; ++i) {
-        if (fabs(array[i]) >= max) {
-            max = fabs(array[i]);
+        if (std::fabs(array[i]) >= max) {
+            max = std::fabs(array[i]);
         }
     }
     return max;

@@ -22,7 +22,7 @@ auto mean(It f, It l) -> float
 auto peakDetect(lt::span<float> data) -> std::size_t
 {
     auto peaks = std::minmax_element(data.begin(), data.end());
-    if (fabs(*peaks.first) >= fabs(*peaks.second)) {
+    if (std::fabs(*peaks.first) >= std::fabs(*peaks.second)) {
         return std::distance(data.begin(), peaks.first);
     }
     return std::distance(data.begin(), peaks.second);

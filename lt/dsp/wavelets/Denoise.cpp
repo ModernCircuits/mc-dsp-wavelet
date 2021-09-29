@@ -232,7 +232,7 @@ auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
                 xSum = 0.0;
 
                 for (auto i = 0; i < dwtLen; ++i) {
-                    dout[i] = fabs(wt.output()[len + i] / sigma);
+                    dout[i] = std::fabs(wt.output()[len + i] / sigma);
                 }
 
                 std::sort(dout.get(), dout.get() + dwtLen, std::less<float> {});

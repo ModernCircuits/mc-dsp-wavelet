@@ -281,13 +281,13 @@ auto coifCoefTests()
         t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
         t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0;
 
-        REQUIRE(fabs(t1) <= epsilon);
-        REQUIRE(fabs(t2) <= epsilon);
-        REQUIRE(fabs(t3) <= epsilon);
-        REQUIRE(fabs(t4) <= epsilon);
+        REQUIRE(std::fabs(t1) <= epsilon);
+        REQUIRE(std::fabs(t2) <= epsilon);
+        REQUIRE(std::fabs(t3) <= epsilon);
+        REQUIRE(std::fabs(t4) <= epsilon);
         for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
             t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
-            REQUIRE(fabs(t5) <= epsilon);
+            REQUIRE(std::fabs(t5) <= epsilon);
         }
     }
 }
@@ -312,14 +312,14 @@ auto symCoefTests()
         t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
         t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0;
 
-        REQUIRE(fabs(t1) <= epsilon);
-        REQUIRE(fabs(t2) <= epsilon);
-        REQUIRE(fabs(t3) <= epsilon);
-        REQUIRE(fabs(t4) <= epsilon);
+        REQUIRE(std::fabs(t1) <= epsilon);
+        REQUIRE(std::fabs(t2) <= epsilon);
+        REQUIRE(std::fabs(t3) <= epsilon);
+        REQUIRE(std::fabs(t4) <= epsilon);
 
         for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
             t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
-            REQUIRE(fabs(t5) <= epsilon);
+            REQUIRE(std::fabs(t5) <= epsilon);
         }
     }
 }
@@ -403,12 +403,12 @@ auto rBiorCoefTests()
         t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
         t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0 / std::sqrt(2.0);
 
-        REQUIRE(fabs(t1) <= epsilon);
-        REQUIRE(fabs(t2) <= epsilon);
-        REQUIRE(fabs(t3) <= epsilon);
-        REQUIRE(fabs(t4) <= epsilon);
-        REQUIRE(fabs(t5) <= epsilon);
-        REQUIRE(fabs(t6) <= epsilon);
+        REQUIRE(std::fabs(t1) <= epsilon);
+        REQUIRE(std::fabs(t2) <= epsilon);
+        REQUIRE(std::fabs(t3) <= epsilon);
+        REQUIRE(std::fabs(t4) <= epsilon);
+        REQUIRE(std::fabs(t5) <= epsilon);
+        REQUIRE(std::fabs(t6) <= epsilon);
     }
 }
 

@@ -45,12 +45,12 @@ FFTConvolver::FFTConvolver(std::size_t signalSize, std::size_t patchSize)
 
 auto FFTConvolver::convolute(float const* signal, float const* patch, float* output) const -> void
 {
-    std::fill(signalScratch_.get(), std::next(signalScratch_.get(), totalSize_), 0.0f);
-    std::fill(patchScratch_.get(), std::next(patchScratch_.get(), totalSize_), 0.0f);
-    std::fill(tmp_.get(), std::next(tmp_.get(), totalSize_), 0.0f);
+    std::fill(signalScratch_.get(), std::next(signalScratch_.get(), totalSize_), 0.0F);
+    std::fill(patchScratch_.get(), std::next(patchScratch_.get(), totalSize_), 0.0F);
+    std::fill(tmp_.get(), std::next(tmp_.get(), totalSize_), 0.0F);
     std::fill(signalScratchOut_.get(), std::next(signalScratchOut_.get(), totalSize_), Complex<float> {});
     std::fill(patchScratchOut_.get(), std::next(patchScratchOut_.get(), totalSize_), Complex<float> {});
-    std::fill(tmpOut_.get(), std::next(tmpOut_.get(), totalSize_), 0.0f);
+    std::fill(tmpOut_.get(), std::next(tmpOut_.get(), totalSize_), 0.0F);
 
     for (auto i = std::size_t { 0 }; i < totalSize_; i++) {
         if (i < signalSize_) {

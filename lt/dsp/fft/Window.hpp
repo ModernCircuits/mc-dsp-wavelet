@@ -59,7 +59,7 @@ namespace dsp {
         }
 
         case WindowFunction::blackman: {
-            constexpr T alpha = 0.16f;
+            constexpr T alpha = 0.16F;
 
             for (std::size_t i = 0; i < size; ++i) {
                 auto const cos2 = ncos<T>(2, i, size);
