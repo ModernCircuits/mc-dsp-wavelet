@@ -88,7 +88,7 @@ conan_cmake_configure(
 conan_cmake_autodetect(settings)
 conan_cmake_install(PATH_OR_REFERENCE . BUILD outdated REMOTE conancenter SETTINGS ${settings})
 
-find_package(Boost 1.77 REQUIRED filesystem json)
+find_package(Boost 1.77 REQUIRED container filesystem json)
 find_package(FFTW3 REQUIRED)
 find_package(fmt REQUIRED)
 find_package(coz-profiler REQUIRED)

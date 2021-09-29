@@ -4,6 +4,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     PUBLIC
         lt::Span
         Boost::headers
+        Boost::container
         Boost::filesystem
         Boost::json
         FFTW3::fftw3
@@ -46,46 +47,46 @@ target_sources(${CMAKE_PROJECT_NAME}
         "utility.hpp"
         "vector.hpp"
 
-        core/AudioFile.h
+        "core/AudioFile.h"
 
-        dsp/convolution.hpp
-        dsp/convolution/FFTConvolver.cpp
-        dsp/convolution/FFTConvolver.hpp
-        dsp/convolution/ConvolutionMethod.hpp
-        dsp/convolution/OverlapSaveConvolver.cpp
-        dsp/convolution/OverlapSaveConvolver.hpp
+        "dsp/convolution.hpp"
+        "dsp/convolution/FFTConvolver.cpp"
+        "dsp/convolution/FFTConvolver.hpp"
+        "dsp/convolution/ConvolutionMethod.hpp"
+        "dsp/convolution/OverlapSaveConvolver.cpp"
+        "dsp/convolution/OverlapSaveConvolver.hpp"
 
-        dsp/fft.hpp
-        dsp/fft/FFT.hpp
-        dsp/fft/FFT.cpp
-        dsp/fft/STFT.hpp
-        dsp/fft/STFT.cpp
-        dsp/fft/Window.hpp
-        dsp/fft/WindowFunction.hpp
-        dsp/fft/WindowFunction.cpp
+        "dsp/fft.hpp"
+        "dsp/fft/FFT.hpp"
+        "dsp/fft/FFT.cpp"
+        "dsp/fft/STFT.hpp"
+        "dsp/fft/STFT.cpp"
+        "dsp/fft/Window.hpp"
+        "dsp/fft/WindowFunction.hpp"
+        "dsp/fft/WindowFunction.cpp"
 
-        dsp/wavelets.hpp
-        dsp/wavelets/common.cpp
-        dsp/wavelets/common.hpp
-        dsp/wavelets/ContinuousWaveletTransform.cpp
-        dsp/wavelets/ContinuousWaveletTransform.hpp
-        dsp/wavelets/Denoise.hpp
-        dsp/wavelets/Denoise.cpp
-        dsp/wavelets/SignalExtension.hpp
-        dsp/wavelets/Wavelet.cpp
-        dsp/wavelets/Wavelet.hpp
-        dsp/wavelets/WaveletPacketTransform.cpp
-        dsp/wavelets/WaveletPacketTransform.hpp
-        dsp/wavelets/WaveletTransform2D.cpp
-        dsp/wavelets/WaveletTransform2D.hpp
-        dsp/wavelets/WaveletTransform.cpp
-        dsp/wavelets/WaveletTransform.hpp
-        dsp/wavelets/WaveletTree.cpp
-        dsp/wavelets/WaveletTree.hpp
+        "dsp/wavelets.hpp"
+        "dsp/wavelets/common.cpp"
+        "dsp/wavelets/common.hpp"
+        "dsp/wavelets/ContinuousWaveletTransform.cpp"
+        "dsp/wavelets/ContinuousWaveletTransform.hpp"
+        "dsp/wavelets/Denoise.hpp"
+        "dsp/wavelets/Denoise.cpp"
+        "dsp/wavelets/SignalExtension.hpp"
+        "dsp/wavelets/Wavelet.cpp"
+        "dsp/wavelets/Wavelet.hpp"
+        "dsp/wavelets/WaveletPacketTransform.cpp"
+        "dsp/wavelets/WaveletPacketTransform.hpp"
+        "dsp/wavelets/WaveletTransform2D.cpp"
+        "dsp/wavelets/WaveletTransform2D.hpp"
+        "dsp/wavelets/WaveletTransform.cpp"
+        "dsp/wavelets/WaveletTransform.hpp"
+        "dsp/wavelets/WaveletTree.cpp"
+        "dsp/wavelets/WaveletTree.hpp"
 
-        dsp/wavelets/filters/coif.hpp
-        dsp/wavelets/filters/daubechies.hpp
-        dsp/wavelets/filters/h.hpp
-        dsp/wavelets/filters/meyer.hpp
-        dsp/wavelets/filters/sym.hpp
+        "dsp/wavelets/filters/coif.hpp"
+        "dsp/wavelets/filters/daubechies.hpp"
+        "dsp/wavelets/filters/h.hpp"
+        "dsp/wavelets/filters/meyer.hpp"
+        "dsp/wavelets/filters/sym.hpp"
 )
