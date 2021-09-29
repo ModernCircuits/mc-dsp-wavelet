@@ -3,14 +3,15 @@
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/wavelets/Wavelet.hpp"
 
+#include "lt/preprocessor.hpp"
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
 struct WaveletPacketTransform {
     WaveletPacketTransform(Wavelet* wave, std::size_t siglength, std::size_t j);
 
-    [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *wave_; }
-    [[nodiscard]] auto signalLength() const noexcept -> int { return signalLength_; }
+    LT_NODISCARD auto wave() const noexcept -> Wavelet const& { return *wave_; }
+    LT_NODISCARD auto signalLength() const noexcept -> int { return signalLength_; }
 
     FFTConvolver* cobj {};
     int outlength {}; // Length of the output DWT vector

@@ -28,6 +28,7 @@
 #include "lt/fstream.hpp"
 #include "lt/iterator.hpp"
 #include "lt/limits.hpp"
+#include "lt/preprocessor.hpp"
 #include "lt/string.hpp"
 #include "lt/unordered_map.hpp"
 #include "lt/vector.hpp"
@@ -80,25 +81,25 @@ public:
     auto save(std::string filePath, AudioFileFormat format = AudioFileFormat::Wave) -> bool;
 
     /** @Returns the sample rate */
-    [[nodiscard]] auto getSampleRate() const -> uint32_t;
+    LT_NODISCARD auto getSampleRate() const -> uint32_t;
 
     /** @Returns the number of audio channels in the buffer */
-    [[nodiscard]] auto getNumChannels() const -> int;
+    LT_NODISCARD auto getNumChannels() const -> int;
 
     /** @Returns true if the audio file is mono */
-    [[nodiscard]] auto isMono() const -> bool;
+    LT_NODISCARD auto isMono() const -> bool;
 
     /** @Returns true if the audio file is stereo */
-    [[nodiscard]] auto isStereo() const -> bool;
+    LT_NODISCARD auto isStereo() const -> bool;
 
     /** @Returns the bit depth of each sample */
-    [[nodiscard]] auto getBitDepth() const -> int;
+    LT_NODISCARD auto getBitDepth() const -> int;
 
     /** @Returns the number of samples per channel */
-    [[nodiscard]] auto getNumSamplesPerChannel() const -> int;
+    LT_NODISCARD auto getNumSamplesPerChannel() const -> int;
 
     /** @Returns the length in seconds of the audio file based on the number of samples and sample rate */
-    [[nodiscard]] auto getLengthInSeconds() const -> double;
+    LT_NODISCARD auto getLengthInSeconds() const -> double;
 
     /** Prints a summary of the audio file to the console */
     void printSummary() const;

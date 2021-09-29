@@ -1,19 +1,20 @@
 #pragma once
 
 #include "lt/memory.hpp"
+#include "lt/preprocessor.hpp"
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
 struct Wavelet {
     explicit Wavelet(char const* wname);
 
-    [[nodiscard]] auto size() const noexcept -> std::size_t { return size_; }
-    [[nodiscard]] auto name() const noexcept -> std::string const& { return name_; }
+    LT_NODISCARD auto size() const noexcept -> std::size_t { return size_; }
+    LT_NODISCARD auto name() const noexcept -> std::string const& { return name_; }
 
-    [[nodiscard]] auto lpd() const noexcept -> lt::span<double> { return lpd_; }
-    [[nodiscard]] auto hpd() const noexcept -> lt::span<double> { return hpd_; }
-    [[nodiscard]] auto lpr() const noexcept -> lt::span<double> { return lpr_; }
-    [[nodiscard]] auto hpr() const noexcept -> lt::span<double> { return hpr_; }
+    LT_NODISCARD auto lpd() const noexcept -> lt::span<double> { return lpd_; }
+    LT_NODISCARD auto hpd() const noexcept -> lt::span<double> { return hpd_; }
+    LT_NODISCARD auto lpr() const noexcept -> lt::span<double> { return lpr_; }
+    LT_NODISCARD auto hpr() const noexcept -> lt::span<double> { return hpr_; }
 
 private:
     std::string name_;

@@ -3,17 +3,18 @@
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/wavelets/Wavelet.hpp"
 
+#include "lt/preprocessor.hpp"
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
 struct WaveletTransform2D {
     WaveletTransform2D(Wavelet& wave, char const* method, std::size_t rows, std::size_t cols, std::size_t j);
 
-    [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *wave_; }
-    [[nodiscard]] auto method() const noexcept -> std::string const& { return method_; }
+    LT_NODISCARD auto wave() const noexcept -> Wavelet const& { return *wave_; }
+    LT_NODISCARD auto method() const noexcept -> std::string const& { return method_; }
 
-    [[nodiscard]] auto rows() const noexcept -> int { return rows_; }
-    [[nodiscard]] auto cols() const noexcept -> int { return cols_; }
+    LT_NODISCARD auto rows() const noexcept -> int { return rows_; }
+    LT_NODISCARD auto cols() const noexcept -> int { return cols_; }
 
     int outlength {}; // Length of the output DWT vector
     int J {}; // Number of decomposition Levels

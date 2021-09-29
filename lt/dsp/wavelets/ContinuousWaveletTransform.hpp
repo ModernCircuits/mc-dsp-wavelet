@@ -2,13 +2,14 @@
 
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 
+#include "lt/preprocessor.hpp"
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
 struct ContinuousWaveletTransform {
     ContinuousWaveletTransform(char const* wave, double param, int siglength, double dt, int j);
 
-    [[nodiscard]] auto wave() const noexcept -> std::string const& { return wave_; }
+    LT_NODISCARD auto wave() const noexcept -> std::string const& { return wave_; }
     auto scales(double s0, double dj, char const* type, int power) -> void;
 
     int signalLength;

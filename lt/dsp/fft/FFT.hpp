@@ -3,6 +3,7 @@
 #include "lt/algorithm.hpp"
 #include "lt/complex.hpp"
 #include "lt/memory.hpp"
+#include "lt/preprocessor.hpp"
 
 #include "kissfft/kissfft.hh"
 
@@ -18,9 +19,9 @@ struct FFT {
 
     auto perform(Complex<double> const* inp, Complex<double>* oup) -> void;
 
-    [[nodiscard]] auto direction() const noexcept -> Direction;
-    [[nodiscard]] auto size() const noexcept -> int;
-    [[nodiscard]] auto engine() -> kissfft<double>& { return fftEngine_; }
+    LT_NODISCARD auto direction() const noexcept -> Direction;
+    LT_NODISCARD auto size() const noexcept -> int;
+    LT_NODISCARD auto engine() -> kissfft<double>& { return fftEngine_; }
 
 private:
     int size_;

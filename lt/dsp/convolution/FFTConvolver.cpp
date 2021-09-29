@@ -1,12 +1,12 @@
 #include "FFTConvolver.hpp"
 
-#include "lt/cmath.hpp"
-
 #include "lt/algorithm.hpp"
+#include "lt/cmath.hpp"
 #include "lt/memory.hpp"
+#include "lt/preprocessor.hpp"
 
 namespace {
-[[nodiscard]] auto factorf(std::size_t m) -> std::size_t
+LT_NODISCARD auto factorf(std::size_t m) -> std::size_t
 {
     auto n = m;
     while (n % 7 == 0) {
@@ -24,7 +24,7 @@ namespace {
     return n;
 }
 
-[[nodiscard]] auto findnexte(std::size_t m) -> std::size_t
+LT_NODISCARD auto findnexte(std::size_t m) -> std::size_t
 {
     auto n = m;
     while (factorf(n) != 1 || n % 2 != 0) {

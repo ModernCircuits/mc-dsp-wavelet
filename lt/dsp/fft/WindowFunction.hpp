@@ -1,5 +1,6 @@
 #pragma once
 
+#include "lt/preprocessor.hpp"
 #include "lt/string.hpp"
 
 namespace lt::dsp {
@@ -13,6 +14,6 @@ enum struct WindowFunction {
     blackmanHarris,
 };
 
-[[nodiscard]] auto toString(WindowFunction wf) -> std::string;
+LT_NODISCARD auto toString(WindowFunction wf) -> std::string;
 
 } // namespace lt::dsp

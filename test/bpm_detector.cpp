@@ -2,15 +2,15 @@
 #include "lt/dsp/convolution.hpp"
 #include "lt/dsp/wavelets.hpp"
 
+#include "lt/algorithm.hpp"
 #include "lt/cmath.hpp"
 #include "lt/format.hpp"
+#include "lt/numeric.hpp"
+#include "lt/preprocessor.hpp"
+#include "lt/utility.hpp"
 
 #include "lt/testing/test.hpp"
 #include "readFileToVector.hpp"
-
-#include "lt/algorithm.hpp"
-#include "lt/numeric.hpp"
-#include "lt/utility.hpp"
 
 template <typename It>
 auto mean(It f, It l) -> double
@@ -37,7 +37,7 @@ struct BpmDetect {
         wt_.convMethod(ConvolutionMethod::direct);
     }
 
-    [[nodiscard]] auto perform(lt::span<double> input, double sampleRate) -> double
+    LT_NODISCARD auto perform(lt::span<double> input, double sampleRate) -> double
     {
 
         auto const levels = 4;

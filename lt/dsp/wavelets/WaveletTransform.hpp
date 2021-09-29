@@ -5,26 +5,27 @@
 #include "lt/dsp/wavelets/SignalExtension.hpp"
 #include "lt/dsp/wavelets/Wavelet.hpp"
 
+#include "lt/preprocessor.hpp"
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
 struct WaveletTransform {
     WaveletTransform(Wavelet& wave, char const* method, std::size_t siglength, std::size_t j);
 
-    [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *wave_; }
-    [[nodiscard]] auto levels() const noexcept -> int { return static_cast<int>(levels_); }
-    [[nodiscard]] auto signalLength() const noexcept -> std::size_t { return signalLength_; }
-    [[nodiscard]] auto method() const noexcept -> std::string const& { return method_; }
+    LT_NODISCARD auto wave() const noexcept -> Wavelet const& { return *wave_; }
+    LT_NODISCARD auto levels() const noexcept -> int { return static_cast<int>(levels_); }
+    LT_NODISCARD auto signalLength() const noexcept -> std::size_t { return signalLength_; }
+    LT_NODISCARD auto method() const noexcept -> std::string const& { return method_; }
 
     auto extension(SignalExtension ext) -> void;
-    [[nodiscard]] auto extension() const noexcept -> SignalExtension { return ext_; }
+    LT_NODISCARD auto extension() const noexcept -> SignalExtension { return ext_; }
 
     auto convMethod(ConvolutionMethod method) -> void;
-    [[nodiscard]] auto convMethod() const noexcept -> ConvolutionMethod { return cmethod_; }
+    LT_NODISCARD auto convMethod() const noexcept -> ConvolutionMethod { return cmethod_; }
 
-    [[nodiscard]] auto output() const -> lt::span<double>;
-    [[nodiscard]] auto approx() const -> lt::span<double>;
-    [[nodiscard]] auto detail(std::size_t level) const -> lt::span<double>;
+    LT_NODISCARD auto output() const -> lt::span<double>;
+    LT_NODISCARD auto approx() const -> lt::span<double>;
+    LT_NODISCARD auto detail(std::size_t level) const -> lt::span<double>;
 
 private:
     Wavelet* wave_;

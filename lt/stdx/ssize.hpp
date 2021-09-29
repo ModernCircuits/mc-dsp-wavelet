@@ -3,6 +3,8 @@
 #include <iterator>
 #include <type_traits>
 
+#include "lt/preprocessor.hpp"
+
 #if defined(__cpp_lib_ssize)
 namespace lt {
 using std::ssize;
@@ -10,7 +12,7 @@ using std::ssize;
 #else
 namespace lt {
 template <typename C>
-[[nodiscard]] constexpr auto ssize(C const& c)
+LT_NODISCARD constexpr auto ssize(C const& c)
     -> std::common_type_t<std::ptrdiff_t,
         std::make_signed_t<decltype(c.size())>>
 {
@@ -19,7 +21,7 @@ template <typename C>
     return static_cast<R>(c.size());
 }
 template <typename T, std::ptrdiff_t N>
-[[nodiscard]] constexpr auto ssize(T const (&array)[N]) noexcept -> std::ptrdiff_t
+LT_NODISCARD constexpr auto ssize(T const (&array)[N]) noexcept -> std::ptrdiff_t
 {
     (void)array;
     return N;

@@ -3,6 +3,7 @@
 #include "lt/dsp/convolution/FFTConvolver.hpp"
 #include "lt/dsp/wavelets/Wavelet.hpp"
 
+#include "lt/preprocessor.hpp"
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
@@ -10,7 +11,7 @@ struct WaveletTree {
     WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t j);
 
     auto extension(char const* newExtension) noexcept -> void;
-    [[nodiscard]] auto extension() const noexcept -> std::string const&;
+    LT_NODISCARD auto extension() const noexcept -> std::string const&;
 
     auto nodeLength(std::size_t x) -> std::size_t;
     auto coeffs(std::size_t x, std::size_t y, double* coeffs, std::size_t n) const -> void;

@@ -6,6 +6,7 @@
 #include "lt/cstring.hpp"
 #include "lt/iterator.hpp"
 #include "lt/memory.hpp"
+#include "lt/preprocessor.hpp"
 #include "lt/vector.hpp"
 
 #include "fftw3.h"
@@ -25,21 +26,21 @@ struct Signal {
         memset(data_, 0, sizeof(T) * size);
     }
 
-    [[nodiscard]] auto begin() -> T* { return data_; }
-    [[nodiscard]] auto begin() const -> const T* { return data_; }
-    [[nodiscard]] auto cbegin() const -> const T* { return data_; }
+    LT_NODISCARD auto begin() -> T* { return data_; }
+    LT_NODISCARD auto begin() const -> const T* { return data_; }
+    LT_NODISCARD auto cbegin() const -> const T* { return data_; }
 
-    [[nodiscard]] auto end() -> T* { return begin() + size(); }
-    [[nodiscard]] auto end() const -> const T* { return begin() + size(); }
-    [[nodiscard]] auto cend() const -> const T* { return begin() + size(); }
+    LT_NODISCARD auto end() -> T* { return begin() + size(); }
+    LT_NODISCARD auto end() const -> const T* { return begin() + size(); }
+    LT_NODISCARD auto cend() const -> const T* { return begin() + size(); }
 
-    [[nodiscard]] auto size() -> size_t& { return size_; }
-    [[nodiscard]] auto size() const -> std::size_t const& { return size_; }
-    [[nodiscard]] auto data() -> T* { return data_; }
-    [[nodiscard]] auto data() const -> const T* { return data_; }
+    LT_NODISCARD auto size() -> size_t& { return size_; }
+    LT_NODISCARD auto size() const -> std::size_t const& { return size_; }
+    LT_NODISCARD auto data() -> T* { return data_; }
+    LT_NODISCARD auto data() const -> const T* { return data_; }
 
-    [[nodiscard]] auto operator[](std::size_t idx) -> T& { return data_[idx]; }
-    [[nodiscard]] auto operator[](std::size_t idx) const -> T& { return data_[idx]; }
+    LT_NODISCARD auto operator[](std::size_t idx) -> T& { return data_[idx]; }
+    LT_NODISCARD auto operator[](std::size_t idx) const -> T& { return data_[idx]; }
 
 protected:
     T* data_;

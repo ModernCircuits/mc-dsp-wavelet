@@ -1,5 +1,6 @@
 #pragma once
 
+#include "lt/preprocessor.hpp"
 #include "lt/string.hpp"
 
 enum struct ConvolutionMethod {
@@ -7,7 +8,7 @@ enum struct ConvolutionMethod {
     fft,
 };
 
-[[nodiscard]] inline auto toString(ConvolutionMethod method) -> std::string
+LT_NODISCARD inline auto toString(ConvolutionMethod method) -> std::string
 {
     if (method == ConvolutionMethod::direct) {
         return "direct";
