@@ -1,5 +1,7 @@
 #include "STFT.hpp"
 
-namespace lt::dsp {
+namespace lt {
+namespace dsp {
 
-} // namespace lt::dsp
+} // namespace dsp
+} // namespace lt

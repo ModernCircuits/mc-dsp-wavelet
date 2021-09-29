@@ -1,13 +1,13 @@
 #pragma once
 
-inline constexpr double sym2[4] = {
+constexpr double sym2[4] = {
     0.48296291314469025,
     0.83651630373746899,
     0.22414386804185735,
     -0.12940952255092145,
 };
 
-inline constexpr double sym3[6] = {
+constexpr double sym3[6] = {
     0.33267055295095688,
     0.80689150931333875,
     0.45987750211933132,
@@ -16,14 +16,14 @@ inline constexpr double sym3[6] = {
     0.035226291882100656,
 };
 
-inline constexpr double sym4[8] = {
+constexpr double sym4[8] = {
     0.032223100604042702, -0.012603967262037833,
     -0.099219543576847216, 0.29785779560527736,
     0.80373875180591614, 0.49761866763201545,
     -0.02963552764599851, -0.075765714789273325
 };
 
-inline constexpr double sym5[10] = {
+constexpr double sym5[10] = {
     0.019538882735286728,
     -0.021101834024758855,
     -0.17532808990845047,
@@ -36,7 +36,7 @@ inline constexpr double sym5[10] = {
     0.027333068345077982,
 };
 
-inline constexpr double sym6[12] = {
+constexpr double sym6[12] = {
     -0.007800708325034148,
     0.0017677118642428036,
     0.044724901770665779,
@@ -51,7 +51,7 @@ inline constexpr double sym6[12] = {
     0.015404109327027373,
 };
 
-inline constexpr double sym7[14] = {
+constexpr double sym7[14] = {
     0.010268176708511255,
     0.0040102448715336634,
     -0.10780823770381774,
@@ -68,7 +68,7 @@ inline constexpr double sym7[14] = {
     0.0026818145682578781,
 };
 
-inline constexpr double sym8[16] = {
+constexpr double sym8[16] = {
     0.0018899503327594609,
     -0.0003029205147213668,
     -0.014952258337048231,
@@ -87,7 +87,7 @@ inline constexpr double sym8[16] = {
     -0.0033824159510061256,
 };
 
-inline constexpr double sym9[18] = {
+constexpr double sym9[18] = {
     0.0010694900329086053,
     -0.00047315449868008311,
     -0.010264064027633142,
@@ -108,7 +108,7 @@ inline constexpr double sym9[18] = {
     0.0014009155259146807,
 };
 
-inline constexpr double sym10[20] = {
+constexpr double sym10[20] = {
     -0.00045932942100465878,
     5.7036083618494284e-005,
     0.0045931735853118284,
@@ -131,7 +131,7 @@ inline constexpr double sym10[20] = {
     0.00077015980911449011,
 };
 
-inline constexpr double sym11[22] = {
+constexpr double sym11[22] = {
     0.00048926361026192387,
     0.00011053509764272153,
     -0.0063896036664548919,
@@ -156,7 +156,7 @@ inline constexpr double sym11[22] = {
     0.00017172195069934854,
 };
 
-inline constexpr double sym12[24] = {
+constexpr double sym12[24] = {
     -0.00017906658697508691,
     -1.8158078862617515e-005,
     0.0023502976141834648,
@@ -183,7 +183,7 @@ inline constexpr double sym12[24] = {
     0.00011196719424656033,
 };
 
-inline constexpr double sym13[26] = {
+constexpr double sym13[26] = {
     7.0429866906944016e-005,
     3.6905373423196241e-005,
     -0.0007213643851362283,
@@ -212,7 +212,7 @@ inline constexpr double sym13[26] = {
     6.8203252630753188e-005,
 };
 
-inline constexpr double sym14[28] = {
+constexpr double sym14[28] = {
     4.4618977991475265e-005,
     1.9329016965523917e-005,
     -0.00060576018246643346,
@@ -243,7 +243,7 @@ inline constexpr double sym14[28] = {
     -2.5879090265397886e-005,
 };
 
-inline constexpr double sym15[30] = {
+constexpr double sym15[30] = {
     2.8660708525318081e-005,
     2.1717890150778919e-005,
     -0.00040216853760293483,
@@ -276,7 +276,7 @@ inline constexpr double sym15[30] = {
     9.7124197379633478e-006,
 };
 
-inline constexpr double sym16[32] = {
+constexpr double sym16[32] = {
     -1.0797982104319795e-005,
     -5.3964831793152419e-006,
     0.00016545679579108483,
@@ -311,7 +311,7 @@ inline constexpr double sym16[32] = {
     6.2300067012207606e-006,
 };
 
-inline constexpr double sym17[34] = {
+constexpr double sym17[34] = {
     3.7912531943321266e-006,
     -2.4527163425832999e-006,
     -7.6071244056051285e-005,
@@ -348,7 +348,7 @@ inline constexpr double sym17[34] = {
     4.297343327345983e-006,
 };
 
-inline constexpr double sym18[36] = {
+constexpr double sym18[36] = {
     -1.5131530692371587e-006,
     7.8472980558317646e-007,
     2.9557437620930811e-005,
@@ -387,7 +387,7 @@ inline constexpr double sym18[36] = {
     2.6126125564836423e-006,
 };
 
-inline constexpr double sym19[38] = {
+constexpr double sym19[38] = {
     1.7509367995348687e-006,
     2.0623170632395688e-006,
     -2.8151138661550245e-005,
@@ -428,7 +428,7 @@ inline constexpr double sym19[38] = {
     5.4877327682158382e-007,
 };
 
-inline constexpr double sym20[40] = {
+constexpr double sym20[40] = {
     -6.3291290447763946e-007,
     -3.2567026420174407e-007,
     1.22872527779612e-005,

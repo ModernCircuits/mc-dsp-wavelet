@@ -33,7 +33,8 @@ auto entropyT(double* x, int n, double t) -> double
 
     auto val = 0.0;
     for (auto i = 0; i < n; ++i) {
-        if (auto const x2 = fabs(x[i]); x2 > t) {
+        auto const x2 = fabs(x[i]);
+        if (x2 > t) {
             val += 1;
         }
     }

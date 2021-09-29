@@ -24,7 +24,7 @@ auto testWindow() -> bool
     };
 
     auto size = std::size_t(2048);
-    auto window = std::vector(size, T(0));
+    auto window = std::vector<T>(size, T(0));
 
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::triangular, true);
     REQUIRE(allPositive(window));
@@ -63,7 +63,7 @@ auto testWindow() -> bool
     REQUIRE(allPositive(window));
     REQUIRE(allEqual(window, T(1.0)));
 
-    auto signal = std::vector(size, T(0.5));
+    auto signal = std::vector<T>(size, T(0.5));
     dsp::multiplyWithWindow(begin(signal), end(signal), cbegin(window), cend(window));
     REQUIRE(allPositive(signal));
     REQUIRE(allEqual(signal, T(0.5)));

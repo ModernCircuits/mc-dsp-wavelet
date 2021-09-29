@@ -2,6 +2,8 @@
 
 #include <iterator>
 
+#include "lt/stdx/data.hpp"
+#include "lt/stdx/empty.hpp"
 #include "lt/stdx/size.hpp"
 #include "lt/stdx/ssize.hpp"
 
@@ -15,8 +17,4 @@ using std::cend;
 using std::crend;
 using std::end;
 using std::rend;
-
-using std::data;
-using std::empty;
-
 } // namespace lt

@@ -1,6 +1,7 @@
 #include "lt/dsp/fft.hpp"
 
 #include "lt/format.hpp"
+#include "lt/iterator.hpp"
 
 #include "lt/testing/test.hpp"
 
@@ -39,7 +40,7 @@ auto main() -> int
 
         auto fft = RealFFT { static_cast<int>(testCase.input.size()), FFT::forward };
         auto output = std::vector<Complex<double>>(testCase.expected.size());
-        fft.performRealToComplex(data(testCase.input), data(output));
+        fft.performRealToComplex(lt::data(testCase.input), lt::data(output));
         REQUIRE(std::equal(begin(output), end(output), begin(testCase.expected), closeEnough));
 
         fmt::print("Testing: {0} done\n", testFile);

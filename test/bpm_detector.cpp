@@ -56,7 +56,7 @@ struct BpmDetect {
                 // dwt(wt_, input.data());
                 cA = wt_.approx();
                 cD = wt_.detail(loop + 1);
-                cDMinlen = static_cast<double>(std::size(cD)) / maxDecimation + 1.0;
+                cDMinlen = static_cast<double>(lt::size(cD)) / maxDecimation + 1.0;
                 cDSum.resize(static_cast<std::size_t>(std::floor(cDMinlen)));
                 std::fill(begin(cDSum), end(cDSum), 0.0);
             } else {
@@ -130,12 +130,12 @@ private:
 
 auto median(lt::span<double> data) -> double
 {
-    if (std::empty(data)) {
+    if (lt::empty(data)) {
         return 0.0;
     }
 
     std::sort(std::begin(data), std::end(data));
-    auto const size = std::size(data);
+    auto const size = lt::size(data);
     auto const mid = size / 2;
     return size % 2 == 0 ? (data[mid] + data[mid - 1]) / 2 : data[mid];
 }
@@ -175,16 +175,16 @@ auto main(int argc, char** argv) -> int
     // auto const numSamples = static_cast<size_t>(audioFile.getNumSamplesPerChannel());
 
     auto channel = lt::span<double>(audioFile.samples[0].data(), audioFile.samples[0].size());
-    // channel = channel.subspan(static_cast<std::size_t>(std::size(audioFile.samples[0]) * (0.05 / 100.0)));
-    // channel = channel.last(static_cast<std::size_t>(std::size(audioFile.samples[0]) * (0.05 / 100.0)));
+    // channel = channel.subspan(static_cast<std::size_t>(lt::size(audioFile.samples[0]) * (0.05 / 100.0)));
+    // channel = channel.last(static_cast<std::size_t>(lt::size(audioFile.samples[0]) * (0.05 / 100.0)));
 
     auto const windowSize = static_cast<std::size_t>(std::floor(3.0 * fs));
-    auto const maxWindowIndex = std::size(channel) / windowSize;
+    auto const maxWindowIndex = lt::size(channel) / windowSize;
 
     auto sampsNdx = 0U;
     auto bpms = std::vector<double> {};
     for (auto windowNdx { 0U }; windowNdx < maxWindowIndex; ++windowNdx) {
-        if (sampsNdx + windowSize >= std::size(channel)) {
+        if (sampsNdx + windowSize >= lt::size(channel)) {
             fmt::print("ERROR");
             continue;
         }

@@ -13,13 +13,14 @@ using std::size;
 #else
 namespace lt {
 template <typename C>
-LT_NODISCARD constexpr auto size(const C& c) -> decltype(c.size())
+LT_NODISCARD constexpr auto size(C const& c) -> decltype(c.size())
 {
     return c.size();
 }
 template <typename T, std::size_t N>
-LT_NODISCARD constexpr auto size(const T (&array)[N]) noexcept -> std::size_t
+LT_NODISCARD constexpr auto size(T const (&array)[N]) noexcept -> std::size_t
 {
+    (void)array;
     return N;
 }
 } // namespace lt

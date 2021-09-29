@@ -82,7 +82,7 @@ auto relError(double const* data, double const* rec, std::size_t n) -> double
 
 auto generateRnd() -> double
 {
-    auto rd = std::random_device {};
+    std::random_device rd {};
     auto gen = std::mt19937 { rd() };
     auto dis = std::uniform_real_distribution<double> { 1.0, 100.0 };
     return dis(gen);
@@ -129,7 +129,8 @@ auto toFloat(TestData<double> const& d) -> TestData<float>
 {
     auto result = TestData<float> {};
     for (auto const& line : d) {
-        auto& lineFloat = result.emplace_back();
+        result.emplace_back();
+        auto& lineFloat = result.back();
         for (auto value : line) {
             lineFloat.push_back(static_cast<float>(value));
         }

@@ -19,7 +19,7 @@ auto dwtReconstructionTest()
     auto inp = std::make_unique<double[]>(n);
     auto out = std::make_unique<double[]>(n);
 
-    auto rd = std::random_device {};
+    std::random_device rd {};
     auto gen = std::mt19937 { rd() };
     auto dis = std::uniform_real_distribution<double> { 0.0, 1.0 };
 

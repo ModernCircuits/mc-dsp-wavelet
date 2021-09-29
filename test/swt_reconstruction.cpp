@@ -23,7 +23,7 @@ auto swtReconstructionTest()
     auto inp = makeZeros<double>(n);
     auto out = makeZeros<double>(n);
 
-    auto rd = std::random_device {};
+    std::random_device rd {};
     auto gen = std::mt19937 { rd() };
     auto dis = std::uniform_real_distribution<double> { 0.0, 1.0 };
 

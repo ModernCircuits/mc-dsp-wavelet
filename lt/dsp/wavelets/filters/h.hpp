@@ -1,6 +1,6 @@
 #pragma once
 
-inline constexpr double h1[10] = {
+constexpr double h1[10] = {
     0.0,
     0.0,
     0.0,
@@ -13,12 +13,12 @@ inline constexpr double h1[10] = {
     0.0,
 };
 
-inline constexpr double hm111[2] = {
+constexpr double hm111[2] = {
     0.70710678118654752440084436210,
     0.70710678118654752440084436210,
 };
 
-inline constexpr double hm113[6] = {
+constexpr double hm113[6] = {
     -0.0883883476483184405501055452631,
     0.0883883476483184405501055452631,
     0.70710678118654752440084436210,
@@ -27,7 +27,7 @@ inline constexpr double hm113[6] = {
     -0.0883883476483184405501055452631,
 };
 
-inline constexpr double hm115[10] = {
+constexpr double hm115[10] = {
     0.0165728151840597076031447897368,
     -0.0165728151840597076031447897368,
     -0.1215339780164378557563951247368,
@@ -40,7 +40,7 @@ inline constexpr double hm115[10] = {
     0.0165728151840597076031447897368,
 };
 
-inline constexpr double h2[18] = {
+constexpr double h2[18] = {
     0.0,
     0.0,
     0.0,
@@ -61,7 +61,7 @@ inline constexpr double h2[18] = {
     0.0,
 };
 
-inline constexpr double hm222[6] = {
+constexpr double hm222[6] = {
     -0.1767766952966368811002110905262,
     0.3535533905932737622004221810524,
     1.0606601717798212866012665431573,
@@ -70,7 +70,7 @@ inline constexpr double hm222[6] = {
     0.0,
 };
 
-inline constexpr double hm224[10] = {
+constexpr double hm224[10] = {
     0.0331456303681194152062895794737,
     -0.0662912607362388304125791589473,
     -0.1767766952966368811002110905262,
@@ -83,7 +83,7 @@ inline constexpr double hm224[10] = {
     0.0,
 };
 
-inline constexpr double hm226[14] = {
+constexpr double hm226[14] = {
     -0.0069053396600248781679769957237,
     0.0138106793200497563359539914474,
     0.0469563096881691715422435709210,
@@ -100,7 +100,7 @@ inline constexpr double hm226[14] = {
     0.0,
 };
 
-inline constexpr double hm228[18] = {
+constexpr double hm228[18] = {
     0.0015105430506304420992449678146,
     -0.0030210861012608841984899356291,
     -0.0129475118625466465649568669819,
@@ -121,7 +121,7 @@ inline constexpr double hm228[18] = {
     0.0,
 };
 
-inline constexpr double h3[20] = {
+constexpr double h3[20] = {
     0.0,
     0.0,
     0.0,
@@ -144,14 +144,14 @@ inline constexpr double h3[20] = {
     0.0,
 };
 
-inline constexpr double hm331[4] = {
+constexpr double hm331[4] = {
     -0.3535533905932737622004221810524,
     1.0606601717798212866012665431573,
     1.0606601717798212866012665431573,
     -0.3535533905932737622004221810524,
 };
 
-inline constexpr double hm333[8] = {
+constexpr double hm333[8] = {
     0.0662912607362388304125791589473,
     -0.1988737822087164912377374768420,
     -0.1546796083845572709626847042104,
@@ -162,7 +162,7 @@ inline constexpr double hm333[8] = {
     0.0662912607362388304125791589473,
 };
 
-inline constexpr double hm335[12] = {
+constexpr double hm335[12] = {
     -0.0138106793200497563359539914474,
     0.0414320379601492690078619743421,
     0.0524805814161890740766251675000,
@@ -177,7 +177,7 @@ inline constexpr double hm335[12] = {
     -0.0138106793200497563359539914474,
 };
 
-inline constexpr double hm337[16] = {
+constexpr double hm337[16] = {
     0.0030210861012608841984899356291,
     -0.0090632583037826525954698068873,
     -0.0168317654213106405344439270765,
@@ -196,7 +196,7 @@ inline constexpr double hm337[16] = {
     0.0030210861012608841984899356291,
 };
 
-inline constexpr double hm339[20] = {
+constexpr double hm339[20] = {
     -0.0006797443727836989446602355165,
     0.0020392331183510968339807065496,
     0.0050603192196119810324706421788,
@@ -219,7 +219,7 @@ inline constexpr double hm339[20] = {
     -0.0006797443727836989446602355165,
 };
 
-inline constexpr double h4[10] = {
+constexpr double h4[10] = {
     0.0,
     -0.064538882628697058,
     -0.040689417609164058,
@@ -232,7 +232,7 @@ inline constexpr double h4[10] = {
     0.0,
 };
 
-inline constexpr double hm444[10] = {
+constexpr double hm444[10] = {
     0.03782845550726404,
     -0.023849465019556843,
     -0.11062440441843718,
@@ -245,7 +245,7 @@ inline constexpr double hm444[10] = {
     0.0,
 };
 
-inline constexpr double h5[12] = {
+constexpr double h5[12] = {
     0.013456709459118716,
     -0.0026949668801115071,
     -0.13670658466432914,
@@ -260,7 +260,7 @@ inline constexpr double h5[12] = {
     0.0,
 };
 
-inline constexpr double hm555[12] = {
+constexpr double hm555[12] = {
     0.0,
     0.03968708834740544,
     0.0079481086372403219,
@@ -275,7 +275,7 @@ inline constexpr double hm555[12] = {
     0.0,
 };
 
-inline constexpr double h6[18] = {
+constexpr double h6[18] = {
     0.0,
     0.0,
     0.0,
@@ -296,7 +296,7 @@ inline constexpr double h6[18] = {
     0.0,
 };
 
-inline constexpr double hm668[18] = {
+constexpr double hm668[18] = {
     0.0019088317364812906,
     -0.0019142861290887667,
     -0.016990639867602342,

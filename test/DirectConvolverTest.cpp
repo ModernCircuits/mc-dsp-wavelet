@@ -11,7 +11,7 @@ auto testDirectConvolve(std::vector<std::vector<T>> const& testData) -> bool
     auto const& expected = testData[2];
 
     auto output = std::vector<T>(expected.size());
-    convolute(data(signal), size(signal), data(patch), size(patch), data(output));
+    convolute(lt::data(signal), lt::size(signal), lt::data(patch), lt::size(patch), lt::data(output));
     REQUIRE(approxEqual(output, expected));
     return true;
 }
