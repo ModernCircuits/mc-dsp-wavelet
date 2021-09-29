@@ -4,8 +4,12 @@
 #include <iterator>
 #include <type_traits>
 
-#if not defined(__cpp_lib_nonmember_container_access)
-namespace std { // NOLINT(cert-dcl58-cpp)
+#if defined(__cpp_lib_nonmember_container_access)
+namespace lt {
+using std::size;
+}
+#else
+namespace lt {
 template <typename C>
 [[nodiscard]] constexpr auto size(const C& c) -> decltype(c.size())
 {
@@ -16,5 +20,5 @@ template <typename T, std::size_t N>
 {
     return N;
 }
-} // namespace std
+} // namespace lt
 #endif

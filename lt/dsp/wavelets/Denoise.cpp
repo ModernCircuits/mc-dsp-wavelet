@@ -40,7 +40,7 @@ auto visushrink(double* signal, std::size_t n, std::size_t j, char const* wname,
     auto filtLen = wave.size();
     auto maxIter = (int)(std::log((double)n / ((double)filtLen - 1.0)) / std::log(2.0));
 
-    if (std::cmp_greater(j, maxIter)) {
+    if (lt::cmp_greater(j, maxIter)) {
         fmt::printf("\n Error - The Signal Can only be iterated %d times using this Wavelet. Exiting\n", maxIter);
         std::exit(-1);
     }
@@ -75,11 +75,11 @@ auto visushrink(double* signal, std::size_t n, std::size_t j, char const* wname,
         }
 
         sigma = median(dout.get(), dlen) / 0.6745;
-        for (it = 0; std::cmp_less(it, j); ++it) {
+        for (it = 0; lt::cmp_less(it, j); ++it) {
             lnoise[it] = sigma;
         }
     } else if (level == lt::string_view { "all" }) {
-        for (it = 0; std::cmp_less(it, j); ++it) {
+        for (it = 0; lt::cmp_less(it, j); ++it) {
             dlen = wt.length[it + 1];
             for (std::size_t i = 0; i < dlen; ++i) {
                 dout[i] = fabs(wt.output()[iter + i]);
@@ -96,7 +96,7 @@ auto visushrink(double* signal, std::size_t n, std::size_t j, char const* wname,
 
     dwtLen = wt.outlength;
     iter = wt.length[0];
-    for (it = 0; std::cmp_less(it, j); ++it) {
+    for (it = 0; lt::cmp_less(it, j); ++it) {
         sigma = lnoise[it];
         dlen = wt.length[it + 1];
         td = std::sqrt(2.0 * std::log(dwtLen)) * sigma;
@@ -155,7 +155,7 @@ auto sureshrink(double* signal, std::size_t n, std::size_t j, char const* wname,
 
     maxIter = (int)(std::log((double)n / ((double)filtLen - 1.0)) / std::log(2.0));
     // Depends on J
-    if (std::cmp_greater(j, maxIter)) {
+    if (lt::cmp_greater(j, maxIter)) {
         fmt::printf("\n Error - The Signal Can only be iterated %d times using this Wavelet. Exiting\n", maxIter);
         std::exit(-1);
     }
@@ -192,11 +192,11 @@ auto sureshrink(double* signal, std::size_t n, std::size_t j, char const* wname,
         }
 
         sigma = median(dout.get(), dlen) / 0.6745;
-        for (it = 0; std::cmp_less(it, j); ++it) {
+        for (it = 0; lt::cmp_less(it, j); ++it) {
             lnoise[it] = sigma;
         }
     } else if (level == lt::string_view { "all" }) {
-        for (it = 0; std::cmp_less(it, j); ++it) {
+        for (it = 0; lt::cmp_less(it, j); ++it) {
             dlen = wt.length[it + 1];
             for (auto i = 0; i < dlen; ++i) {
                 dout[i] = fabs(wt.output()[iter + i]);
@@ -211,7 +211,7 @@ auto sureshrink(double* signal, std::size_t n, std::size_t j, char const* wname,
         std::exit(-1);
     }
 
-    for (it = 0; std::cmp_less(it, j); ++it) {
+    for (it = 0; lt::cmp_less(it, j); ++it) {
         dwtLen = wt.length[it + 1];
         sigma = lnoise[it];
 
@@ -296,7 +296,7 @@ auto modwtshrink(double* signal, std::size_t n, std::size_t j, char const* wname
 
     auto maxIter = (int)(std::log((double)n / ((double)filtLen - 1.0)) / std::log(2.0));
 
-    if (std::cmp_greater(j, maxIter)) {
+    if (lt::cmp_greater(j, maxIter)) {
         fmt::printf("\n Error - The Signal Can only be iterated %d times using this Wavelet. Exiting\n", maxIter);
         std::exit(-1);
     }
@@ -330,7 +330,7 @@ auto modwtshrink(double* signal, std::size_t n, std::size_t j, char const* wname
     auto dlen = wt.length[j];
     auto dout = std::make_unique<double[]>(dlen);
 
-    for (it = 0; std::cmp_less(it, j); ++it) {
+    for (it = 0; lt::cmp_less(it, j); ++it) {
         dlen = wt.length[it + 1];
         for (std::size_t i = 0; i < dlen; ++i) {
             dout[i] = fabs(wt.output()[iter + i]);
@@ -346,7 +346,7 @@ auto modwtshrink(double* signal, std::size_t n, std::size_t j, char const* wname
     // Thresholding
 
     iter = wt.length[0];
-    for (it = 0; std::cmp_less(it, j); ++it) {
+    for (it = 0; lt::cmp_less(it, j); ++it) {
         sigma = lnoise[it];
         dlen = wt.length[it + 1];
         td = std::sqrt(2.0 * llen / m) * sigma;

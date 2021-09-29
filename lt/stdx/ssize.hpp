@@ -3,10 +3,14 @@
 #include <iterator>
 #include <type_traits>
 
-#if not defined(__cpp_lib_ssize)
-namespace std { // NOLINT(cert-dcl58-cpp)
+#if defined(__cpp_lib_ssize)
+namespace lt {
+using std::ssize;
+}
+#else
+namespace lt {
 template <typename C>
-[[nodiscard]] constexpr auto ssize(const C& c)
+[[nodiscard]] constexpr auto ssize(C const& c)
     -> std::common_type_t<std::ptrdiff_t,
         std::make_signed_t<decltype(c.size())>>
 {
@@ -15,10 +19,10 @@ template <typename C>
     return static_cast<R>(c.size());
 }
 template <typename T, std::ptrdiff_t N>
-[[nodiscard]] constexpr auto ssize(const T (&array)[N]) noexcept -> std::ptrdiff_t
+[[nodiscard]] constexpr auto ssize(T const (&array)[N]) noexcept -> std::ptrdiff_t
 {
     (void)array;
     return N;
 }
-} // namespace std
+} // namespace lt
 #endif

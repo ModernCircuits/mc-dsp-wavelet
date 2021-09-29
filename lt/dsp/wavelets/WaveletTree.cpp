@@ -51,7 +51,7 @@ WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t 
     this->nodeLength_ = (std::size_t*)&this->params[signalLength * (j + 1) + elength];
     this->coeflength = (std::size_t*)&this->params[signalLength * (j + 1) + elength + nodess];
 
-    for (auto i = 0; std::cmp_less(i, signalLength * (j + 1) + elength + nodess + j + 1); ++i) {
+    for (auto i = 0; lt::cmp_less(i, signalLength * (j + 1) + elength + nodess + j + 1); ++i) {
         this->params[i] = 0.0;
     }
 }

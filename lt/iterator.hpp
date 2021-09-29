@@ -19,6 +19,4 @@ using std::rend;
 using std::data;
 using std::empty;
 
-using std::size;
-using std::ssize;
 } // namespace lt
