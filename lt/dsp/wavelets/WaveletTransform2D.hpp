@@ -34,14 +34,14 @@ private:
     std::string method_;
 };
 
-auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>;
-auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void;
-auto swt2(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>;
-auto iswt2(WaveletTransform2D& wt, double const* wavecoeffs, double* oup) -> void;
-auto modwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>;
-auto imodwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void;
-auto getWT2Coeffs(WaveletTransform2D& wt, double* wcoeffs, int level, char const* type, int* rows, int* cols) -> double*;
+auto dwt(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>;
+auto idwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void;
+auto swt2(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>;
+auto iswt2(WaveletTransform2D& wt, float const* wavecoeffs, float* oup) -> void;
+auto modwt(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>;
+auto imodwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void;
+auto getWT2Coeffs(WaveletTransform2D& wt, float* wcoeffs, int level, char const* type, int* rows, int* cols) -> float*;
 auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void;
-auto dispWT2Coeffs(double* a, int row, int col) -> void;
+auto dispWT2Coeffs(float* a, int row, int col) -> void;
 
 auto summary(WaveletTransform2D const& wt) -> void;

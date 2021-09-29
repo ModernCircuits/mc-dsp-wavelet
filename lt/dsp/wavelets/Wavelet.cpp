@@ -15,7 +15,7 @@
 #include "lt/utility.hpp"
 
 namespace {
-auto copy(double const* in, int n, double* out)
+auto copy(float const* in, int n, float* out)
 {
     int count = 0;
     for (count = 0; count < n; count++) {
@@ -23,7 +23,7 @@ auto copy(double const* in, int n, double* out)
     }
 }
 
-auto copyReverse(double const* in, int n, double* out)
+auto copyReverse(float const* in, int n, float* out)
 {
     int count = 0;
     for (count = 0; count < n; count++) {
@@ -31,7 +31,7 @@ auto copyReverse(double const* in, int n, double* out)
     }
 }
 
-auto qmfEven(double const* in, int n, double* out)
+auto qmfEven(float const* in, int n, float* out)
 {
     int count = 0;
     for (count = 0; count < n; count++) {
@@ -42,9 +42,9 @@ auto qmfEven(double const* in, int n, double* out)
     }
 }
 
-auto qmfWrev(double const* in, int n, double* out)
+auto qmfWrev(float const* in, int n, float* out)
 {
-    auto sigOutTemp = std::make_unique<double[]>(n);
+    auto sigOutTemp = std::make_unique<float[]>(n);
 
     qmfEven(in, n, sigOutTemp.get());
     copyReverse(sigOutTemp.get(), n, out);
@@ -211,7 +211,7 @@ auto waveletFilterLength(char const* name) -> int
     return -1;
 }
 
-auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, double* lp2, double* hp2) -> int
+auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* lp2, float* hp2) -> int
 {
     int i = 0;
     int n = waveletFilterLength(name);
@@ -788,7 +788,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
     }
 
     if (name == lt::string_view { "coif1" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif1, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -804,7 +804,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
     }
 
     if (name == lt::string_view { "coif2" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif2, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -820,7 +820,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
     }
 
     if (name == lt::string_view { "coif3" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif3, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -836,7 +836,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
     }
 
     if (name == lt::string_view { "coif4" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif4, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -852,7 +852,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
     }
 
     if (name == lt::string_view { "coif5" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif5, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -868,7 +868,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
     }
 
     if (name == lt::string_view { "coif6" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif6, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -884,7 +884,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
     }
 
     if (name == lt::string_view { "coif7" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif7, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -900,7 +900,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
     }
 
     if (name == lt::string_view { "coif8" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif8, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -916,7 +916,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
     }
 
     if (name == lt::string_view { "coif9" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif9, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -932,7 +932,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
     }
 
     if (name == lt::string_view { "coif10" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif10, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -947,7 +947,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
         return n;
     }
     if (name == lt::string_view { "coif11" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif11, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -962,7 +962,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
         return n;
     }
     if (name == lt::string_view { "coif12" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif12, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -977,7 +977,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
         return n;
     }
     if (name == lt::string_view { "coif13" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif13, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -992,7 +992,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
         return n;
     }
     if (name == lt::string_view { "coif14" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif14, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -1007,7 +1007,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
         return n;
     }
     if (name == lt::string_view { "coif15" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif15, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -1022,7 +1022,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
         return n;
     }
     if (name == lt::string_view { "coif16" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif16, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -1037,7 +1037,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
         return n;
     }
     if (name == lt::string_view { "coif17" }) {
-        auto coeffTemp = std::make_unique<double[]>(n);
+        auto coeffTemp = std::make_unique<float[]>(n);
 
         copy(coif17, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
@@ -1209,7 +1209,7 @@ auto waveletFilterCoefficients(char const* name, double* lp1, double* hp1, doubl
 Wavelet::Wavelet(char const* name)
     : name_ { name }
     , size_ { static_cast<std::size_t>(::waveletFilterLength(name)) }
-    , params_ { std::make_unique<double[]>(4 * size_) }
+    , params_ { std::make_unique<float[]>(4 * size_) }
     , lpd_ { &params_[0], size_ }
     , hpd_ { &params_[size_], size_ }
     , lpr_ { &params_[2 * size_], size_ }

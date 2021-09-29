@@ -9,9 +9,9 @@
 #include "lt/cstring.hpp"
 #include "lt/memory.hpp"
 
-static auto rmse(int n, double const* x, double const* y) -> double
+static auto rmse(int n, float const* x, float const* y) -> float
 {
-    double rms = NAN;
+    float rms = NAN;
     int i = 0;
 
     rms = 0.0;
@@ -20,21 +20,21 @@ static auto rmse(int n, double const* x, double const* y) -> double
         rms += (x[i] - y[i]) * (x[i] - y[i]);
     }
 
-    rms = std::sqrt(rms / (double)n);
+    rms = std::sqrt(rms / (float)n);
 
     return rms;
 }
 
-static auto corrcoef(int n, double const* x, double const* y) -> double
+static auto corrcoef(int n, float const* x, float const* y) -> float
 {
-    double cc = NAN;
-    double xm = NAN;
-    double ym = NAN;
-    double tx = NAN;
-    double ty = NAN;
-    double num = NAN;
-    double den1 = NAN;
-    double den2 = NAN;
+    float cc = NAN;
+    float xm = NAN;
+    float ym = NAN;
+    float tx = NAN;
+    float ty = NAN;
+    float num = NAN;
+    float den1 = NAN;
+    float den2 = NAN;
     int i = 0;
     xm = ym = 0.0;
     for (i = 0; i < n; ++i) {
@@ -73,7 +73,7 @@ auto main() -> int
 
     auto const n = sig.size();
     auto const j = 4;
-    auto out = std::make_unique<double[]>(n);
+    auto out = std::make_unique<float[]>(n);
 
     modwtshrink(sig.data(), n, j, wname, cmethod, ext, thresh, out.get());
 

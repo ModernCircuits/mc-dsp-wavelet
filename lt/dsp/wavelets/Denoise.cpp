@@ -27,18 +27,18 @@ DenoiseSet::DenoiseSet(int length, int j, char const* name)
     cmethod = "direct";
 }
 
-auto visushrink(double* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void
+auto visushrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, float* denoised) -> void
 {
     int dwtLen = 0;
     int sgn = 0;
     int it = 0;
-    double sigma = NAN;
-    double td = NAN;
-    double tmp = NAN;
+    float sigma = NAN;
+    float td = NAN;
+    float tmp = NAN;
 
     auto wave = Wavelet { wname };
     auto filtLen = wave.size();
-    auto maxIter = (int)(std::log((double)n / ((double)filtLen - 1.0)) / std::log(2.0));
+    auto maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0)) / std::log(2.0));
 
     if (lt::cmp_greater(j, maxIter)) {
         fmt::printf("\n Error - The Signal Can only be iterated %d times using this Wavelet. Exiting\n", maxIter);
@@ -56,14 +56,14 @@ auto visushrink(double* signal, std::size_t n, std::size_t j, char const* wname,
         std::exit(-1);
     }
 
-    auto lnoise = std::make_unique<double[]>(j);
+    auto lnoise = std::make_unique<float[]>(j);
 
     //Set sigma
 
     auto iter = wt.length[0];
     auto dlen = wt.length[j];
 
-    auto dout = std::make_unique<double[]>(dlen);
+    auto dout = std::make_unique<float[]>(dlen);
 
     if (level == lt::string_view { "first" }) {
         for (std::size_t i = 1; i < j; ++i) {
@@ -129,7 +129,7 @@ auto visushrink(double* signal, std::size_t n, std::size_t j, char const* wname,
     }
 }
 
-auto sureshrink(double* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void
+auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, float* denoised) -> void
 {
     int filtLen = 0;
     int it = 0;
@@ -140,20 +140,20 @@ auto sureshrink(double* signal, std::size_t n, std::size_t j, char const* wname,
     int sgn = 0;
     int maxIter = 0;
     int iter = 0;
-    double sigma = NAN;
-    double norm = NAN;
-    double td = NAN;
-    double tv = NAN;
-    double te = NAN;
-    double ct = NAN;
-    double thr = NAN;
-    double temp = NAN;
-    double xSum = NAN;
+    float sigma = NAN;
+    float norm = NAN;
+    float td = NAN;
+    float tv = NAN;
+    float te = NAN;
+    float ct = NAN;
+    float thr = NAN;
+    float temp = NAN;
+    float xSum = NAN;
 
     auto wave = Wavelet { wname };
     filtLen = wave.size();
 
-    maxIter = (int)(std::log((double)n / ((double)filtLen - 1.0)) / std::log(2.0));
+    maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0)) / std::log(2.0));
     // Depends on J
     if (lt::cmp_greater(j, maxIter)) {
         fmt::printf("\n Error - The Signal Can only be iterated %d times using this Wavelet. Exiting\n", maxIter);
@@ -175,10 +175,10 @@ auto sureshrink(double* signal, std::size_t n, std::size_t j, char const* wname,
     len = wt.length[0];
     dlen = wt.length[j];
 
-    auto dout = std::make_unique<double[]>(dlen);
-    auto risk = std::make_unique<double[]>(dlen);
-    auto dsum = std::make_unique<double[]>(dlen);
-    auto lnoise = std::make_unique<double[]>(j);
+    auto dout = std::make_unique<float[]>(dlen);
+    auto risk = std::make_unique<float[]>(dlen);
+    auto dsum = std::make_unique<float[]>(dlen);
+    auto lnoise = std::make_unique<float[]>(j);
 
     iter = wt.length[0];
 
@@ -223,8 +223,8 @@ auto sureshrink(double* signal, std::size_t n, std::size_t j, char const* wname,
             for (auto i = 0; i < dwtLen; ++i) {
                 norm += (wt.output()[len + i] * wt.output()[len + i] / (sigma * sigma));
             }
-            te = (norm - (double)dwtLen) / (double)dwtLen;
-            ct = pow(std::log((double)dwtLen) / std::log(2.0), 1.5) / std::sqrt((double)dwtLen);
+            te = (norm - (float)dwtLen) / (float)dwtLen;
+            ct = pow(std::log((float)dwtLen) / std::log(2.0), 1.5) / std::sqrt((float)dwtLen);
 
             if (te < ct) {
                 td = tv;
@@ -235,7 +235,7 @@ auto sureshrink(double* signal, std::size_t n, std::size_t j, char const* wname,
                     dout[i] = fabs(wt.output()[len + i] / sigma);
                 }
 
-                std::sort(dout.get(), dout.get() + dwtLen, std::less<double> {});
+                std::sort(dout.get(), dout.get() + dwtLen, std::less<float> {});
                 for (auto i = 0; i < dwtLen; ++i) {
                     dout[i] = (dout[i] * dout[i]);
                     xSum += dout[i];
@@ -243,7 +243,7 @@ auto sureshrink(double* signal, std::size_t n, std::size_t j, char const* wname,
                 }
 
                 for (auto i = 0; i < dwtLen; ++i) {
-                    risk[i] = ((double)dwtLen - 2 * ((double)i + 1) + dsum[i] + dout[i] * ((double)dwtLen - 1 - (double)i)) / (double)dwtLen;
+                    risk[i] = ((float)dwtLen - 2 * ((float)i + 1) + dsum[i] + dout[i] * ((float)dwtLen - 1 - (float)i)) / (float)dwtLen;
                 }
                 minIndex = minindex(risk.get(), dwtLen);
                 thr = std::sqrt(dout[minIndex]);
@@ -281,20 +281,20 @@ auto sureshrink(double* signal, std::size_t n, std::size_t j, char const* wname,
     }
 }
 
-auto modwtshrink(double* signal, std::size_t n, std::size_t j, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised) -> void
+auto modwtshrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* cmethod, char const* ext, char const* thresh, float* denoised) -> void
 {
     int sgn = 0;
     int it = 0;
-    double sigma = NAN;
-    double td = NAN;
-    double tmp = NAN;
-    double m = NAN;
-    double llen = NAN;
+    float sigma = NAN;
+    float td = NAN;
+    float tmp = NAN;
+    float m = NAN;
+    float llen = NAN;
 
     auto wave = Wavelet { wname };
     auto filtLen = wave.size();
 
-    auto maxIter = (int)(std::log((double)n / ((double)filtLen - 1.0)) / std::log(2.0));
+    auto maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0)) / std::log(2.0));
 
     if (lt::cmp_greater(j, maxIter)) {
         fmt::printf("\n Error - The Signal Can only be iterated %d times using this Wavelet. Exiting\n", maxIter);
@@ -322,13 +322,13 @@ auto modwtshrink(double* signal, std::size_t n, std::size_t j, char const* wname
 
     modwt(wt, signal);
 
-    auto lnoise = std::make_unique<double[]>(j);
+    auto lnoise = std::make_unique<float[]>(j);
 
     //Set sigma
 
     auto iter = wt.length[0];
     auto dlen = wt.length[j];
-    auto dout = std::make_unique<double[]>(dlen);
+    auto dout = std::make_unique<float[]>(dlen);
 
     for (it = 0; lt::cmp_less(it, j); ++it) {
         dlen = wt.length[it + 1];
@@ -342,7 +342,7 @@ auto modwtshrink(double* signal, std::size_t n, std::size_t j, char const* wname
     }
 
     m = pow(2.0, j);
-    llen = std::log((double)wt.modwtsiglength);
+    llen = std::log((float)wt.modwtsiglength);
     // Thresholding
 
     iter = wt.length[0];
@@ -376,7 +376,7 @@ auto modwtshrink(double* signal, std::size_t n, std::size_t j, char const* wname
     imodwt(wt, denoised);
 }
 
-auto denoise(DenoiseSet& obj, double* signal, double* denoised) -> void
+auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void
 {
     if (obj.dmethod == "sureshrink") {
         if (obj.wmethod == lt::string_view { "MODWT" }) {
@@ -462,11 +462,11 @@ auto setDenoiseParameters(DenoiseSet& obj, char const* thresh, char const* level
     }
 }
 
-auto median(double* const x, int n) -> double
+auto median(float* const x, int n) -> float
 {
-    std::sort(x, x + n, std::less<double> {});
+    std::sort(x, x + n, std::less<float> {});
 
-    double sigma = NAN;
+    float sigma = NAN;
     if ((n % 2) == 0) {
         sigma = (x[n / 2 - 1] + x[n / 2]) / 2.0;
     } else {
@@ -476,9 +476,9 @@ auto median(double* const x, int n) -> double
     return sigma;
 }
 
-auto minindex(double const* arr, int n) -> int
+auto minindex(float const* arr, int n) -> int
 {
-    double min = NAN;
+    float min = NAN;
     int index = 0;
 
     min = DBL_MAX;

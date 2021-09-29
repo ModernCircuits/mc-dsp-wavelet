@@ -13,15 +13,15 @@
 
 namespace {
 
-auto idwtShift(int shift, int rows, int cols, double const* lpr, double const* hpr, int lf, double* a, double* h, double* v, double* d, double* oup) -> void
+auto idwtShift(int shift, int rows, int cols, float const* lpr, float const* hpr, int lf, float* a, float* h, float* v, float* d, float* oup) -> void
 {
     auto const n = rows > cols ? 2 * rows : 2 * cols;
     auto const dim1 = 2 * rows;
     auto const dim2 = 2 * cols;
 
-    auto xLp = makeZeros<double>(n + 2 * lf - 1);
-    auto cL = makeZeros<double>(dim1 * dim2);
-    auto cH = makeZeros<double>(dim1 * dim2);
+    auto xLp = makeZeros<float>(n + 2 * lf - 1);
+    auto cL = makeZeros<float>(dim1 * dim2);
+    auto cH = makeZeros<float>(dim1 * dim2);
 
     auto ir = rows;
     auto ic = cols;
@@ -62,9 +62,9 @@ auto idwtShift(int shift, int rows, int cols, double const* lpr, double const* h
             cL[i] = oup[(i + 1) * ic - 1];
         }
         // Save the last row
-        std::memcpy(cH.get(), oup + (ir - 1) * ic, sizeof(double) * ic);
+        std::memcpy(cH.get(), oup + (ir - 1) * ic, sizeof(float) * ic);
         for (auto i = ir - 1; i > 0; --i) {
-            std::memcpy(oup + i * ic + 1, oup + (i - 1) * ic, sizeof(double) * (ic - 1));
+            std::memcpy(oup + i * ic + 1, oup + (i - 1) * ic, sizeof(float) * (ic - 1));
         }
         oup[0] = cL[ir - 1];
         for (auto i = 1; i < ir; ++i) {
@@ -77,7 +77,7 @@ auto idwtShift(int shift, int rows, int cols, double const* lpr, double const* h
     }
 }
 
-auto imodwtPerStride(int m, double const* cA, int lenCA, double const* cD, double const* filt, int lf, double* x, int istride, int ostride) -> void
+auto imodwtPerStride(int m, float const* cA, int lenCA, float const* cD, float const* filt, int lf, float* x, int istride, int ostride) -> void
 {
     int lenAvg = 0;
     int i = 0;
@@ -196,7 +196,7 @@ auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void
     }
 }
 
-auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
+auto dwt(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>
 {
     int iter = 0;
     int n = 0;
@@ -211,7 +211,7 @@ auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
     int aHL = 0;
     int aHH = 0;
     int cdim = 0;
-    double* orig = nullptr;
+    float* orig = nullptr;
 
     auto j = wt.J;
     wt.outlength = 0;
@@ -224,8 +224,8 @@ auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
     if (wt.ext == lt::string_view { "per" }) {
         auto idx = 2 * j;
         while (idx > 0) {
-            rowsN = (int)ceil((double)rowsN / 2.0);
-            colsN = (int)ceil((double)colsN / 2.0);
+            rowsN = (int)ceil((float)rowsN / 2.0);
+            colsN = (int)ceil((float)colsN / 2.0);
             wt.dimensions[idx - 1] = colsN;
             wt.dimensions[idx - 2] = rowsN;
             wt.outlength += (rowsN * colsN) * 3;
@@ -233,15 +233,15 @@ auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
         }
         wt.outlength += (rowsN * colsN);
         n = wt.outlength;
-        auto wavecoeff = makeZeros<double>(wt.outlength);
+        auto wavecoeff = makeZeros<float>(wt.outlength);
 
         orig = inp;
         ir = wt.rows();
         ic = wt.cols();
         colsI = wt.dimensions[2 * j - 1];
 
-        auto lpDn1 = makeZeros<double>(ir * colsI);
-        auto hpDn1 = makeZeros<double>(ir * colsI);
+        auto lpDn1 = makeZeros<float>(ir * colsI);
+        auto hpDn1 = makeZeros<float>(ir * colsI);
 
         for (iter = 0; iter < j; ++iter) {
             rowsI = wt.dimensions[2 * j - 2 * iter - 2];
@@ -291,8 +291,8 @@ auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
     while (idx > 0) {
         rowsN += lp - 2;
         colsN += lp - 2;
-        rowsN = (int)ceil((double)rowsN / 2.0);
-        colsN = (int)ceil((double)colsN / 2.0);
+        rowsN = (int)ceil((float)rowsN / 2.0);
+        colsN = (int)ceil((float)colsN / 2.0);
         wt.dimensions[idx - 1] = colsN;
         wt.dimensions[idx - 2] = rowsN;
         wt.outlength += (rowsN * colsN) * 3;
@@ -300,15 +300,15 @@ auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
     }
     wt.outlength += (rowsN * colsN);
     n = wt.outlength;
-    auto wavecoeff = makeZeros<double>(wt.outlength);
+    auto wavecoeff = makeZeros<float>(wt.outlength);
 
     orig = inp;
     ir = wt.rows();
     ic = wt.cols();
     colsI = wt.dimensions[2 * j - 1];
 
-    auto lpDn1 = makeZeros<double>(ir * colsI);
-    auto hpDn1 = makeZeros<double>(ir * colsI);
+    auto lpDn1 = makeZeros<float>(ir * colsI);
+    auto hpDn1 = makeZeros<float>(ir * colsI);
 
     for (iter = 0; iter < j; ++iter) {
         rowsI = wt.dimensions[2 * j - 2 * iter - 2];
@@ -352,7 +352,7 @@ auto dwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
     return wavecoeff;
 }
 
-auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
+auto idwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void
 {
 
     int ir = 0;
@@ -365,7 +365,7 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
     int aLH = 0;
     int aHL = 0;
     int aHH = 0;
-    double* orig = nullptr;
+    float* orig = nullptr;
 
     auto const rows = wt.rows();
     auto const cols = wt.cols();
@@ -386,10 +386,10 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
             idx--;
         }
 
-        auto xLp = makeZeros<double>(n + 2 * lf - 1);
-        auto cL = makeZeros<double>(dim1 * dim2);
-        auto cH = makeZeros<double>(dim1 * dim2);
-        auto out = makeZeros<double>(dim1 * dim2);
+        auto xLp = makeZeros<float>(n + 2 * lf - 1);
+        auto cL = makeZeros<float>(dim1 * dim2);
+        auto cH = makeZeros<float>(dim1 * dim2);
+        auto out = makeZeros<float>(dim1 * dim2);
 
         aLL = wt.coeffaccess[0];
         orig = wavecoeff + aLL;
@@ -462,10 +462,10 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
         idx--;
     }
 
-    auto xLp = makeZeros<double>(n + 2 * lf - 1);
-    auto cL = makeZeros<double>(dim1 * dim2);
-    auto cH = makeZeros<double>(dim1 * dim2);
-    auto out = makeZeros<double>(dim1 * dim2);
+    auto xLp = makeZeros<float>(n + 2 * lf - 1);
+    auto cL = makeZeros<float>(dim1 * dim2);
+    auto cH = makeZeros<float>(dim1 * dim2);
+    auto out = makeZeros<float>(dim1 * dim2);
 
     aLL = wt.coeffaccess[0];
     orig = wavecoeff + aLL;
@@ -521,7 +521,7 @@ auto idwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
     }
 }
 
-auto swt2(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
+auto swt2(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>
 {
     int j = 0;
     int iter = 0;
@@ -542,7 +542,7 @@ auto swt2(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
     int aHH = 0;
     int cdim = 0;
     int clen = 0;
-    double* orig = nullptr;
+    float* orig = nullptr;
 
     j = wt.J;
     m = 1;
@@ -562,15 +562,15 @@ auto swt2(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
     }
     wt.outlength += (rowsN * colsN);
     n = wt.outlength;
-    auto wavecoeff = makeZeros<double>(wt.outlength);
+    auto wavecoeff = makeZeros<float>(wt.outlength);
 
     orig = inp;
     ir = wt.rows();
     ic = wt.cols();
     colsI = wt.dimensions[2 * j - 1];
 
-    auto lpDn1 = std::make_unique<double[]>(ir * colsI);
-    auto hpDn1 = std::make_unique<double[]>(ir * colsI);
+    auto lpDn1 = std::make_unique<float[]>(ir * colsI);
+    auto hpDn1 = std::make_unique<float[]>(ir * colsI);
 
     for (iter = 0; iter < j; ++iter) {
         if (iter > 0) {
@@ -615,7 +615,7 @@ auto swt2(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
     return wavecoeff;
 }
 
-auto iswt2(WaveletTransform2D& wt, double const* wavecoeffs, double* oup) -> void
+auto iswt2(WaveletTransform2D& wt, float const* wavecoeffs, float* oup) -> void
 {
     int k = 0;
     int iter = 0;
@@ -641,12 +641,12 @@ auto iswt2(WaveletTransform2D& wt, double const* wavecoeffs, double* oup) -> voi
     cols = wt.cols();
     lf = wt.wave().lpd().size();
 
-    auto a = makeZeros<double>((rows + lf) * (cols + lf));
-    auto h = makeZeros<double>((rows + lf) * (cols + lf));
-    auto v = makeZeros<double>((rows + lf) * (cols + lf));
-    auto d = makeZeros<double>((rows + lf) * (cols + lf));
-    auto oup1 = makeZeros<double>((rows + lf) * (cols + lf));
-    auto oup2 = makeZeros<double>((rows + lf) * (cols + lf));
+    auto a = makeZeros<float>((rows + lf) * (cols + lf));
+    auto h = makeZeros<float>((rows + lf) * (cols + lf));
+    auto v = makeZeros<float>((rows + lf) * (cols + lf));
+    auto d = makeZeros<float>((rows + lf) * (cols + lf));
+    auto oup1 = makeZeros<float>((rows + lf) * (cols + lf));
+    auto oup2 = makeZeros<float>((rows + lf) * (cols + lf));
 
     aLL = wt.coeffaccess[0];
 
@@ -660,7 +660,7 @@ auto iswt2(WaveletTransform2D& wt, double const* wavecoeffs, double* oup) -> voi
         aLH = wt.coeffaccess[(j - iter) * 3 + 1];
         aHL = wt.coeffaccess[(j - iter) * 3 + 2];
         aHH = wt.coeffaccess[(j - iter) * 3 + 3];
-        m = (int)std::pow(2.0, (double)iter - 1);
+        m = (int)std::pow(2.0, (float)iter - 1);
 
         for (it2 = 0; it2 < m; ++it2) {
             ir = 0;
@@ -713,7 +713,7 @@ auto iswt2(WaveletTransform2D& wt, double const* wavecoeffs, double* oup) -> voi
     }
 }
 
-auto modwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
+auto modwt(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>
 {
     int j = 0;
     int iter = 0;
@@ -734,8 +734,8 @@ auto modwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
     int aHH = 0;
     int cdim = 0;
     int clen = 0;
-    double* orig = nullptr;
-    double s = NAN;
+    float* orig = nullptr;
+    float s = NAN;
 
     j = wt.J;
     m = 1;
@@ -755,8 +755,8 @@ auto modwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
     }
     wt.outlength += (rowsN * colsN);
     n = wt.outlength;
-    auto wavecoeff = makeZeros<double>(wt.outlength);
-    auto filt = std::make_unique<double[]>(2 * lp);
+    auto wavecoeff = makeZeros<float>(wt.outlength);
+    auto filt = std::make_unique<float[]>(2 * lp);
     s = std::sqrt(2.0);
     for (auto i = 0; i < lp; ++i) {
         filt[i] = wt.wave().lpd()[i] / s;
@@ -768,8 +768,8 @@ auto modwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
     ic = wt.cols();
     colsI = wt.dimensions[2 * j - 1];
 
-    auto lpDn1 = std::make_unique<double[]>(ir * colsI);
-    auto hpDn1 = std::make_unique<double[]>(ir * colsI);
+    auto lpDn1 = std::make_unique<float[]>(ir * colsI);
+    auto hpDn1 = std::make_unique<float[]>(ir * colsI);
 
     for (iter = 0; iter < j; ++iter) {
         if (iter > 0) {
@@ -813,7 +813,7 @@ auto modwt(WaveletTransform2D& wt, double* inp) -> std::unique_ptr<double[]>
     return wavecoeff;
 }
 
-auto imodwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
+auto imodwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void
 {
     int rows = 0;
     int cols = 0;
@@ -830,26 +830,26 @@ auto imodwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
     int aLH = 0;
     int aHL = 0;
     int aHH = 0;
-    double* orig = nullptr;
-    double s = NAN;
+    float* orig = nullptr;
+    float s = NAN;
 
     rows = wt.rows();
     cols = wt.cols();
     j = wt.J;
 
-    m = (int)std::pow(2.0, (double)j - 1.0);
+    m = (int)std::pow(2.0, (float)j - 1.0);
     // N = rows > cols ? rows : cols;
     lf = (wt.wave().lpr().size() + wt.wave().hpr().size()) / 2;
 
-    auto filt = makeZeros<double>(2 * lf);
+    auto filt = makeZeros<float>(2 * lf);
     s = std::sqrt(2.0);
     for (auto i = 0; i < lf; ++i) {
         filt[i] = wt.wave().lpd()[i] / s;
         filt[lf + i] = wt.wave().hpd()[i] / s;
     }
 
-    auto cL = makeZeros<double>(rows * cols);
-    auto cH = makeZeros<double>(rows * cols);
+    auto cL = makeZeros<float>(rows * cols);
+    auto cH = makeZeros<float>(rows * cols);
     aLL = wt.coeffaccess[0];
     orig = wavecoeff + aLL;
     for (iter = 0; iter < j; ++iter) {
@@ -879,12 +879,12 @@ auto imodwt(WaveletTransform2D& wt, double* wavecoeff, double* oup) -> void
     }
 }
 
-auto getWT2Coeffs(WaveletTransform2D& wt, double* wcoeffs, int level, char const* type, int* rows, int* cols) -> double*
+auto getWT2Coeffs(WaveletTransform2D& wt, float* wcoeffs, int level, char const* type, int* rows, int* cols) -> float*
 {
     int j = 0;
     int iter = 0;
     int t = 0;
-    double* ptr = nullptr;
+    float* ptr = nullptr;
     j = wt.J;
     // Error Check
 
@@ -924,7 +924,7 @@ auto getWT2Coeffs(WaveletTransform2D& wt, double* wcoeffs, int level, char const
     return ptr;
 }
 
-auto dispWT2Coeffs(double* a, int row, int col) -> void
+auto dispWT2Coeffs(float* a, int row, int col) -> void
 {
     fmt::printf("\n MATRIX Order : %d X %d \n \n", row, col);
 

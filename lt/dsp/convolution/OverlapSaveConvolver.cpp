@@ -16,30 +16,30 @@ auto pow2Ceil(std::size_t x)
 }
 
 DoubleSignal::DoubleSignal(std::size_t size)
-    : Signal(fftw_alloc_real(size), size)
+    : Signal(fftwf_alloc_real(size), size)
 {
 }
 
-DoubleSignal::DoubleSignal(double* data, size_t size)
+DoubleSignal::DoubleSignal(float* data, size_t size)
     : DoubleSignal(size)
 {
-    std::memcpy(data_, data, sizeof(double) * size);
+    std::memcpy(data_, data, sizeof(float) * size);
 }
 
-DoubleSignal::DoubleSignal(double* data, size_t size, size_t padBef, size_t padAft)
+DoubleSignal::DoubleSignal(float* data, size_t size, size_t padBef, size_t padAft)
     : DoubleSignal(size + padBef + padAft)
 {
-    std::memcpy(data_ + padBef, data, sizeof(double) * size);
+    std::memcpy(data_ + padBef, data, sizeof(float) * size);
 }
 
-DoubleSignal::~DoubleSignal() { fftw_free(data_); }
+DoubleSignal::~DoubleSignal() { fftwf_free(data_); }
 
 ComplexSignal::ComplexSignal(std::size_t size)
-    : Signal(fftw_alloc_complex(size), size)
+    : Signal(fftwf_alloc_complex(size), size)
 {
 }
 
-ComplexSignal::~ComplexSignal() { fftw_free(data_); }
+ComplexSignal::~ComplexSignal() { fftwf_free(data_); }
 
 auto spectralConvolution(ComplexSignal const& a, ComplexSignal const& b, ComplexSignal& result) -> void
 {
@@ -62,13 +62,13 @@ auto spectralCorrelation(ComplexSignal const& a, ComplexSignal const& b, Complex
 }
 
 FftForwardPlan::FftForwardPlan(DoubleSignal& fs, ComplexSignal& cs)
-    : FftPlan(fftw_plan_dft_r2c_1d(fs.size(), fs.data(), cs.data(), FFTW_ESTIMATE))
+    : FftPlan(fftwf_plan_dft_r2c_1d(fs.size(), fs.data(), cs.data(), FFTW_ESTIMATE))
 {
     LT_ASSERT(cs.size() == (fs.size() / 2U + 1U));
 }
 
 FftBackwardPlan::FftBackwardPlan(ComplexSignal& cs, DoubleSignal& fs)
-    : FftPlan(fftw_plan_dft_c2r_1d(fs.size(), cs.data(), fs.data(), FFTW_ESTIMATE))
+    : FftPlan(fftwf_plan_dft_c2r_1d(fs.size(), cs.data(), fs.data(), FFTW_ESTIMATE))
 {
     LT_ASSERT(cs.size() == (fs.size() / 2U + 1U));
 }
@@ -152,7 +152,7 @@ auto OverlapSaveConvolver::extractResult() -> DoubleSignal
         auto copySize = result_stride_;
         copySize -= (chunkBegin + result_stride_ > resultSize_) ? chunkBegin + result_stride_ - resultSize_ : 0;
 
-        std::memcpy(resultArr + chunkBegin, xcArr + offset, sizeof(double) * copySize);
+        std::memcpy(resultArr + chunkBegin, xcArr + offset, sizeof(float) * copySize);
     }
 
     return result;

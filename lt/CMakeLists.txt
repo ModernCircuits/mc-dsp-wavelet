@@ -7,8 +7,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         Boost::container
         Boost::filesystem
         Boost::json
-        FFTW3::fftw3
-        kissfft::kissfft-double
+        FFTW3::fftw3f
+        kissfft::kissfft
         fmt::fmt
         coz::coz
         lt::CompilerOptions

@@ -15,9 +15,9 @@ auto main() -> int
     auto cols = 40;
     auto n = rows * cols;
 
-    auto inp = makeZeros<double>(n);
-    auto oup = makeZeros<double>(n);
-    auto diff = makeZeros<double>(n);
+    auto inp = makeZeros<float>(n);
+    auto oup = makeZeros<float>(n);
+    auto diff = makeZeros<float>(n);
 
     auto j = 2;
     auto wt = WaveletTransform2D(obj, "modwt", rows, cols, j);

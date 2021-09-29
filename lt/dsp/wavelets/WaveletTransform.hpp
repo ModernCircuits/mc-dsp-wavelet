@@ -23,9 +23,9 @@ struct WaveletTransform {
     auto convMethod(ConvolutionMethod method) -> void;
     LT_NODISCARD auto convMethod() const noexcept -> ConvolutionMethod { return cmethod_; }
 
-    LT_NODISCARD auto output() const -> lt::span<double>;
-    LT_NODISCARD auto approx() const -> lt::span<double>;
-    LT_NODISCARD auto detail(std::size_t level) const -> lt::span<double>;
+    LT_NODISCARD auto output() const -> lt::span<float>;
+    LT_NODISCARD auto approx() const -> lt::span<float>;
+    LT_NODISCARD auto detail(std::size_t level) const -> lt::span<float>;
 
 private:
     Wavelet* wave_;
@@ -35,7 +35,7 @@ private:
     SignalExtension ext_;
     ConvolutionMethod cmethod_;
 
-    double* output_;
+    float* output_;
 
 public:
     std::unique_ptr<FFTConvolver> convolver;
@@ -48,14 +48,14 @@ public:
     std::size_t cfftset;
     std::size_t zpad {};
     std::size_t length[102] {};
-    std::unique_ptr<double[]> params;
+    std::unique_ptr<float[]> params;
 };
 
-auto dwt(WaveletTransform& wt, double const* inp) -> void;
-auto idwt(WaveletTransform& wt, double* dwtop) -> void;
-auto swt(WaveletTransform& wt, double const* inp) -> void;
-auto iswt(WaveletTransform& wt, double* swtop) -> void;
-auto modwt(WaveletTransform& wt, double const* inp) -> void;
-auto imodwt(WaveletTransform& wt, double* oup) -> void;
+auto dwt(WaveletTransform& wt, float const* inp) -> void;
+auto idwt(WaveletTransform& wt, float* dwtop) -> void;
+auto swt(WaveletTransform& wt, float const* inp) -> void;
+auto iswt(WaveletTransform& wt, float* swtop) -> void;
+auto modwt(WaveletTransform& wt, float const* inp) -> void;
+auto imodwt(WaveletTransform& wt, float* oup) -> void;
 
 auto summary(WaveletTransform const& wt) -> void;

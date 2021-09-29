@@ -6,8 +6,8 @@
 #include "lt/testing/test.hpp"
 
 struct FFTRealToComplexTestCase {
-    std::vector<double> input {};
-    std::vector<Complex<double>> expected {};
+    std::vector<float> input {};
+    std::vector<Complex<float>> expected {};
 };
 
 auto readFFTRealToComplexTestData(char const* path) -> FFTRealToComplexTestCase
@@ -28,7 +28,7 @@ auto main() -> int
     };
 
     auto closeEnough = [](auto l, auto r) -> bool {
-        auto const epsilon = std::numeric_limits<double>::epsilon();
+        auto const epsilon = std::numeric_limits<float>::epsilon();
         auto const re = std::fabs(l.real() - r.real()) < epsilon * 4;
         auto const im = std::fabs(l.imag() - r.imag()) < epsilon * 4;
         return re && im;
@@ -39,7 +39,7 @@ auto main() -> int
         auto testCase = readFFTRealToComplexTestData(testFile);
 
         auto fft = RealFFT { static_cast<int>(testCase.input.size()), FFT::forward };
-        auto output = std::vector<Complex<double>>(testCase.expected.size());
+        auto output = std::vector<Complex<float>>(testCase.expected.size());
         fft.performRealToComplex(lt::data(testCase.input), lt::data(output));
         REQUIRE(std::equal(begin(output), end(output), begin(testCase.expected), closeEnough));
 

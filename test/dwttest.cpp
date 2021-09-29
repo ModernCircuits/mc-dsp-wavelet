@@ -28,10 +28,10 @@ auto main() -> int
         fmt::printf("%g ", wt.output()[i]);
     }
 
-    auto out = std::make_unique<double[]>(n);
+    auto out = std::make_unique<float[]>(n);
     idwt(wt, out.get());
 
-    auto diff = std::make_unique<double[]>(n);
+    auto diff = std::make_unique<float[]>(n);
     for (auto i = 0; lt::cmp_less(i, wt.signalLength()); ++i) {
         diff[i] = out[i] - input[i];
     }

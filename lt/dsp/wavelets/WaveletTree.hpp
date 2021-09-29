@@ -14,7 +14,7 @@ struct WaveletTree {
     LT_NODISCARD auto extension() const noexcept -> std::string const&;
 
     auto nodeLength(std::size_t x) -> std::size_t;
-    auto coeffs(std::size_t x, std::size_t y, double* coeffs, std::size_t n) const -> void;
+    auto coeffs(std::size_t x, std::size_t y, float* coeffs, std::size_t n) const -> void;
 
     Wavelet* wave;
     std::string method;
@@ -29,14 +29,14 @@ struct WaveletTree {
     std::size_t cfftset;
     std::size_t zpad {};
     std::size_t length[102] {};
-    double* output;
-    std::size_t* coeflength;
-    std::unique_ptr<double[]> params;
-    std::size_t* nodeLength_ { nullptr };
+    float* output;
+    unsigned* coeflength;
+    std::unique_ptr<float[]> params;
+    unsigned* nodeLength_ { nullptr };
 
 private:
     std::string ext_;
 };
 
-auto wtree(WaveletTree& wt, double const* inp) -> void;
+auto wtree(WaveletTree& wt, float const* inp) -> void;
 auto summary(WaveletTree const& wt) -> void;

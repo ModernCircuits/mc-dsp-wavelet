@@ -6,7 +6,7 @@
 #include "lt/iterator.hpp"
 #include "lt/vector.hpp"
 
-inline auto readFileToVector(char const* filePath) -> std::vector<double>
+inline auto readFileToVector(char const* filePath) -> std::vector<float>
 {
     auto* ifp = std::fopen(filePath, "r");
     if (ifp == nullptr) {
@@ -14,7 +14,7 @@ inline auto readFileToVector(char const* filePath) -> std::vector<double>
         std::exit(EXIT_FAILURE);
     }
 
-    auto result = std::vector<double> {};
+    auto result = std::vector<float> {};
     result.reserve(8096 * 4);
     while (std::feof(ifp) == 0) {
         auto temp = 0.0;

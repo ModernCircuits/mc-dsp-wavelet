@@ -19,7 +19,7 @@ auto main() -> int
     auto j = 2;
 
     auto inp = readFileToVector("testData/signal.txt");
-    auto out = std::make_unique<double[]>(n);
+    auto out = std::make_unique<float[]>(n);
 
     // Initialize the wavelet transform object
     auto wt = WaveletTransform(obj, "modwt", n, j);
@@ -34,7 +34,7 @@ auto main() -> int
 
     imodwt(wt, out.get()); // Perform ISWT (if needed)
 
-    auto diff = std::make_unique<double[]>(n);
+    auto diff = std::make_unique<float[]>(n);
     for (auto i = 0; lt::cmp_less(i, wt.signalLength()); ++i) {
         diff[i] = out[i] - inp[i];
     }

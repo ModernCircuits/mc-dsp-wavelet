@@ -13,19 +13,19 @@ auto swtReconstructionTest()
 {
 
     int i = 0;
-    double epsilon = 1e-15;
-    double err = NAN;
+    float epsilon = 1e-6;
+    float err = NAN;
 
     auto const n = 4000;
 
     // N = 256;
 
-    auto inp = makeZeros<double>(n);
-    auto out = makeZeros<double>(n);
+    auto inp = makeZeros<float>(n);
+    auto out = makeZeros<float>(n);
 
     std::random_device rd {};
     auto gen = std::mt19937 { rd() };
-    auto dis = std::uniform_real_distribution<double> { 0.0, 1.0 };
+    auto dis = std::uniform_real_distribution<float> { 0.0, 1.0 };
 
     for (i = 0; i < n; ++i) {
         inp[i] = dis(gen);
@@ -99,9 +99,9 @@ auto swtReconstructionTest()
                     iswt(wt, out.get());
 
                     if (directFft == 0) {
-                        epsilon = 1e-8;
+                        epsilon = 1e-5;
                     } else {
-                        epsilon = 1e-10;
+                        epsilon = 1e-5;
                     }
 
                     err = rmsError(out.get(), inp.get(), wt.signalLength());
@@ -120,8 +120,8 @@ auto swT2ReconstructionTest()
 
     auto const n = rows * cols;
 
-    auto inp = makeZeros<double>(n);
-    auto out = makeZeros<double>(n);
+    auto inp = makeZeros<float>(n);
+    auto out = makeZeros<float>(n);
 
     std::vector<std::string> waveletNames;
 
@@ -188,11 +188,11 @@ auto swT2ReconstructionTest()
                     auto wavecoeffs = swt2(wt, inp.get());
                     iswt2(wt, wavecoeffs.get(), out.get());
 
-                    double epsilon { 0.0 };
+                    float epsilon { 0.0 };
                     if (directFft == 0) {
-                        epsilon = 1e-8;
+                        epsilon = 1e-4;
                     } else {
-                        epsilon = 1e-10;
+                        epsilon = 1e-4;
                     }
 
                     REQUIRE(rmsError(out.get(), inp.get(), n) <= epsilon);

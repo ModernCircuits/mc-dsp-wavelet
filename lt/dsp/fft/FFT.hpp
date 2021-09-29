@@ -17,28 +17,28 @@ struct FFT {
 
     FFT(int n, Direction direction);
 
-    auto perform(Complex<double> const* inp, Complex<double>* oup) -> void;
+    auto perform(Complex<float> const* inp, Complex<float>* oup) -> void;
 
     LT_NODISCARD auto direction() const noexcept -> Direction;
     LT_NODISCARD auto size() const noexcept -> int;
-    LT_NODISCARD auto engine() -> kissfft<double>& { return fftEngine_; }
+    LT_NODISCARD auto engine() -> kissfft<float>& { return fftEngine_; }
 
 private:
     int size_;
     Direction direction_;
 
-    kissfft<double> fftEngine_;
+    kissfft<float> fftEngine_;
 };
 
 struct RealFFT {
     RealFFT(int n, FFT::Direction direction);
 
-    auto performRealToComplex(double const* inp, Complex<double>* oup) -> void;
-    auto performComplexToReal(Complex<double> const* inp, double* oup) -> void;
+    auto performRealToComplex(float const* inp, Complex<float>* oup) -> void;
+    auto performComplexToReal(Complex<float> const* inp, float* oup) -> void;
 
 private:
     std::unique_ptr<FFT> cobj_;
-    std::unique_ptr<Complex<double>[]> data_;
+    std::unique_ptr<Complex<float>[]> data_;
 };
 
 auto divideby(int m, int d) -> int;

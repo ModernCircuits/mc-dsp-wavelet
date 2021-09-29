@@ -17,17 +17,17 @@ auto main() -> int
     int iter = 0;
     int nd = 0;
     int k = 0;
-    double dt = NAN;
-    double dj = NAN;
-    double s0 = NAN;
-    double param = NAN;
-    double mn = NAN;
-    double td = NAN;
-    double tn = NAN;
-    double den = NAN;
-    double num = NAN;
-    double reconMean = NAN;
-    double reconVar = NAN;
+    float dt = NAN;
+    float dj = NAN;
+    float s0 = NAN;
+    float param = NAN;
+    float mn = NAN;
+    float td = NAN;
+    float tn = NAN;
+    float den = NAN;
+    float num = NAN;
+    float reconMean = NAN;
+    float reconVar = NAN;
 
     // Set Morlet wavelet. Other options "paul" and "dog"
     auto const* wave = "morlet";
@@ -38,14 +38,14 @@ auto main() -> int
     subscale = 4;
     dt = 0.25;
     s0 = dt;
-    dj = 1.0 / (double)subscale;
+    dj = 1.0 / (float)subscale;
     j = 11 * subscale; // Total Number of scales
     a0 = 2; //power
 
     auto wt = ContinuousWaveletTransform { wave, param, n, dt, j };
 
     auto const inp = readFileToVector("testData/sst_nino3.dat");
-    auto oup = std::make_unique<double[]>(n);
+    auto oup = std::make_unique<float[]>(n);
 
     wt.scales(s0, dj, type, a0);
 

@@ -17,74 +17,74 @@ namespace {
 
 namespace {
 
-    auto factorial(int n) -> double
+    auto factorial(int n) -> float
     {
-        static const double fact[41] = {
-            1.0,
-            1.0,
-            2.0,
-            6.0,
-            24.0,
-            120.0,
-            720.0,
-            5040.0,
-            40320.0,
-            362880.0,
-            3628800.0,
-            39916800.0,
-            479001600.0,
-            6227020800.0,
-            87178291200.0,
-            1307674368000.0,
-            20922789888000.0,
-            355687428096000.0,
-            6402373705728000.0,
-            121645100408832000.0,
-            2432902008176640000.0,
-            51090942171709440000.0,
-            1124000727777607680000.0,
-            25852016738884976640000.0,
-            620448401733239439360000.0,
-            15511210043330985984000000.0,
-            403291461126605635584000000.0,
-            10888869450418352160768000000.0,
-            304888344611713860501504000000.0,
-            8841761993739701954543616000000.0,
-            265252859812191058636308480000000.0,
-            8222838654177922817725562880000000.0,
-            263130836933693530167218012160000000.0,
-            8683317618811886495518194401280000000.0,
-            295232799039604140847618609643520000000.0,
-            10333147966386144929666651337523200000000.0,
-            371993326789901217467999448150835200000000.0,
-            13763753091226345046315979581580902400000000.0,
-            523022617466601111760007224100074291200000000.0,
-            20397882081197443358640281739902897356800000000.0,
-            815915283247897734345611269596115894272000000000.0,
+        static const float fact[] = {
+            1.0f,
+            1.0f,
+            2.0f,
+            6.0f,
+            24.0f,
+            120.0f,
+            720.0f,
+            5040.0f,
+            40320.0f,
+            362880.0f,
+            3628800.0f,
+            39916800.0f,
+            479001600.0f,
+            6227020800.0f,
+            87178291200.0f,
+            1307674368000.0f,
+            20922789888000.0f,
+            355687428096000.0f,
+            6402373705728000.0f,
+            121645100408832000.0f,
+            2432902008176640000.0f,
+            51090942171709440000.0f,
+            1124000727777607680000.0f,
+            25852016738884976640000.0f,
+            620448401733239439360000.0f,
+            15511210043330985984000000.0f,
+            403291461126605635584000000.0f,
+            10888869450418352160768000000.0f,
+            304888344611713860501504000000.0f,
+            8841761993739701954543616000000.0f,
+            265252859812191058636308480000000.0f,
+            8222838654177922817725562880000000.0f,
+            263130836933693530167218012160000000.0f,
+            8683317618811886495518194401280000000.0f,
+            295232799039604140847618609643520000000.0f,
+            // 10333147966386144929666651337523200000000.0f,
+            // 371993326789901217467999448150835200000000.0f,
+            // 13763753091226345046315979581580902400000000.0f,
+            // 523022617466601111760007224100074291200000000.0f,
+            // 20397882081197443358640281739902897356800000000.0f,
+            // 815915283247897734345611269596115894272000000000.0f,
         };
 
-        if (n > 40 || n < 0) {
-            fmt::print("This program is only valid for 0 <= N <= 40 \n");
+        if (n > 40 - 6 || n < 0) {
+            fmt::print("This program is only valid for 0 <= N <= 40-6 \n");
             return -1.0;
         }
 
         return fact[n];
     }
 
-    auto nsfftFd(FFT* obj, Complex<double>* inp, Complex<double>* oup, double lb, double ub, double* w) -> void
+    auto nsfftFd(FFT* obj, Complex<float>* inp, Complex<float>* oup, float lb, float ub, float* w) -> void
     {
         auto const n = obj->size();
         auto const l = n / 2;
 
-        auto temp1 = std::make_unique<double[]>(l);
-        auto temp2 = std::make_unique<double[]>(l);
+        auto temp1 = std::make_unique<float[]>(l);
+        auto temp2 = std::make_unique<float[]>(l);
 
         auto const delta = (ub - lb) / n;
         auto const den = 2 * (ub - lb);
         auto j = -n;
 
         for (auto i = 0; i < n; ++i) {
-            w[i] = (double)j / den;
+            w[i] = (float)j / den;
             j += 2;
         }
 
@@ -117,7 +117,7 @@ namespace {
         }
     }
 
-    auto nsfftBk(FFT* obj, Complex<double>* inp, Complex<double>* oup, double lb, double ub, double* t) -> void
+    auto nsfftBk(FFT* obj, Complex<float>* inp, Complex<float>* oup, float lb, float ub, float* t) -> void
     {
 
         auto const n = obj->size();
@@ -130,17 +130,17 @@ namespace {
             exit(1);
         }
 
-        auto temp1 = std::make_unique<double[]>(l);
-        auto temp2 = std::make_unique<double[]>(l);
-        auto w = std::make_unique<double[]>(n);
-        auto inpt = std::make_unique<Complex<double>[]>(n);
+        auto temp1 = std::make_unique<float[]>(l);
+        auto temp2 = std::make_unique<float[]>(l);
+        auto w = std::make_unique<float[]>(n);
+        auto inpt = std::make_unique<Complex<float>[]>(n);
 
         auto const delta = (ub - lb) / n;
         auto const den = 2 * (ub - lb);
         auto j = -n;
 
         for (auto i = 0; i < n; ++i) {
-            w[i] = (double)j / den;
+            w[i] = (float)j / den;
             j += 2;
         }
 
@@ -174,7 +174,7 @@ namespace {
         }
     }
 
-    auto nsfftExec(FFT* fft, Complex<double>* inp, Complex<double>* oup, double lb, double ub, double* w) -> void
+    auto nsfftExec(FFT* fft, Complex<float>* inp, Complex<float>* oup, float lb, float ub, float* w) -> void
     {
         if (fft->direction() == FFT::forward) {
             nsfftFd(fft, inp, oup, lb, ub, w);
@@ -185,12 +185,12 @@ namespace {
 
 }
 
-auto roundTowardsZero(double x) -> double
+auto roundTowardsZero(float x) -> float
 {
     return x >= 0.0 ? std::floor(x) : std::ceil(x);
 }
 
-auto cwtGamma(double x) -> double
+auto cwtGamma(float x) -> float
 {
     /*
 	 * This C program code is based on  W J Cody's fortran code.
@@ -207,26 +207,26 @@ auto cwtGamma(double x) -> double
 
     // numerator and denominator coefficients for 1 <= x <= 2
 
-    double y = NAN;
-    double oup = NAN;
-    double fact = NAN;
-    double sum = NAN;
-    double y2 = NAN;
-    double yi = NAN;
-    double z = NAN;
-    double nsum = NAN;
-    double dsum = NAN;
+    float y = NAN;
+    float oup = NAN;
+    float fact = NAN;
+    float sum = NAN;
+    float y2 = NAN;
+    float yi = NAN;
+    float z = NAN;
+    float nsum = NAN;
+    float dsum = NAN;
     int swi = 0;
     int n = 0;
 
-    constexpr double spi = 0.9189385332046727417803297;
-    constexpr double pi = 3.1415926535897932384626434;
-    constexpr double xmax = 171.624e+0;
-    constexpr double xinf = 1.79e308;
-    constexpr double eps = 2.22e-16;
-    constexpr double xninf = 1.79e-308;
+    constexpr float spi = 0.9189385332046727417803297;
+    constexpr float pi = 3.1415926535897932384626434;
+    constexpr float xmax = 171.624e+0;
+    constexpr float xinf = 1.79e308;
+    constexpr float eps = 2.22e-16;
+    constexpr float xninf = 1.79e-308;
 
-    double num[8] = {
+    float num[8] = {
         -1.71618513886549492533811e+0,
         2.47656508055759199108314e+1,
         -3.79804256470945635097577e+2,
@@ -237,7 +237,7 @@ auto cwtGamma(double x) -> double
         6.64561438202405440627855e+4,
     };
 
-    double den[8] = {
+    float den[8] = {
         -3.08402300119738975254353e+1,
         3.15350626979604161529144e+2,
         -1.01515636749021914166146e+3,
@@ -250,7 +250,7 @@ auto cwtGamma(double x) -> double
 
     // Coefficients for Hart's Minimax approximation x >= 12
 
-    double c[7] = {
+    float c[7] = {
         -1.910444077728e-03,
         8.4171387781295e-04,
         -5.952379913043012e-04,
@@ -296,7 +296,7 @@ auto cwtGamma(double x) -> double
             y += 1.;
         } else {
             n = (int)y - 1;
-            y -= (double)n;
+            y -= (float)n;
             z = y - 1.0;
         }
         nsum = 0.;
@@ -343,16 +343,16 @@ auto cwtGamma(double x) -> double
     return oup;
 }
 
-auto waveFunction(int nk, double dt, int mother, double param, double scale1, double const* kwave, double pi, double* period1,
-    double* coi1, Complex<double>* daughter) -> void
+auto waveFunction(int nk, float dt, int mother, float param, float scale1, float const* kwave, float pi, float* period1,
+    float* coi1, Complex<float>* daughter) -> void
 {
 
-    double norm = NAN;
-    double expnt = NAN;
-    double fourierFactor = NAN;
+    float norm = NAN;
+    float expnt = NAN;
+    float fourierFactor = NAN;
     int k = 0;
     int m = 0;
-    double temp = NAN;
+    float temp = NAN;
     int sign = 0;
     int re = 0;
 
@@ -382,11 +382,11 @@ auto waveFunction(int nk, double dt, int mother, double param, double scale1, do
             param = 4.0;
         }
         m = (int)param;
-        norm = std::sqrt(2.0 * pi * scale1 / dt) * (std::pow(2.0, (double)m) / std::sqrt((double)(m * factorial(2 * m - 1))));
+        norm = std::sqrt(2.0 * pi * scale1 / dt) * (std::pow(2.0, (float)m) / std::sqrt((float)(m * factorial(2 * m - 1))));
         for (k = 1; k <= nk / 2 + 1; ++k) {
             temp = scale1 * kwave[k - 1];
             expnt = -temp;
-            daughter[k - 1].real(norm * std::pow(temp, (double)m) * std::exp(expnt));
+            daughter[k - 1].real(norm * std::pow(temp, (float)m) * std::exp(expnt));
             daughter[k - 1].imag(0.0);
         }
         for (k = nk / 2 + 2; k <= nk; ++k) {
@@ -420,14 +420,14 @@ auto waveFunction(int nk, double dt, int mother, double param, double scale1, do
         if (re == 1) {
             for (k = 1; k <= nk; ++k) {
                 temp = scale1 * kwave[k - 1];
-                daughter[k - 1].real(norm * std::pow(temp, (double)m) * std::exp(-0.50 * std::pow(temp, 2.0)));
+                daughter[k - 1].real(norm * std::pow(temp, (float)m) * std::exp(-0.50 * std::pow(temp, 2.0)));
                 daughter[k - 1].imag(0.0);
             }
         } else if (re == 0) {
             for (k = 1; k <= nk; ++k) {
                 temp = scale1 * kwave[k - 1];
                 daughter[k - 1].real(0.0);
-                daughter[k - 1].imag(norm * std::pow(temp, (double)m) * std::exp(-0.50 * std::pow(temp, 2.0)));
+                daughter[k - 1].imag(norm * std::pow(temp, (float)m) * std::exp(-0.50 * std::pow(temp, 2.0)));
             }
         }
         fourierFactor = (2.0 * pi) * std::sqrt(2.0 / (2.0 * m + 1.0));
@@ -438,21 +438,21 @@ auto waveFunction(int nk, double dt, int mother, double param, double scale1, do
 
 }
 
-auto cwavelet(double const* y, int n, double dt, int mother, double param, double s0, double dj, int jtot, int npad,
-    double* wave, double const* scale, double* period, double* coi) -> void
+auto cwavelet(float const* y, int n, float dt, int mother, float param, float s0, float dj, int jtot, int npad,
+    float* wave, float const* scale, float* period, float* coi) -> void
 {
 
     int j = 0;
     int k = 0;
     int iter = 0;
-    double ymean = NAN;
-    double freq1 = NAN;
-    double pi = NAN;
-    double period1 = NAN;
-    double coi1 = NAN;
-    double tmp1 = NAN;
-    double tmp2 = NAN;
-    double scale1 = NAN;
+    float ymean = NAN;
+    float freq1 = NAN;
+    float pi = NAN;
+    float period1 = NAN;
+    float coi1 = NAN;
+    float tmp1 = NAN;
+    float tmp2 = NAN;
+    float scale1 = NAN;
 
     (void)s0;
     (void)dj; /* yes, we need these parameters unused */
@@ -467,10 +467,10 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
     auto obj = std::make_unique<FFT>(npad, FFT::forward);
     auto iobj = std::make_unique<FFT>(npad, FFT::backward);
 
-    auto ypad = std::make_unique<Complex<double>[]>(npad);
-    auto yfft = std::make_unique<Complex<double>[]>(npad);
-    auto daughter = std::make_unique<Complex<double>[]>(npad);
-    auto kwave = std::make_unique<double[]>(npad);
+    auto ypad = std::make_unique<Complex<float>[]>(npad);
+    auto yfft = std::make_unique<Complex<float>[]>(npad);
+    auto daughter = std::make_unique<Complex<float>[]>(npad);
+    auto kwave = std::make_unique<float[]>(npad);
     ymean = 0.0;
 
     for (auto i = 0; i < n; ++i) {
@@ -494,13 +494,13 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
     obj->perform(ypad.get(), yfft.get());
 
     for (auto i = 0; i < npad; ++i) {
-        yfft[i].real(yfft[i].real() / (double)npad);
-        yfft[i].imag(yfft[i].imag() / (double)npad);
+        yfft[i].real(yfft[i].real() / (float)npad);
+        yfft[i].imag(yfft[i].imag() / (float)npad);
     }
 
     //Construct the wavenumber array
 
-    freq1 = 2.0 * pi / ((double)npad * dt);
+    freq1 = 2.0 * pi / ((float)npad * dt);
     kwave[0] = 0.0;
 
     for (auto i = 1; i < npad / 2 + 1; ++i) {
@@ -514,7 +514,7 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
     // Main loop
 
     for (j = 1; j <= jtot; ++j) {
-        scale1 = scale[j - 1]; // = s0*std::pow(2.0, (double)(j - 1)*dj);
+        scale1 = scale[j - 1]; // = s0*std::pow(2.0, (float)(j - 1)*dj);
         waveFunction(npad, dt, mother, param, scale1, kwave.get(), pi, &period1, &coi1, daughter.get());
         period[j - 1] = period1;
         for (k = 0; k < npad; ++k) {
@@ -532,15 +532,15 @@ auto cwavelet(double const* y, int n, double dt, int mother, double param, doubl
     }
 
     for (auto i = 1; i <= (n + 1) / 2; ++i) {
-        coi[i - 1] = coi1 * dt * ((double)i - 1.0);
+        coi[i - 1] = coi1 * dt * ((float)i - 1.0);
         coi[n - i] = coi[i - 1];
     }
 }
 
-auto psi0(int mother, double param, double* val, int* real) -> void
+auto psi0(int mother, float param, float* val, int* real) -> void
 {
-    double pi = NAN;
-    double coeff = NAN;
+    float pi = NAN;
+    float coeff = NAN;
     int m = 0;
     int sign = 0;
 
@@ -564,7 +564,7 @@ auto psi0(int mother, double param, double* val, int* real) -> void
         } else {
             sign = -1;
         }
-        *val = sign * std::pow(2.0, (double)m) * factorial(m) / (std::sqrt(pi * factorial(2 * m)));
+        *val = sign * std::pow(2.0, (float)m) * factorial(m) / (std::sqrt(pi * factorial(2 * m)));
 
     } else if (mother == 2) {
         // D.O.G
@@ -576,18 +576,18 @@ auto psi0(int mother, double param, double* val, int* real) -> void
             } else {
                 sign = 1;
             }
-            coeff = sign * std::pow(2.0, (double)m / 2) / cwtGamma(0.5);
-            *val = coeff * cwtGamma(((double)m + 1.0) / 2.0) / std::sqrt(cwtGamma(m + 0.50));
+            coeff = sign * std::pow(2.0, (float)m / 2) / cwtGamma(0.5);
+            *val = coeff * cwtGamma(((float)m + 1.0) / 2.0) / std::sqrt(cwtGamma(m + 0.50));
         } else {
             *val = 0;
         }
     }
 }
 
-static auto maxabs(double* array, int n) -> int
+static auto maxabs(float* array, int n) -> int
 {
-    double maxval = NAN;
-    double temp = NAN;
+    float maxval = NAN;
+    float temp = NAN;
 
     int index = 0;
     maxval = 0.0;
@@ -604,7 +604,7 @@ static auto maxabs(double* array, int n) -> int
     return index;
 }
 
-auto cdelta(int mother, double param, double psi0) -> double
+auto cdelta(int mother, float param, float psi0) -> float
 {
     auto s0 { 0.0 };
     auto n { 1 };
@@ -630,12 +630,12 @@ auto cdelta(int mother, double param, double psi0) -> double
     auto const dj = 1.0 / subscale;
     auto const jtot = 16 * (int)subscale;
 
-    auto delta = std::make_unique<double[]>(n);
-    auto wave = std::make_unique<double[]>(2 * n * jtot);
-    auto coi = std::make_unique<double[]>(n);
-    auto scale = std::make_unique<double[]>(jtot);
-    auto period = std::make_unique<double[]>(jtot);
-    auto mval = std::make_unique<double[]>(n);
+    auto delta = std::make_unique<float[]>(n);
+    auto wave = std::make_unique<float[]>(2 * n * jtot);
+    auto coi = std::make_unique<float[]>(n);
+    auto scale = std::make_unique<float[]>(jtot);
+    auto period = std::make_unique<float[]>(jtot);
+    auto mval = std::make_unique<float[]>(n);
 
     delta[0] = 1;
 
@@ -644,7 +644,7 @@ auto cdelta(int mother, double param, double psi0) -> double
     }
 
     for (auto i = 0; i < jtot; ++i) {
-        scale[i] = s0 * std::pow(2.0, (double)(i)*dj);
+        scale[i] = s0 * std::pow(2.0, (float)(i)*dj);
     }
 
     cwavelet(delta.get(), n, dt, mother, param, s0, dj, jtot, n, wave.get(), scale.get(), period.get(), coi.get());
@@ -666,13 +666,13 @@ auto cdelta(int mother, double param, double psi0) -> double
     return cdel;
 }
 
-auto icwavelet(double const* wave, int n, double* scale, int jtot, double dt, double dj, double cdelta, double psi0, double* oup) -> void
+auto icwavelet(float const* wave, int n, float* scale, int jtot, float dt, float dj, float cdelta, float psi0, float* oup) -> void
 {
 
     int j = 0;
     int iter = 0;
-    double den = NAN;
-    double coeff = NAN;
+    float den = NAN;
+    float coeff = NAN;
 
     coeff = std::sqrt(dt) * dj / (cdelta * psi0);
 
@@ -693,11 +693,11 @@ auto icwavelet(double const* wave, int n, double* scale, int jtot, double dt, do
     }
 }
 
-ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, double param, int siglength, double dtIn, int j)
+ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, float param, int siglength, float dtIn, int j)
 {
 
-    double s0Tmp {};
-    double djTmp {};
+    float s0Tmp {};
+    float djTmp {};
     char const* pdefault = "pow";
 
     auto const mm = (int)param;
@@ -708,7 +708,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, double 
 
     auto n = siglength;
     auto nj2 = 2 * n * j;
-    params = std::make_unique<double[]>(nj2 + 2 * j + n);
+    params = std::make_unique<float[]>(nj2 + 2 * j + n);
 
     int motherTmp { 0 };
     if ((wave == lt::string_view { "morlet" }) || (wave == lt::string_view { "morl" })) {
@@ -764,12 +764,12 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, double 
     mother = motherTmp;
     m = param;
 
-    auto const t1 = 0.499999 + std::log((double)n) / std::log(2.0);
+    auto const t1 = 0.499999 + std::log((float)n) / std::log(2.0);
     auto const ibase2 = 1 + (int)t1;
 
-    npad = (int)std::pow(2.0, (double)ibase2);
+    npad = (int)std::pow(2.0, (float)ibase2);
 
-    output = (Complex<double>*)&params[0];
+    output = (Complex<float>*)&params[0];
     scale = &params[nj2];
     period = &params[nj2 + j];
     coi = &params[nj2 + 2 * j];
@@ -779,20 +779,20 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, double 
     }
 }
 
-auto ContinuousWaveletTransform::scales(double newS0, double newDj, char const* newType, int power) -> void
+auto ContinuousWaveletTransform::scales(float newS0, float newDj, char const* newType, int power) -> void
 {
     type = newType;
-    //newS0*std::pow(2.0, (double)(j - 1)*newDj);
+    //newS0*std::pow(2.0, (float)(j - 1)*newDj);
     if ((type == "pow") || (type == "power")) {
         for (auto i = 0; i < J; ++i) {
-            scale[i] = newS0 * std::pow((double)power, (double)(i)*newDj);
+            scale[i] = newS0 * std::pow((float)power, (float)(i)*newDj);
         }
         sflag = 1;
         pow = power;
 
     } else if ((type == "lin") || (type == "linear")) {
         for (auto i = 0; i < J; ++i) {
-            scale[i] = newS0 + (double)i * newDj;
+            scale[i] = newS0 + (float)i * newDj;
         }
         sflag = 1;
     } else {
@@ -803,7 +803,7 @@ auto ContinuousWaveletTransform::scales(double newS0, double newDj, char const* 
     dj = newDj;
 }
 
-auto cwt(ContinuousWaveletTransform& wt, double const* inp) -> void
+auto cwt(ContinuousWaveletTransform& wt, float const* inp) -> void
 {
     int n = 0;
     int npad = 0;
@@ -813,7 +813,7 @@ auto cwt(ContinuousWaveletTransform& wt, double const* inp) -> void
     n = wt.signalLength;
     if (wt.sflag == 0) {
         for (auto i = 0; i < wt.J; ++i) {
-            wt.scale[i] = wt.s0 * std::pow(2.0, (double)(i)*wt.dj);
+            wt.scale[i] = wt.s0 * std::pow(2.0, (float)(i)*wt.dj);
         }
         wt.sflag = 1;
     }
@@ -838,10 +838,10 @@ auto cwt(ContinuousWaveletTransform& wt, double const* inp) -> void
     cwavelet(inp, n, wt.dt, wt.mother, wt.m, wt.s0, wt.dj, wt.J, npad, wt.params.get(), wt.params.get() + nj2, wt.params.get() + nj2 + j, wt.params.get() + nj2 + j2);
 }
 
-auto icwt(ContinuousWaveletTransform& wt, double* cwtop) -> void
+auto icwt(ContinuousWaveletTransform& wt, float* cwtop) -> void
 {
-    double psi = NAN;
-    double cdel = NAN;
+    float psi = NAN;
+    float cdel = NAN;
     int real = 0;
     int n = 0;
     int nj2 = 0;
@@ -877,7 +877,7 @@ auto summary(ContinuousWaveletTransform const& wt) -> void
     fmt::printf("\n");
 }
 
-auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid) -> void
+auto meyer(int n, float lb, float ub, float* phi, float* psi, float* tgrid) -> void
 {
     auto const m = divideby(n, 2);
     if (m == 0) {
@@ -890,14 +890,14 @@ auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
     }
 
     auto obj = std::make_unique<FFT>(n, FFT::backward);
-    auto w = std::make_unique<double[]>(n);
-    auto phiw = std::make_unique<Complex<double>[]>(n);
-    auto psiw = std::make_unique<Complex<double>[]>(n);
-    auto oup = std::make_unique<Complex<double>[]>(n);
+    auto w = std::make_unique<float[]>(n);
+    auto phiw = std::make_unique<Complex<float>[]>(n);
+    auto psiw = std::make_unique<Complex<float>[]>(n);
+    auto oup = std::make_unique<Complex<float>[]>(n);
 
     auto const delta = 2 * (ub - lb) / pi2;
 
-    auto j = (double)n;
+    auto j = (float)n;
     j *= -1.0;
 
     for (auto i = 0; i < n; ++i) {
@@ -955,13 +955,13 @@ auto meyer(int n, double lb, double ub, double* phi, double* psi, double* tgrid)
     }
 }
 
-auto gauss(int n, int p, double lb, double ub, double* psi, double* t) -> void
+auto gauss(int n, int p, float lb, float ub, float* psi, float* t) -> void
 {
-    double delta = NAN;
-    double num = NAN;
-    double den = NAN;
-    double t2 = NAN;
-    double t4 = NAN;
+    float delta = NAN;
+    float num = NAN;
+    float den = NAN;
+    float t2 = NAN;
+    float t4 = NAN;
     int i = 0;
 
     if (lb >= ub) {
@@ -1046,15 +1046,15 @@ auto gauss(int n, int p, double lb, double ub, double* psi, double* t) -> void
     }
 }
 
-auto mexhat(int n, double lb, double ub, double* psi, double* t) -> void
+auto mexhat(int n, float lb, float ub, float* psi, float* t) -> void
 {
     gauss(n, 2, lb, ub, psi, t);
 }
 
-auto morlet(int n, double lb, double ub, double* psi, double* t) -> void
+auto morlet(int n, float lb, float ub, float* psi, float* t) -> void
 {
     int i = 0;
-    double delta = NAN;
+    float delta = NAN;
 
     if (lb >= ub) {
         fmt::printf("upper bound must be greater than lower bound");

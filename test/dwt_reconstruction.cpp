@@ -16,12 +16,12 @@ auto dwtReconstructionTest()
 {
     auto const n = 22'050;
 
-    auto inp = std::make_unique<double[]>(n);
-    auto out = std::make_unique<double[]>(n);
+    auto inp = std::make_unique<float[]>(n);
+    auto out = std::make_unique<float[]>(n);
 
     std::random_device rd {};
     auto gen = std::mt19937 { rd() };
-    auto dis = std::uniform_real_distribution<double> { 0.0, 1.0 };
+    auto dis = std::uniform_real_distribution<float> { 0.0, 1.0 };
 
     for (auto i = 0; i < n; ++i) {
         inp[i] = dis(gen);
@@ -92,11 +92,11 @@ auto dwtReconstructionTest()
                     idwt(wt, out.get()); // Perform IDWT (if needed)
                     // Test Reconstruction
 
-                    auto epsilon = 1e-15;
+                    auto epsilon = 1e-5;
                     if (directFft == 0) {
-                        epsilon = 1e-8;
+                        epsilon = 1e-5;
                     } else {
-                        epsilon = 1e-10;
+                        epsilon = 1e-5;
                     }
 
                     REQUIRE(rmsError(out.get(), inp.get(), wt.signalLength()) <= epsilon);
@@ -108,15 +108,15 @@ auto dwtReconstructionTest()
 
 auto dwT2ReconstructionTest()
 {
-    double epsilon = NAN;
+    float epsilon = NAN;
 
     auto const rows = 256;
     auto const cols = 200;
 
     auto const n = rows * cols;
 
-    auto inp = std::make_unique<double[]>(n);
-    auto out = std::make_unique<double[]>(n);
+    auto inp = std::make_unique<float[]>(n);
+    auto out = std::make_unique<float[]>(n);
 
     std::vector<std::string> waveletNames;
 
@@ -191,9 +191,9 @@ auto dwT2ReconstructionTest()
                     // Test Reconstruction
 
                     if (directFft == 0) {
-                        epsilon = 1e-8;
+                        epsilon = 1e-4;
                     } else {
-                        epsilon = 1e-10;
+                        epsilon = 1e-4;
                     }
 
                     REQUIRE(rmsError(out.get(), inp.get(), n) <= epsilon);

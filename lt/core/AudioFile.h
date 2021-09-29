@@ -99,7 +99,7 @@ public:
     LT_NODISCARD auto getNumSamplesPerChannel() const -> int;
 
     /** @Returns the length in seconds of the audio file based on the number of samples and sample rate */
-    LT_NODISCARD auto getLengthInSeconds() const -> double;
+    LT_NODISCARD auto getLengthInSeconds() const -> float;
 
     /** Prints a summary of the audio file to the console */
     void printSummary() const;
@@ -285,9 +285,9 @@ auto AudioFile<T>::getNumSamplesPerChannel() const -> int
 }
 
 template <class T>
-auto AudioFile<T>::getLengthInSeconds() const -> double
+auto AudioFile<T>::getLengthInSeconds() const -> float
 {
-    return (double)getNumSamplesPerChannel() / (double)sampleRate_;
+    return (float)getNumSamplesPerChannel() / (float)sampleRate_;
 }
 
 template <class T>

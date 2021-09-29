@@ -81,15 +81,15 @@ conan_cmake_configure(
         boost:without_test=True
         boost:without_type_erasure=True
         boost:without_wave=True
-        fftw:precision=double
+        fftw:precision=single
         fftw:simd=sse2
-        kissfft:datatype=double
+        kissfft:datatype=float
 )
 conan_cmake_autodetect(settings)
 conan_cmake_install(PATH_OR_REFERENCE . BUILD outdated REMOTE conancenter SETTINGS ${settings})
 
 find_package(Boost 1.77 REQUIRED container filesystem json)
-find_package(FFTW3 REQUIRED)
+find_package(FFTW3f REQUIRED)
 find_package(fmt REQUIRED)
 find_package(coz-profiler REQUIRED)
 find_package(kissfft REQUIRED)

@@ -42,24 +42,24 @@ auto approxEqual(Container1 c1, Container2 c2, int epsilonFactor = 4) -> bool
     return approxEqual(std::begin(c1), std::end(c1), std::begin(c2), std::end(c2), epsilonFactor);
 }
 
-auto absmax(double* array, std::size_t n) -> double;
-auto sum1(double const* array, std::size_t n) -> double;
-auto sum2(double const* array, std::size_t n) -> double;
-auto sum3(double const* array, std::size_t n) -> double;
+auto absmax(float* array, std::size_t n) -> float;
+auto sum1(float const* array, std::size_t n) -> float;
+auto sum2(float const* array, std::size_t n) -> float;
+auto sum3(float const* array, std::size_t n) -> float;
 
 // np.sum(w[2*m:(2*N+2*m)]*w[0:2*N])
-auto sum4(double const* array, std::size_t n) -> double;
+auto sum4(float const* array, std::size_t n) -> float;
 // np.sum(w[2 * m:(2 * N)] * w[0:2 * N - 2 * m])
-auto sum5(double const* array, std::size_t n, std::size_t m) -> double;
+auto sum5(float const* array, std::size_t n, std::size_t m) -> float;
 
-auto rmsError(double const* data, double const* rec, std::size_t n) -> double;
-auto relError(double const* data, double const* rec, std::size_t n) -> double;
+auto rmsError(float const* data, float const* rec, std::size_t n) -> float;
+auto relError(float const* data, float const* rec, std::size_t n) -> float;
 
-auto generateRnd() -> double;
+auto generateRnd() -> float;
 
 template <typename T>
 using TestData = std::vector<std::vector<T>>;
 
 auto split(std::string const& s, char delim) -> std::vector<std::string>;
-auto loadTestData(char const* filePath) -> TestData<double>;
-auto toFloat(TestData<double> const& d) -> TestData<float>;
+auto loadTestData(char const* filePath) -> TestData<float>;
+auto toFloat(TestData<float> const& d) -> TestData<float>;

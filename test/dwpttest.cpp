@@ -15,9 +15,9 @@ auto main() -> int
     auto const n = std::size_t { 788 + 23 };
     auto const j = std::size_t { 4 };
 
-    auto inp = std::make_unique<double[]>(n);
-    auto oup = std::make_unique<double[]>(n);
-    auto diff = std::make_unique<double[]>(n);
+    auto inp = std::make_unique<float[]>(n);
+    auto oup = std::make_unique<float[]>(n);
+    auto diff = std::make_unique<float[]>(n);
 
     for (std::size_t i = 1; i < n + 1; ++i) {
         inp[i - 1] = i;

@@ -26,7 +26,7 @@ auto FFT::direction() const noexcept -> Direction { return direction_; }
 
 auto FFT::size() const noexcept -> int { return size_; }
 
-auto FFT::perform(Complex<double> const* input, Complex<double>* ouput) -> void
+auto FFT::perform(Complex<float> const* input, Complex<float>* ouput) -> void
 {
     fftEngine_.transform(input, ouput);
 }
@@ -44,7 +44,7 @@ auto divideby(int m, int d) -> int
 
 RealFFT::RealFFT(int n, FFT::Direction direction)
 {
-    data_ = std::make_unique<Complex<double>[]>(n / 2);
+    data_ = std::make_unique<Complex<float>[]>(n / 2);
     cobj_ = std::make_unique<FFT>(n / 2, direction);
 
     for (auto k = 0; k < n / 2; ++k) {
@@ -54,11 +54,11 @@ RealFFT::RealFFT(int n, FFT::Direction direction)
     }
 }
 
-auto RealFFT::performRealToComplex(double const* inp, Complex<double>* oup) -> void
+auto RealFFT::performRealToComplex(float const* inp, Complex<float>* oup) -> void
 {
     auto const n2 = cobj_->size();
-    auto cinp = std::make_unique<Complex<double>[]>(n2);
-    auto coup = std::make_unique<Complex<double>[]>(n2);
+    auto cinp = std::make_unique<Complex<float>[]>(n2);
+    auto coup = std::make_unique<Complex<float>[]>(n2);
 
     for (auto i = 0; i < n2; ++i) {
         cinp[i].real(inp[2 * i]);
@@ -87,11 +87,11 @@ auto RealFFT::performRealToComplex(double const* inp, Complex<double>* oup) -> v
     }
 }
 
-auto RealFFT::performComplexToReal(Complex<double> const* inp, double* oup) -> void
+auto RealFFT::performComplexToReal(Complex<float> const* inp, float* oup) -> void
 {
     auto const n = static_cast<std::size_t>(cobj_->size());
-    auto cinp = std::make_unique<Complex<double>[]>(n);
-    auto coup = std::make_unique<Complex<double>[]>(n);
+    auto cinp = std::make_unique<Complex<float>[]>(n);
+    auto coup = std::make_unique<Complex<float>[]>(n);
 
     for (auto i = std::size_t { 0 }; i < n; ++i) {
         auto const temp1 = -inp[i].imag() - inp[n - i].imag();

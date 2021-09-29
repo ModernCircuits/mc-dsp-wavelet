@@ -23,13 +23,13 @@ struct DenoiseSet {
     std::string dmethod; //Denoising Method -sureshrink or visushrink
 };
 
-auto visushrink(double* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void;
+auto visushrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, float* denoised) -> void;
 
-auto sureshrink(double* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, double* denoised) -> void;
+auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, float* denoised) -> void;
 
-auto modwtshrink(double* signal, std::size_t n, std::size_t j, char const* wname, char const* cmethod, char const* ext, char const* thresh, double* denoised) -> void;
+auto modwtshrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* cmethod, char const* ext, char const* thresh, float* denoised) -> void;
 
-auto denoise(DenoiseSet& obj, double* signal, double* denoised) -> void;
+auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void;
 
 auto setDenoiseMethod(DenoiseSet& obj, char const* dmethod) -> void;
 
@@ -39,6 +39,6 @@ auto setDenoiseWTExtension(DenoiseSet& obj, char const* extension) -> void;
 
 auto setDenoiseParameters(DenoiseSet& obj, char const* thresh, char const* level) -> void;
 
-auto median(double* x, int n) -> double;
+auto median(float* x, int n) -> float;
 
-auto minindex(double const* arr, int n) -> int;
+auto minindex(float const* arr, int n) -> int;

@@ -5,7 +5,7 @@
 
 #include "lt/cstdlib.hpp"
 
-auto absmax(double* array, std::size_t n) -> double
+auto absmax(float* array, std::size_t n) -> float
 {
     auto max = 0.0;
     for (auto i = std::size_t { 0 }; i < n; ++i) {
@@ -16,7 +16,7 @@ auto absmax(double* array, std::size_t n) -> double
     return max;
 }
 
-auto sum1(double const* array, std::size_t n) -> double
+auto sum1(float const* array, std::size_t n) -> float
 {
     auto sum = 0.0;
     for (auto i = std::size_t { 0 }; i < n; ++i) {
@@ -25,7 +25,7 @@ auto sum1(double const* array, std::size_t n) -> double
     return sum;
 }
 
-auto sum2(double const* array, std::size_t n) -> double
+auto sum2(float const* array, std::size_t n) -> float
 {
     auto sum = 0.0;
     for (std::size_t i = 0; i < n; i += 2) {
@@ -33,7 +33,7 @@ auto sum2(double const* array, std::size_t n) -> double
     }
     return sum;
 }
-auto sum3(double const* array, std::size_t n) -> double
+auto sum3(float const* array, std::size_t n) -> float
 {
     auto sum = 0.0;
     for (std::size_t i = 1; i < n; i += 2) {
@@ -42,7 +42,7 @@ auto sum3(double const* array, std::size_t n) -> double
     return sum;
 }
 // np.sum(w[2*m:(2*N+2*m)]*w[0:2*N])
-auto sum4(double const* array, std::size_t n) -> double
+auto sum4(float const* array, std::size_t n) -> float
 {
     auto sum = 0.0;
     for (std::size_t i = 0; i < n; i += 1) {
@@ -51,7 +51,7 @@ auto sum4(double const* array, std::size_t n) -> double
     return sum;
 }
 // np.sum(w[2 * m:(2 * N)] * w[0:2 * N - 2 * m])
-auto sum5(double const* array, std::size_t n, std::size_t m) -> double
+auto sum5(float const* array, std::size_t n, std::size_t m) -> float
 {
     auto sum = 0.0;
     for (std::size_t i = 2 * m; i < n; i += 1) {
@@ -60,19 +60,19 @@ auto sum5(double const* array, std::size_t n, std::size_t m) -> double
     return sum;
 }
 
-auto rmsError(double const* data, double const* rec, std::size_t n) -> double
+auto rmsError(float const* data, float const* rec, std::size_t n) -> float
 {
-    double sum = 0;
+    float sum = 0;
     for (std::size_t i = 0; i < n; ++i) {
         sum += (data[i] - rec[i]) * (data[i] - rec[i]);
     }
-    return std::sqrt(sum / ((double)n - 1));
+    return std::sqrt(sum / ((float)n - 1));
 }
 
-auto relError(double const* data, double const* rec, std::size_t n) -> double
+auto relError(float const* data, float const* rec, std::size_t n) -> float
 {
-    double sum1 = 0;
-    double sum2 = 0;
+    float sum1 = 0;
+    float sum2 = 0;
     for (std::size_t i = 0; i < n; ++i) {
         sum1 += (data[i] - rec[i]) * (data[i] - rec[i]);
         sum2 += data[i] * data[i];
@@ -80,11 +80,11 @@ auto relError(double const* data, double const* rec, std::size_t n) -> double
     return std::sqrt(sum1) / std::sqrt(sum2);
 }
 
-auto generateRnd() -> double
+auto generateRnd() -> float
 {
     std::random_device rd {};
     auto gen = std::mt19937 { rd() };
-    auto dis = std::uniform_real_distribution<double> { 1.0, 100.0 };
+    auto dis = std::uniform_real_distribution<float> { 1.0, 100.0 };
     return dis(gen);
 }
 
@@ -100,11 +100,11 @@ auto split(std::string const& s, char delim) -> std::vector<std::string>
     return result;
 }
 
-auto loadTestData(char const* filePath) -> TestData<double>
+auto loadTestData(char const* filePath) -> TestData<float>
 {
     auto parseLine = [](auto const& line) {
         auto splits = split(line, ' ');
-        auto values = std::vector<double> {};
+        auto values = std::vector<float> {};
         for (auto const& s : splits) {
             values.push_back(std::stod(s));
         }
@@ -113,7 +113,7 @@ auto loadTestData(char const* filePath) -> TestData<double>
 
     auto file = std::fstream { filePath, std::ios::in };
     auto tmp = std::string {};
-    auto result = TestData<double> {};
+    auto result = TestData<float> {};
 
     if (file.is_open()) {
         while (std::getline(file, tmp)) {
@@ -125,7 +125,7 @@ auto loadTestData(char const* filePath) -> TestData<double>
     return result;
 }
 
-auto toFloat(TestData<double> const& d) -> TestData<float>
+auto toFloat(TestData<float> const& d) -> TestData<float>
 {
     auto result = TestData<float> {};
     for (auto const& line : d) {

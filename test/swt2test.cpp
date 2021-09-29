@@ -16,9 +16,9 @@ auto main() -> int
     auto const cols = std::size_t { 48 };
     auto const n = rows * cols;
 
-    auto inp = makeZeros<double>(n);
-    auto oup = makeZeros<double>(n);
-    auto diff = makeZeros<double>(n);
+    auto inp = makeZeros<float>(n);
+    auto oup = makeZeros<float>(n);
+    auto diff = makeZeros<float>(n);
     auto const j = std::size_t { 2 };
 
     auto wt = WaveletTransform2D(obj, "swt", rows, cols, j);

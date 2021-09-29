@@ -9,7 +9,7 @@
 #include "lt/cstdlib.hpp"
 #include "lt/cstring.hpp"
 
-auto dwtPerStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride) -> void
+auto dwtPerStride(float const* inp, int n, float const* lpd, float const* hpd, int lpdLen, float* cA, int lenCA, float* cD, int istride, int ostride) -> void
 {
     int l = 0;
     int l2 = 0;
@@ -71,7 +71,7 @@ auto dwtPerStride(double const* inp, int n, double const* lpd, double const* hpd
     }
 }
 
-auto dwtSymStride(double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride) -> void
+auto dwtSymStride(float const* inp, int n, float const* lpd, float const* hpd, int lpdLen, float* cA, int lenCA, float* cD, int istride, int ostride) -> void
 {
     int i = 0;
     int l = 0;
@@ -104,7 +104,7 @@ auto dwtSymStride(double const* inp, int n, double const* lpd, double const* hpd
     }
 }
 
-auto modwtPerStride(int m, double const* inp, int /*N*/, double const* filt, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride) -> void
+auto modwtPerStride(int m, float const* inp, int /*N*/, float const* filt, int lpdLen, float* cA, int lenCA, float* cD, int istride, int ostride) -> void
 {
     int l = 0;
     int i = 0;
@@ -136,7 +136,7 @@ auto modwtPerStride(int m, double const* inp, int /*N*/, double const* filt, int
     }
 }
 
-auto swtPerStride(int m, double const* inp, int n, double const* lpd, double const* hpd, int lpdLen, double* cA, int lenCA, double* cD, int istride, int ostride) -> void
+auto swtPerStride(int m, float const* inp, int n, float const* lpd, float const* hpd, int lpdLen, float* cA, int lenCA, float* cD, int istride, int ostride) -> void
 {
     int l = 0;
     int l2 = 0;
@@ -193,7 +193,7 @@ auto swtPerStride(int m, double const* inp, int n, double const* lpd, double con
     }
 }
 
-auto idwtPerStride(double const* cA, int lenCA, double const* cD, double const* lpr, double const* hpr, int lprLen, double* x, int istride, int ostride) -> void
+auto idwtPerStride(float const* cA, int lenCA, float const* cD, float const* lpr, float const* hpr, int lprLen, float* x, int istride, int ostride) -> void
 {
     int lenAvg = 0;
     int i = 0;
@@ -237,7 +237,7 @@ auto idwtPerStride(double const* cA, int lenCA, double const* cD, double const* 
     }
 }
 
-auto idwtSymStride(double const* cA, int lenCA, double const* cD, double const* lpr, double const* hpr, int lprLen, double* x, int istride, int ostride) -> void
+auto idwtSymStride(float const* cA, int lenCA, float const* cD, float const* lpr, float const* hpr, int lprLen, float* x, int istride, int ostride) -> void
 {
     int lenAvg = 0;
     int i = 0;
@@ -293,6 +293,6 @@ auto testSWTlength(int n, int j) -> int
 
 auto maxIterations(std::size_t sigLen, std::size_t filtLen) -> std::size_t
 {
-    auto const temp = std::log(static_cast<double>(sigLen) / (static_cast<double>(filtLen) - 1.0)) / std::log(2.0);
+    auto const temp = std::log(static_cast<float>(sigLen) / (static_cast<float>(filtLen) - 1.0)) / std::log(2.0);
     return static_cast<std::size_t>(temp);
 }

@@ -11,10 +11,10 @@ struct Wavelet {
     LT_NODISCARD auto size() const noexcept -> std::size_t { return size_; }
     LT_NODISCARD auto name() const noexcept -> std::string const& { return name_; }
 
-    LT_NODISCARD auto lpd() const noexcept -> lt::span<double> { return lpd_; }
-    LT_NODISCARD auto hpd() const noexcept -> lt::span<double> { return hpd_; }
-    LT_NODISCARD auto lpr() const noexcept -> lt::span<double> { return lpr_; }
-    LT_NODISCARD auto hpr() const noexcept -> lt::span<double> { return hpr_; }
+    LT_NODISCARD auto lpd() const noexcept -> lt::span<float> { return lpd_; }
+    LT_NODISCARD auto hpd() const noexcept -> lt::span<float> { return hpd_; }
+    LT_NODISCARD auto lpr() const noexcept -> lt::span<float> { return lpr_; }
+    LT_NODISCARD auto hpr() const noexcept -> lt::span<float> { return hpr_; }
 
 private:
     std::string name_;
@@ -22,12 +22,12 @@ private:
     // When all filters are of the same length.
     // [Matlab uses zero-padding to make all filters of the same length]
     std::size_t size_;
-    std::unique_ptr<double[]> params_;
+    std::unique_ptr<float[]> params_;
 
-    lt::span<double> lpd_;
-    lt::span<double> hpd_;
-    lt::span<double> lpr_;
-    lt::span<double> hpr_;
+    lt::span<float> lpd_;
+    lt::span<float> hpd_;
+    lt::span<float> lpr_;
+    lt::span<float> hpr_;
 };
 
 auto summary(Wavelet const& obj) -> void;

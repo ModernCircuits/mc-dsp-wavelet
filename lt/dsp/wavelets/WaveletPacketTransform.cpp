@@ -13,7 +13,7 @@
 #include "lt/utility.hpp"
 
 namespace {
-auto entropyS(double const* x, int n) -> double
+auto entropyS(float const* x, int n) -> float
 {
     auto val = 0.0;
     for (auto i = 0; i < n; ++i) {
@@ -25,7 +25,7 @@ auto entropyS(double const* x, int n) -> double
     return val;
 }
 
-auto entropyT(double* x, int n, double t) -> double
+auto entropyT(float* x, int n, float t) -> float
 {
     if (t < 0) {
         throw std::invalid_argument("Threshold value must be >= 0");
@@ -42,7 +42,7 @@ auto entropyT(double* x, int n, double t) -> double
     return val;
 }
 
-auto entropyN(double* x, int n, double p) -> double
+auto entropyN(float* x, int n, float p) -> float
 {
     if (p < 1) {
         throw std::invalid_argument("Norm power value must be >= 1");
@@ -51,13 +51,13 @@ auto entropyN(double* x, int n, double p) -> double
     auto val = 0.0;
     for (auto i = 0; i < n; ++i) {
         auto const x2 = fabs(x[i]);
-        val += std::pow(x2, (double)p);
+        val += std::pow(x2, (float)p);
     }
 
     return val;
 }
 
-auto entropyL(double const* x, int n) -> double
+auto entropyL(float const* x, int n) -> float
 {
     auto val = 0.0;
     for (auto i = 0; i < n; ++i) {
@@ -69,7 +69,7 @@ auto entropyL(double const* x, int n) -> double
     return val;
 }
 
-auto costfunc(double* x, int n, char const* entropy, double p) -> double
+auto costfunc(float* x, int n, char const* entropy, float p) -> float
 {
     auto e = lt::string_view { entropy };
     if (e == "shannon") {
@@ -116,13 +116,13 @@ WaveletPacketTransform::WaveletPacketTransform(Wavelet* wave, std::size_t siglen
     std::size_t elength = 0;
     while (idx > 0) {
         n = n + lp - 2;
-        n = (int)ceil((double)n / 2.0);
+        n = (int)ceil((float)n / 2.0);
         elength = p2 * n;
         idx--;
         p2 *= 2;
     }
 
-    this->params = std::make_unique<double[]>(elength + 4 * nodess + 2 * j + 6);
+    this->params = std::make_unique<float[]>(elength + 4 * nodess + 2 * j + 6);
     this->outlength = siglength + 2 * (j + 1) * (size + 1);
     this->ext = "sym";
     this->entropy = "shannon";
@@ -149,7 +149,7 @@ WaveletPacketTransform::WaveletPacketTransform(Wavelet* wave, std::size_t siglen
     }
 }
 
-static auto dwtPer(WaveletPacketTransform& wt, double const* inp, int n, double* cA, int lenCA, double* cD) -> void
+static auto dwtPer(WaveletPacketTransform& wt, float const* inp, int n, float* cA, int lenCA, float* cD) -> void
 {
     int l = 0;
     int l2 = 0;
@@ -199,7 +199,7 @@ static auto dwtPer(WaveletPacketTransform& wt, double const* inp, int n, double*
     }
 }
 
-static auto dwtSym(WaveletPacketTransform& wt, double const* inp, int n, double* cA, int lenCA, double* cD) -> void
+static auto dwtSym(WaveletPacketTransform& wt, float const* inp, int n, float* cA, int lenCA, float* cD) -> void
 {
     int l = 0;
     int t = 0;
@@ -235,7 +235,7 @@ static constexpr auto ipow2(int n) -> int
     return p;
 }
 
-auto dwt(WaveletPacketTransform& wt, double const* inp) -> void
+auto dwt(WaveletPacketTransform& wt, float const* inp) -> void
 {
     int iter = 0;
     int p2 = 0;
@@ -243,8 +243,8 @@ auto dwt(WaveletPacketTransform& wt, double const* inp) -> void
     int n2 = 0;
     int np = 0;
     int llb = 0;
-    double v1 = NAN;
-    double v2 = NAN;
+    float v1 = NAN;
+    float v2 = NAN;
     int lenCA = 0;
     int t = 0;
 
@@ -264,8 +264,8 @@ auto dwt(WaveletPacketTransform& wt, double const* inp) -> void
     }
 
     auto eparam = wt.eparam;
-    auto orig = std::make_unique<double[]>(tempLen);
-    auto tree = std::make_unique<double[]>((tempLen * (jj + 1) + elength));
+    auto orig = std::make_unique<float[]>(tempLen);
+    auto tree = std::make_unique<float[]>((tempLen * (jj + 1) + elength));
     auto nodelength = std::make_unique<int[]>(nodes);
 
     for (auto i = 0; i < wt.signalLength(); ++i) {
@@ -292,7 +292,7 @@ auto dwt(WaveletPacketTransform& wt, double const* inp) -> void
         auto i = jj;
         p2 = 2;
         while (i > 0) {
-            n = (int)ceil((double)n / 2.0);
+            n = (int)ceil((float)n / 2.0);
             wt.length[i] = n;
             wt.outlength += p2 * (wt.length[i]);
             i--;
@@ -328,7 +328,7 @@ auto dwt(WaveletPacketTransform& wt, double const* inp) -> void
         p2 = 2;
         while (i > 0) {
             n = n + lp - 2;
-            n = (int)ceil((double)n / 2.0);
+            n = (int)ceil((float)n / 2.0);
             wt.length[i] = n;
             wt.outlength += p2 * (wt.length[i]);
             i--;
@@ -467,7 +467,7 @@ auto getDWPTNodelength(WaveletPacketTransform& wt, int x) -> int
     return wt.length[wt.J - x + 1];
 }
 
-static auto idwtPer(WaveletPacketTransform& wt, double const* cA, int lenCA, double const* cD, double* x) -> void
+static auto idwtPer(WaveletPacketTransform& wt, float const* cA, int lenCA, float const* cD, float* x) -> void
 {
     int lenAvg = 0;
     int l = 0;
@@ -502,7 +502,7 @@ static auto idwtPer(WaveletPacketTransform& wt, double const* cA, int lenCA, dou
     }
 }
 
-static auto idwtSym(WaveletPacketTransform& wt, double const* cA, int lenCA, double const* cD, double* x) -> void
+static auto idwtSym(WaveletPacketTransform& wt, float const* cA, int lenCA, float const* cD, float* x) -> void
 {
     auto lenAvg = (wt.wave().lpr().size() + wt.wave().hpr().size()) / 2;
     auto m = -2;
@@ -524,7 +524,7 @@ static auto idwtSym(WaveletPacketTransform& wt, double const* cA, int lenCA, dou
     }
 }
 
-auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
+auto idwt(WaveletPacketTransform& wt, float* dwtop) -> void
 {
     int k = 0;
     int l = 0;
@@ -536,10 +536,10 @@ auto idwt(WaveletPacketTransform& wt, double* dwtop) -> void
     auto lf = (wt.wave().lpr().size() + wt.wave().hpr().size()) / 2;
     auto xlen = powJ * (appLen + 2 * lf);
 
-    auto xLp = std::make_unique<double[]>(2 * (wt.length[j] + lf));
-    auto x = std::make_unique<double[]>(xlen);
-    auto out = std::make_unique<double[]>(wt.length[j]);
-    auto out2 = std::make_unique<double[]>(wt.length[j]);
+    auto xLp = std::make_unique<float[]>(2 * (wt.length[j] + lf));
+    auto x = std::make_unique<float[]>(xlen);
+    auto out = std::make_unique<float[]>(wt.length[j]);
+    auto out2 = std::make_unique<float[]>(wt.length[j]);
     auto prep = makeZeros<int>(powJ);
     auto ptemp = makeZeros<int>(powJ);
     auto n1 = 1;
@@ -762,7 +762,7 @@ auto setDWPTExtension(WaveletPacketTransform& wt, char const* extension) -> void
     }
 }
 
-auto setDWPTEntropy(WaveletPacketTransform& wt, char const* entropy, double eparam) -> void
+auto setDWPTEntropy(WaveletPacketTransform& wt, char const* entropy, float eparam) -> void
 {
     if (strcmp(entropy, "shannon") == 0) {
         wt.entropy = "shannon";

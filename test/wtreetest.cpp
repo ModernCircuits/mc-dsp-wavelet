@@ -11,7 +11,7 @@ auto main() -> int
 {
     auto obj = Wavelet { "db3" };
     auto const n = 147;
-    auto inp = std::make_unique<double[]>(n);
+    auto inp = std::make_unique<float[]>(n);
     for (auto i = 1; i < n + 1; ++i) {
         inp[i - 1] = -0.25 * i * i * i + 25 * i * i + 10 * i;
     }
@@ -27,7 +27,7 @@ auto main() -> int
     auto const len = wt.nodeLength(x);
     fmt::printf("\n %d", len);
     fmt::printf("\n");
-    auto oup = std::make_unique<double[]>(len);
+    auto oup = std::make_unique<float[]>(len);
 
     fmt::printf("Node [%d %d] Coefficients : \n", x, y);
     wt.coeffs(x, y, oup.get(), len);

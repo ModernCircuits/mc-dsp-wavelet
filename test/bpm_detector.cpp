@@ -13,13 +13,13 @@
 #include "readFileToVector.hpp"
 
 template <typename It>
-auto mean(It f, It l) -> double
+auto mean(It f, It l) -> float
 {
     auto const sum = std::accumulate(f, l, 0.0);
-    return sum / static_cast<double>(std::distance(f, l));
+    return sum / static_cast<float>(std::distance(f, l));
 }
 
-auto peakDetect(lt::span<double> data) -> std::size_t
+auto peakDetect(lt::span<float> data) -> std::size_t
 {
     auto peaks = std::minmax_element(data.begin(), data.end());
     if (fabs(*peaks.first) >= fabs(*peaks.second)) {
@@ -37,7 +37,7 @@ struct BpmDetect {
         wt_.convMethod(ConvolutionMethod::direct);
     }
 
-    LT_NODISCARD auto perform(lt::span<double> input, double sampleRate) -> double
+    LT_NODISCARD auto perform(lt::span<float> input, float sampleRate) -> float
     {
 
         auto const levels = 4;
@@ -45,18 +45,18 @@ struct BpmDetect {
         auto const minNdx = std::floor(60.0 / 220.0 * (sampleRate / maxDecimation));
         auto const maxNdx = std::floor(60.0 / 40.0 * (sampleRate / maxDecimation));
 
-        auto cA = lt::span<double> {};
-        auto cD = lt::span<double> {};
+        auto cA = lt::span<float> {};
+        auto cD = lt::span<float> {};
 
         auto cDMinlen = 0.0;
-        auto cDSum = std::vector<double> {};
+        auto cDSum = std::vector<float> {};
         dwt(wt_, input.data());
         for (auto loop { 0 }; loop < levels; ++loop) {
             if (loop == 0) {
                 // dwt(wt_, input.data());
                 cA = wt_.approx();
                 cD = wt_.detail(loop + 1);
-                cDMinlen = static_cast<double>(lt::size(cD)) / maxDecimation + 1.0;
+                cDMinlen = static_cast<float>(lt::size(cD)) / maxDecimation + 1.0;
                 cDSum.resize(static_cast<std::size_t>(std::floor(cDMinlen)));
                 std::fill(begin(cDSum), end(cDSum), 0.0);
             } else {
@@ -115,7 +115,7 @@ struct BpmDetect {
         auto correl = x.extractResult();
 
         auto midpoint = static_cast<std::size_t>(std::floor(correl.size() / 2.0));
-        auto correlMidpointTmp = lt::span<double> { correl.data(), correl.size() }.subspan(midpoint);
+        auto correlMidpointTmp = lt::span<float> { correl.data(), correl.size() }.subspan(midpoint);
         auto const peakNdx = peakDetect(correlMidpointTmp.subspan(minNdx, maxNdx - minNdx));
 
         auto const peakNdxAdjusted = peakNdx + minNdx;
@@ -128,7 +128,7 @@ private:
     WaveletTransform wt_;
 };
 
-auto median(lt::span<double> data) -> double
+auto median(lt::span<float> data) -> float
 {
     if (lt::empty(data)) {
         return 0.0;
@@ -140,13 +140,13 @@ auto median(lt::span<double> data) -> double
     return size % 2 == 0 ? (data[mid] + data[mid - 1]) / 2 : data[mid];
 }
 
-auto mode(lt::span<double> arr) -> double
+auto mode(lt::span<float> arr) -> float
 {
     auto const n = arr.size();
-    double count = 1;
-    double countmax = 0;
-    double current = arr[0];
-    double moda = 0;
+    float count = 1;
+    float countmax = 0;
+    float current = arr[0];
+    float moda = 0;
     for (std::size_t i = 1; i < n; i++) {
         if (arr[i] == current) {
             count++;
@@ -167,14 +167,14 @@ auto main(int argc, char** argv) -> int
         return EXIT_FAILURE;
     }
 
-    AudioFile<double> audioFile;
+    AudioFile<float> audioFile;
     audioFile.load(argv[1]);
     audioFile.printSummary();
 
-    auto const fs = static_cast<double>(audioFile.getSampleRate());
+    auto const fs = static_cast<float>(audioFile.getSampleRate());
     // auto const numSamples = static_cast<size_t>(audioFile.getNumSamplesPerChannel());
 
-    auto channel = lt::span<double>(audioFile.samples[0].data(), audioFile.samples[0].size());
+    auto channel = lt::span<float>(audioFile.samples[0].data(), audioFile.samples[0].size());
     // channel = channel.subspan(static_cast<std::size_t>(lt::size(audioFile.samples[0]) * (0.05 / 100.0)));
     // channel = channel.last(static_cast<std::size_t>(lt::size(audioFile.samples[0]) * (0.05 / 100.0)));
 
@@ -182,7 +182,7 @@ auto main(int argc, char** argv) -> int
     auto const maxWindowIndex = lt::size(channel) / windowSize;
 
     auto sampsNdx = 0U;
-    auto bpms = std::vector<double> {};
+    auto bpms = std::vector<float> {};
     for (auto windowNdx { 0U }; windowNdx < maxWindowIndex; ++windowNdx) {
         if (sampsNdx + windowSize >= lt::size(channel)) {
             fmt::print("ERROR");

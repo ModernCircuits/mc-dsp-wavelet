@@ -16,14 +16,14 @@
 auto modwtReconstructionTest()
 {
     auto const n = 4096;
-    auto epsilon = 1e-15;
+    auto epsilon = 1e-6;
 
-    auto out = std::make_unique<double[]>(n);
-    auto inp = std::make_unique<double[]>(n);
+    auto out = std::make_unique<float[]>(n);
+    auto inp = std::make_unique<float[]>(n);
 
     std::random_device rd {};
     auto gen = std::mt19937 { rd() };
-    auto dis = std::uniform_real_distribution<double> { 0.0, 1.0 };
+    auto dis = std::uniform_real_distribution<float> { 0.0, 1.0 };
     std::generate_n(inp.get(), n, [&] { return dis(gen); });
 
     auto waveletNames = std::vector<std::string> {};
@@ -63,9 +63,9 @@ auto modwtReconstructionTest()
                     imodwt(wt, out.get());
 
                     if (directFft == 0) {
-                        epsilon = 1e-8;
+                        epsilon = 1e-6;
                     } else {
-                        epsilon = 1e-10;
+                        epsilon = 1e-6;
                     }
 
                     auto const err = rmsError(out.get(), inp.get(), wt.signalLength());
@@ -83,15 +83,15 @@ auto modwT2ReconstructionTest()
     int rows = 0;
     int cols = 0;
 
-    double epsilon = NAN;
+    float epsilon = NAN;
 
     rows = 512;
     cols = 500;
 
     auto n = rows * cols;
 
-    auto inp = std::make_unique<double[]>(n);
-    auto out = std::make_unique<double[]>(n);
+    auto inp = std::make_unique<float[]>(n);
+    auto out = std::make_unique<float[]>(n);
 
     std::vector<std::string> waveletNames;
 
@@ -127,9 +127,9 @@ auto modwT2ReconstructionTest()
                     imodwt(wt, wavecoeffs.get(), out.get());
 
                     if (directFft == 0) {
-                        epsilon = 1e-8;
+                        epsilon = 1e-4;
                     } else {
-                        epsilon = 1e-10;
+                        epsilon = 1e-4;
                     }
                     REQUIRE(rmsError(out.get(), inp.get(), n) <= epsilon);
                 }
@@ -142,16 +142,16 @@ auto dwtReconstructionTest()
 {
 
     int i = 0;
-    double epsilon = 1e-8;
+    float epsilon = 1e-5;
 
     auto n = 8096;
 
-    auto inp = std::make_unique<double[]>(n);
-    auto out = std::make_unique<double[]>(n);
+    auto inp = std::make_unique<float[]>(n);
+    auto out = std::make_unique<float[]>(n);
 
     std::random_device rd {};
     auto gen = std::mt19937 { rd() };
-    auto dis = std::uniform_real_distribution<double> { 0.0, 1.0 };
+    auto dis = std::uniform_real_distribution<float> { 0.0, 1.0 };
 
     for (i = 0; i < n; ++i) {
         inp[i] = dis(gen);
@@ -232,98 +232,9 @@ auto dwtReconstructionTest()
     }
 }
 
-auto cwtReconstructionTest()
-{
-    int i = 0;
-    int n = 0;
-    int j = 0;
-    int subscale = 0;
-    int a0 = 0;
-    double dt = NAN;
-    double dj = NAN;
-    double s0 = NAN;
-    double pi = NAN;
-    double t = NAN;
-    double epsilon = NAN;
-    int it1 = 0;
-    int it2 = 0;
-
-    char const* wave[3] {
-        "morl",
-        "paul",
-        "dog",
-    };
-    double param[30] = {
-        4.5,
-        5,
-        5.5,
-        6,
-        6.5,
-        8,
-        10,
-        13,
-        17,
-        20,
-        4,
-        5,
-        7,
-        8,
-        10,
-        12,
-        13,
-        14,
-        17,
-        20,
-        2,
-        4,
-        6,
-        8,
-        10,
-        12,
-        14,
-        16,
-        18,
-        20,
-    };
-    char const* type = "pow";
-
-    epsilon = 0.01;
-    n = 2048;
-    dt = 0.000125;
-    subscale = 20;
-    dj = 1.0 / (double)subscale;
-    s0 = dt / 32;
-    j = 32 * subscale;
-    a0 = 2; // power
-
-    auto inp = std::make_unique<double[]>(n);
-    auto oup = std::make_unique<double[]>(n);
-
-    pi = 4.0 * atan(1.0);
-
-    for (i = 0; i < n; ++i) {
-        t = dt * i;
-        inp[i] = sin(2 * pi * 500 * t) + sin(2 * pi * 1000 * t) + 0.1 * sin(2 * pi * 8 * t);
-        if (i == 1200 || i == 1232) {
-            inp[i] += 5.0;
-        }
-    }
-
-    for (it1 = 0; it1 < 3; ++it1) {
-        for (it2 = 0; it2 < 10; ++it2) {
-            auto wt = ContinuousWaveletTransform { wave[it1], param[it1 * 10 + it2], n, dt, j };
-            wt.scales(s0, dj, type, a0);
-            cwt(wt, inp.get());
-            icwt(wt, oup.get());
-
-            REQUIRE(relError(inp.get(), oup.get(), wt.signalLength) <= epsilon);
-        }
-    }
-}
-
 auto dbCoefTests()
 {
-    constexpr auto epsilon = 1e-15;
+    constexpr auto epsilon = 1e-6;
     auto waveletNames = std::vector<std::string>(38);
     std::generate(begin(waveletNames), end(waveletNames), [i = 1]() mutable {
         return std::string("db") + std::to_string(i);
@@ -351,12 +262,12 @@ auto dbCoefTests()
 
 auto coifCoefTests()
 {
-    double epsilon = 1e-15;
-    double t1 = NAN;
-    double t2 = NAN;
-    double t3 = NAN;
-    double t4 = NAN;
-    double t5 = NAN;
+    float epsilon = 1e-6;
+    float t1 = NAN;
+    float t2 = NAN;
+    float t3 = NAN;
+    float t4 = NAN;
+    float t5 = NAN;
     std::vector<std::string> waveletNames;
     waveletNames.resize(17);
     for (std::size_t i = 0; i < waveletNames.size(); i++) {
@@ -383,12 +294,12 @@ auto coifCoefTests()
 
 auto symCoefTests()
 {
-    double epsilon = 1e-10;
-    double t1 = NAN;
-    double t2 = NAN;
-    double t3 = NAN;
-    double t4 = NAN;
-    double t5 = NAN;
+    float epsilon = 1e-6;
+    float t1 = NAN;
+    float t2 = NAN;
+    float t3 = NAN;
+    float t4 = NAN;
+    float t5 = NAN;
     std::vector<std::string> waveletNames;
     for (std::size_t i = 1; i < 20; i++) {
         waveletNames.push_back(std::string("sym") + std::to_string(i + 1));
@@ -415,7 +326,7 @@ auto symCoefTests()
 
 auto biorCoefTests()
 {
-    constexpr double epsilon = 1e-10;
+    constexpr float epsilon = 1e-6;
     std::vector<std::string> waveletNames;
     waveletNames.emplace_back("bior1.1");
     waveletNames.emplace_back("bior1.3");
@@ -456,13 +367,13 @@ auto biorCoefTests()
 
 auto rBiorCoefTests()
 {
-    double epsilon = 1e-10;
-    double t1 = NAN;
-    double t2 = NAN;
-    double t3 = NAN;
-    double t4 = NAN;
-    double t5 = NAN;
-    double t6 = NAN;
+    float epsilon = 1e-6;
+    float t1 = NAN;
+    float t2 = NAN;
+    float t3 = NAN;
+    float t4 = NAN;
+    float t5 = NAN;
+    float t6 = NAN;
     std::vector<std::string> waveletNames;
     waveletNames.emplace_back("rbior1.1");
     waveletNames.emplace_back("rbior1.3");
@@ -504,33 +415,39 @@ auto rBiorCoefTests()
 auto main() -> int
 {
     fmt::printf("Running Unit Tests : \n \n");
+
     fmt::printf("Running DBCoefTests ... ");
     dbCoefTests();
     fmt::printf("DONE \n");
+
     fmt::printf("Running CoifCoefTests ... ");
     coifCoefTests();
     fmt::printf("DONE \n");
+
     fmt::printf("Running SymCoefTests ... ");
     symCoefTests();
     fmt::printf("DONE \n");
+
     fmt::printf("Running BiorCoefTests ... ");
     biorCoefTests();
     fmt::printf("DONE \n");
+
     fmt::printf("Running RBiorCoefTests ... ");
     rBiorCoefTests();
     fmt::printf("DONE \n");
+
     fmt::printf("Running MODWT ReconstructionTests ... ");
     modwtReconstructionTest();
     fmt::printf("DONE \n");
+
     fmt::printf("Running DWPT ReconstructionTests ... ");
     dwtReconstructionTest();
     fmt::printf("DONE \n");
-    fmt::printf("Running CWT ReconstructionTests ... ");
-    cwtReconstructionTest();
-    fmt::printf("DONE \n");
+
     fmt::printf("Running MODWT2 ReconstructionTests ... ");
     modwT2ReconstructionTest();
     fmt::printf("DONE \n");
+
     fmt::printf("\n\nUnit Tests Successful\n\n");
     return 0;
 }
