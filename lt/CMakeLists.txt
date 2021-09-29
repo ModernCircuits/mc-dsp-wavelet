@@ -26,6 +26,11 @@ target_sources(${CMAKE_PROJECT_NAME}
         dsp/fft.hpp
         dsp/fft/FFT.hpp
         dsp/fft/FFT.cpp
+        dsp/fft/STFT.hpp
+        dsp/fft/STFT.cpp
+        dsp/fft/Window.hpp
+        dsp/fft/WindowFunction.hpp
+        dsp/fft/WindowFunction.cpp
 
         dsp/wavelets.hpp
         dsp/wavelets/common.cpp
