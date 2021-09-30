@@ -60,7 +60,6 @@ conan_cmake_configure(
         boost/1.77.0
         fftw/3.3.9
         fmt/8.0.1
-        coz/cci.20210322
         kissfft/131.1.0
     GENERATORS
         cmake_find_package
@@ -91,7 +90,6 @@ conan_cmake_install(PATH_OR_REFERENCE . BUILD outdated REMOTE conancenter SETTIN
 find_package(Boost 1.77 REQUIRED container filesystem json)
 find_package(FFTW3f REQUIRED)
 find_package(fmt REQUIRED)
-find_package(coz-profiler REQUIRED)
 find_package(kissfft REQUIRED)
 
 add_subdirectory(3rd_party/span)

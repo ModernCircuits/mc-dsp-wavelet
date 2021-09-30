@@ -10,7 +10,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         FFTW3::fftw3f
         kissfft::kissfft
         fmt::fmt
-        coz::coz
         lt::CompilerOptions
         lt::CompilerWarnings
         lt::CodeCoverage
