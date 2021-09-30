@@ -2,13 +2,13 @@
 
 #include "lt/algorithm.hpp"
 #include "lt/cmath.hpp"
-#include "lt/string.hpp"
-#include "lt/vector.hpp"
-
+#include "lt/format.hpp"
 #include "lt/fstream.hpp"
 #include "lt/limits.hpp"
 #include "lt/sstream.hpp"
+#include "lt/string.hpp"
 #include "lt/type_traits.hpp"
+#include "lt/vector.hpp"
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define REQUIRE(e)                                                              \

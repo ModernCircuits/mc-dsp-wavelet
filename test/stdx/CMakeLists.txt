@@ -1,0 +1,1 @@
+wavelib_add_test(bit_test)

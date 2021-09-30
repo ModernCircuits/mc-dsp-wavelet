@@ -32,18 +32,21 @@ namespace detail {
 
     template <typename T>
     struct BitCeilImpl<T, false> {
-        static auto ceil(T x) noexcept
+        static auto ceil(T x) noexcept -> T
         {
-            // for types subject to integral promotion
-            auto o = std::numeric_limits<unsigned>::digits - std::numeric_limits<T>::digits;
-            return T { 1U << (bit_width(T { x - 1U }) + o) >> o };
+            unsigned const num = std::numeric_limits<T>::digits - lt::countl_zero(static_cast<T>(x - 1));
+            unsigned const extra = std::numeric_limits<unsigned>::digits - std::numeric_limits<T>::digits;
+            unsigned const ret = 1U << (num + extra);
+            return static_cast<T>(ret >> extra);
         }
     };
+
     template <typename T>
     struct BitCeilImpl<T, true> {
-        static auto ceil(T x) noexcept
+        static auto ceil(T x) noexcept -> T
         {
-            return T { 1U } << bit_width(T { x - 1U });
+            unsigned const num = std::numeric_limits<T>::digits - lt::countl_zero(static_cast<T>(x - 1U));
+            return static_cast<T>(T { 1 } << num);
         }
     };
 }
@@ -52,11 +55,10 @@ template <typename T>
 LT_NODISCARD constexpr auto bit_ceil(T x) noexcept // NOLINT(readability-identifier-naming)
     -> std::enable_if_t<detail::bitUnsignedInt<T>, T>
 {
-    if (x <= T(1)) {
+    if (x < T(2)) {
         return T(1);
     }
-    using impl_t = detail::BitCeilImpl<T, !std::is_same<T, decltype(+x)>::value>;
-    return impl_t::ceil(x);
+    return detail::BitCeilImpl<T, !std::is_same<T, decltype(+x)>::value>::ceil(x);
 }
 } // namespace lt
 #endif

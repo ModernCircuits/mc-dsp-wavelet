@@ -40,3 +40,5 @@ wavelib_add_test(dwt_reconstruction)
 wavelib_add_test(swt_reconstruction)
 wavelib_add_test(denoisetest)
 wavelib_add_test(modwtdenoisetest)
+
+add_subdirectory(stdx)
