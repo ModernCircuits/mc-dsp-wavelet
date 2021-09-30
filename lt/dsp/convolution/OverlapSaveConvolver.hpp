@@ -3,6 +3,7 @@
 #include "lt/algorithm.hpp"
 #include "lt/array.hpp"
 #include "lt/cmath.hpp"
+#include "lt/complex.hpp"
 #include "lt/cstring.hpp"
 #include "lt/iterator.hpp"
 #include "lt/memory.hpp"
@@ -11,58 +12,62 @@
 
 #include "fftw3.h"
 
-/// This is an abstract base class that provides some basic, type-independent functionality for
-/// any container that should behave as a signal. It is not intended to be instantiated directly.
-template <typename T>
-struct Signal {
-    /// Given a size and a reference to an array, it fills the array with <SIZE> zeros.
-    /// Therefore, **IT DELETES THE CONTENTS OF THE ARRAY**. It is intended to be passed a newly
-    /// allocated array by the classes that inherit from Signal, because it isn't an expensive
-    /// operation and avoids memory errors due to non-initialized values.
-    explicit Signal(T* data, size_t size)
-        : data_(data)
-        , size_(size)
-    {
-        memset(data_, 0, sizeof(T) * size);
-    }
+/// This class is a Signal that works on aligned float arrays allocated by FFTW.
+/// It also overloads some further operators to do basic arithmetic
+struct FloatSignal {
+    /// the basic constructor allocates an aligned, float array, which is zeroed by the superclass
+    explicit FloatSignal(std::size_t size);
+    FloatSignal(float* data, size_t size);
+    FloatSignal(float* data, size_t size, size_t padBef, size_t padAft);
+    ~FloatSignal();
 
-    LT_NODISCARD auto begin() -> T* { return data_; }
-    LT_NODISCARD auto begin() const -> const T* { return data_; }
-    LT_NODISCARD auto cbegin() const -> const T* { return data_; }
+    LT_NODISCARD auto begin() -> float* { return data_; }
+    LT_NODISCARD auto begin() const -> const float* { return data_; }
+    LT_NODISCARD auto cbegin() const -> const float* { return data_; }
 
-    LT_NODISCARD auto end() -> T* { return begin() + size(); }
-    LT_NODISCARD auto end() const -> const T* { return begin() + size(); }
-    LT_NODISCARD auto cend() const -> const T* { return begin() + size(); }
+    LT_NODISCARD auto end() -> float* { return begin() + size(); }
+    LT_NODISCARD auto end() const -> const float* { return begin() + size(); }
+    LT_NODISCARD auto cend() const -> const float* { return begin() + size(); }
 
     LT_NODISCARD auto size() -> size_t& { return size_; }
     LT_NODISCARD auto size() const -> std::size_t const& { return size_; }
-    LT_NODISCARD auto data() -> T* { return data_; }
-    LT_NODISCARD auto data() const -> const T* { return data_; }
+    LT_NODISCARD auto data() -> float* { return data_; }
+    LT_NODISCARD auto data() const -> const float* { return data_; }
 
-    LT_NODISCARD auto operator[](std::size_t idx) -> T& { return data_[idx]; }
-    LT_NODISCARD auto operator[](std::size_t idx) const -> T& { return data_[idx]; }
+    LT_NODISCARD auto operator[](std::size_t idx) -> float& { return data_[idx]; }
+    LT_NODISCARD auto operator[](std::size_t idx) const -> float& { return data_[idx]; }
 
 protected:
-    T* data_;
+    float* data_;
     std::size_t size_;
-};
-
-/// This class is a Signal that works on aligned float arrays allocated by FFTW.
-/// It also overloads some further operators to do basic arithmetic
-struct DoubleSignal : Signal<float> {
-    /// the basic constructor allocates an aligned, float array, which is zeroed by the superclass
-    explicit DoubleSignal(std::size_t size);
-    DoubleSignal(float* data, size_t size);
-    DoubleSignal(float* data, size_t size, size_t padBef, size_t padAft);
-    ~DoubleSignal();
 };
 
 /// This class is a Signal that works on aligned complex (float[2]) arrays allocated by FFTW.
 /// It also overloads some further operators to do basic arithmetic
-struct ComplexSignal : Signal<fftwf_complex> {
+struct ComplexSignal {
     /// the basic constructor allocates an aligned, float[2] array, which is zeroed by the superclass
     explicit ComplexSignal(std::size_t size);
     ~ComplexSignal();
+
+    LT_NODISCARD auto begin() -> Complex<float>* { return data_; }
+    LT_NODISCARD auto begin() const -> const Complex<float>* { return data_; }
+    LT_NODISCARD auto cbegin() const -> const Complex<float>* { return data_; }
+
+    LT_NODISCARD auto end() -> Complex<float>* { return begin() + size(); }
+    LT_NODISCARD auto end() const -> const Complex<float>* { return begin() + size(); }
+    LT_NODISCARD auto cend() const -> const Complex<float>* { return begin() + size(); }
+
+    LT_NODISCARD auto size() -> size_t& { return size_; }
+    LT_NODISCARD auto size() const -> std::size_t const& { return size_; }
+    LT_NODISCARD auto data() -> Complex<float>* { return data_; }
+    LT_NODISCARD auto data() const -> const Complex<float>* { return data_; }
+
+    LT_NODISCARD auto operator[](std::size_t idx) -> Complex<float>& { return data_[idx]; }
+    LT_NODISCARD auto operator[](std::size_t idx) const -> Complex<float>& { return data_[idx]; }
+
+protected:
+    Complex<float>* data_;
+    std::size_t size_;
 };
 
 /// This free function takes three complex signals a,b,c of the same size and computes the complex
@@ -99,7 +104,7 @@ struct FftForwardPlan : FftPlan {
     // the complex has to be size(real)/2+1, so the constructor will throw a runtime error if
     // this condition doesn't hold. Since the signals and the superclass already have proper
     // destructors, no special memory management has to be done.
-    explicit FftForwardPlan(DoubleSignal& fs, ComplexSignal& cs);
+    explicit FftForwardPlan(FloatSignal& fs, ComplexSignal& cs);
 };
 
 // This backward plan (1D, C->R) is adequate to process spectra of 1D floats (real).
@@ -109,7 +114,7 @@ struct FftBackwardPlan : FftPlan {
     // the complex has to be size(real)/2+1, so the constructor will throw a runtime error if
     // this condition doesn't hold. Since the signals and the superclass already have proper
     // destructors, no special memory management has to be done.
-    explicit FftBackwardPlan(ComplexSignal& cs, DoubleSignal& fs);
+    explicit FftBackwardPlan(ComplexSignal& cs, FloatSignal& fs);
 };
 
 /// This class performs an efficient version of the spectral convolution/cross-correlation between
@@ -135,7 +140,7 @@ struct OverlapSaveConvolver {
     /// of them, so no care has to be taken regarding memory management.
     /// The wisdomPath may be empty, or a path to a valid wisdom file.
     /// Note that len(signal) can never be smaller than len(patch), or an exception is thrown.
-    OverlapSaveConvolver(DoubleSignal& signal, DoubleSignal& patch, std::string const& wisdomPath = "");
+    OverlapSaveConvolver(FloatSignal& signal, FloatSignal& patch, std::string const& wisdomPath = "");
 
     auto convolute() -> void;
     auto crossCorrelate() -> void;
@@ -143,7 +148,7 @@ struct OverlapSaveConvolver {
     // This method implements step 6 of the overlap-save algorithm. In convolution, the first (P-1)
     // samples of each chunk are discarded, in xcorr the last (P-1) ones. Therefore, depending on the
     // current _state_, the corresponding method is used. USAGE:
-    // Every time it is called, this function returns a new DoubleSignal instance of size
+    // Every time it is called, this function returns a new FloatSignal instance of size
     // len(signal)+len(patch)-1. If the last operation performed was convolute(), this function
     // will return the  convolution of signal and patch. If the last operation performed was
     // crossCorrelate(), the result will contain the cross-correlation. If none of them was performed
@@ -159,7 +164,7 @@ struct OverlapSaveConvolver {
     //   ...
     // Result[8] =                  [1 1 1]        => 1*7         = 7  // LAST ENTRY
     // Note that the returned signal object takes care of its own memory, so no management is needed.
-    auto extractResult() -> DoubleSignal;
+    auto extractResult() -> FloatSignal;
 
 private:
     // This private method implements steps 3,4,5 of the algorithm. If the given flag is false,
@@ -173,21 +178,21 @@ private:
     std::size_t resultSize_;
 
     // make padded copies of the inputs and get chunk measurements
-    DoubleSignal paddedPatch_;
+    FloatSignal paddedPatch_;
     std::size_t resultChunksize_;
     std::size_t resultChunksizeComplex_;
     std::size_t result_stride_;
     ComplexSignal paddedPatchComplex_;
 
     // padded copy of the signal
-    DoubleSignal paddedSignal_;
+    FloatSignal paddedSignal_;
 
     // the deconstructed signal
-    std::vector<std::unique_ptr<DoubleSignal>> inputChunks_;
+    std::vector<std::unique_ptr<FloatSignal>> inputChunks_;
     std::vector<std::unique_ptr<ComplexSignal>> inputChunksComplex_;
 
     // the corresponding chunks holding convs/xcorrs
-    std::vector<std::unique_ptr<DoubleSignal>> resultChunks_;
+    std::vector<std::unique_ptr<FloatSignal>> resultChunks_;
     std::vector<std::unique_ptr<ComplexSignal>> resultChunksComplex_;
 
     // the corresponding plans (plus the plan of the patch)

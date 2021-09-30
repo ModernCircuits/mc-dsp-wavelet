@@ -109,7 +109,7 @@ struct BpmDetect {
         // auto const m = mean(begin(cD_sumf_), end(cD_sumf_));
         // std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [m](auto v) { return v - m; });
 
-        auto s = DoubleSignal(cDSum.data(), cDSum.size());
+        auto s = FloatSignal(cDSum.data(), cDSum.size());
         auto x = OverlapSaveConvolver(s, s);
         x.crossCorrelate();
         auto correl = x.extractResult();

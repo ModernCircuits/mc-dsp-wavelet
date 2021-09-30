@@ -18,8 +18,8 @@ auto main() -> int
         auto testData = loadTestData(testFile);
         REQUIRE(testData.size() == 4U);
 
-        auto s = DoubleSignal { testData[0].data(), testData[0].size() };
-        auto p = DoubleSignal { testData[1].data(), testData[1].size() };
+        auto s = FloatSignal { testData[0].data(), testData[0].size() };
+        auto p = FloatSignal { testData[1].data(), testData[1].size() };
         auto x = OverlapSaveConvolver { s, p };
 
         x.convolute();
