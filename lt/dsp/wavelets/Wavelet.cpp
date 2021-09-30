@@ -11,6 +11,7 @@
 #include "lt/cstring.hpp"
 #include "lt/format.hpp"
 #include "lt/memory.hpp"
+#include "lt/numbers.hpp"
 #include "lt/string_view.hpp"
 #include "lt/utility.hpp"
 
@@ -792,7 +793,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif1, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -808,7 +809,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif2, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -824,7 +825,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif3, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -840,7 +841,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif4, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -856,7 +857,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif5, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -872,7 +873,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif6, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -888,7 +889,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif7, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -904,7 +905,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif8, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -920,7 +921,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif9, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -936,7 +937,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif10, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -951,7 +952,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif11, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -966,7 +967,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif12, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -981,7 +982,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif13, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -996,7 +997,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif14, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -1011,7 +1012,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif15, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -1026,7 +1027,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif16, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
@@ -1041,7 +1042,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         copy(coif17, n, coeffTemp.get());
         for (i = 0; i < n; ++i) {
-            coeffTemp[i] *= M_SQRT2;
+            coeffTemp[i] *= static_cast<float>(lt::numbers::sqrt2);
         }
 
         copyReverse(coeffTemp.get(), n, lp1);
