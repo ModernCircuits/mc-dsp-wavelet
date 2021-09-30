@@ -88,10 +88,23 @@ conan_cmake_configure(
         fftw:simd=False
         kissfft:datatype=float
 )
-conan_cmake_autodetect(settings)
-conan_cmake_install(PATH_OR_REFERENCE . BUILD outdated REMOTE conancenter SETTINGS ${settings})
 
-find_package(Boost 1.77 REQUIRED container filesystem json)
+conan_cmake_autodetect(settings)
+
+conan_cmake_install(
+    PATH_OR_REFERENCE
+        .
+    BUILD
+        outdated
+    REMOTE
+        conancenter
+    SETTINGS
+        ${settings}
+    SETTINGS
+        compiler.cppstd=14
+)
+
+find_package(Boost 1.77 REQUIRED COMPONENTS container filesystem json)
 find_package(FFTW3f REQUIRED)
 find_package(fmt REQUIRED)
 find_package(kissfft REQUIRED)
