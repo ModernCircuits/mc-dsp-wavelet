@@ -22,8 +22,13 @@ namespace dsp {
             return kissfft<float> { size, direction != FFTDirection::forward };
         }
 
-        static auto perform(handle_type& handle, Complex<float> const* in, Complex<float>* out) -> void
+        static auto destroy(handle_type& /*handle*/)
         {
+        }
+
+        static auto perform(handle_type& handle, Complex<float> const* in, Complex<float>* out, FFTDirection direction) -> void
+        {
+            (void)direction;
             handle.transform(in, out);
         }
     };

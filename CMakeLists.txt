@@ -63,6 +63,7 @@ conan_cmake_configure(
         fftw/3.3.9
         fmt/8.0.1
         kissfft/131.1.0
+        pffft/cci.20210511
     GENERATORS
         cmake_find_package
     OPTIONS
@@ -87,6 +88,7 @@ conan_cmake_configure(
         fftw:precision=single
         fftw:simd=False
         kissfft:datatype=float
+        pffft:disable_simd=True
 )
 
 conan_cmake_autodetect(settings)
@@ -108,6 +110,7 @@ find_package(Boost 1.77 REQUIRED COMPONENTS container filesystem json)
 find_package(FFTW3f REQUIRED)
 find_package(fmt REQUIRED)
 find_package(kissfft REQUIRED)
+find_package(pffft REQUIRED)
 
 add_subdirectory(3rd_party/span)
 

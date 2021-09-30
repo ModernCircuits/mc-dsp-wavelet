@@ -4,6 +4,7 @@
 #include "lt/dsp/fft/FFTDirection.hpp"
 
 #include "lt/dsp/fft/backend/KissFFT.hpp"
+#include "lt/dsp/fft/backend/PFFFT.hpp"
 
 #include "lt/algorithm.hpp"
 #include "lt/complex.hpp"
@@ -19,12 +20,12 @@ namespace dsp {
         using backend_type = typename FFTBackend<T, BackendTag>::handle_type;
 
         FFT(int n, FFTDirection direction);
-
-        auto perform(Complex<T> const* inp, Complex<T>* oup) -> void;
+        ~FFT();
 
         LT_NODISCARD auto direction() const noexcept -> FFTDirection;
         LT_NODISCARD auto size() const noexcept -> int;
-        LT_NODISCARD auto engine() -> backend_type& { return engine_; }
+
+        auto perform(Complex<T> const* inp, Complex<T>* oup) -> void;
 
     private:
         int size_;
@@ -41,6 +42,9 @@ namespace dsp {
     }
 
     template <typename T, typename BackendTag>
+    FFT<T, BackendTag>::~FFT() { FFTBackend<T, BackendTag>::destroy(engine_); }
+
+    template <typename T, typename BackendTag>
     auto FFT<T, BackendTag>::direction() const noexcept -> FFTDirection { return direction_; }
 
     template <typename T, typename BackendTag>
@@ -49,7 +53,7 @@ namespace dsp {
     template <typename T, typename BackendTag>
     auto FFT<T, BackendTag>::perform(Complex<T> const* input, Complex<T>* output) -> void
     {
-        FFTBackend<T, BackendTag>::perform(engine_, input, output);
+        FFTBackend<T, BackendTag>::perform(engine_, input, output, direction_);
     }
 
     struct RFFT {

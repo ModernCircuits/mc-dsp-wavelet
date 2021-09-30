@@ -9,6 +9,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         Boost::json
         FFTW3::fftw3f
         kissfft::kissfft
+        pffft::pffft
         fmt::fmt
         lt::CompilerOptions
         lt::CompilerWarnings
