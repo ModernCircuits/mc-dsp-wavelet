@@ -40,7 +40,7 @@ auto main() -> int
         fmt::print("Testing: {0} ...\n", testFile);
         auto testCase = readFFTRealToComplexTestData(testFile);
 
-        auto fft = dsp::RealFFT { static_cast<int>(testCase.input.size()), dsp::FFT::forward };
+        auto fft = dsp::RFFT { static_cast<int>(testCase.input.size()), dsp::FFTDirection::forward };
         auto output = std::vector<Complex<float>>(testCase.expected.size());
         fft.performRealToComplex(lt::data(testCase.input), lt::data(output));
         REQUIRE(std::equal(begin(output), end(output), begin(testCase.expected), closeEnough));

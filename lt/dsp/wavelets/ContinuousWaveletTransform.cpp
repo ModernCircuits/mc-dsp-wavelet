@@ -12,9 +12,25 @@
 #include "lt/memory.hpp"
 #include "lt/string_view.hpp"
 
+namespace {
+constexpr auto pi2 = 6.28318530717958647692528676655900577;
+} // namespace
+
 namespace lt {
+
 namespace dsp {
     namespace {
+        auto divideby(int m, int d) -> int
+        {
+            while (m % d == 0) {
+                m = m / d;
+            }
+            if (m == 1) {
+                return 1;
+            }
+            return 0;
+        }
+
         auto factorial(int n) -> float
         {
             static const float fact[] = {
@@ -69,7 +85,8 @@ namespace dsp {
             return fact[n];
         }
 
-        auto nsfftFd(FFT* obj, Complex<float>* inp, Complex<float>* oup, float lb, float ub, float* w) -> void
+        template <typename FFTImpl>
+        auto nsfftFd(FFTImpl* obj, Complex<float>* inp, Complex<float>* oup, float lb, float ub, float* w) -> void
         {
             auto const n = obj->size();
             auto const l = n / 2;
@@ -115,7 +132,8 @@ namespace dsp {
             }
         }
 
-        auto nsfftBk(FFT* obj, Complex<float>* inp, Complex<float>* oup, float lb, float ub, float* t) -> void
+        template <typename FFTImpl>
+        auto nsfftBk(FFTImpl* obj, Complex<float>* inp, Complex<float>* oup, float lb, float ub, float* t) -> void
         {
 
             auto const n = obj->size();
@@ -172,9 +190,10 @@ namespace dsp {
             }
         }
 
-        auto nsfftExec(FFT* fft, Complex<float>* inp, Complex<float>* oup, float lb, float ub, float* w) -> void
+        template <typename FFTImpl>
+        auto nsfftExec(FFTImpl* fft, Complex<float>* inp, Complex<float>* oup, float lb, float ub, float* w) -> void
         {
-            if (fft->direction() == FFT::forward) {
+            if (fft->direction() == FFTDirection::forward) {
                 nsfftFd(fft, inp, oup, lb, ub, w);
             } else {
                 nsfftBk(fft, inp, oup, lb, ub, w);
@@ -460,8 +479,8 @@ namespace dsp {
             exit(-1);
         }
 
-        auto obj = std::make_unique<FFT>(npad, FFT::forward);
-        auto iobj = std::make_unique<FFT>(npad, FFT::backward);
+        auto obj = std::make_unique<FFT<float, KissFFT>>(npad, FFTDirection::forward);
+        auto iobj = std::make_unique<FFT<float, KissFFT>>(npad, FFTDirection::backward);
 
         auto ypad = std::make_unique<Complex<float>[]>(npad);
         auto yfft = std::make_unique<Complex<float>[]>(npad);
@@ -885,7 +904,7 @@ namespace dsp {
             exit(1);
         }
 
-        auto obj = std::make_unique<FFT>(n, FFT::backward);
+        auto obj = std::make_unique<FFT<float, KissFFT>>(n, FFTDirection::backward);
         auto w = std::make_unique<float[]>(n);
         auto phiw = std::make_unique<Complex<float>[]>(n);
         auto psiw = std::make_unique<Complex<float>[]>(n);

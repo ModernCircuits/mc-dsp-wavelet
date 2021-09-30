@@ -914,8 +914,8 @@ namespace dsp {
             wt.length[iter] = n;
         }
 
-        auto fftFd = std::make_unique<FFT>(n, FFT::forward);
-        auto fftBd = std::make_unique<FFT>(n, FFT::backward);
+        auto fftFd = std::make_unique<FFT<float, KissFFT>>(n, FFTDirection::forward);
+        auto fftBd = std::make_unique<FFT<float, KissFFT>>(n, FFTDirection::backward);
 
         auto sig = std::make_unique<Complex<float>[]>(n);
         auto cA = std::make_unique<Complex<float>[]>(n);
@@ -1027,8 +1027,8 @@ namespace dsp {
         auto j = static_cast<std::size_t>(wt.levels());
 
         auto s = std::sqrt(2.0F);
-        auto fftFd = std::make_unique<FFT>(n, FFT::forward);
-        auto fftBd = std::make_unique<FFT>(n, FFT::backward);
+        auto fftFd = std::make_unique<FFT<float, KissFFT>>(n, FFTDirection::forward);
+        auto fftBd = std::make_unique<FFT<float, KissFFT>>(n, FFTDirection::backward);
 
         auto sig = std::make_unique<Complex<float>[]>(n);
         auto cA = std::make_unique<Complex<float>[]>(n);

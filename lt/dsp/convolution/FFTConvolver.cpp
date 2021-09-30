@@ -41,8 +41,8 @@ namespace dsp {
         : signalSize_ { signalSize }
         , patchSize_ { patchSize }
         , totalSize_ { findnexte(signalSize + patchSize_ - 1U) }
-        , forwardFFT_ { std::make_unique<RealFFT>(totalSize_, FFT::forward) }
-        , backwardFFT_ { std::make_unique<RealFFT>(totalSize_, FFT::backward) }
+        , forwardFFT_ { std::make_unique<RFFT>(totalSize_, FFTDirection::forward) }
+        , backwardFFT_ { std::make_unique<RFFT>(totalSize_, FFTDirection::backward) }
     {
     }
 

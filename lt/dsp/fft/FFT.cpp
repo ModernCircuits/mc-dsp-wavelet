@@ -6,49 +6,17 @@
 
 #include "lt/memory.hpp"
 
+namespace {
+constexpr auto pi2 = 6.28318530717958647692528676655900577;
+} // namespace
+
 namespace lt {
 namespace dsp {
 
-    namespace {
-
-        auto toKissFFTDirection(FFT::Direction direction) noexcept -> bool
-        {
-            return direction != FFT::Direction::forward;
-        }
-
-    }
-
-    FFT::FFT(int n, Direction direction)
-        : size_ { n }
-        , direction_ { direction }
-        , fftEngine_ { static_cast<std::size_t>(n), toKissFFTDirection(direction) }
-    {
-    }
-
-    auto FFT::direction() const noexcept -> Direction { return direction_; }
-
-    auto FFT::size() const noexcept -> int { return size_; }
-
-    auto FFT::perform(Complex<float> const* input, Complex<float>* ouput) -> void
-    {
-        fftEngine_.transform(input, ouput);
-    }
-
-    auto divideby(int m, int d) -> int
-    {
-        while (m % d == 0) {
-            m = m / d;
-        }
-        if (m == 1) {
-            return 1;
-        }
-        return 0;
-    }
-
-    RealFFT::RealFFT(int n, FFT::Direction direction)
+    RFFT::RFFT(int n, FFTDirection direction)
     {
         data_ = std::make_unique<Complex<float>[]>(n / 2);
-        cobj_ = std::make_unique<FFT>(n / 2, direction);
+        cobj_ = std::make_unique<FFT<float, KissFFT>>(n / 2, direction);
 
         for (auto k = 0; k < n / 2; ++k) {
             auto const theta = pi2 * k / n;
@@ -57,7 +25,7 @@ namespace dsp {
         }
     }
 
-    auto RealFFT::performRealToComplex(float const* inp, Complex<float>* oup) -> void
+    auto RFFT::performRealToComplex(float const* inp, Complex<float>* oup) -> void
     {
         auto const n2 = cobj_->size();
         auto cinp = std::make_unique<Complex<float>[]>(n2);
@@ -90,7 +58,7 @@ namespace dsp {
         }
     }
 
-    auto RealFFT::performComplexToReal(Complex<float> const* inp, float* oup) -> void
+    auto RFFT::performComplexToReal(Complex<float> const* inp, float* oup) -> void
     {
         auto const n = static_cast<std::size_t>(cobj_->size());
         auto cinp = std::make_unique<Complex<float>[]>(n);

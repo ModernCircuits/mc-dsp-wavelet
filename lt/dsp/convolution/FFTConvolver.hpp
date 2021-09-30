@@ -17,8 +17,8 @@ namespace dsp {
         std::size_t patchSize_;
         std::size_t totalSize_;
 
-        std::unique_ptr<RealFFT> forwardFFT_;
-        std::unique_ptr<RealFFT> backwardFFT_;
+        std::unique_ptr<RFFT> forwardFFT_;
+        std::unique_ptr<RFFT> backwardFFT_;
 
         std::unique_ptr<float[]> signalScratch_ { std::make_unique<float[]>(totalSize_) };
         std::unique_ptr<Complex<float>[]> signalScratchOut_ { std::make_unique<Complex<float>[]>(totalSize_) };
