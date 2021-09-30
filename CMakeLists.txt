@@ -30,10 +30,10 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
         #     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
         # endif ()
     else ()
-        check_cxx_compiler_flag("-msse2" COMPILER_SSE2_SUPPORTED)
-        if (COMPILER_SSE2_SUPPORTED)
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2")
-        endif ()
+        # check_cxx_compiler_flag("-msse2" COMPILER_SSE2_SUPPORTED)
+        # if (COMPILER_SSE2_SUPPORTED)
+        #     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2")
+        # endif ()
     endif ()
 
     list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -83,7 +83,7 @@ conan_cmake_configure(
         boost:asio_no_deprecated=True
         boost:filesystem_no_deprecated=True
         fftw:precision=single
-        fftw:simd=sse2
+        fftw:simd=False
         kissfft:datatype=float
 )
 conan_cmake_autodetect(settings)
