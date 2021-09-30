@@ -2,5 +2,5 @@
 
 #include <vector>
 
-#include "stdx/SmallVector.hpp"
-#include "stdx/StaticVector.hpp"
+#include "container/SmallVector.hpp"
+#include "container/StaticVector.hpp"

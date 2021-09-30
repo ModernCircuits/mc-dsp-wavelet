@@ -2,4 +2,4 @@
 
 #include <utility>
 
-#include "lt/stdx/integer_compare.hpp"
+#include "lt/stdx/utility_P0586.hpp"
