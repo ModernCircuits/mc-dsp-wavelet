@@ -7,7 +7,10 @@
 #include "lt/cstring.hpp"
 
 namespace {
-
+auto pow2Ceil(std::size_t x)
+{
+    return static_cast<std::size_t>(std::pow(2, std::ceil(std::log2(x))));
+}
 }
 
 FloatSignal::FloatSignal(std::size_t size)
@@ -74,7 +77,7 @@ OverlapSaveConvolver::OverlapSaveConvolver(FloatSignal& signal, FloatSignal& pat
     : signalSize_ { signal.size() }
     , patchSize_ { patch.size() }
     , resultSize_ { signalSize_ + patchSize_ - 1 }
-    , paddedPatch_ { patch.data(), patchSize_, 0, 2 * lt::bit_ceil(patchSize_) - patchSize_ }
+    , paddedPatch_ { patch.data(), patchSize_, 0, 2 * pow2Ceil(patchSize_) - patchSize_ }
     , resultChunksize_ { paddedPatch_.size() }
     , resultChunksizeComplex_ { resultChunksize_ / 2 + 1 }
     , result_stride_ { resultChunksize_ - patchSize_ + 1 }
