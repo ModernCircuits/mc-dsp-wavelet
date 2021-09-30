@@ -64,7 +64,7 @@ namespace {
 
         if (n > 40 - 6 || n < 0) {
             fmt::print("This program is only valid for 0 <= N <= 40-6 \n");
-            return -1.0;
+            return -1.0F;
         }
 
         return fact[n];
@@ -186,7 +186,7 @@ namespace {
 
 auto roundTowardsZero(float x) -> float
 {
-    return x >= 0.0 ? std::floor(x) : std::ceil(x);
+    return x >= 0.0F ? std::floor(x) : std::ceil(x);
 }
 
 auto cwtGamma(float x) -> float
@@ -218,64 +218,64 @@ auto cwtGamma(float x) -> float
     int swi = 0;
     int n = 0;
 
-    constexpr float spi = 0.9189385332046727417803297;
-    constexpr float pi = 3.1415926535897932384626434;
-    constexpr float xmax = 171.624e+0;
-    constexpr float xinf = 1.79e308;
-    constexpr float eps = 2.22e-16;
-    constexpr float xninf = 1.79e-308;
+    constexpr float spi = 0.9189385332046727417803297F;
+    constexpr float pi = 3.1415926535897932384626434F;
+    constexpr float xmax = 171.624e+0F;
+    constexpr float xinf = 1.79e38F;
+    constexpr float eps = 2.22e-16F;
+    constexpr float xninf = 1.41e-45F;
 
     float num[8] = {
-        -1.71618513886549492533811e+0,
-        2.47656508055759199108314e+1,
-        -3.79804256470945635097577e+2,
-        6.29331155312818442661052e+2,
-        8.66966202790413211295064e+2,
-        -3.14512729688483675254357e+4,
-        -3.61444134186911729807069e+4,
-        6.64561438202405440627855e+4,
+        -1.71618513886549492533811e+0F,
+        2.47656508055759199108314e+1F,
+        -3.79804256470945635097577e+2F,
+        6.29331155312818442661052e+2F,
+        8.66966202790413211295064e+2F,
+        -3.14512729688483675254357e+4F,
+        -3.61444134186911729807069e+4F,
+        6.64561438202405440627855e+4F,
     };
 
     float den[8] = {
-        -3.08402300119738975254353e+1,
-        3.15350626979604161529144e+2,
-        -1.01515636749021914166146e+3,
-        -3.10777167157231109440444e+3,
-        2.25381184209801510330112e+4,
-        4.75584627752788110767815e+3,
-        -1.34659959864969306392456e+5,
-        -1.15132259675553483497211e+5,
+        -3.08402300119738975254353e+1F,
+        3.15350626979604161529144e+2F,
+        -1.01515636749021914166146e+3F,
+        -3.10777167157231109440444e+3F,
+        2.25381184209801510330112e+4F,
+        4.75584627752788110767815e+3F,
+        -1.34659959864969306392456e+5F,
+        -1.15132259675553483497211e+5F,
     };
 
     // Coefficients for Hart's Minimax approximation x >= 12
 
     float c[7] = {
-        -1.910444077728e-03,
-        8.4171387781295e-04,
-        -5.952379913043012e-04,
-        7.93650793500350248e-04,
-        -2.777777777777681622553e-03,
-        8.333333333333333331554247e-02,
-        5.7083835261e-03,
+        -1.910444077728e-03F,
+        8.4171387781295e-04F,
+        -5.952379913043012e-04F,
+        7.93650793500350248e-04F,
+        -2.777777777777681622553e-03F,
+        8.333333333333333331554247e-02F,
+        5.7083835261e-03F,
     };
 
     y = x;
     swi = 0;
-    fact = 1.0;
+    fact = 1.0F;
     n = 0;
 
-    if (y < 0.) {
+    if (y < 0.0F) {
         // Negative x
         y = -x;
         yi = roundTowardsZero(y);
         oup = y - yi;
 
-        if (oup != 0.0) {
-            if (yi != roundTowardsZero(yi * .5) * 2.) {
+        if (oup != 0.0F) {
+            if (yi != roundTowardsZero(yi * 0.5F) * 2.0F) {
                 swi = 1;
             }
             fact = -pi / std::sin(pi * oup);
-            y += 1.;
+            y += 1.0F;
         } else {
             return xinf;
         }
@@ -283,28 +283,28 @@ auto cwtGamma(float x) -> float
 
     if (y < eps) {
         if (y >= xninf) {
-            oup = 1.0 / y;
+            oup = 1.0F / y;
         } else {
             return xinf;
         }
 
-    } else if (y < 12.) {
+    } else if (y < 12.0F) {
         yi = y;
-        if (y < 1.) {
+        if (y < 1.0F) {
             z = y;
-            y += 1.;
+            y += 1.0F;
         } else {
             n = (int)y - 1;
             y -= (float)n;
-            z = y - 1.0;
+            z = y - 1.0F;
         }
-        nsum = 0.;
-        dsum = 1.;
+        nsum = 0.0F;
+        dsum = 1.0F;
         for (auto i = 0; i < 8; ++i) {
             nsum = (nsum + num[i]) * z;
             dsum = dsum * z + den[i];
         }
-        oup = nsum / dsum + 1.;
+        oup = nsum / dsum + 1.0F;
 
         if (yi < y) {
 
@@ -313,7 +313,7 @@ auto cwtGamma(float x) -> float
 
             for (auto i = 0; i < n; ++i) {
                 oup *= y;
-                y += 1.;
+                y += 1.0F;
             }
         }
 
@@ -335,7 +335,7 @@ auto cwtGamma(float x) -> float
     if (swi != 0) {
         oup = -oup;
     }
-    if (fact != 1.) {
+    if (fact != 1.0F) {
         oup = fact / oup;
     }
 
@@ -357,47 +357,47 @@ auto waveFunction(int nk, float dt, int mother, float param, float scale1, float
 
     if (mother == 0) {
         //MORLET
-        if (param < 0.0) {
-            param = 6.0;
+        if (param < 0.0F) {
+            param = 6.0F;
         }
-        norm = std::sqrt(2.0 * pi * scale1 / dt) * std::pow(pi, -0.25);
+        norm = std::sqrt(2.0F * pi * scale1 / dt) * std::pow(pi, -0.25);
 
         for (k = 1; k <= nk / 2 + 1; ++k) {
             temp = (scale1 * kwave[k - 1] - param);
             expnt = -0.5 * temp * temp;
             daughter[k - 1].real(norm * std::exp(expnt));
-            daughter[k - 1].imag(0.0);
+            daughter[k - 1].imag(0.0F);
         }
         for (k = nk / 2 + 2; k <= nk; ++k) {
-            daughter[k - 1].real(0.0);
-            daughter[k - 1].imag(0.0);
+            daughter[k - 1].real(0.0F);
+            daughter[k - 1].imag(0.0F);
         }
-        fourierFactor = (4.0 * pi) / (param + std::sqrt(2.0 + param * param));
+        fourierFactor = (4.0F * pi) / (param + std::sqrt(2.0F + param * param));
         *period1 = scale1 * fourierFactor;
-        *coi1 = fourierFactor / std::sqrt(2.0);
+        *coi1 = fourierFactor / std::sqrt(2.0F);
     } else if (mother == 1) {
         // PAUL
-        if (param < 0.0) {
-            param = 4.0;
+        if (param < 0.0F) {
+            param = 4.0F;
         }
         m = (int)param;
-        norm = std::sqrt(2.0 * pi * scale1 / dt) * (std::pow(2.0, (float)m) / std::sqrt((float)(m * factorial(2 * m - 1))));
+        norm = std::sqrt(2.0F * pi * scale1 / dt) * (std::pow(2.0F, (float)m) / std::sqrt((float)(m * factorial(2 * m - 1))));
         for (k = 1; k <= nk / 2 + 1; ++k) {
             temp = scale1 * kwave[k - 1];
             expnt = -temp;
             daughter[k - 1].real(norm * std::pow(temp, (float)m) * std::exp(expnt));
-            daughter[k - 1].imag(0.0);
+            daughter[k - 1].imag(0.0F);
         }
         for (k = nk / 2 + 2; k <= nk; ++k) {
-            daughter[k - 1].real(0.0);
-            daughter[k - 1].imag(0.0);
+            daughter[k - 1].real(0.0F);
+            daughter[k - 1].imag(0.0F);
         }
-        fourierFactor = (4.0 * pi) / (2.0 * m + 1.0);
+        fourierFactor = (4.0F * pi) / (2.0F * m + 1.0F);
         *period1 = scale1 * fourierFactor;
-        *coi1 = fourierFactor * std::sqrt(2.0);
+        *coi1 = fourierFactor * std::sqrt(2.0F);
     } else if (mother == 2) {
-        if (param < 0.0) {
-            param = 2.0;
+        if (param < 0.0F) {
+            param = 2.0F;
         }
         m = (int)param;
 
@@ -413,25 +413,25 @@ auto waveFunction(int nk, float dt, int mother, float param, float scale1, float
             sign = 1;
         }
 
-        norm = std::sqrt(2.0 * pi * scale1 / dt) * std::sqrt(1.0 / cwtGamma(m + 0.50));
+        norm = std::sqrt(2.0F * pi * scale1 / dt) * std::sqrt(1.0F / cwtGamma(m + 0.50));
         norm *= sign;
 
         if (re == 1) {
             for (k = 1; k <= nk; ++k) {
                 temp = scale1 * kwave[k - 1];
-                daughter[k - 1].real(norm * std::pow(temp, (float)m) * std::exp(-0.50 * std::pow(temp, 2.0)));
-                daughter[k - 1].imag(0.0);
+                daughter[k - 1].real(norm * std::pow(temp, (float)m) * std::exp(-0.50 * std::pow(temp, 2.0F)));
+                daughter[k - 1].imag(0.0F);
             }
         } else if (re == 0) {
             for (k = 1; k <= nk; ++k) {
                 temp = scale1 * kwave[k - 1];
-                daughter[k - 1].real(0.0);
-                daughter[k - 1].imag(norm * std::pow(temp, (float)m) * std::exp(-0.50 * std::pow(temp, 2.0)));
+                daughter[k - 1].real(0.0F);
+                daughter[k - 1].imag(norm * std::pow(temp, (float)m) * std::exp(-0.50 * std::pow(temp, 2.0F)));
             }
         }
-        fourierFactor = (2.0 * pi) * std::sqrt(2.0 / (2.0 * m + 1.0));
+        fourierFactor = (2.0F * pi) * std::sqrt(2.0F / (2.0F * m + 1.0F));
         *period1 = scale1 * fourierFactor;
-        *coi1 = fourierFactor / std::sqrt(2.0);
+        *coi1 = fourierFactor / std::sqrt(2.0F);
     }
 }
 
@@ -456,7 +456,7 @@ auto cwavelet(float const* y, int n, float dt, int mother, float param, float s0
     (void)s0;
     (void)dj; /* yes, we need these parameters unused */
 
-    pi = 4.0 * std::atan(1.0);
+    pi = 4.0F * std::atan(1.0F);
 
     if (npad < n) {
         fmt::printf("npad must be >= N \n");
@@ -470,7 +470,7 @@ auto cwavelet(float const* y, int n, float dt, int mother, float param, float s0
     auto yfft = std::make_unique<Complex<float>[]>(npad);
     auto daughter = std::make_unique<Complex<float>[]>(npad);
     auto kwave = std::make_unique<float[]>(npad);
-    ymean = 0.0;
+    ymean = 0.0F;
 
     for (auto i = 0; i < n; ++i) {
         ymean += y[i];
@@ -480,12 +480,12 @@ auto cwavelet(float const* y, int n, float dt, int mother, float param, float s0
 
     for (auto i = 0; i < n; ++i) {
         ypad[i].real(y[i] - ymean);
-        ypad[i].imag(0.0);
+        ypad[i].imag(0.0F);
     }
 
     for (auto i = n; i < npad; ++i) {
-        ypad[i].real(0.0);
-        ypad[i].imag(0.0);
+        ypad[i].real(0.0F);
+        ypad[i].imag(0.0F);
     }
 
     // Find FFT of the input y (ypad)
@@ -499,8 +499,8 @@ auto cwavelet(float const* y, int n, float dt, int mother, float param, float s0
 
     //Construct the wavenumber array
 
-    freq1 = 2.0 * pi / ((float)npad * dt);
-    kwave[0] = 0.0;
+    freq1 = 2.0F * pi / ((float)npad * dt);
+    kwave[0] = 0.0F;
 
     for (auto i = 1; i < npad / 2 + 1; ++i) {
         kwave[i] = i * freq1;
@@ -513,7 +513,7 @@ auto cwavelet(float const* y, int n, float dt, int mother, float param, float s0
     // Main loop
 
     for (j = 1; j <= jtot; ++j) {
-        scale1 = scale[j - 1]; // = s0*std::pow(2.0, (float)(j - 1)*dj);
+        scale1 = scale[j - 1]; // = s0*std::pow(2.0F, (float)(j - 1)*dj);
         waveFunction(npad, dt, mother, param, scale1, kwave.get(), pi, &period1, &coi1, daughter.get());
         period[j - 1] = period1;
         for (k = 0; k < npad; ++k) {
@@ -531,7 +531,7 @@ auto cwavelet(float const* y, int n, float dt, int mother, float param, float s0
     }
 
     for (auto i = 1; i <= (n + 1) / 2; ++i) {
-        coi[i - 1] = coi1 * dt * ((float)i - 1.0);
+        coi[i - 1] = coi1 * dt * ((float)i - 1.0F);
         coi[n - i] = coi[i - 1];
     }
 }
@@ -544,11 +544,11 @@ auto psi0(int mother, float param, float* val, int* real) -> void
     int sign = 0;
 
     m = (int)param;
-    pi = 4.0 * std::atan(1.0);
+    pi = 4.0F * std::atan(1.0F);
 
     if (mother == 0) {
         // Morlet
-        *val = 1.0 / std::sqrt(std::sqrt(pi));
+        *val = 1.0F / std::sqrt(std::sqrt(pi));
         *real = 1;
     } else if (mother == 1) {
         //Paul
@@ -563,7 +563,7 @@ auto psi0(int mother, float param, float* val, int* real) -> void
         } else {
             sign = -1;
         }
-        *val = sign * std::pow(2.0, (float)m) * factorial(m) / (std::sqrt(pi * factorial(2 * m)));
+        *val = sign * std::pow(2.0F, (float)m) * factorial(m) / (std::sqrt(pi * factorial(2 * m)));
 
     } else if (mother == 2) {
         // D.O.G
@@ -575,8 +575,8 @@ auto psi0(int mother, float param, float* val, int* real) -> void
             } else {
                 sign = 1;
             }
-            coeff = sign * std::pow(2.0, (float)m / 2) / cwtGamma(0.5);
-            *val = coeff * cwtGamma(((float)m + 1.0) / 2.0) / std::sqrt(cwtGamma(m + 0.50));
+            coeff = sign * std::pow(2.0F, (float)m / 2) / cwtGamma(0.5);
+            *val = coeff * cwtGamma(((float)m + 1.0F) / 2.0F) / std::sqrt(cwtGamma(m + 0.50));
         } else {
             *val = 0;
         }
@@ -589,7 +589,7 @@ static auto maxabs(float* array, int n) -> int
     float temp = NAN;
 
     int index = 0;
-    maxval = 0.0;
+    maxval = 0.0F;
     index = -1;
 
     for (auto i = 0; i < n; ++i) {
@@ -605,9 +605,9 @@ static auto maxabs(float* array, int n) -> int
 
 auto cdelta(int mother, float param, float psi0) -> float
 {
-    auto s0 { 0.0 };
+    auto s0 { 0.0F };
     auto n { 1 };
-    auto subscale = 8.0;
+    auto subscale = 8.0F;
     auto dt = 0.25;
 
     if (mother == 0) {
@@ -615,18 +615,18 @@ auto cdelta(int mother, float param, float psi0) -> float
         s0 = dt / 4;
     } else if (mother == 1) {
         n = 16;
-        s0 = dt / 4.0;
+        s0 = dt / 4.0F;
     } else if (mother == 2) {
-        s0 = dt / 8.0;
+        s0 = dt / 8.0F;
         n = 256;
-        if (param == 2.0) {
-            subscale = 16.0;
-            s0 = dt / 16.0;
+        if (param == 2.0F) {
+            subscale = 16.0F;
+            s0 = dt / 16.0F;
             n = 2048;
         }
     }
 
-    auto const dj = 1.0 / subscale;
+    auto const dj = 1.0F / subscale;
     auto const jtot = 16 * (int)subscale;
 
     auto delta = std::make_unique<float[]>(n);
@@ -643,7 +643,7 @@ auto cdelta(int mother, float param, float psi0) -> float
     }
 
     for (auto i = 0; i < jtot; ++i) {
-        scale[i] = s0 * std::pow(2.0, (float)(i)*dj);
+        scale[i] = s0 * std::pow(2.0F, (float)(i)*dj);
     }
 
     cwavelet(delta.get(), n, dt, mother, param, s0, dj, jtot, n, wave.get(), scale.get(), period.get(), coi.get());
@@ -676,7 +676,7 @@ auto icwavelet(float const* wave, int n, float* scale, int jtot, float dt, float
     coeff = std::sqrt(dt) * dj / (cdelta * psi0);
 
     for (auto i = 0; i < n; ++i) {
-        oup[i] = 0.0;
+        oup[i] = 0.0F;
     }
 
     for (j = 0; j < jtot; ++j) {
@@ -714,12 +714,12 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, float p
         s0Tmp = 2 * dtIn;
         djTmp = 0.4875;
         motherTmp = 0;
-        if (param < 0.0) {
+        if (param < 0.0F) {
             fmt::printf("\n Morlet Wavelet Parameter should be >= 0 \n");
             exit(-1);
         }
         if (param == 0) {
-            param = 6.0;
+            param = 6.0F;
         }
         wave_ = "morlet";
 
@@ -732,7 +732,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, float p
             exit(-1);
         }
         if (param == 0) {
-            param = 4.0;
+            param = 4.0F;
         }
         wave_ = "paul";
 
@@ -745,7 +745,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, float p
             exit(-1);
         }
         if (param == 0) {
-            param = 2.0;
+            param = 2.0F;
         }
         wave_ = "dog";
     }
@@ -763,10 +763,10 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, float p
     mother = motherTmp;
     m = param;
 
-    auto const t1 = 0.499999 + std::log((float)n) / std::log(2.0);
+    auto const t1 = 0.499999 + std::log((float)n) / std::log(2.0F);
     auto const ibase2 = 1 + (int)t1;
 
-    npad = (int)std::pow(2.0, (float)ibase2);
+    npad = (int)std::pow(2.0F, (float)ibase2);
 
     output = (Complex<float>*)&params[0];
     scale = &params[nj2];
@@ -774,14 +774,14 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, float p
     coi = &params[nj2 + 2 * j];
 
     for (auto i = 0; i < nj2 + 2 * j + n; ++i) {
-        params[i] = 0.0;
+        params[i] = 0.0F;
     }
 }
 
 auto ContinuousWaveletTransform::scales(float newS0, float newDj, char const* newType, int power) -> void
 {
     type = newType;
-    //newS0*std::pow(2.0, (float)(j - 1)*newDj);
+    //newS0*std::pow(2.0F, (float)(j - 1)*newDj);
     if ((type == "pow") || (type == "power")) {
         for (auto i = 0; i < J; ++i) {
             scale[i] = newS0 * std::pow((float)power, (float)(i)*newDj);
@@ -812,7 +812,7 @@ auto cwt(ContinuousWaveletTransform& wt, float const* inp) -> void
     n = wt.signalLength;
     if (wt.sflag == 0) {
         for (auto i = 0; i < wt.J; ++i) {
-            wt.scale[i] = wt.s0 * std::pow(2.0, (float)(i)*wt.dj);
+            wt.scale[i] = wt.s0 * std::pow(2.0F, (float)(i)*wt.dj);
         }
         wt.sflag = 1;
     }
@@ -827,7 +827,7 @@ auto cwt(ContinuousWaveletTransform& wt, float const* inp) -> void
     j = wt.J;
     j2 = 2 * j;
 
-    wt.smean = 0.0;
+    wt.smean = 0.0F;
 
     for (auto i = 0; i < n; ++i) {
         wt.smean += inp[i];
@@ -854,7 +854,7 @@ auto icwt(ContinuousWaveletTransform& wt, float* cwtop) -> void
     if (((wt.type == "pow") || (wt.type == "power")) && wt.pow == 2) {
         icwavelet(wt.params.get(), n, wt.params.get() + nj2, wt.J, wt.dt, wt.dj, cdel, psi, cwtop);
     } else {
-        fmt::printf("Inverse CWT is only available for power of 2.0 scales \n");
+        fmt::printf("Inverse CWT is only available for power of 2.0F scales \n");
         exit(-1);
     }
     for (auto i = 0; i < n; ++i) {
@@ -897,47 +897,47 @@ auto meyer(int n, float lb, float ub, float* phi, float* psi, float* tgrid) -> v
     auto const delta = 2 * (ub - lb) / pi2;
 
     auto j = (float)n;
-    j *= -1.0;
+    j *= -1.0F;
 
     for (auto i = 0; i < n; ++i) {
         w[i] = j / delta;
-        j += 2.0;
-        psiw[i].real(0.0);
-        psiw[i].imag(0.0);
-        phiw[i].real(0.0);
-        phiw[i].imag(0.0);
+        j += 2.0F;
+        psiw[i].real(0.0F);
+        psiw[i].imag(0.0F);
+        phiw[i].real(0.0F);
+        phiw[i].imag(0.0F);
     }
 
     for (auto i = 0; i < n; ++i) {
         auto const wf = fabs(w[i]);
-        if (wf <= pi2 / 3.0) {
-            phiw[i].real(1.0);
+        if (wf <= pi2 / 3.0F) {
+            phiw[i].real(1.0F);
         }
-        if (wf > pi2 / 3.0 && wf <= 2 * pi2 / 3.0) {
-            auto const x = (3 * wf / pi2) - 1.0;
+        if (wf > pi2 / 3.0F && wf <= 2 * pi2 / 3.0F) {
+            auto const x = (3 * wf / pi2) - 1.0F;
             auto const x2 = x * x;
             auto const x3 = x2 * x;
             auto const x4 = x3 * x;
             auto const v = x4 * (35 - 84 * x + 70 * x2 - 20 * x3);
-            auto const theta = v * pi2 / 4.0;
+            auto const theta = v * pi2 / 4.0F;
             auto const cs = std::cos(theta);
             auto const sn = std::sin(theta);
 
             phiw[i].real(cs);
-            psiw[i].real(std::cos(w[i] / 2.0) * sn);
-            psiw[i].imag(std::sin(w[i] / 2.0) * sn);
+            psiw[i].real(std::cos(w[i] / 2.0F) * sn);
+            psiw[i].imag(std::sin(w[i] / 2.0F) * sn);
         }
-        if (wf > 2.0 * pi2 / 3.0 && wf <= 4 * pi2 / 3.0) {
-            auto const x = (1.5 * wf / pi2) - 1.0;
+        if (wf > 2.0F * pi2 / 3.0F && wf <= 4 * pi2 / 3.0F) {
+            auto const x = (1.5 * wf / pi2) - 1.0F;
             auto const x2 = x * x;
             auto const x3 = x2 * x;
             auto const x4 = x3 * x;
             auto const v = x4 * (35 - 84 * x + 70 * x2 - 20 * x3);
-            auto const theta = v * pi2 / 4.0;
+            auto const theta = v * pi2 / 4.0F;
             auto const cs = std::cos(theta);
 
-            psiw[i].real(std::cos(w[i] / 2.0) * cs);
-            psiw[i].imag(std::sin(w[i] / 2.0) * cs);
+            psiw[i].real(std::cos(w[i] / 2.0F) * cs);
+            psiw[i].imag(std::sin(w[i] / 2.0F) * cs);
         }
     }
 
@@ -978,9 +978,9 @@ auto gauss(int n, int p, float lb, float ub, float* psi, float* t) -> void
     den = std::sqrt(cwtGamma(p + 0.5));
 
     if ((p + 1) % 2 == 0) {
-        num = 1.0;
+        num = 1.0F;
     } else {
-        num = -1.0;
+        num = -1.0F;
     }
 
     num /= den;
@@ -989,55 +989,55 @@ auto gauss(int n, int p, float lb, float ub, float* psi, float* t) -> void
 
     if (p == 1) {
         for (i = 0; i < n; ++i) {
-            psi[i] = -t[i] * std::exp(-t[i] * t[i] / 2.0) * num;
+            psi[i] = -t[i] * std::exp(-t[i] * t[i] / 2.0F) * num;
         }
     } else if (p == 2) {
         for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
-            psi[i] = (-1.0 + t2) * std::exp(-t2 / 2.0) * num;
+            psi[i] = (-1.0F + t2) * std::exp(-t2 / 2.0F) * num;
         }
     } else if (p == 3) {
         for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
-            psi[i] = t[i] * (3.0 - t2) * std::exp(-t2 / 2.0) * num;
+            psi[i] = t[i] * (3.0F - t2) * std::exp(-t2 / 2.0F) * num;
         }
     } else if (p == 4) {
         for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
-            psi[i] = (t2 * t2 - 6.0 * t2 + 3.0) * std::exp(-t2 / 2.0) * num;
+            psi[i] = (t2 * t2 - 6.0F * t2 + 3.0F) * std::exp(-t2 / 2.0F) * num;
         }
     } else if (p == 5) {
         for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
-            psi[i] = t[i] * (-t2 * t2 + 10.0 * t2 - 15.0) * std::exp(-t2 / 2.0) * num;
+            psi[i] = t[i] * (-t2 * t2 + 10.0F * t2 - 15.0F) * std::exp(-t2 / 2.0F) * num;
         }
     } else if (p == 6) {
         for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
-            psi[i] = (t2 * t2 * t2 - 15.0 * t2 * t2 + 45.0 * t2 - 15.0) * std::exp(-t2 / 2.0) * num;
+            psi[i] = (t2 * t2 * t2 - 15.0F * t2 * t2 + 45.0F * t2 - 15.0F) * std::exp(-t2 / 2.0F) * num;
         }
     } else if (p == 7) {
         for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
-            psi[i] = t[i] * (-t2 * t2 * t2 + 21.0 * t2 * t2 - 105.0 * t2 + 105.0) * std::exp(-t2 / 2.0) * num;
+            psi[i] = t[i] * (-t2 * t2 * t2 + 21.0F * t2 * t2 - 105.0F * t2 + 105.0F) * std::exp(-t2 / 2.0F) * num;
         }
     } else if (p == 8) {
         for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
             t4 = t2 * t2;
-            psi[i] = (t4 * t4 - 28.0 * t4 * t2 + 210.0 * t4 - 420.0 * t2 + 105.0) * std::exp(-t2 / 2.0) * num;
+            psi[i] = (t4 * t4 - 28.0F * t4 * t2 + 210.0F * t4 - 420.0F * t2 + 105.0F) * std::exp(-t2 / 2.0F) * num;
         }
     } else if (p == 9) {
         for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
             t4 = t2 * t2;
-            psi[i] = t[i] * (-t4 * t4 + 36.0 * t4 * t2 - 378.0 * t4 + 1260.0 * t2 - 945.0) * std::exp(-t2 / 2.0) * num;
+            psi[i] = t[i] * (-t4 * t4 + 36.0F * t4 * t2 - 378.0F * t4 + 1260.0F * t2 - 945.0F) * std::exp(-t2 / 2.0F) * num;
         }
     } else if (p == 10) {
         for (i = 0; i < n; ++i) {
             t2 = t[i] * t[i];
             t4 = t2 * t2;
-            psi[i] = (t4 * t4 * t2 - 45.0 * t4 * t4 + 630.0 * t4 * t2 - 3150.0 * t4 + 4725.0 * t2 - 945.0) * std::exp(-t2 / 2.0) * num;
+            psi[i] = (t4 * t4 * t2 - 45.0F * t4 * t4 + 630.0F * t4 * t2 - 3150.0F * t4 + 4725.0F * t2 - 945.0F) * std::exp(-t2 / 2.0F) * num;
         }
     } else {
         fmt::printf("\n The Gaussian Derivative Wavelet is only available for Derivatives 1 to 10");
@@ -1068,6 +1068,6 @@ auto morlet(int n, float lb, float ub, float* psi, float* t) -> void
     }
 
     for (i = 0; i < n; ++i) {
-        psi[i] = std::exp(-t[i] * t[i] / 2.0) * std::cos(5 * t[i]);
+        psi[i] = std::exp(-t[i] * t[i] / 2.0F) * std::cos(5 * t[i]);
     }
 }

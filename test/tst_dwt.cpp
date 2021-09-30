@@ -23,7 +23,7 @@ auto modwtReconstructionTest()
 
     std::random_device rd {};
     auto gen = std::mt19937 { rd() };
-    auto dis = std::uniform_real_distribution<float> { 0.0, 1.0 };
+    auto dis = std::uniform_real_distribution<float> { 0.0F, 1.0F };
     std::generate_n(inp.get(), n, [&] { return dis(gen); });
 
     auto waveletNames = std::vector<std::string> {};
@@ -109,7 +109,7 @@ auto modwT2ReconstructionTest()
         for (k = 0; k < cols; ++k) {
             // inp[i*cols + k] = i*cols + k;
             inp[i * cols + k] = generateRnd();
-            out[i * cols + k] = 0.0;
+            out[i * cols + k] = 0.0F;
         }
     }
 
@@ -151,7 +151,7 @@ auto dwtReconstructionTest()
 
     std::random_device rd {};
     auto gen = std::mt19937 { rd() };
-    auto dis = std::uniform_real_distribution<float> { 0.0, 1.0 };
+    auto dis = std::uniform_real_distribution<float> { 0.0F, 1.0F };
 
     for (i = 0; i < n; ++i) {
         inp[i] = dis(gen);
@@ -243,10 +243,10 @@ auto dbCoefTests()
 
     for (auto const& name : waveletNames) {
         auto obj = Wavelet { name.c_str() };
-        auto t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0);
-        auto t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
-        auto t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
-        auto t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0;
+        auto t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
+        auto t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        auto t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        auto t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
         REQUIRE(fabs(t1) <= epsilon);
         REQUIRE(fabs(t2) <= epsilon);
@@ -276,10 +276,10 @@ auto coifCoefTests()
 
     for (auto const& name : waveletNames) {
         auto obj = Wavelet { name.c_str() };
-        t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0);
-        t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
-        t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
-        t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0;
+        t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
+        t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
         REQUIRE(std::fabs(t1) <= epsilon);
         REQUIRE(std::fabs(t2) <= epsilon);
@@ -307,10 +307,10 @@ auto symCoefTests()
 
     for (auto const& name : waveletNames) {
         auto obj = Wavelet { name.c_str() };
-        t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0);
-        t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
-        t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
-        t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0;
+        t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
+        t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
         REQUIRE(std::fabs(t1) <= epsilon);
         REQUIRE(std::fabs(t2) <= epsilon);
@@ -347,14 +347,14 @@ auto biorCoefTests()
     for (auto const& name : waveletNames) {
         auto obj = Wavelet { name.c_str() };
 
-        auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0);
-        auto const t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0);
+        auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
+        auto const t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0F);
 
-        auto const t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
-        auto const t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0 / std::sqrt(2.0);
+        auto const t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        auto const t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
 
-        auto const t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
-        auto const t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0 / std::sqrt(2.0);
+        auto const t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        auto const t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
 
         REQUIRE(fabs(t1) <= epsilon);
         REQUIRE(fabs(t2) <= epsilon);
@@ -394,14 +394,14 @@ auto rBiorCoefTests()
     for (auto const& name : waveletNames) {
         auto obj = Wavelet { name.c_str() };
 
-        t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0);
-        t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0);
+        t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
+        t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0F);
 
-        t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
-        t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0 / std::sqrt(2.0);
+        t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
 
-        t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0 / std::sqrt(2.0);
-        t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0 / std::sqrt(2.0);
+        t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
 
         REQUIRE(std::fabs(t1) <= epsilon);
         REQUIRE(std::fabs(t2) <= epsilon);

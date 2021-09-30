@@ -34,11 +34,11 @@ auto main() -> int
     auto const* type = "pow";
 
     n = 504;
-    param = 6.0;
+    param = 6.0F;
     subscale = 4;
     dt = 0.25;
     s0 = dt;
-    dj = 1.0 / (float)subscale;
+    dj = 1.0F / (float)subscale;
     j = 11 * subscale; // Total Number of scales
     a0 = 2; //power
 
@@ -53,7 +53,7 @@ auto main() -> int
 
     fmt::printf("\n MEAN %g \n", wt.smean);
 
-    mn = 0.0;
+    mn = 0.0F;
 
     for (i = 0; i < n; ++i) {
         mn += std::sqrt(wt.output[i].real() * wt.output[i].real() + wt.output[i].imag() * wt.output[i].imag());
@@ -76,7 +76,7 @@ auto main() -> int
 
     icwt(wt, oup.get());
 
-    num = den = reconMean = 0.0;
+    num = den = reconMean = 0.0F;
     fmt::printf("\n\n");
     fmt::printf("Signal Reconstruction\n");
     fmt::printf("%-15s%-15s%-15s \n", "i", "Input(i)", "Output(i)");

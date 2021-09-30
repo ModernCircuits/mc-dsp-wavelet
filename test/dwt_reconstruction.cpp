@@ -21,7 +21,7 @@ auto dwtReconstructionTest()
 
     std::random_device rd {};
     auto gen = std::mt19937 { rd() };
-    auto dis = std::uniform_real_distribution<float> { 0.0, 1.0 };
+    auto dis = std::uniform_real_distribution<float> { 0.0F, 1.0F };
 
     for (auto i = 0; i < n; ++i) {
         inp[i] = dis(gen);
@@ -166,7 +166,7 @@ auto dwT2ReconstructionTest()
         for (auto k = 0; k < cols; ++k) {
             // inp[i*cols + k] = i*cols + k;
             inp[i * cols + k] = generateRnd();
-            out[i * cols + k] = 0.0;
+            out[i * cols + k] = 0.0F;
         }
     }
 

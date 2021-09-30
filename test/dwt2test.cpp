@@ -27,7 +27,7 @@ auto main() -> int
     for (std::size_t i = 0; i < rows; ++i) {
         for (std::size_t k = 0; k < cols; ++k) {
             inp[i * cols + k] = generateRnd();
-            oup[i * cols + k] = 0.0;
+            oup[i * cols + k] = 0.0F;
         }
     }
 

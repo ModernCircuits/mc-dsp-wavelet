@@ -13,8 +13,6 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-        with:
-          submodules: true
 
       - name: CMake configure -- Release
         run: cmake -S . -G Ninja -B cmake-build-release -DCMAKE_BUILD_TYPE=Release
@@ -36,8 +34,6 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-        with:
-          submodules: true
 
       - name: CMake configure -- Release
         run: cmake -S . -G Ninja -B cmake-build-release -DCMAKE_BUILD_TYPE=Release
@@ -57,8 +53,6 @@ jobs:
   #   steps:
   #     - name: Check out code
   #       uses: actions/checkout@v2
-  #       with:
-  #         submodules: true
 
   #     - name: Install dependencies
   #       run: |

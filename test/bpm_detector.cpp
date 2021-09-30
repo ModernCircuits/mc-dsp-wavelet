@@ -15,7 +15,7 @@
 template <typename It>
 auto mean(It f, It l) -> float
 {
-    auto const sum = std::accumulate(f, l, 0.0);
+    auto const sum = std::accumulate(f, l, 0.0F);
     return sum / static_cast<float>(std::distance(f, l));
 }
 
@@ -41,14 +41,14 @@ struct BpmDetect {
     {
 
         auto const levels = 4;
-        auto const maxDecimation = std::pow(2.0, levels - 1);
-        auto const minNdx = std::floor(60.0 / 220.0 * (sampleRate / maxDecimation));
-        auto const maxNdx = std::floor(60.0 / 40.0 * (sampleRate / maxDecimation));
+        auto const maxDecimation = std::pow(2.0F, levels - 1);
+        auto const minNdx = std::floor(60.0F / 220.0F * (sampleRate / maxDecimation));
+        auto const maxNdx = std::floor(60.0F / 40.0F * (sampleRate / maxDecimation));
 
         auto cA = lt::span<float> {};
         auto cD = lt::span<float> {};
 
-        auto cDMinlen = 0.0;
+        auto cDMinlen = 0.0F;
         auto cDSum = std::vector<float> {};
         dwt(wt_, input.data());
         for (auto loop { 0 }; loop < levels; ++loop) {
@@ -56,9 +56,9 @@ struct BpmDetect {
                 // dwt(wt_, input.data());
                 cA = wt_.approx();
                 cD = wt_.detail(loop + 1);
-                cDMinlen = static_cast<float>(lt::size(cD)) / maxDecimation + 1.0;
+                cDMinlen = static_cast<float>(lt::size(cD)) / maxDecimation + 1.0F;
                 cDSum.resize(static_cast<std::size_t>(std::floor(cDMinlen)));
-                std::fill(begin(cDSum), end(cDSum), 0.0);
+                std::fill(begin(cDSum), end(cDSum), 0.0F);
             } else {
                 // dwt(wt_, cA.data());
                 cA = wt_.approx();
@@ -87,8 +87,8 @@ struct BpmDetect {
 
         // if [b for b in cA if b != 0.0] == []:
         //     return no_audio_data()
-        if (std::none_of(std::begin(cA), std::end(cA), [](auto s) { return s != 0.0; })) {
-            return 0.0;
+        if (std::none_of(std::begin(cA), std::end(cA), [](auto s) { return s != 0.0F; })) {
+            return 0.0F;
         }
 
         // # Adding in the approximate data as well...
@@ -114,12 +114,12 @@ struct BpmDetect {
         x.crossCorrelate();
         auto correl = x.extractResult();
 
-        auto midpoint = static_cast<std::size_t>(std::floor(correl.size() / 2.0));
+        auto midpoint = static_cast<std::size_t>(std::floor(correl.size() / 2.0F));
         auto correlMidpointTmp = lt::span<float> { correl.data(), correl.size() }.subspan(midpoint);
         auto const peakNdx = peakDetect(correlMidpointTmp.subspan(minNdx, maxNdx - minNdx));
 
         auto const peakNdxAdjusted = peakNdx + minNdx;
-        auto const bpm = 60.0 / peakNdxAdjusted * (sampleRate / maxDecimation);
+        auto const bpm = 60.0F / peakNdxAdjusted * (sampleRate / maxDecimation);
         return bpm;
     }
 

@@ -25,7 +25,7 @@ auto swtReconstructionTest()
 
     std::random_device rd {};
     auto gen = std::mt19937 { rd() };
-    auto dis = std::uniform_real_distribution<float> { 0.0, 1.0 };
+    auto dis = std::uniform_real_distribution<float> { 0.0F, 1.0F };
 
     for (i = 0; i < n; ++i) {
         inp[i] = dis(gen);
@@ -171,7 +171,7 @@ auto swT2ReconstructionTest()
         for (auto k = 0; k < cols; ++k) {
             // inp[i*cols + k] = i*cols + k;
             inp[i * cols + k] = generateRnd();
-            out[i * cols + k] = 0.0;
+            out[i * cols + k] = 0.0F;
         }
     }
 
@@ -188,7 +188,7 @@ auto swT2ReconstructionTest()
                     auto wavecoeffs = swt2(wt, inp.get());
                     iswt2(wt, wavecoeffs.get(), out.get());
 
-                    float epsilon { 0.0 };
+                    float epsilon { 0.0F };
                     if (directFft == 0) {
                         epsilon = 1e-4;
                     } else {

@@ -35,7 +35,7 @@ FloatSignal::FloatSignal(float* data, size_t size, size_t padBef, size_t padAft)
 FloatSignal::~FloatSignal() { fftwf_free(data_); }
 
 ComplexSignal::ComplexSignal(std::size_t size)
-    : data_ { reinterpret_cast<Complex<float>*>(fftwf_alloc_complex(size)) }
+    : data_ { reinterpret_cast<Complex<float>*>(fftwf_alloc_complex(size)) } // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
     , size_ { size }
 {
     std::fill(data_, data_ + size_, lt::Complex<float> {});
@@ -62,13 +62,13 @@ auto spectralCorrelation(ComplexSignal const& a, ComplexSignal const& b, Complex
 }
 
 FftForwardPlan::FftForwardPlan(FloatSignal& fs, ComplexSignal& cs)
-    : FftPlan(fftwf_plan_dft_r2c_1d(fs.size(), fs.data(), reinterpret_cast<fftwf_complex*>(cs.data()), FFTW_ESTIMATE))
+    : FftPlan(fftwf_plan_dft_r2c_1d(static_cast<int>(fs.size()), fs.data(), reinterpret_cast<fftwf_complex*>(cs.data()), FFTW_ESTIMATE))
 {
     LT_ASSERT(cs.size() == (fs.size() / 2U + 1U));
 }
 
 FftBackwardPlan::FftBackwardPlan(ComplexSignal& cs, FloatSignal& fs)
-    : FftPlan(fftwf_plan_dft_c2r_1d(fs.size(), reinterpret_cast<fftwf_complex*>(cs.data()), fs.data(), FFTW_ESTIMATE))
+    : FftPlan(fftwf_plan_dft_c2r_1d(static_cast<int>(fs.size()), reinterpret_cast<fftwf_complex*>(cs.data()), fs.data(), FFTW_ESTIMATE))
 {
     LT_ASSERT(cs.size() == (fs.size() / 2U + 1U));
 }

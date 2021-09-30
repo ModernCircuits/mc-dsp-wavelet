@@ -68,18 +68,18 @@ auto RealFFT::performRealToComplex(float const* inp, Complex<float>* oup) -> voi
     cobj_->perform(cinp.get(), coup.get());
 
     oup[0].real(coup[0].real() + coup[0].imag());
-    oup[0].imag(0.0);
+    oup[0].imag(0.0F);
 
     for (auto i = 1; i < n2; ++i) {
         auto const temp1 = coup[i].imag() + coup[n2 - i].imag();
         auto const temp2 = coup[n2 - i].real() - coup[i].real();
-        oup[i].real((coup[i].real() + coup[n2 - i].real() + (temp1 * data_[i].real()) + (temp2 * data_[i].imag())) / 2.0);
-        oup[i].imag((coup[i].imag() - coup[n2 - i].imag() + (temp2 * data_[i].real()) - (temp1 * data_[i].imag())) / 2.0);
+        oup[i].real((coup[i].real() + coup[n2 - i].real() + (temp1 * data_[i].real()) + (temp2 * data_[i].imag())) / 2.0F);
+        oup[i].imag((coup[i].imag() - coup[n2 - i].imag() + (temp2 * data_[i].real()) - (temp1 * data_[i].imag())) / 2.0F);
     }
 
     auto const n = n2 * 2;
     oup[n2].real(coup[0].real() - coup[0].imag());
-    oup[n2].imag(0.0);
+    oup[n2].imag(0.0F);
 
     for (auto i = 1; i < n2; ++i) {
         oup[n - i].real(oup[i].real());

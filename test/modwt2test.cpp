@@ -26,7 +26,7 @@ auto main() -> int
         for (auto k = 0; k < cols; ++k) {
             //inp[i*cols + k] = i*cols + k;
             inp[i * cols + k] = generateRnd();
-            oup[i * cols + k] = 0.0;
+            oup[i * cols + k] = 0.0F;
         }
     }
 

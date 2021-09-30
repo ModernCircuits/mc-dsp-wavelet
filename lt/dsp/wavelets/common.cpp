@@ -27,8 +27,8 @@ auto dwtPerStride(float const* inp, int n, float const* lpd, float const* hpd, i
     for (i = 0; i < lenCA; ++i) {
         t = 2 * i + l2;
         os = i * ostride;
-        cA[os] = 0.0;
-        cD[os] = 0.0;
+        cA[os] = 0.0F;
+        cD[os] = 0.0F;
         for (l = 0; l < lenAvg; ++l) {
             if ((t - l) >= l2 && (t - l) < n) {
                 is = (t - l) * istride;
@@ -84,8 +84,8 @@ auto dwtSymStride(float const* inp, int n, float const* lpd, float const* hpd, i
     for (i = 0; i < lenCA; ++i) {
         t = 2 * i + 1;
         os = i * ostride;
-        cA[os] = 0.0;
-        cD[os] = 0.0;
+        cA[os] = 0.0F;
+        cD[os] = 0.0F;
         for (l = 0; l < lenAvg; ++l) {
             if ((t - l) >= 0 && (t - l) < n) {
                 is = (t - l) * istride;
@@ -154,8 +154,8 @@ auto swtPerStride(int m, float const* inp, int n, float const* lpd, float const*
     for (i = 0; i < lenCA; ++i) {
         t = i + l2;
         os = i * ostride;
-        cA[os] = 0.0;
-        cD[os] = 0.0;
+        cA[os] = 0.0F;
+        cD[os] = 0.0F;
         l = -1;
         for (j = 0; j < lenAvg; j += m) {
             l++;
@@ -216,8 +216,8 @@ auto idwtPerStride(float const* cA, int lenCA, float const* cD, float const* lpr
         n += 2;
         ms = m * ostride;
         ns = n * ostride;
-        x[ms] = 0.0;
-        x[ns] = 0.0;
+        x[ms] = 0.0F;
+        x[ns] = 0.0F;
         for (l = 0; l < l2; ++l) {
             t = 2 * l;
             if ((i - l) >= 0 && (i - l) < lenCA) {
@@ -259,8 +259,8 @@ auto idwtSymStride(float const* cA, int lenCA, float const* cD, float const* lpr
         n += 2;
         ms = m * ostride;
         ns = n * ostride;
-        x[ms] = 0.0;
-        x[ns] = 0.0;
+        x[ms] = 0.0F;
+        x[ns] = 0.0F;
         for (l = 0; l < lenAvg / 2; ++l) {
             t = 2 * l;
             if ((i - l) >= 0 && (i - l) < lenCA) {
@@ -293,6 +293,6 @@ auto testSWTlength(int n, int j) -> int
 
 auto maxIterations(std::size_t sigLen, std::size_t filtLen) -> std::size_t
 {
-    auto const temp = std::log(static_cast<float>(sigLen) / (static_cast<float>(filtLen) - 1.0)) / std::log(2.0);
+    auto const temp = std::log(static_cast<float>(sigLen) / (static_cast<float>(filtLen) - 1.0F)) / std::log(2.0F);
     return static_cast<std::size_t>(temp);
 }

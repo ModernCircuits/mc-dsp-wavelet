@@ -224,8 +224,8 @@ auto dwt(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>
     if (wt.ext == lt::string_view { "per" }) {
         auto idx = 2 * j;
         while (idx > 0) {
-            rowsN = (int)ceil((float)rowsN / 2.0);
-            colsN = (int)ceil((float)colsN / 2.0);
+            rowsN = (int)std::ceil((float)rowsN / 2.0F);
+            colsN = (int)std::ceil((float)colsN / 2.0F);
             wt.dimensions[idx - 1] = colsN;
             wt.dimensions[idx - 2] = rowsN;
             wt.outlength += (rowsN * colsN) * 3;
@@ -291,8 +291,8 @@ auto dwt(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>
     while (idx > 0) {
         rowsN += lp - 2;
         colsN += lp - 2;
-        rowsN = (int)ceil((float)rowsN / 2.0);
-        colsN = (int)ceil((float)colsN / 2.0);
+        rowsN = (int)std::ceil((float)rowsN / 2.0F);
+        colsN = (int)std::ceil((float)colsN / 2.0F);
         wt.dimensions[idx - 1] = colsN;
         wt.dimensions[idx - 2] = rowsN;
         wt.outlength += (rowsN * colsN) * 3;
@@ -660,7 +660,7 @@ auto iswt2(WaveletTransform2D& wt, float const* wavecoeffs, float* oup) -> void
         aLH = wt.coeffaccess[(j - iter) * 3 + 1];
         aHL = wt.coeffaccess[(j - iter) * 3 + 2];
         aHH = wt.coeffaccess[(j - iter) * 3 + 3];
-        m = (int)std::pow(2.0, (float)iter - 1);
+        m = (int)std::pow(2.0F, (float)iter - 1);
 
         for (it2 = 0; it2 < m; ++it2) {
             ir = 0;
@@ -757,7 +757,7 @@ auto modwt(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>
     n = wt.outlength;
     auto wavecoeff = makeZeros<float>(wt.outlength);
     auto filt = std::make_unique<float[]>(2 * lp);
-    s = std::sqrt(2.0);
+    s = std::sqrt(2.0F);
     for (auto i = 0; i < lp; ++i) {
         filt[i] = wt.wave().lpd()[i] / s;
         filt[lp + i] = wt.wave().hpd()[i] / s;
@@ -837,12 +837,12 @@ auto imodwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void
     cols = wt.cols();
     j = wt.J;
 
-    m = (int)std::pow(2.0, (float)j - 1.0);
+    m = (int)std::pow(2.0F, (float)j - 1.0F);
     // N = rows > cols ? rows : cols;
     lf = (wt.wave().lpr().size() + wt.wave().hpr().size()) / 2;
 
     auto filt = makeZeros<float>(2 * lf);
-    s = std::sqrt(2.0);
+    s = std::sqrt(2.0F);
     for (auto i = 0; i < lf; ++i) {
         filt[i] = wt.wave().lpd()[i] / s;
         filt[lf + i] = wt.wave().hpd()[i] / s;

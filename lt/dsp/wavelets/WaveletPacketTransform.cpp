@@ -15,7 +15,7 @@
 namespace {
 auto entropyS(float const* x, int n) -> float
 {
-    auto val = 0.0;
+    auto val = 0.0F;
     for (auto i = 0; i < n; ++i) {
         if (x[i] != 0) {
             auto x2 = x[i] * x[i];
@@ -31,7 +31,7 @@ auto entropyT(float* x, int n, float t) -> float
         throw std::invalid_argument("Threshold value must be >= 0");
     }
 
-    auto val = 0.0;
+    auto val = 0.0F;
     for (auto i = 0; i < n; ++i) {
         auto const x2 = std::fabs(x[i]);
         if (x2 > t) {
@@ -48,7 +48,7 @@ auto entropyN(float* x, int n, float p) -> float
         throw std::invalid_argument("Norm power value must be >= 1");
     }
 
-    auto val = 0.0;
+    auto val = 0.0F;
     for (auto i = 0; i < n; ++i) {
         auto const x2 = std::fabs(x[i]);
         val += std::pow(x2, (float)p);
@@ -59,7 +59,7 @@ auto entropyN(float* x, int n, float p) -> float
 
 auto entropyL(float const* x, int n) -> float
 {
-    auto val = 0.0;
+    auto val = 0.0F;
     for (auto i = 0; i < n; ++i) {
         if (x[i] != 0) {
             auto const x2 = x[i] * x[i];
@@ -86,7 +86,7 @@ auto costfunc(float* x, int n, char const* entropy, float p) -> float
     }
 
     fmt::printf("Entropy must be one of shannon, threshold, norm or energy");
-    return 0.0;
+    return 0.0F;
 }
 }
 
@@ -116,7 +116,7 @@ WaveletPacketTransform::WaveletPacketTransform(Wavelet* wave, std::size_t siglen
     std::size_t elength = 0;
     while (idx > 0) {
         n = n + lp - 2;
-        n = (int)ceil((float)n / 2.0);
+        n = (int)std::ceil((float)n / 2.0F);
         elength = p2 * n;
         idx--;
         p2 *= 2;
@@ -126,7 +126,7 @@ WaveletPacketTransform::WaveletPacketTransform(Wavelet* wave, std::size_t siglen
     this->outlength = siglength + 2 * (j + 1) * (size + 1);
     this->ext = "sym";
     this->entropy = "shannon";
-    this->eparam = 0.0;
+    this->eparam = 0.0F;
 
     this->wave_ = wave;
     this->signalLength_ = siglength;
@@ -145,7 +145,7 @@ WaveletPacketTransform::WaveletPacketTransform(Wavelet* wave, std::size_t siglen
     this->coeflength = (int*)&this->params[elength + 4 * nodes + j + 5];
 
     for (std::size_t i = 0; i < elength + 4 * nodes + 2 * j + 6; ++i) {
-        this->params[i] = 0.0;
+        this->params[i] = 0.0F;
     }
 }
 
@@ -163,8 +163,8 @@ static auto dwtPer(WaveletPacketTransform& wt, float const* inp, int n, float* c
 
     for (auto i = 0; i < lenCA; ++i) {
         t = 2 * i + l2;
-        cA[i] = 0.0;
-        cD[i] = 0.0;
+        cA[i] = 0.0F;
+        cD[i] = 0.0F;
         for (l = 0; l < lenAvg; ++l) {
             if ((t - l) >= l2 && (t - l) < n) {
                 cA[i] += wt.wave().lpd()[l] * inp[t - l];
@@ -209,8 +209,8 @@ static auto dwtSym(WaveletPacketTransform& wt, float const* inp, int n, float* c
 
     for (auto i = 0; i < lenCA; ++i) {
         t = 2 * i + 1;
-        cA[i] = 0.0;
-        cD[i] = 0.0;
+        cA[i] = 0.0F;
+        cD[i] = 0.0F;
         for (l = 0; l < lenAvg; ++l) {
             if ((t - l) >= 0 && (t - l) < n) {
                 cA[i] += wt.wave().lpd()[l] * inp[t - l];
@@ -273,12 +273,12 @@ auto dwt(WaveletPacketTransform& wt, float const* inp) -> void
     }
 
     for (auto i = 0; i < tempLen * (jj + 1) + elength; ++i) {
-        tree[i] = 0.0;
+        tree[i] = 0.0F;
     }
 
     for (auto i = 0; i < nodes + 1; ++i) {
-        wt.basisvector[i] = 0.0;
-        wt.costvalues[i] = 0.0;
+        wt.basisvector[i] = 0.0F;
+        wt.costvalues[i] = 0.0F;
     }
 
     auto n = tempLen;
@@ -292,7 +292,7 @@ auto dwt(WaveletPacketTransform& wt, float const* inp) -> void
         auto i = jj;
         p2 = 2;
         while (i > 0) {
-            n = (int)ceil((float)n / 2.0);
+            n = (int)std::ceil((float)n / 2.0F);
             wt.length[i] = n;
             wt.outlength += p2 * (wt.length[i]);
             i--;
@@ -328,7 +328,7 @@ auto dwt(WaveletPacketTransform& wt, float const* inp) -> void
         p2 = 2;
         while (i > 0) {
             n = n + lp - 2;
-            n = (int)ceil((float)n / 2.0);
+            n = (int)std::ceil((float)n / 2.0F);
             wt.length[i] = n;
             wt.outlength += p2 * (wt.length[i]);
             i--;
@@ -484,8 +484,8 @@ static auto idwtPer(WaveletPacketTransform& wt, float const* cA, int lenCA, floa
     for (auto i = 0; i < lenCA + l2 - 1; ++i) {
         m += 2;
         n += 2;
-        x[m] = 0.0;
-        x[n] = 0.0;
+        x[m] = 0.0F;
+        x[n] = 0.0F;
         for (l = 0; l < l2; ++l) {
             t = 2 * l;
             if ((i - l) >= 0 && (i - l) < lenCA) {
@@ -512,8 +512,8 @@ static auto idwtSym(WaveletPacketTransform& wt, float const* cA, int lenCA, floa
         auto i = v;
         m += 2;
         n += 2;
-        x[m] = 0.0;
-        x[n] = 0.0;
+        x[m] = 0.0F;
+        x[n] = 0.0F;
         for (auto l = 0; l < static_cast<int>(lenAvg) / 2; ++l) {
             auto const t = 2 * l;
             if ((i - l) >= 0 && i - l < lenCA) {
@@ -558,7 +558,7 @@ auto idwt(WaveletPacketTransform& wt, float* dwtop) -> void
         }
 
         for (std::size_t i = 0; i < xlen; ++i) {
-            x[i] = 0.0;
+            x[i] = 0.0F;
         }
 
         for (auto i = 0; i < llb; ++i) {

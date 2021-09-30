@@ -52,7 +52,7 @@ WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t 
     this->coeflength = (unsigned*)&this->params[signalLength * (j + 1) + elength + nodess];
 
     for (auto i = 0; lt::cmp_less(i, signalLength * (j + 1) + elength + nodess + j + 1); ++i) {
-        this->params[i] = 0.0;
+        this->params[i] = 0.0F;
     }
 }
 
@@ -70,8 +70,8 @@ static auto wtreePer(WaveletTree& wt, float const* inp, int n, float* cA, int le
 
     for (auto i = 0; i < lenCA; ++i) {
         t = 2 * i + l2;
-        cA[i] = 0.0;
-        cD[i] = 0.0;
+        cA[i] = 0.0F;
+        cD[i] = 0.0F;
         for (l = 0; l < lenAvg; ++l) {
             if ((t - l) >= l2 && (t - l) < n) {
                 cA[i] += wt.wave->lpd()[l] * inp[t - l];
@@ -116,8 +116,8 @@ static auto wtreeSym(WaveletTree& wt, float const* inp, int n, float* cA, int le
 
     for (auto i = 0; i < lenCA; ++i) {
         t = 2 * i + 1;
-        cA[i] = 0.0;
-        cD[i] = 0.0;
+        cA[i] = 0.0F;
+        cD[i] = 0.0F;
         for (l = 0; l < lenAvg; ++l) {
             if ((t - l) >= 0 && (t - l) < n) {
                 cA[i] += wt.wave->lpd()[l] * inp[t - l];
@@ -170,7 +170,7 @@ auto wtree(WaveletTree& wt, float const* inp) -> void
         auto i = j;
         p2 = 2;
         while (i > 0) {
-            n = (int)ceil((float)n / 2.0);
+            n = (int)std::ceil((float)n / 2.0F);
             wt.length[i] = n;
             wt.outlength += p2 * (wt.length[i]);
             i--;
@@ -202,7 +202,7 @@ auto wtree(WaveletTree& wt, float const* inp) -> void
         p2 = 2;
         while (i > 0) {
             n = n + lp - 2;
-            n = (int)ceil((float)n / 2.0);
+            n = (int)std::ceil((float)n / 2.0F);
             wt.length[i] = n;
             wt.outlength += p2 * (wt.length[i]);
             i--;

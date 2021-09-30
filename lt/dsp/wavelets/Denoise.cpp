@@ -38,7 +38,7 @@ auto visushrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
 
     auto wave = Wavelet { wname };
     auto filtLen = wave.size();
-    auto maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0)) / std::log(2.0));
+    auto maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0F)) / std::log(2.0F));
 
     if (lt::cmp_greater(j, maxIter)) {
         fmt::printf("\n Error - The Signal Can only be iterated %d times using this Wavelet. Exiting\n", maxIter);
@@ -99,7 +99,7 @@ auto visushrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
     for (it = 0; lt::cmp_less(it, j); ++it) {
         sigma = lnoise[it];
         dlen = wt.length[it + 1];
-        td = std::sqrt(2.0 * std::log(dwtLen)) * sigma;
+        td = std::sqrt(2.0F * std::log(dwtLen)) * sigma;
 
         if (thresh == lt::string_view { "hard" }) {
             for (std::size_t i = 0; i < dlen; ++i) {
@@ -153,7 +153,7 @@ auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
     auto wave = Wavelet { wname };
     filtLen = wave.size();
 
-    maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0)) / std::log(2.0));
+    maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0F)) / std::log(2.0F));
     // Depends on J
     if (lt::cmp_greater(j, maxIter)) {
         fmt::printf("\n Error - The Signal Can only be iterated %d times using this Wavelet. Exiting\n", maxIter);
@@ -218,18 +218,18 @@ auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
         if (sigma < 0.00000001) {
             td = 0;
         } else {
-            tv = std::sqrt(2.0 * std::log(dwtLen));
-            norm = 0.0;
+            tv = std::sqrt(2.0F * std::log(dwtLen));
+            norm = 0.0F;
             for (auto i = 0; i < dwtLen; ++i) {
                 norm += (wt.output()[len + i] * wt.output()[len + i] / (sigma * sigma));
             }
             te = (norm - (float)dwtLen) / (float)dwtLen;
-            ct = pow(std::log((float)dwtLen) / std::log(2.0), 1.5) / std::sqrt((float)dwtLen);
+            ct = pow(std::log((float)dwtLen) / std::log(2.0F), 1.5) / std::sqrt((float)dwtLen);
 
             if (te < ct) {
                 td = tv;
             } else {
-                xSum = 0.0;
+                xSum = 0.0F;
 
                 for (auto i = 0; i < dwtLen; ++i) {
                     dout[i] = std::fabs(wt.output()[len + i] / sigma);
@@ -294,7 +294,7 @@ auto modwtshrink(float* signal, std::size_t n, std::size_t j, char const* wname,
     auto wave = Wavelet { wname };
     auto filtLen = wave.size();
 
-    auto maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0)) / std::log(2.0));
+    auto maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0F)) / std::log(2.0F));
 
     if (lt::cmp_greater(j, maxIter)) {
         fmt::printf("\n Error - The Signal Can only be iterated %d times using this Wavelet. Exiting\n", maxIter);
@@ -336,12 +336,12 @@ auto modwtshrink(float* signal, std::size_t n, std::size_t j, char const* wname,
             dout[i] = fabs(wt.output()[iter + i]);
         }
 
-        sigma = std::sqrt(2.0) * median(dout.get(), dlen) / 0.6745;
+        sigma = std::sqrt(2.0F) * median(dout.get(), dlen) / 0.6745;
         lnoise[it] = sigma;
         iter += dlen;
     }
 
-    m = pow(2.0, j);
+    m = pow(2.0F, j);
     llen = std::log((float)wt.modwtsiglength);
     // Thresholding
 
@@ -349,7 +349,7 @@ auto modwtshrink(float* signal, std::size_t n, std::size_t j, char const* wname,
     for (it = 0; lt::cmp_less(it, j); ++it) {
         sigma = lnoise[it];
         dlen = wt.length[it + 1];
-        td = std::sqrt(2.0 * llen / m) * sigma;
+        td = std::sqrt(2.0F * llen / m) * sigma;
 
         if (thresh == lt::string_view { "hard" }) {
             for (std::size_t i = 0; i < dlen; ++i) {
@@ -370,7 +370,7 @@ auto modwtshrink(float* signal, std::size_t n, std::size_t j, char const* wname,
         }
 
         iter += wt.length[it + 1];
-        m /= 2.0;
+        m /= 2.0F;
     }
 
     imodwt(wt, denoised);
@@ -468,7 +468,7 @@ auto median(float* const x, int n) -> float
 
     float sigma = NAN;
     if ((n % 2) == 0) {
-        sigma = (x[n / 2 - 1] + x[n / 2]) / 2.0;
+        sigma = (x[n / 2 - 1] + x[n / 2]) / 2.0F;
     } else {
         sigma = x[n / 2];
     }

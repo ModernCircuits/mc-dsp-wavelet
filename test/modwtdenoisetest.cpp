@@ -11,18 +11,11 @@
 
 static auto rmse(int n, float const* x, float const* y) -> float
 {
-    float rms = NAN;
-    int i = 0;
-
-    rms = 0.0;
-
-    for (i = 0; i < n; ++i) {
+    auto rms = 0.0F;
+    for (std::size_t i = 0; i < static_cast<std::size_t>(n); ++i) {
         rms += (x[i] - y[i]) * (x[i] - y[i]);
     }
-
-    rms = std::sqrt(rms / (float)n);
-
-    return rms;
+    return std::sqrt(rms / (float)n);
 }
 
 static auto corrcoef(int n, float const* x, float const* y) -> float
@@ -36,7 +29,7 @@ static auto corrcoef(int n, float const* x, float const* y) -> float
     float den1 = NAN;
     float den2 = NAN;
     int i = 0;
-    xm = ym = 0.0;
+    xm = ym = 0.0F;
     for (i = 0; i < n; ++i) {
         xm += x[i];
         ym += y[i];
@@ -44,7 +37,7 @@ static auto corrcoef(int n, float const* x, float const* y) -> float
 
     xm = xm / n;
     ym = ym / n;
-    num = den1 = den2 = 0.0;
+    num = den1 = den2 = 0.0F;
 
     for (i = 0; i < n; ++i) {
         tx = x[i] - xm;
