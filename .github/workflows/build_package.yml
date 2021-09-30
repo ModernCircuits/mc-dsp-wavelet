@@ -31,6 +31,8 @@ jobs:
   macos-build:
     name: macOS Build
     runs-on: [self-hosted, macOS]
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "10.12"
     steps:
       - name: Check out code
         uses: actions/checkout@v2
