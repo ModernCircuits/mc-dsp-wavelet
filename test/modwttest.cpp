@@ -10,10 +10,12 @@
 #include "lt/testing/test.hpp"
 #include "readFileToVector.hpp"
 
+namespace dsp = lt::dsp;
+
 auto main() -> int
 {
-    auto obj = Wavelet { "db4" };
-    summary(obj);
+    auto wave = dsp::Wavelet { "db4" };
+    summary(wave);
 
     auto n = 177;
     auto j = 2;
@@ -21,8 +23,7 @@ auto main() -> int
     auto inp = readFileToVector("testData/signal.txt");
     auto out = std::make_unique<float[]>(n);
 
-    // Initialize the wavelet transform object
-    auto wt = WaveletTransform(obj, "modwt", n, j);
+    auto wt = dsp::WaveletTransform(wave, "modwt", n, j);
 
     // MODWT output can be accessed using wt.output vector.
     // Use wt_summary to find out how to extract appx and detail coefficients

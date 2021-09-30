@@ -12,6 +12,8 @@
 #include "lt/testing/test.hpp"
 #include "readFileToVector.hpp"
 
+namespace dsp = lt::dsp;
+
 template <typename It>
 auto mean(It f, It l) -> float
 {
@@ -33,8 +35,8 @@ struct BpmDetect {
         : wave_ { "db4" }
         , wt_ { wave_, "dwt", n, levels }
     {
-        wt_.extension(SignalExtension::symmetric);
-        wt_.convMethod(ConvolutionMethod::direct);
+        wt_.extension(dsp::SignalExtension::symmetric);
+        wt_.convMethod(dsp::ConvolutionMethod::direct);
     }
 
     LT_NODISCARD auto perform(lt::span<float> input, float sampleRate) -> float
@@ -109,8 +111,8 @@ struct BpmDetect {
         // auto const m = mean(begin(cD_sumf_), end(cD_sumf_));
         // std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [m](auto v) { return v - m; });
 
-        auto s = FloatSignal(cDSum.data(), cDSum.size());
-        auto x = OverlapSaveConvolver(s, s);
+        auto s = dsp::FloatSignal(cDSum.data(), cDSum.size());
+        auto x = dsp::OverlapSaveConvolver(s, s);
         x.crossCorrelate();
         auto correl = x.extractResult();
 
@@ -124,8 +126,8 @@ struct BpmDetect {
     }
 
 private:
-    Wavelet wave_;
-    WaveletTransform wt_;
+    dsp::Wavelet wave_;
+    dsp::WaveletTransform wt_;
 };
 
 auto median(lt::span<float> data) -> float

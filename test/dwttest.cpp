@@ -10,15 +10,17 @@
 #include "lt/testing/test.hpp"
 #include "readFileToVector.hpp"
 
+namespace dsp = lt::dsp;
+
 auto main() -> int
 {
     auto const input = readFileToVector("testData/signal.txt");
     auto const n = 256;
 
-    auto obj = Wavelet { "db4" };
-    auto wt = WaveletTransform(obj, "dwt", n, 3);
-    wt.extension(SignalExtension::symmetric);
-    wt.convMethod(ConvolutionMethod::direct);
+    auto obj = dsp::Wavelet { "db4" };
+    auto wt = dsp::WaveletTransform(obj, "dwt", n, 3);
+    wt.extension(dsp::SignalExtension::symmetric);
+    wt.convMethod(dsp::ConvolutionMethod::direct);
 
     // DWT output can be accessed using wt.output vector.
     // Use wt_summary to find out how to extract appx and detail coefficients

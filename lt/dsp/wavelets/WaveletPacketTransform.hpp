@@ -7,42 +7,48 @@
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
-struct WaveletPacketTransform {
-    WaveletPacketTransform(Wavelet* wave, std::size_t siglength, std::size_t j);
+namespace lt {
+namespace dsp {
 
-    LT_NODISCARD auto wave() const noexcept -> Wavelet const& { return *wave_; }
-    LT_NODISCARD auto signalLength() const noexcept -> int { return signalLength_; }
+    struct WaveletPacketTransform {
+        WaveletPacketTransform(Wavelet* wave, std::size_t siglength, std::size_t j);
 
-    FFTConvolver* cobj {};
-    int outlength {}; // Length of the output DWT vector
-    int lenlength {}; // Length of the Output Dimension Vector "length"
-    int J {}; // Number of decomposition Levels
-    int MaxIter {}; // Maximum Iterations J <= MaxIter
-    std::string ext; // Type of Extension used - "per" or "sym"
-    std::string entropy;
-    float eparam {};
+        LT_NODISCARD auto wave() const noexcept -> Wavelet const& { return *wave_; }
+        LT_NODISCARD auto signalLength() const noexcept -> int { return signalLength_; }
 
-    int N {}; //
-    int nodes {};
-    int length[102] {};
-    float* output {};
-    float* costvalues {};
-    float* basisvector {};
-    int* nodeindex {};
-    int* numnodeslevel {};
-    int* coeflength {};
-    std::unique_ptr<float[]> params;
+        FFTConvolver* cobj {};
+        int outlength {}; // Length of the output DWT vector
+        int lenlength {}; // Length of the Output Dimension Vector "length"
+        int J {}; // Number of decomposition Levels
+        int MaxIter {}; // Maximum Iterations J <= MaxIter
+        std::string ext; // Type of Extension used - "per" or "sym"
+        std::string entropy;
+        float eparam {};
 
-private:
-    Wavelet* wave_ { nullptr };
-    int signalLength_ {}; // Length of the original signal.
-};
+        int N {}; //
+        int nodes {};
+        int length[102] {};
+        float* output {};
+        float* costvalues {};
+        float* basisvector {};
+        int* nodeindex {};
+        int* numnodeslevel {};
+        int* coeflength {};
+        std::unique_ptr<float[]> params;
 
-auto dwt(WaveletPacketTransform& wt, float const* inp) -> void;
-auto idwt(WaveletPacketTransform& wt, float* dwtop) -> void;
+    private:
+        Wavelet* wave_ { nullptr };
+        int signalLength_ {}; // Length of the original signal.
+    };
 
-auto setDWPTExtension(WaveletPacketTransform& wt, char const* extension) -> void;
-auto setDWPTEntropy(WaveletPacketTransform& wt, char const* entropy, float eparam) -> void;
-auto getDWPTNodelength(WaveletPacketTransform& wt, int x) -> int;
+    auto dwt(WaveletPacketTransform& wt, float const* inp) -> void;
+    auto idwt(WaveletPacketTransform& wt, float* dwtop) -> void;
 
-auto summary(WaveletPacketTransform const& wt) -> void;
+    auto setDWPTExtension(WaveletPacketTransform& wt, char const* extension) -> void;
+    auto setDWPTEntropy(WaveletPacketTransform& wt, char const* entropy, float eparam) -> void;
+    auto getDWPTNodelength(WaveletPacketTransform& wt, int x) -> int;
+
+    auto summary(WaveletPacketTransform const& wt) -> void;
+
+}
+}

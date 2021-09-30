@@ -34,7 +34,7 @@ namespace detail {
     struct BitCeilImpl<T, false> {
         static auto ceil(T x) noexcept -> T
         {
-            unsigned const num = std::numeric_limits<T>::digits - lt::countl_zero(static_cast<T>(x - 1));
+            unsigned const num = std::numeric_limits<T>::digits - countl_zero(static_cast<T>(x - 1));
             unsigned const extra = std::numeric_limits<unsigned>::digits - std::numeric_limits<T>::digits;
             unsigned const ret = 1U << (num + extra);
             return static_cast<T>(ret >> extra);
@@ -45,7 +45,7 @@ namespace detail {
     struct BitCeilImpl<T, true> {
         static auto ceil(T x) noexcept -> T
         {
-            unsigned const num = std::numeric_limits<T>::digits - lt::countl_zero(static_cast<T>(x - 1U));
+            unsigned const num = std::numeric_limits<T>::digits - countl_zero(static_cast<T>(x - 1U));
             return static_cast<T>(T { 1 } << num);
         }
     };

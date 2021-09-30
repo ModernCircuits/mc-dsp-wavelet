@@ -7,9 +7,11 @@
 
 #include "lt/testing/test.hpp"
 
+namespace dsp = lt::dsp;
+
 auto main() -> int
 {
-    auto obj = Wavelet { "db2" };
+    auto obj = dsp::Wavelet { "db2" };
 
     auto rows = 51;
     auto cols = 40;
@@ -20,7 +22,7 @@ auto main() -> int
     auto diff = makeZeros<float>(n);
 
     auto j = 2;
-    auto wt = WaveletTransform2D(obj, "modwt", rows, cols, j);
+    auto wt = dsp::WaveletTransform2D(obj, "modwt", rows, cols, j);
 
     for (auto i = 0; i < rows; ++i) {
         for (auto k = 0; k < cols; ++k) {

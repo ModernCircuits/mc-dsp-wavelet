@@ -6,43 +6,48 @@
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
-struct ContinuousWaveletTransform {
-    ContinuousWaveletTransform(char const* wave, float param, int siglength, float dt, int j);
+namespace lt {
+namespace dsp {
 
-    LT_NODISCARD auto wave() const noexcept -> std::string const& { return wave_; }
-    auto scales(float s0, float dj, char const* type, int power) -> void;
+    struct ContinuousWaveletTransform {
+        ContinuousWaveletTransform(char const* wave, float param, int siglength, float dt, int j);
 
-    int signalLength;
-    int J; // Total Number of Scales
-    float s0; // Smallest scale. It depends on the sampling rate. s0 <= 2 * dt for most wavelets
-    float dt; // Sampling Rate
-    float dj; // Separation between scales. eg., scale = s0 * 2 ^ ( [0:N-1] *dj ) or scale = s0 *[0:N-1] * dj
-    std::string type; // Scale Type - Power or Linear
-    int pow; // Base of Power in case type = pow. Typical value is pow = 2
-    int sflag;
-    int pflag;
-    int npad;
-    int mother;
-    float m; // Wavelet parameter param
-    float smean {}; // Input Signal mean
+        LT_NODISCARD auto wave() const noexcept -> std::string const& { return wave_; }
+        auto scales(float s0, float dj, char const* type, int power) -> void;
 
-    Complex<float>* output;
-    float* scale;
-    float* period;
-    float* coi;
-    std::unique_ptr<float[]> params;
+        int signalLength;
+        int J; // Total Number of Scales
+        float s0; // Smallest scale. It depends on the sampling rate. s0 <= 2 * dt for most wavelets
+        float dt; // Sampling Rate
+        float dj; // Separation between scales. eg., scale = s0 * 2 ^ ( [0:N-1] *dj ) or scale = s0 *[0:N-1] * dj
+        std::string type; // Scale Type - Power or Linear
+        int pow; // Base of Power in case type = pow. Typical value is pow = 2
+        int sflag;
+        int pflag;
+        int npad;
+        int mother;
+        float m; // Wavelet parameter param
+        float smean {}; // Input Signal mean
 
-private:
-    // Wavelet - morl/morlet,paul,dog/dgauss
-    std::string wave_;
-};
+        Complex<float>* output;
+        float* scale;
+        float* period;
+        float* coi;
+        std::unique_ptr<float[]> params;
 
-auto cwt(ContinuousWaveletTransform& wt, float const* inp) -> void;
-auto icwt(ContinuousWaveletTransform& wt, float* cwtop) -> void;
+    private:
+        // Wavelet - morl/morlet,paul,dog/dgauss
+        std::string wave_;
+    };
 
-auto summary(ContinuousWaveletTransform const& wt) -> void;
+    auto cwt(ContinuousWaveletTransform& wt, float const* inp) -> void;
+    auto icwt(ContinuousWaveletTransform& wt, float* cwtop) -> void;
 
-auto meyer(int n, float lb, float ub, float* phi, float* psi, float* tgrid) -> void;
-auto gauss(int n, int p, float lb, float ub, float* psi, float* t) -> void;
-auto mexhat(int n, float lb, float ub, float* psi, float* t) -> void;
-auto morlet(int n, float lb, float ub, float* psi, float* t) -> void;
+    auto summary(ContinuousWaveletTransform const& wt) -> void;
+
+    auto meyer(int n, float lb, float ub, float* phi, float* psi, float* tgrid) -> void;
+    auto gauss(int n, int p, float lb, float ub, float* psi, float* t) -> void;
+    auto mexhat(int n, float lb, float ub, float* psi, float* t) -> void;
+    auto morlet(int n, float lb, float ub, float* psi, float* t) -> void;
+}
+}

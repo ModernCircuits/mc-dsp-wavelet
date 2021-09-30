@@ -1,17 +1,18 @@
 #include "lt/dsp/wavelets.hpp"
 
 #include "lt/cmath.hpp"
+#include "lt/cstdlib.hpp"
+#include "lt/cstring.hpp"
 #include "lt/format.hpp"
+#include "lt/memory.hpp"
 
 #include "lt/testing/test.hpp"
 
-#include "lt/cstdlib.hpp"
-#include "lt/cstring.hpp"
-#include "lt/memory.hpp"
+namespace dsp = lt::dsp;
 
 auto main() -> int
 {
-    auto obj = Wavelet { "db4" };
+    auto obj = dsp::Wavelet { "db4" };
     auto const n = std::size_t { 788 + 23 };
     auto const j = std::size_t { 4 };
 
@@ -23,7 +24,7 @@ auto main() -> int
         inp[i - 1] = i;
     }
 
-    auto wt = WaveletPacketTransform(&obj, n, j);
+    auto wt = dsp::WaveletPacketTransform(&obj, n, j);
     setDWPTExtension(wt, "per");
     setDWPTEntropy(wt, "logenergy", 0);
 

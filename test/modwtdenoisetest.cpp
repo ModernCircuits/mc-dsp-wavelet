@@ -1,13 +1,14 @@
 #include "lt/dsp/wavelets/Denoise.hpp"
 
 #include "lt/cmath.hpp"
+#include "lt/cstdlib.hpp"
+#include "lt/cstring.hpp"
 #include "lt/format.hpp"
+#include "lt/memory.hpp"
 
 #include "readFileToVector.hpp"
 
-#include "lt/cstdlib.hpp"
-#include "lt/cstring.hpp"
-#include "lt/memory.hpp"
+namespace dsp = lt::dsp;
 
 static auto rmse(int n, float const* x, float const* y) -> float
 {
@@ -68,7 +69,7 @@ auto main() -> int
     auto const j = 4;
     auto out = std::make_unique<float[]>(n);
 
-    modwtshrink(sig.data(), n, j, wname, cmethod, ext, thresh, out.get());
+    dsp::modwtshrink(sig.data(), n, j, wname, cmethod, ext, thresh, out.get());
 
     fmt::printf("Signal - Noisy Signal Stats \n");
     fmt::printf("RMSE %g\n", rmse(n, sig.data(), inp.data()));

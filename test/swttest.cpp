@@ -1,19 +1,19 @@
 #include "lt/dsp/wavelets.hpp"
 
 #include "lt/cmath.hpp"
-#include "lt/format.hpp"
-
-#include "lt/testing/test.hpp"
-
-#include "readFileToVector.hpp"
-
 #include "lt/cstdlib.hpp"
 #include "lt/cstring.hpp"
+#include "lt/format.hpp"
 #include "lt/memory.hpp"
+
+#include "lt/testing/test.hpp"
+#include "readFileToVector.hpp"
+
+namespace dsp = lt::dsp;
 
 auto main() -> int
 {
-    auto obj = Wavelet { "bior3.5" };
+    auto obj = dsp::Wavelet { "bior3.5" };
     auto const n = std::size_t { 256 };
 
     auto const inp = readFileToVector("testData/signal.txt");
@@ -23,8 +23,8 @@ auto main() -> int
 
     auto const j = std::size_t { 1 };
 
-    auto wt = WaveletTransform(obj, "swt", n, j); // Initialize the wavelet transform object
-    wt.convMethod(ConvolutionMethod::direct);
+    auto wt = dsp::WaveletTransform(obj, "swt", n, j); // Initialize the wavelet transform object
+    wt.convMethod(dsp::ConvolutionMethod::direct);
 
     swt(wt, inp.data()); // Perform SWT
     //SWT output can be accessed using wt.output vector. Use wt_summary to find out how to extract appx and detail coefficients

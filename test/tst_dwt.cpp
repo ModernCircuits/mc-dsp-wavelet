@@ -7,11 +7,12 @@
 #include "lt/format.hpp"
 #include "lt/memory.hpp"
 #include "lt/random.hpp"
+#include "lt/sstream.hpp"
 #include "lt/vector.hpp"
 
 #include "lt/testing/test.hpp"
 
-#include "lt/sstream.hpp"
+namespace dsp = lt::dsp;
 
 auto modwtReconstructionTest()
 {
@@ -41,20 +42,20 @@ auto modwtReconstructionTest()
     for (std::size_t directFft = 0; directFft < 2; directFft++) {
         for (std::size_t symPer = 0; symPer < 1; symPer++) {
             for (auto const& name : waveletNames) {
-                auto obj = Wavelet { name.c_str() };
+                auto obj = dsp::Wavelet { name.c_str() };
                 for (auto j = 1; j < 3; j++) {
-                    auto wt = WaveletTransform(obj, "modwt", n, j);
+                    auto wt = dsp::WaveletTransform(obj, "modwt", n, j);
 
                     if (directFft == 0) {
-                        wt.convMethod(ConvolutionMethod::direct);
+                        wt.convMethod(dsp::ConvolutionMethod::direct);
                     } else {
-                        wt.convMethod(ConvolutionMethod::fft);
+                        wt.convMethod(dsp::ConvolutionMethod::fft);
                     }
 
                     if (symPer == 0) {
-                        wt.extension(SignalExtension::periodic);
+                        wt.extension(dsp::SignalExtension::periodic);
                     } else if (symPer == 1 && directFft == 1) {
-                        wt.extension(SignalExtension::symmetric);
+                        wt.extension(dsp::SignalExtension::symmetric);
                     } else {
                         break;
                     }
@@ -116,11 +117,11 @@ auto modwT2ReconstructionTest()
     for (std::size_t directFft = 0; directFft < 1; directFft++) {
         for (std::size_t symPer = 0; symPer < 1; symPer++) {
             for (auto const& name : waveletNames) {
-                auto obj = Wavelet { name.c_str() };
+                auto obj = dsp::Wavelet { name.c_str() };
                 for (auto j = 1; j < 3; j++) {
-                    auto wt = WaveletTransform2D(obj, "modwt", rows, cols, j);
+                    auto wt = dsp::WaveletTransform2D(obj, "modwt", rows, cols, j);
                     if (symPer == 0) {
-                        setDWT2Extension(wt, "per");
+                        dsp::setDWT2Extension(wt, "per");
                     }
 
                     auto wavecoeffs = modwt(wt, inp.get());
@@ -203,23 +204,23 @@ auto dwtReconstructionTest()
     for (std::size_t ent = 0; ent < 2; ent++) {
         for (std::size_t symPer = 0; symPer < 2; symPer++) {
             for (auto const& name : waveletNames) {
-                auto obj = Wavelet { name.c_str() };
+                auto obj = dsp::Wavelet { name.c_str() };
                 for (auto j = 1; j < 3; j++) {
                     // J = 3;
 
-                    auto wt = WaveletPacketTransform(&obj, n, j); // Initialize the wavelet transform object
+                    auto wt = dsp::WaveletPacketTransform(&obj, n, j); // Initialize the wavelet transform object
                     if (symPer == 0) {
-                        setDWPTExtension(wt,
+                        dsp::setDWPTExtension(wt,
                             "sym"); // Options are "per" and "sym".
                         // Symmetric is the default option
                     } else {
-                        setDWPTExtension(wt, "per");
+                        dsp::setDWPTExtension(wt, "per");
                     }
 
                     if (ent == 0) {
-                        setDWPTEntropy(wt, "shannon", 0);
+                        dsp::setDWPTEntropy(wt, "shannon", 0);
                     } else {
-                        setDWPTEntropy(wt, "logenergy", 0);
+                        dsp::setDWPTEntropy(wt, "logenergy", 0);
                     }
 
                     dwt(wt, inp.get());
@@ -242,7 +243,7 @@ auto dbCoefTests()
     });
 
     for (auto const& name : waveletNames) {
-        auto obj = Wavelet { name.c_str() };
+        auto obj = dsp::Wavelet { name.c_str() };
         auto t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
         auto t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
         auto t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
@@ -275,7 +276,7 @@ auto coifCoefTests()
     }
 
     for (auto const& name : waveletNames) {
-        auto obj = Wavelet { name.c_str() };
+        auto obj = dsp::Wavelet { name.c_str() };
         t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
         t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
         t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
@@ -306,7 +307,7 @@ auto symCoefTests()
     }
 
     for (auto const& name : waveletNames) {
-        auto obj = Wavelet { name.c_str() };
+        auto obj = dsp::Wavelet { name.c_str() };
         t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
         t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
         t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
@@ -345,7 +346,7 @@ auto biorCoefTests()
     waveletNames.emplace_back("bior6.8");
 
     for (auto const& name : waveletNames) {
-        auto obj = Wavelet { name.c_str() };
+        auto obj = dsp::Wavelet { name.c_str() };
 
         auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
         auto const t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0F);
@@ -392,7 +393,7 @@ auto rBiorCoefTests()
     waveletNames.emplace_back("rbior6.8");
 
     for (auto const& name : waveletNames) {
-        auto obj = Wavelet { name.c_str() };
+        auto obj = dsp::Wavelet { name.c_str() };
 
         t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
         t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0F);

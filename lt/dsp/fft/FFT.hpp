@@ -7,38 +7,42 @@
 
 #include "kissfft/kissfft.hh"
 
-constexpr auto pi2 = 6.28318530717958647692528676655900577;
+namespace lt {
+namespace dsp {
+    constexpr auto pi2 = 6.28318530717958647692528676655900577;
 
-struct FFT {
-    enum Direction {
-        forward = 0,
-        backward = 1,
+    struct FFT {
+        enum Direction {
+            forward = 0,
+            backward = 1,
+        };
+
+        FFT(int n, Direction direction);
+
+        auto perform(Complex<float> const* inp, Complex<float>* oup) -> void;
+
+        LT_NODISCARD auto direction() const noexcept -> Direction;
+        LT_NODISCARD auto size() const noexcept -> int;
+        LT_NODISCARD auto engine() -> kissfft<float>& { return fftEngine_; }
+
+    private:
+        int size_;
+        Direction direction_;
+
+        kissfft<float> fftEngine_;
     };
 
-    FFT(int n, Direction direction);
+    struct RealFFT {
+        RealFFT(int n, FFT::Direction direction);
 
-    auto perform(Complex<float> const* inp, Complex<float>* oup) -> void;
+        auto performRealToComplex(float const* inp, Complex<float>* oup) -> void;
+        auto performComplexToReal(Complex<float> const* inp, float* oup) -> void;
 
-    LT_NODISCARD auto direction() const noexcept -> Direction;
-    LT_NODISCARD auto size() const noexcept -> int;
-    LT_NODISCARD auto engine() -> kissfft<float>& { return fftEngine_; }
+    private:
+        std::unique_ptr<FFT> cobj_;
+        std::unique_ptr<Complex<float>[]> data_;
+    };
 
-private:
-    int size_;
-    Direction direction_;
-
-    kissfft<float> fftEngine_;
-};
-
-struct RealFFT {
-    RealFFT(int n, FFT::Direction direction);
-
-    auto performRealToComplex(float const* inp, Complex<float>* oup) -> void;
-    auto performComplexToReal(Complex<float> const* inp, float* oup) -> void;
-
-private:
-    std::unique_ptr<FFT> cobj_;
-    std::unique_ptr<Complex<float>[]> data_;
-};
-
-auto divideby(int m, int d) -> int;
+    auto divideby(int m, int d) -> int;
+}
+}

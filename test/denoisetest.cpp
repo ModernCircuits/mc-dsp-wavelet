@@ -1,11 +1,12 @@
 #include "lt/dsp/wavelets/Denoise.hpp"
 
 #include "lt/cmath.hpp"
-#include "lt/format.hpp"
-
 #include "lt/cstdlib.hpp"
 #include "lt/cstring.hpp"
+#include "lt/format.hpp"
 #include "lt/memory.hpp"
+
+namespace dsp = lt::dsp;
 
 static auto rmse(int n, float const* x, float const* y) -> float
 {
@@ -107,7 +108,7 @@ auto main() -> int
     for (i = 0; i < n; ++i) {
         inp[i] = temp[i];
     }
-    auto obj = DenoiseSet(n, j, wname);
+    auto obj = dsp::DenoiseSet(n, j, wname);
     setDenoiseMethod(obj, "visushrink"); // sureshrink is also the default. The other option with dwt and swt is visushrink.
     // modwt works only with modwtshrink method
     setDenoiseWTMethod(obj, method); // Default is dwt. the other options are swt and modwt

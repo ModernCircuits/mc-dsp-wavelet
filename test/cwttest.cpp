@@ -2,10 +2,11 @@
 
 #include "lt/cmath.hpp"
 #include "lt/format.hpp"
+#include "lt/memory.hpp"
 
 #include "readFileToVector.hpp"
 
-#include "lt/memory.hpp"
+namespace dsp = lt::dsp;
 
 auto main() -> int
 {
@@ -42,7 +43,7 @@ auto main() -> int
     j = 11 * subscale; // Total Number of scales
     a0 = 2; //power
 
-    auto wt = ContinuousWaveletTransform { wave, param, n, dt, j };
+    auto wt = dsp::ContinuousWaveletTransform { wave, param, n, dt, j };
 
     auto const inp = readFileToVector("testData/sst_nino3.dat");
     auto oup = std::make_unique<float[]>(n);

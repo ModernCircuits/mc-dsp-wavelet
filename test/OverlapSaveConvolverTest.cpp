@@ -4,6 +4,8 @@
 
 #include "lt/testing/test.hpp"
 
+namespace dsp = lt::dsp;
+
 auto main() -> int
 {
     auto const testFiles = std::vector<char const*> {
@@ -18,9 +20,9 @@ auto main() -> int
         auto testData = loadTestData(testFile);
         REQUIRE(testData.size() == 4U);
 
-        auto s = FloatSignal { testData[0].data(), testData[0].size() };
-        auto p = FloatSignal { testData[1].data(), testData[1].size() };
-        auto x = OverlapSaveConvolver { s, p };
+        auto s = dsp::FloatSignal { testData[0].data(), testData[0].size() };
+        auto p = dsp::FloatSignal { testData[1].data(), testData[1].size() };
+        auto x = dsp::OverlapSaveConvolver { s, p };
 
         x.convolute();
         REQUIRE(approxEqual(x.extractResult(), testData[2]));

@@ -8,37 +8,43 @@
 #include "lt/cstring.hpp"
 #include "lt/string.hpp"
 
-struct DenoiseSet {
-    DenoiseSet(int length, int j, char const* name);
+namespace lt {
+namespace dsp {
 
-    int N {}; //signal length
-    int J {}; // Levels of Wavelet decomposition
-    std::string wname; //Wavelet name
-    std::string wmethod; //Wavelet decomposition method - dwt or swt
-    std::string cmethod; //Cnvolution Method - direct or fft . Available only for modwt.
-    // SWT and DWT only use direct method.
-    std::string ext; // Signal Extension - sym or per
-    std::string thresh; // thresholding - soft or hard
-    std::string level; // Noise Estimation level - first or all
-    std::string dmethod; //Denoising Method -sureshrink or visushrink
-};
+    struct DenoiseSet {
+        DenoiseSet(int length, int j, char const* name);
 
-auto visushrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, float* denoised) -> void;
+        int N {}; //signal length
+        int J {}; // Levels of Wavelet decomposition
+        std::string wname; //Wavelet name
+        std::string wmethod; //Wavelet decomposition method - dwt or swt
+        std::string cmethod; //Cnvolution Method - direct or fft . Available only for modwt.
+        // SWT and DWT only use direct method.
+        std::string ext; // Signal Extension - sym or per
+        std::string thresh; // thresholding - soft or hard
+        std::string level; // Noise Estimation level - first or all
+        std::string dmethod; //Denoising Method -sureshrink or visushrink
+    };
 
-auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, float* denoised) -> void;
+    auto visushrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, float* denoised) -> void;
 
-auto modwtshrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* cmethod, char const* ext, char const* thresh, float* denoised) -> void;
+    auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext, char const* thresh, char const* level, float* denoised) -> void;
 
-auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void;
+    auto modwtshrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* cmethod, char const* ext, char const* thresh, float* denoised) -> void;
 
-auto setDenoiseMethod(DenoiseSet& obj, char const* dmethod) -> void;
+    auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void;
 
-auto setDenoiseWTMethod(DenoiseSet& obj, char const* wmethod) -> void;
+    auto setDenoiseMethod(DenoiseSet& obj, char const* dmethod) -> void;
 
-auto setDenoiseWTExtension(DenoiseSet& obj, char const* extension) -> void;
+    auto setDenoiseWTMethod(DenoiseSet& obj, char const* wmethod) -> void;
 
-auto setDenoiseParameters(DenoiseSet& obj, char const* thresh, char const* level) -> void;
+    auto setDenoiseWTExtension(DenoiseSet& obj, char const* extension) -> void;
 
-auto median(float* x, int n) -> float;
+    auto setDenoiseParameters(DenoiseSet& obj, char const* thresh, char const* level) -> void;
 
-auto minindex(float const* arr, int n) -> int;
+    auto median(float* x, int n) -> float;
+
+    auto minindex(float const* arr, int n) -> int;
+
+}
+}

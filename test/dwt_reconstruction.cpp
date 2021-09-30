@@ -6,11 +6,12 @@
 #include "lt/format.hpp"
 #include "lt/memory.hpp"
 #include "lt/random.hpp"
+#include "lt/sstream.hpp"
 #include "lt/vector.hpp"
 
 #include "lt/testing/test.hpp"
 
-#include "lt/sstream.hpp"
+namespace dsp = lt::dsp;
 
 auto dwtReconstructionTest()
 {
@@ -73,18 +74,18 @@ auto dwtReconstructionTest()
     for (unsigned int directFft = 0; directFft < 2; directFft++) {
         for (unsigned int symPer = 0; symPer < 2; symPer++) {
             for (auto& waveletName : waveletNames) {
-                auto obj = Wavelet { waveletName.c_str() };
+                auto obj = dsp::Wavelet { waveletName.c_str() };
                 for (auto j = 1; j < 3; j++) {
-                    auto wt = WaveletTransform(obj, "dwt", n, j);
+                    auto wt = dsp::WaveletTransform(obj, "dwt", n, j);
                     if (symPer == 0) {
-                        wt.extension(SignalExtension::symmetric);
+                        wt.extension(dsp::SignalExtension::symmetric);
                     } else {
-                        wt.extension(SignalExtension::periodic);
+                        wt.extension(dsp::SignalExtension::periodic);
                     }
                     if (directFft == 0) {
-                        wt.convMethod(ConvolutionMethod::direct);
+                        wt.convMethod(dsp::ConvolutionMethod::direct);
                     } else {
-                        wt.convMethod(ConvolutionMethod::fft);
+                        wt.convMethod(dsp::ConvolutionMethod::fft);
                     }
 
                     dwt(wt, inp.get()); // Perform DWT
@@ -118,7 +119,7 @@ auto dwT2ReconstructionTest()
     auto inp = std::make_unique<float[]>(n);
     auto out = std::make_unique<float[]>(n);
 
-    std::vector<std::string> waveletNames;
+    std::vector<std::string> waveletNames {};
 
     for (unsigned int j = 0; j < 15; j++) {
         waveletNames.push_back(std::string("db") + std::to_string(j + 1));
@@ -173,11 +174,11 @@ auto dwT2ReconstructionTest()
     for (unsigned int directFft = 0; directFft < 1; directFft++) {
         for (unsigned int symPer = 0; symPer < 2; symPer++) {
             for (auto& waveletName : waveletNames) {
-                auto obj = Wavelet { waveletName.c_str() };
+                auto obj = dsp::Wavelet { waveletName.c_str() };
                 for (auto j = 1; j < 3; j++) {
                     // J = 3;
 
-                    auto wt = WaveletTransform2D(obj, "dwt", rows, cols,
+                    auto wt = dsp::WaveletTransform2D(obj, "dwt", rows, cols,
                         j); // Initialize the wavelet transform object
                     if (symPer == 0) {
                         setDWT2Extension(wt, "sym");

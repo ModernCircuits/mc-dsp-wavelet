@@ -4,21 +4,21 @@
 #include "lt/preprocessor.hpp"
 #include "lt/string.hpp"
 
-enum struct SignalExtension {
-    periodic,
-    symmetric,
-};
-
-LT_NODISCARD inline auto toString(SignalExtension ext) -> std::string
-{
-    if (ext == SignalExtension::periodic) {
-        return "periodic";
-    }
-    return "symmetric";
-}
-
 namespace lt {
 namespace dsp {
+
+    enum struct SignalExtension {
+        periodic,
+        symmetric,
+    };
+
+    LT_NODISCARD inline auto toString(SignalExtension ext) -> std::string
+    {
+        if (ext == SignalExtension::periodic) {
+            return "periodic";
+        }
+        return "symmetric";
+    }
 
     template <typename T>
     auto periodicExtension(T const* signal, std::size_t len, std::size_t a, T* output) -> std::size_t

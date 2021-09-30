@@ -9,6 +9,8 @@
 
 #include "lt/testing/test.hpp"
 
+namespace dsp = lt::dsp;
+
 auto swtReconstructionTest()
 {
 
@@ -77,20 +79,20 @@ auto swtReconstructionTest()
     for (unsigned int directFft = 0; directFft < 2; directFft++) {
         for (unsigned int symPer = 0; symPer < 1; symPer++) {
             for (auto& name : waveletNames) {
-                auto obj = Wavelet { name.c_str() };
+                auto obj = dsp::Wavelet { name.c_str() };
                 for (auto j = 1; j < 3; j++) {
-                    auto wt = WaveletTransform(obj, "swt", n, j);
+                    auto wt = dsp::WaveletTransform(obj, "swt", n, j);
 
                     if (directFft == 0) {
-                        wt.convMethod(ConvolutionMethod::direct);
+                        wt.convMethod(dsp::ConvolutionMethod::direct);
                     } else {
-                        wt.convMethod(ConvolutionMethod::fft);
+                        wt.convMethod(dsp::ConvolutionMethod::fft);
                     }
 
                     if (symPer == 0) {
-                        wt.extension(SignalExtension::periodic);
+                        wt.extension(dsp::SignalExtension::periodic);
                     } else if (symPer == 1 && directFft == 1) {
-                        wt.extension(SignalExtension::symmetric);
+                        wt.extension(dsp::SignalExtension::symmetric);
                     } else {
                         REQUIRE(false);
                     }
@@ -178,9 +180,9 @@ auto swT2ReconstructionTest()
     for (unsigned int directFft = 0; directFft < 1; directFft++) {
         for (unsigned int symPer = 0; symPer < 1; symPer++) {
             for (auto& name : waveletNames) {
-                auto obj = Wavelet { name.c_str() };
+                auto obj = dsp::Wavelet { name.c_str() };
                 for (auto j = 1; j < 3; j++) {
-                    auto wt = WaveletTransform2D(obj, "swt", rows, cols, j);
+                    auto wt = dsp::WaveletTransform2D(obj, "swt", rows, cols, j);
                     if (symPer == 0) {
                         setDWT2Extension(wt, "per"); // Options are "per"
                     }
