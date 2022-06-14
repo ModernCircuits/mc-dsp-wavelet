@@ -1,7 +1,7 @@
 [requires]
 catch2/3.0.1
 fftw/3.3.9
-fmt/8.0.1
+fmt/8.1.1
 kissfft/131.1.0
 pffft/cci.20210511
 
