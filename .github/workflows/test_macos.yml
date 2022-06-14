@@ -6,6 +6,8 @@ jobs:
   build:
     name: Build
     runs-on: macos-12
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "10.14"
     steps:
       - name: Check out code
         uses: actions/checkout@v2
