@@ -1,0 +1,19 @@
+[requires]
+catch2/3.0.1
+fftw/3.3.9
+fmt/8.0.1
+kissfft/131.1.0
+pffft/cci.20210511
+
+[options]
+fftw:precision=single
+fftw:simd=False
+kissfft:datatype=float
+pffft:disable_simd=True
+
+[generators]
+cmake_find_package
+markdown
+
+[imports]
+., license* -> ./licenses @ folder=True, ignore_case=True

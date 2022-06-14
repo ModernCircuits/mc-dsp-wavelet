@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
-cmake_policy(VERSION 3.15)
+cmake_minimum_required(VERSION 3.18)
 project(mc_dsp_wavelet VERSION 0.1.0)
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
@@ -47,38 +46,15 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
-
-if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-    file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.1/conan.cmake"
-        "${CMAKE_BINARY_DIR}/conan.cmake"
-        TLS_VERIFY ON)
-endif()
-
-include(${CMAKE_BINARY_DIR}/conan.cmake)
-conan_add_remote(NAME conancenter URL https://center.conan.io)
-conan_cmake_configure(
-    REQUIRES
-    fftw/3.3.9
-    fmt/8.0.1
-    kissfft/131.1.0
-    pffft/cci.20210511
-    GENERATORS
-    cmake_find_package
-    OPTIONS
-    fftw:precision=single
-    fftw:simd=False
-    kissfft:datatype=float
-    pffft:disable_simd=True
-)
-
-conan_cmake_autodetect(settings)
-conan_cmake_install(PATH_OR_REFERENCE . BUILD outdated REMOTE conancenter SETTINGS ${settings})
+include(mcConan)
 
 find_package(FFTW3f REQUIRED)
 find_package(fmt REQUIRED)
 find_package(kissfft REQUIRED)
 find_package(pffft REQUIRED)
+
+find_package(Catch2 REQUIRED)
+include(Catch)
 
 add_subdirectory(3rd_party/span)
 

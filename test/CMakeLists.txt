@@ -40,5 +40,3 @@ mc_dsp_wavelet_add_test(dwt_reconstruction)
 mc_dsp_wavelet_add_test(swt_reconstruction)
 mc_dsp_wavelet_add_test(denoisetest)
 mc_dsp_wavelet_add_test(modwtdenoisetest)
-
-add_subdirectory(stdx)

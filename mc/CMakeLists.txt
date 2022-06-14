@@ -1,6 +1,6 @@
-add_library(${CMAKE_PROJECT_NAME})
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
-target_link_libraries(${CMAKE_PROJECT_NAME}
+add_library(mc_dsp_wavelet)
+target_include_directories(mc_dsp_wavelet PUBLIC ${CMAKE_SOURCE_DIR})
+target_link_libraries(mc_dsp_wavelet
     PUBLIC
     mc::Span
     FFTW3::fftw3f
@@ -11,7 +11,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     mc::CompilerWarnings
     mc::CodeCoverage
 )
-target_sources(${CMAKE_PROJECT_NAME}
+target_sources(mc_dsp_wavelet
     PRIVATE
     "algorithm.hpp"
     "array.hpp"
@@ -86,3 +86,7 @@ target_sources(${CMAKE_PROJECT_NAME}
     "dsp/wavelets/filters/meyer.hpp"
     "dsp/wavelets/filters/sym.hpp"
 )
+
+add_executable(mc_dsp_wavelet_tests "bit.test.cpp")
+catch_discover_tests(mc_dsp_wavelet_tests)
+target_link_libraries(mc_dsp_wavelet_tests PRIVATE mc_dsp_wavelet Catch2::Catch2)
