@@ -8,9 +8,7 @@
 #include "lt/cstring.hpp"
 #include "lt/string.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 struct DenoiseSet
@@ -52,5 +50,4 @@ auto median(float* x, int n) -> float;
 
 auto minindex(float const* arr, int n) -> int;
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

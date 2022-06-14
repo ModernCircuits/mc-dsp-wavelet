@@ -11,9 +11,7 @@
 #include "lt/memory.hpp"
 #include "lt/preprocessor.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 template<typename T, typename BackendTag>
@@ -80,5 +78,4 @@ private:
     std::unique_ptr<Complex<float>[]> data_;
 };
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

@@ -1,8 +1,6 @@
 #pragma once
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 // All coif coefficents have to be multiplied by std::sqrt(2)
@@ -976,5 +974,4 @@ constexpr float coif17[102] = {
     -1.055408614665356789775787814731337905514088897800715301399902e-22,
 };
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

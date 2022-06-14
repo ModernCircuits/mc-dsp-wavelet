@@ -6,9 +6,7 @@
 
 #include "kissfft/kissfft.hh"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 struct KissFFT
@@ -36,5 +34,4 @@ struct FFTBackend<float, KissFFT>
     }
 };
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

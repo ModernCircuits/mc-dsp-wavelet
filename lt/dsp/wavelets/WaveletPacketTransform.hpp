@@ -7,9 +7,7 @@
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 struct WaveletPacketTransform
@@ -53,5 +51,4 @@ auto getDWPTNodelength(WaveletPacketTransform& wt, int x) -> int;
 
 auto summary(WaveletPacketTransform const& wt) -> void;
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

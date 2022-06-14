@@ -13,9 +13,7 @@
 #include "lt/iterator.hpp"
 #include "lt/string_view.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 namespace
@@ -1219,5 +1217,4 @@ auto summary(WaveletTransform const& wt) -> void
     fmt::printf("\n");
 }
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

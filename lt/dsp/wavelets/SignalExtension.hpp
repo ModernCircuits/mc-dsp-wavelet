@@ -4,9 +4,7 @@
 #include "lt/preprocessor.hpp"
 #include "lt/string.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 enum struct SignalExtension
@@ -59,5 +57,4 @@ auto symmetricExtension(T const* signal, std::size_t len, std::size_t a, T* outp
     }
     return newLength;
 }
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

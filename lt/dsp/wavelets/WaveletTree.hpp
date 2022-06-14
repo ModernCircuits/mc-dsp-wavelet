@@ -7,9 +7,7 @@
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 struct WaveletTree
 {
@@ -45,5 +43,4 @@ private:
 
 auto wtree(WaveletTree& wt, float const* inp) -> void;
 auto summary(WaveletTree const& wt) -> void;
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

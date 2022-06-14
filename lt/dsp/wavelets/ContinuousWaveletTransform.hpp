@@ -6,9 +6,7 @@
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 struct ContinuousWaveletTransform
@@ -52,5 +50,4 @@ auto meyer(int n, float lb, float ub, float* phi, float* psi, float* tgrid) -> v
 auto gauss(int n, int p, float lb, float ub, float* psi, float* t) -> void;
 auto mexhat(int n, float lb, float ub, float* psi, float* t) -> void;
 auto morlet(int n, float lb, float ub, float* psi, float* t) -> void;
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

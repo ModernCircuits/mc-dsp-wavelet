@@ -5,9 +5,7 @@
 #include "lt/memory.hpp"
 #include "lt/preprocessor.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 namespace
@@ -65,5 +63,4 @@ auto FFTConvolver::convolute(float const* signal, float const* patch, float* out
     for (auto i = std::size_t{0}; i < ls; i++) { output[i] = tmpOut_[i] / totalSize_; }
 }
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

@@ -1,8 +1,6 @@
 #pragma once
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 constexpr float h1[10] = {
@@ -209,5 +207,4 @@ constexpr float hm668[18] = {
     0.04973290349094079,    0.01193456527972926,    -0.016990639867602342,
     -0.0019142861290887667, 0.0019088317364812906,  0.0,
 };
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

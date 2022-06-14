@@ -1,8 +1,6 @@
 #pragma once
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 constexpr float meyer[102] = {
@@ -41,5 +39,4 @@ constexpr float meyer[102] = {
     0.000001723223554,  -0.000002096568870, 0.000000449585560,
     0.000001278766757,  -0.000001509740857, 0.0,
 };
-}
-}  // namespace lt
+}  // namespace lt::dsp

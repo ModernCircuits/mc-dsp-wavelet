@@ -3,9 +3,7 @@
 #include "lt/algorithm.hpp"
 #include "lt/cstddef.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 template<typename Convolver>
 auto convolute(Convolver& c, typename Convolver::value_type const* s, typename Convolver::value_type const* p,
@@ -53,5 +51,4 @@ auto convolute(T const* signal, std::size_t n, T const* patch, std::size_t l, T*
         for (auto m = i; m < tmin; m++) { output[k] += patch[m] * signal[k - m]; }
     }
 }
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

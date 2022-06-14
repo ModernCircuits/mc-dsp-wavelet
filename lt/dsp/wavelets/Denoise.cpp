@@ -10,9 +10,7 @@
 #include "lt/string_view.hpp"
 #include "lt/utility.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 DenoiseSet::DenoiseSet(int length, int j, char const* name)
@@ -529,5 +527,4 @@ auto minindex(float const* arr, int n) -> int
     return index;
 }
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

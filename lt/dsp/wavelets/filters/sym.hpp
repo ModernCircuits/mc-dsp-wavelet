@@ -1,8 +1,6 @@
 #pragma once
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 constexpr float sym2[4] = {
@@ -168,5 +166,4 @@ constexpr float sym20[40] = {
     7.2159911880740349e-005,  -0.00049473109156726548,  -1.928412300645204e-005,  7.992967835772481e-005,
     3.0256660627369661e-006,  -7.919361411976999e-006,  -1.9015675890554106e-007, 3.695537474835221e-007,
 };
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

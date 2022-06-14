@@ -7,9 +7,7 @@
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 struct WaveletTransform2D
@@ -51,5 +49,4 @@ auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void;
 auto dispWT2Coeffs(float* a, int row, int col) -> void;
 
 auto summary(WaveletTransform2D const& wt) -> void;
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

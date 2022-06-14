@@ -11,9 +11,7 @@ namespace
 constexpr auto pi2 = 6.28318530717958647692528676655900577;
 }  // namespace
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 RFFT::RFFT(int n, FFTDirection direction)
@@ -89,5 +87,4 @@ auto RFFT::performComplexToReal(Complex<float> const* inp, float* oup) -> void
         oup[2 * i + 1] = coup[i].imag();
     }
 }
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

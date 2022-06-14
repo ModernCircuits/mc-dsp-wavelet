@@ -3,9 +3,7 @@
 #include "lt/dsp/convolution/convolute.hpp"
 #include "lt/dsp/fft/FFT.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 struct FFTConvolver
 {
@@ -32,5 +30,4 @@ private:
     std::unique_ptr<Complex<float>[]> tmp_ { std::make_unique<Complex<float>[]>(totalSize_) };
     std::unique_ptr<float[]> tmpOut_{std::make_unique<float[]>(totalSize_)};
 };
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

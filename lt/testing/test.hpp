@@ -27,7 +27,7 @@ auto approxEqual(It1 f1, It1 l1, It2 f2, It2 l2, int epsilonFactor = 4) -> bool
     // of the same floating-point type.
     using v1_t = typename std::iterator_traits<It1>::value_type;
     using v2_t = typename std::iterator_traits<It2>::value_type;
-    static_assert(std::is_same<v1_t, v2_t>::value, "");
+    static_assert(std::is_same<v1_t, v2_t>::value);
 
     auto epsilonEqual = [epsilonFactor](auto l, auto r)
     {

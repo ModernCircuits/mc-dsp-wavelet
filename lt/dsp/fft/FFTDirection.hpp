@@ -1,13 +1,10 @@
 #pragma once
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 enum struct FFTDirection
 {
     forward  = 0,
     backward = 1,
 };
-}
-}  // namespace lt
+}  // namespace lt::dsp

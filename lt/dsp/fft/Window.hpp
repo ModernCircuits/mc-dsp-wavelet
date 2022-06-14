@@ -10,9 +10,7 @@
 #include "lt/numbers.hpp"
 #include "lt/vector.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 template<typename T>
@@ -118,5 +116,4 @@ auto multiplyWithWindow(SignalIt signalF, SignalIt signalL, WindowIt winF, Windo
     std::transform(signalF, std::next(signalF, minSize), winF, signalF, std::multiplies<>{});
 }
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

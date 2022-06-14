@@ -12,9 +12,7 @@
 #include "lt/string_view.hpp"
 #include "lt/utility.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 namespace
@@ -876,5 +874,4 @@ auto summary(WaveletPacketTransform const& wt) -> void
 
     fmt::printf("\n");
 }
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

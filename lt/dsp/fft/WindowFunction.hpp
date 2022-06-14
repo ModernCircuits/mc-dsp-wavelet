@@ -3,9 +3,7 @@
 #include "lt/preprocessor.hpp"
 #include "lt/string.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 enum struct WindowFunction
 {
@@ -18,5 +16,4 @@ enum struct WindowFunction
 };
 
 LT_NODISCARD auto toString(WindowFunction wf) -> std::string;
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

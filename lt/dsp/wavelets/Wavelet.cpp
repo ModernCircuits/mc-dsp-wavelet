@@ -15,9 +15,7 @@
 #include "lt/string_view.hpp"
 #include "lt/utility.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 namespace
@@ -1253,5 +1251,4 @@ auto summary(Wavelet const& obj) -> void
     fmt::printf("] \n");
 }
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

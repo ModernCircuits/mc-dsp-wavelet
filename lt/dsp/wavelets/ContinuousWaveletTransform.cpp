@@ -17,10 +17,7 @@ namespace
 constexpr auto pi2 = 6.28318530717958647692528676655900577;
 }  // namespace
 
-namespace lt
-{
-
-namespace dsp
+namespace lt::dsp
 {
 namespace
 {
@@ -1086,5 +1083,4 @@ auto morlet(int n, float lb, float ub, float* psi, float* t) -> void
     for (i = 0; i < n; ++i) { psi[i] = std::exp(-t[i] * t[i] / 2.0F) * std::cos(5 * t[i]); }
 }
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

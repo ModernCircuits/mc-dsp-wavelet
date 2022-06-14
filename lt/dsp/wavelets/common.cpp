@@ -6,9 +6,7 @@
 #include "lt/cstdlib.hpp"
 #include "lt/cstring.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 auto dwtPerStride(float const* inp, int n, float const* lpd, float const* hpd, int lpdLen, float* cA, int lenCA,
@@ -346,5 +344,4 @@ auto maxIterations(std::size_t sigLen, std::size_t filtLen) -> std::size_t
     auto const temp = std::log(static_cast<float>(sigLen) / (static_cast<float>(filtLen) - 1.0F)) / std::log(2.0F);
     return static_cast<std::size_t>(temp);
 }
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

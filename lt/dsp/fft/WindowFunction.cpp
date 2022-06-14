@@ -2,9 +2,7 @@
 
 #include "lt/cassert.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 auto toString(WindowFunction wf) -> std::string
 {
@@ -21,5 +19,4 @@ auto toString(WindowFunction wf) -> std::string
     LT_ASSERT(false);  // NOLINT
     return "";
 }
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

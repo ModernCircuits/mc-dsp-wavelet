@@ -2,9 +2,7 @@
 
 #include "lt/cstddef.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 auto dwtPerStride(float const* inp, int n, float const* lpd, float const* hpd, int lpdLen, float* cA, int lenCA,
@@ -29,5 +27,4 @@ auto testSWTlength(int n, int j) -> int;
 
 auto maxIterations(std::size_t sigLen, std::size_t filtLen) -> std::size_t;
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

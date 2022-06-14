@@ -11,9 +11,7 @@
 #include "lt/string_view.hpp"
 #include "lt/utility.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 namespace
@@ -1061,5 +1059,4 @@ auto summary(WaveletTransform2D const& wt) -> void
                     vsize);
     }
 }
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

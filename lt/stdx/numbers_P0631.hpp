@@ -25,9 +25,7 @@ using std::numbers::sqrt3;       // NOLINT(readability-identifier-naming)
 }  // namespace numbers
 }  // namespace lt
 #else
-namespace lt
-{
-namespace numbers
+namespace lt::numbers
 {
 // clang-format off
     template <typename T> constexpr auto e_v           = static_cast<T>(2.7182818284590452353602874713526625L); // NOLINT(readability-identifier-naming)
@@ -58,7 +56,6 @@ namespace numbers
     constexpr double egamma     = egamma_v<double>;      // NOLINT(readability-identifier-naming)
     constexpr double phi        = phi_v<double>;         // NOLINT(readability-identifier-naming)
 // clang-format on
-}  // namespace numbers
-}  // namespace lt
+}  // namespace lt::numbers
 
 #endif

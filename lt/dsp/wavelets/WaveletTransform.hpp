@@ -9,9 +9,7 @@
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 struct WaveletTransform
@@ -66,5 +64,4 @@ auto imodwt(WaveletTransform& wt, float* oup) -> void;
 
 auto summary(WaveletTransform const& wt) -> void;
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

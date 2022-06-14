@@ -6,9 +6,7 @@
 
 #include <pffft.h>
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 struct PFFFT
@@ -38,5 +36,4 @@ struct FFTBackend<float, PFFFT>
     }
 };
 
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

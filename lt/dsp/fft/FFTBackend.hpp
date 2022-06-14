@@ -1,10 +1,7 @@
 #pragma once
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 template<typename T, typename Tag>
 struct FFTBackend;
-}
-}  // namespace lt
+}  // namespace lt::dsp

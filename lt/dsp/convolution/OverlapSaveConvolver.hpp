@@ -12,9 +12,7 @@
 
 #include "fftw3.h"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 /// This class is a Signal that works on aligned float arrays allocated by FFTW.
@@ -218,5 +216,4 @@ private:
 
     State state_{State::Uninitialized};  // Uninitialized after instantiation, Conv/Xcorr after respective op.
 };
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

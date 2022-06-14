@@ -6,9 +6,7 @@
 #include "lt/climits.hpp"
 #include "lt/cstring.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 namespace
 {
@@ -182,5 +180,4 @@ auto OverlapSaveConvolver::execute(bool const crossCorrelate) -> void
         std::transform(std::begin(chunk), std::end(chunk), std::begin(chunk), divideBy);
     }
 }
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

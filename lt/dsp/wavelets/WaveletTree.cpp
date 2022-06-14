@@ -8,9 +8,7 @@
 #include "lt/string_view.hpp"
 #include "lt/utility.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t j) : wave{waveIn}
@@ -397,5 +395,4 @@ auto summary(WaveletTree const& wt) -> void
     }
     fmt::printf("\n");
 }
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

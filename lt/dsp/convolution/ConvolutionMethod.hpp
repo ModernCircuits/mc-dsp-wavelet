@@ -3,9 +3,7 @@
 #include "lt/preprocessor.hpp"
 #include "lt/string.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 enum struct ConvolutionMethod
 {
@@ -18,5 +16,4 @@ LT_NODISCARD inline auto toString(ConvolutionMethod method) -> std::string
     if (method == ConvolutionMethod::direct) { return "direct"; }
     return "fft";
 }
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

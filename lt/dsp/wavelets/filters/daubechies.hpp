@@ -1,8 +1,6 @@
 #pragma once
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 
 constexpr float daubechies1[2] = {
@@ -1600,5 +1598,4 @@ float const daubechies38[76] = {
     4.304596839558790016251867477122791508849697688058169053134463e-17,
     -1.716152451088744188732404281737964277713026087224248235541071e-18,
 };
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp

@@ -5,9 +5,7 @@
 #include "lt/span.hpp"
 #include "lt/string.hpp"
 
-namespace lt
-{
-namespace dsp
+namespace lt::dsp
 {
 struct Wavelet
 {
@@ -36,5 +34,4 @@ private:
 };
 
 auto summary(Wavelet const& obj) -> void;
-}  // namespace dsp
-}  // namespace lt
+}  // namespace lt::dsp
