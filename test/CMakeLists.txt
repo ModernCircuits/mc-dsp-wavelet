@@ -1,44 +1,44 @@
-add_library(wavelib_testdata ${CMAKE_SOURCE_DIR}/lt/testing/test.cpp ${CMAKE_SOURCE_DIR}/lt/testing/test.hpp)
-target_include_directories(wavelib_testdata PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(wavelib_testdata PUBLIC wavelib)
+add_library(mc_dsp_wavelet_testdata ${CMAKE_SOURCE_DIR}/mc/testing/test.cpp ${CMAKE_SOURCE_DIR}/mc/testing/test.hpp)
+target_include_directories(mc_dsp_wavelet_testdata PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(mc_dsp_wavelet_testdata PUBLIC mc_dsp_wavelet)
 add_custom_command(
     TARGET
-        wavelib_testdata
+    mc_dsp_wavelet_testdata
     COMMAND
-        ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/testData
-        $<TARGET_FILE_DIR:wavelib_testdata>/testData
+    ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/testData
+    $<TARGET_FILE_DIR:mc_dsp_wavelet_testdata>/testData
     POST_BUILD
 )
 
-function(wavelib_add_test _target)
+function(mc_dsp_wavelet_add_test _target)
     add_executable(${_target} "${_target}.cpp")
     add_test(NAME ${_target} COMMAND ${_target})
-    target_link_libraries(${_target} PRIVATE wavelib wavelib_testdata lt::CodeCoverage)
+    target_link_libraries(${_target} PRIVATE mc_dsp_wavelet mc_dsp_wavelet_testdata mc::CodeCoverage)
 endfunction()
 
 add_executable(bpm_detector "bpm_detector.cpp")
-target_link_libraries(bpm_detector PRIVATE wavelib wavelib_testdata lt::CodeCoverage)
+target_link_libraries(bpm_detector PRIVATE mc_dsp_wavelet mc_dsp_wavelet_testdata mc::CodeCoverage)
 
-wavelib_add_test(FFTTest)
-wavelib_add_test(DirectConvolverTest)
-wavelib_add_test(OverlapSaveConvolverTest)
-wavelib_add_test(WindowTest)
-wavelib_add_test(StdHeadersTest)
+mc_dsp_wavelet_add_test(FFTTest)
+mc_dsp_wavelet_add_test(DirectConvolverTest)
+mc_dsp_wavelet_add_test(OverlapSaveConvolverTest)
+mc_dsp_wavelet_add_test(WindowTest)
+mc_dsp_wavelet_add_test(StdHeadersTest)
 
-wavelib_add_test(cwttest)
-wavelib_add_test(dwttest)
-wavelib_add_test(swttest)
-wavelib_add_test(modwttest)
-wavelib_add_test(dwpttest)
-wavelib_add_test(wtreetest)
-wavelib_add_test(dwt2test)
-wavelib_add_test(swt2test)
-wavelib_add_test(modwt2test)
-wavelib_add_test(tst_dwt)
-wavelib_add_test(dwt_reconstruction)
-wavelib_add_test(swt_reconstruction)
-wavelib_add_test(denoisetest)
-wavelib_add_test(modwtdenoisetest)
+mc_dsp_wavelet_add_test(cwttest)
+mc_dsp_wavelet_add_test(dwttest)
+mc_dsp_wavelet_add_test(swttest)
+mc_dsp_wavelet_add_test(modwttest)
+mc_dsp_wavelet_add_test(dwpttest)
+mc_dsp_wavelet_add_test(wtreetest)
+mc_dsp_wavelet_add_test(dwt2test)
+mc_dsp_wavelet_add_test(swt2test)
+mc_dsp_wavelet_add_test(modwt2test)
+mc_dsp_wavelet_add_test(tst_dwt)
+mc_dsp_wavelet_add_test(dwt_reconstruction)
+mc_dsp_wavelet_add_test(swt_reconstruction)
+mc_dsp_wavelet_add_test(denoisetest)
+mc_dsp_wavelet_add_test(modwtdenoisetest)
 
 add_subdirectory(stdx)

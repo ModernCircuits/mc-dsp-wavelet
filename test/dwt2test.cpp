@@ -1,32 +1,34 @@
-#include "lt/dsp/wavelets.hpp"
+#include "mc/dsp/wavelets.hpp"
 
-#include "lt/cmath.hpp"
-#include "lt/cstdlib.hpp"
-#include "lt/cstring.hpp"
-#include "lt/format.hpp"
+#include "mc/cmath.hpp"
+#include "mc/cstdlib.hpp"
+#include "mc/cstring.hpp"
+#include "mc/format.hpp"
 
-#include "lt/testing/test.hpp"
+#include "mc/testing/test.hpp"
 
-namespace dsp = lt::dsp;
+namespace dsp = mc::dsp;
 
 auto main() -> int
 {
-    auto obj = dsp::Wavelet { "db2" };
+    auto obj = dsp::Wavelet{"db2"};
 
-    auto rows = std::size_t { 32 };
-    auto cols = std::size_t { 30 };
-    auto n = rows * cols;
+    auto rows = std::size_t{32};
+    auto cols = std::size_t{30};
+    auto n    = rows * cols;
 
-    auto inp = makeZeros<float>(n);
-    auto oup = makeZeros<float>(n);
+    auto inp  = makeZeros<float>(n);
+    auto oup  = makeZeros<float>(n);
     auto diff = makeZeros<float>(n);
 
-    auto const j = std::size_t { 3 };
+    auto const j = std::size_t{3};
 
     auto wt = dsp::WaveletTransform2D(obj, "dwt", rows, cols, j);
 
-    for (std::size_t i = 0; i < rows; ++i) {
-        for (std::size_t k = 0; k < cols; ++k) {
+    for (std::size_t i = 0; i < rows; ++i)
+    {
+        for (std::size_t k = 0; k < cols; ++k)
+        {
             inp[i * cols + k] = generateRnd();
             oup[i * cols + k] = 0.0F;
         }
@@ -34,17 +36,15 @@ auto main() -> int
 
     auto wavecoeffs = dwt(wt, inp.get());
 
-    int ir { 0 };
-    int ic { 0 };
+    int ir{0};
+    int ic{0};
     auto* cLL = dsp::getWT2Coeffs(wt, wavecoeffs.get(), 1, "D", &ir, &ic);
 
     dsp::dispWT2Coeffs(cLL, ir, ic);
 
     idwt(wt, wavecoeffs.get(), oup.get());
 
-    for (std::size_t i = 0; i < rows * cols; ++i) {
-        diff[i] = oup[i] - inp[i];
-    }
+    for (std::size_t i = 0; i < rows * cols; ++i) { diff[i] = oup[i] - inp[i]; }
 
     summary(wt);
     fmt::printf("Abs Max %g \n", absmax(diff.get(), rows * cols));

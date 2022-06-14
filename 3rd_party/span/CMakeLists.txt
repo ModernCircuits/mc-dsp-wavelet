@@ -1,6 +1,6 @@
 project(span)
 
 add_library(${PROJECT_NAME} INTERFACE)
-add_library(lt::Span ALIAS ${PROJECT_NAME})
+add_library(mc::Span ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} INTERFACE ${PROJECT_SOURCE_DIR})
-target_compile_definitions(${PROJECT_NAME} INTERFACE TCB_SPAN_NAMESPACE_NAME=lt)
+target_compile_definitions(${PROJECT_NAME} INTERFACE TCB_SPAN_NAMESPACE_NAME=mc)

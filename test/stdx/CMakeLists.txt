@@ -1,1 +1,1 @@
-wavelib_add_test(bit_test)
+mc_dsp_wavelet_add_test(bit_test)

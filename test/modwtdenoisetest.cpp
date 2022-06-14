@@ -1,46 +1,46 @@
-#include "lt/dsp/wavelets/Denoise.hpp"
+#include "mc/dsp/wavelets/Denoise.hpp"
 
-#include "lt/cmath.hpp"
-#include "lt/cstdlib.hpp"
-#include "lt/cstring.hpp"
-#include "lt/format.hpp"
-#include "lt/memory.hpp"
+#include "mc/cmath.hpp"
+#include "mc/cstdlib.hpp"
+#include "mc/cstring.hpp"
+#include "mc/format.hpp"
+#include "mc/memory.hpp"
 
 #include "readFileToVector.hpp"
 
-namespace dsp = lt::dsp;
+namespace dsp = mc::dsp;
 
 static auto rmse(int n, float const* x, float const* y) -> float
 {
     auto rms = 0.0F;
-    for (std::size_t i = 0; i < static_cast<std::size_t>(n); ++i) {
-        rms += (x[i] - y[i]) * (x[i] - y[i]);
-    }
+    for (std::size_t i = 0; i < static_cast<std::size_t>(n); ++i) { rms += (x[i] - y[i]) * (x[i] - y[i]); }
     return std::sqrt(rms / (float)n);
 }
 
 static auto corrcoef(int n, float const* x, float const* y) -> float
 {
-    float cc = NAN;
-    float xm = NAN;
-    float ym = NAN;
-    float tx = NAN;
-    float ty = NAN;
-    float num = NAN;
+    float cc   = NAN;
+    float xm   = NAN;
+    float ym   = NAN;
+    float tx   = NAN;
+    float ty   = NAN;
+    float num  = NAN;
     float den1 = NAN;
     float den2 = NAN;
-    int i = 0;
+    int i      = 0;
     xm = ym = 0.0F;
-    for (i = 0; i < n; ++i) {
+    for (i = 0; i < n; ++i)
+    {
         xm += x[i];
         ym += y[i];
     }
 
-    xm = xm / n;
-    ym = ym / n;
+    xm  = xm / n;
+    ym  = ym / n;
     num = den1 = den2 = 0.0F;
 
-    for (i = 0; i < n; ++i) {
+    for (i = 0; i < n; ++i)
+    {
         tx = x[i] - xm;
         ty = y[i] - ym;
         num += (tx * ty);
@@ -57,17 +57,17 @@ static auto corrcoef(int n, float const* x, float const* y) -> float
 // See denoisetest.cpp for more information.
 auto main() -> int
 {
-    auto const* wname = "db5";
-    auto const* ext = "per";
-    auto const* thresh = "soft";
+    auto const* wname   = "db5";
+    auto const* ext     = "per";
+    auto const* thresh  = "soft";
     auto const* cmethod = "direct";
 
     auto const inp = readFileToVector("testData/PieceRegular10.txt");
-    auto sig = readFileToVector("testData/pieceregular1024.txt");
+    auto sig       = readFileToVector("testData/pieceregular1024.txt");
 
     auto const n = sig.size();
     auto const j = 4;
-    auto out = std::make_unique<float[]>(n);
+    auto out     = std::make_unique<float[]>(n);
 
     dsp::modwtshrink(sig.data(), n, j, wname, cmethod, ext, thresh, out.get());
 

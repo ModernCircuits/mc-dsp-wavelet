@@ -2,4 +2,4 @@
 
 ## Resources
 
-- [github.com/rafat/wavelib](https://github.com/rafat/wavelib)
+- [github.com/rafat/mc_dsp_wavelet](https://github.com/rafat/mc_dsp_wavelet)

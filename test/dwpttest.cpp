@@ -1,28 +1,26 @@
-#include "lt/dsp/wavelets.hpp"
+#include "mc/dsp/wavelets.hpp"
 
-#include "lt/cmath.hpp"
-#include "lt/cstdlib.hpp"
-#include "lt/cstring.hpp"
-#include "lt/format.hpp"
-#include "lt/memory.hpp"
+#include "mc/cmath.hpp"
+#include "mc/cstdlib.hpp"
+#include "mc/cstring.hpp"
+#include "mc/format.hpp"
+#include "mc/memory.hpp"
 
-#include "lt/testing/test.hpp"
+#include "mc/testing/test.hpp"
 
-namespace dsp = lt::dsp;
+namespace dsp = mc::dsp;
 
 auto main() -> int
 {
-    auto obj = dsp::Wavelet { "db4" };
-    auto const n = std::size_t { 788 + 23 };
-    auto const j = std::size_t { 4 };
+    auto obj     = dsp::Wavelet{"db4"};
+    auto const n = std::size_t{788 + 23};
+    auto const j = std::size_t{4};
 
-    auto inp = std::make_unique<float[]>(n);
-    auto oup = std::make_unique<float[]>(n);
+    auto inp  = std::make_unique<float[]>(n);
+    auto oup  = std::make_unique<float[]>(n);
     auto diff = std::make_unique<float[]>(n);
 
-    for (std::size_t i = 1; i < n + 1; ++i) {
-        inp[i - 1] = i;
-    }
+    for (std::size_t i = 1; i < n + 1; ++i) { inp[i - 1] = i; }
 
     auto wt = dsp::WaveletPacketTransform(&obj, n, j);
     setDWPTExtension(wt, "per");
@@ -32,9 +30,7 @@ auto main() -> int
 
     idwt(wt, oup.get());
 
-    for (std::size_t i = 0; i < n; ++i) {
-        diff[i] = (inp[i] - oup[i]) / inp[i];
-    }
+    for (std::size_t i = 0; i < n; ++i) { diff[i] = (inp[i] - oup[i]) / inp[i]; }
 
     summary(wt);
 

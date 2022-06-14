@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 cmake_policy(VERSION 3.15)
-project(wavelib VERSION 0.1.0)
+project(mc_dsp_wavelet VERSION 0.1.0)
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     find_program(CCACHE ccache)
@@ -40,9 +40,9 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     endif()
 
     list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-    include(ltCompilerOptions)
-    include(ltCompilerWarnings)
-    include(ltCodeCoverage)
+    include(mcCompilerOptions)
+    include(mcCompilerWarnings)
+    include(mcCodeCoverage)
 endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
@@ -82,5 +82,5 @@ find_package(pffft REQUIRED)
 
 add_subdirectory(3rd_party/span)
 
-add_subdirectory(lt)
+add_subdirectory(mc)
 add_subdirectory(test)

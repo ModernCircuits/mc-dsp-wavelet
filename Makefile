@@ -9,11 +9,11 @@ CLANG_TIDY_ARGS = ./scripts/run-clang-tidy.py -clang-tidy-binary ${CLANG_TIDY_BI
 
 .PHONY: tidy-check
 tidy-check:
-	${CLANG_TIDY_ARGS} -quiet -p $(BUILD_DIR) -header-filter $(shell realpath ./lt) $(shell realpath ./lt)
+	${CLANG_TIDY_ARGS} -quiet -p $(BUILD_DIR) -header-filter $(shell realpath ./mc) $(shell realpath ./mc)
 
 .PHONY: tidy-fix
 tidy-fix:
-	${CLANG_TIDY_ARGS} -fix -quiet -p $(BUILD_DIR) -header-filter $(shell realpath ./lt) $(shell realpath ./lt)
+	${CLANG_TIDY_ARGS} -fix -quiet -p $(BUILD_DIR) -header-filter $(shell realpath ./mc) $(shell realpath ./mc)
 
 
 .PHONY: coverage
@@ -24,11 +24,11 @@ coverage:
 
 .PHONY: coverage-html
 coverage-html: coverage
-	cd cmake-build-coverage && gcovr --html --html-details --exclude-unreachable-branches -o coverage.html -r ../lt -j ${shell nproc} -s .
+	cd cmake-build-coverage && gcovr --html --html-details --exclude-unreachable-branches -o coverage.html -r ../mc -j ${shell nproc} -s .
 
 .PHONY: coverage-xml
 coverage-xml: coverage
-	cd cmake-build-coverage && gcovr --xml-pretty --exclude-unreachable-branches -o coverage.xml  -r ../lt -j ${shell nproc} -s .
+	cd cmake-build-coverage && gcovr --xml-pretty --exclude-unreachable-branches -o coverage.xml  -r ../mc -j ${shell nproc} -s .
 
 .PHONY: stats
 stats:
@@ -36,8 +36,8 @@ stats:
 
 .PHONY: format
 format:
-	@find lt -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs ${CLANG_FORMAT_BIN} -i
+	@find mc -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs ${CLANG_FORMAT_BIN} -i
 
 .PHONY: format-check
 format-check:
-	@find lt -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs -n 1 -P 1 -I{} -t sh -c '${CLANG_FORMAT_BIN} -style=file {} | diff - {}'
+	@find mc -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs -n 1 -P 1 -I{} -t sh -c '${CLANG_FORMAT_BIN} -style=file {} | diff - {}'

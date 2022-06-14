@@ -1,29 +1,32 @@
-#include "lt/dsp/fft.hpp"
+#include "mc/dsp/fft.hpp"
 
-#include "lt/format.hpp"
-#include "lt/testing/test.hpp"
+#include "mc/format.hpp"
+#include "mc/testing/test.hpp"
 
-namespace dsp = lt::dsp;
+namespace dsp = mc::dsp;
 
-template <typename T>
+template<typename T>
 auto testWindow() -> bool
 {
-    auto allEqual = [](auto const& range, auto val) {
+    auto allEqual = [](auto const& range, auto val)
+    {
         auto equals = [val](auto v) { return v == val; };
         return std::all_of(cbegin(range), cend(range), equals);
     };
 
-    auto allPositive = [](auto const& range) {
+    auto allPositive = [](auto const& range)
+    {
         auto positive = [](auto v) { return v >= T(0); };
         return std::all_of(cbegin(range), cend(range), positive);
     };
 
-    auto allLessEqualOne = [](auto const& range) {
+    auto allLessEqualOne = [](auto const& range)
+    {
         auto lessEqual = [](auto v) { return v <= T(1); };
         return std::all_of(cbegin(range), cend(range), lessEqual);
     };
 
-    auto size = std::size_t(2048);
+    auto size   = std::size_t(2048);
     auto window = std::vector<T>(size, T(0));
 
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::triangular, true);

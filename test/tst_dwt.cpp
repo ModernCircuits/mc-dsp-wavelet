@@ -1,18 +1,18 @@
-#include "lt/dsp/wavelets.hpp"
+#include "mc/dsp/wavelets.hpp"
 
-#include "lt/algorithm.hpp"
-#include "lt/cmath.hpp"
-#include "lt/cstdlib.hpp"
-#include "lt/cstring.hpp"
-#include "lt/format.hpp"
-#include "lt/memory.hpp"
-#include "lt/random.hpp"
-#include "lt/sstream.hpp"
-#include "lt/vector.hpp"
+#include "mc/algorithm.hpp"
+#include "mc/cmath.hpp"
+#include "mc/cstdlib.hpp"
+#include "mc/cstring.hpp"
+#include "mc/format.hpp"
+#include "mc/memory.hpp"
+#include "mc/random.hpp"
+#include "mc/sstream.hpp"
+#include "mc/vector.hpp"
 
-#include "lt/testing/test.hpp"
+#include "mc/testing/test.hpp"
 
-namespace dsp = lt::dsp;
+namespace dsp = mc::dsp;
 
 auto modwtReconstructionTest()
 {
@@ -22,52 +22,40 @@ auto modwtReconstructionTest()
     auto out = std::make_unique<float[]>(n);
     auto inp = std::make_unique<float[]>(n);
 
-    std::random_device rd {};
-    auto gen = std::mt19937 { rd() };
-    auto dis = std::uniform_real_distribution<float> { 0.0F, 1.0F };
+    std::random_device rd{};
+    auto gen = std::mt19937{rd()};
+    auto dis = std::uniform_real_distribution<float>{0.0F, 1.0F};
     std::generate_n(inp.get(), n, [&] { return dis(gen); });
 
-    auto waveletNames = std::vector<std::string> {};
+    auto waveletNames = std::vector<std::string>{};
 
-    for (std::size_t j = 0; j < 15; j++) {
-        waveletNames.push_back(std::string("db") + std::to_string(j + 1));
-    }
-    for (std::size_t j = 0; j < 5; j++) {
-        waveletNames.push_back(std::string("coif") + std::to_string(j + 1));
-    }
-    for (std::size_t j = 1; j < 10; j++) {
-        waveletNames.push_back(std::string("sym") + std::to_string(j + 1));
-    }
+    for (std::size_t j = 0; j < 15; j++) { waveletNames.push_back(std::string("db") + std::to_string(j + 1)); }
+    for (std::size_t j = 0; j < 5; j++) { waveletNames.push_back(std::string("coif") + std::to_string(j + 1)); }
+    for (std::size_t j = 1; j < 10; j++) { waveletNames.push_back(std::string("sym") + std::to_string(j + 1)); }
 
-    for (std::size_t directFft = 0; directFft < 2; directFft++) {
-        for (std::size_t symPer = 0; symPer < 1; symPer++) {
-            for (auto const& name : waveletNames) {
-                auto obj = dsp::Wavelet { name.c_str() };
-                for (auto j = 1; j < 3; j++) {
+    for (std::size_t directFft = 0; directFft < 2; directFft++)
+    {
+        for (std::size_t symPer = 0; symPer < 1; symPer++)
+        {
+            for (auto const& name : waveletNames)
+            {
+                auto obj = dsp::Wavelet{name.c_str()};
+                for (auto j = 1; j < 3; j++)
+                {
                     auto wt = dsp::WaveletTransform(obj, "modwt", n, j);
 
-                    if (directFft == 0) {
-                        wt.convMethod(dsp::ConvolutionMethod::direct);
-                    } else {
-                        wt.convMethod(dsp::ConvolutionMethod::fft);
-                    }
+                    if (directFft == 0) { wt.convMethod(dsp::ConvolutionMethod::direct); }
+                    else { wt.convMethod(dsp::ConvolutionMethod::fft); }
 
-                    if (symPer == 0) {
-                        wt.extension(dsp::SignalExtension::periodic);
-                    } else if (symPer == 1 && directFft == 1) {
-                        wt.extension(dsp::SignalExtension::symmetric);
-                    } else {
-                        break;
-                    }
+                    if (symPer == 0) { wt.extension(dsp::SignalExtension::periodic); }
+                    else if (symPer == 1 && directFft == 1) { wt.extension(dsp::SignalExtension::symmetric); }
+                    else { break; }
 
                     modwt(wt, inp.get());
                     imodwt(wt, out.get());
 
-                    if (directFft == 0) {
-                        epsilon = 1e-6;
-                    } else {
-                        epsilon = 1e-6;
-                    }
+                    if (directFft == 0) { epsilon = 1e-6; }
+                    else { epsilon = 1e-6; }
 
                     auto const err = rmsError(out.get(), inp.get(), wt.signalLength());
                     REQUIRE(err <= epsilon);
@@ -79,8 +67,8 @@ auto modwtReconstructionTest()
 
 auto modwT2ReconstructionTest()
 {
-    int i = 0;
-    int k = 0;
+    int i    = 0;
+    int k    = 0;
     int rows = 0;
     int cols = 0;
 
@@ -96,42 +84,37 @@ auto modwT2ReconstructionTest()
 
     std::vector<std::string> waveletNames;
 
-    for (std::size_t j = 0; j < 15; j++) {
-        waveletNames.push_back(std::string("db") + std::to_string(j + 1));
-    }
-    for (std::size_t j = 0; j < 5; j++) {
-        waveletNames.push_back(std::string("coif") + std::to_string(j + 1));
-    }
-    for (std::size_t j = 1; j < 10; j++) {
-        waveletNames.push_back(std::string("sym") + std::to_string(j + 1));
-    }
+    for (std::size_t j = 0; j < 15; j++) { waveletNames.push_back(std::string("db") + std::to_string(j + 1)); }
+    for (std::size_t j = 0; j < 5; j++) { waveletNames.push_back(std::string("coif") + std::to_string(j + 1)); }
+    for (std::size_t j = 1; j < 10; j++) { waveletNames.push_back(std::string("sym") + std::to_string(j + 1)); }
 
-    for (i = 0; i < rows; ++i) {
-        for (k = 0; k < cols; ++k) {
+    for (i = 0; i < rows; ++i)
+    {
+        for (k = 0; k < cols; ++k)
+        {
             // inp[i*cols + k] = i*cols + k;
             inp[i * cols + k] = generateRnd();
             out[i * cols + k] = 0.0F;
         }
     }
 
-    for (std::size_t directFft = 0; directFft < 1; directFft++) {
-        for (std::size_t symPer = 0; symPer < 1; symPer++) {
-            for (auto const& name : waveletNames) {
-                auto obj = dsp::Wavelet { name.c_str() };
-                for (auto j = 1; j < 3; j++) {
+    for (std::size_t directFft = 0; directFft < 1; directFft++)
+    {
+        for (std::size_t symPer = 0; symPer < 1; symPer++)
+        {
+            for (auto const& name : waveletNames)
+            {
+                auto obj = dsp::Wavelet{name.c_str()};
+                for (auto j = 1; j < 3; j++)
+                {
                     auto wt = dsp::WaveletTransform2D(obj, "modwt", rows, cols, j);
-                    if (symPer == 0) {
-                        dsp::setDWT2Extension(wt, "per");
-                    }
+                    if (symPer == 0) { dsp::setDWT2Extension(wt, "per"); }
 
                     auto wavecoeffs = modwt(wt, inp.get());
                     imodwt(wt, wavecoeffs.get(), out.get());
 
-                    if (directFft == 0) {
-                        epsilon = 1e-4;
-                    } else {
-                        epsilon = 1e-4;
-                    }
+                    if (directFft == 0) { epsilon = 1e-4; }
+                    else { epsilon = 1e-4; }
                     REQUIRE(rmsError(out.get(), inp.get(), n) <= epsilon);
                 }
             }
@@ -142,7 +125,7 @@ auto modwT2ReconstructionTest()
 auto dwtReconstructionTest()
 {
 
-    int i = 0;
+    int i         = 0;
     float epsilon = 1e-5;
 
     auto n = 8096;
@@ -150,24 +133,16 @@ auto dwtReconstructionTest()
     auto inp = std::make_unique<float[]>(n);
     auto out = std::make_unique<float[]>(n);
 
-    std::random_device rd {};
-    auto gen = std::mt19937 { rd() };
-    auto dis = std::uniform_real_distribution<float> { 0.0F, 1.0F };
+    std::random_device rd{};
+    auto gen = std::mt19937{rd()};
+    auto dis = std::uniform_real_distribution<float>{0.0F, 1.0F};
 
-    for (i = 0; i < n; ++i) {
-        inp[i] = dis(gen);
-    }
+    for (i = 0; i < n; ++i) { inp[i] = dis(gen); }
     std::vector<std::string> waveletNames;
 
-    for (std::size_t j = 0; j < 36; j++) {
-        waveletNames.push_back(std::string("db") + std::to_string(j + 1));
-    }
-    for (std::size_t j = 0; j < 17; j++) {
-        waveletNames.push_back(std::string("coif") + std::to_string(j + 1));
-    }
-    for (std::size_t j = 1; j < 20; j++) {
-        waveletNames.push_back(std::string("sym") + std::to_string(j + 1));
-    }
+    for (std::size_t j = 0; j < 36; j++) { waveletNames.push_back(std::string("db") + std::to_string(j + 1)); }
+    for (std::size_t j = 0; j < 17; j++) { waveletNames.push_back(std::string("coif") + std::to_string(j + 1)); }
+    for (std::size_t j = 1; j < 20; j++) { waveletNames.push_back(std::string("sym") + std::to_string(j + 1)); }
 
     waveletNames.emplace_back("bior1.1");
     waveletNames.emplace_back("bior1.3");
@@ -201,27 +176,28 @@ auto dwtReconstructionTest()
     waveletNames.emplace_back("rbior5.5");
     waveletNames.emplace_back("rbior6.8");
 
-    for (std::size_t ent = 0; ent < 2; ent++) {
-        for (std::size_t symPer = 0; symPer < 2; symPer++) {
-            for (auto const& name : waveletNames) {
-                auto obj = dsp::Wavelet { name.c_str() };
-                for (auto j = 1; j < 3; j++) {
+    for (std::size_t ent = 0; ent < 2; ent++)
+    {
+        for (std::size_t symPer = 0; symPer < 2; symPer++)
+        {
+            for (auto const& name : waveletNames)
+            {
+                auto obj = dsp::Wavelet{name.c_str()};
+                for (auto j = 1; j < 3; j++)
+                {
                     // J = 3;
 
-                    auto wt = dsp::WaveletPacketTransform(&obj, n, j); // Initialize the wavelet transform object
-                    if (symPer == 0) {
+                    auto wt = dsp::WaveletPacketTransform(&obj, n, j);  // Initialize the wavelet transform object
+                    if (symPer == 0)
+                    {
                         dsp::setDWPTExtension(wt,
-                            "sym"); // Options are "per" and "sym".
+                                              "sym");  // Options are "per" and "sym".
                         // Symmetric is the default option
-                    } else {
-                        dsp::setDWPTExtension(wt, "per");
                     }
+                    else { dsp::setDWPTExtension(wt, "per"); }
 
-                    if (ent == 0) {
-                        dsp::setDWPTEntropy(wt, "shannon", 0);
-                    } else {
-                        dsp::setDWPTEntropy(wt, "logenergy", 0);
-                    }
+                    if (ent == 0) { dsp::setDWPTEntropy(wt, "shannon", 0); }
+                    else { dsp::setDWPTEntropy(wt, "logenergy", 0); }
 
                     dwt(wt, inp.get());
                     idwt(wt, out.get());
@@ -236,25 +212,29 @@ auto dwtReconstructionTest()
 auto dbCoefTests()
 {
     constexpr auto epsilon = 1e-6;
-    auto waveletNames = std::vector<std::string>(38);
-    std::generate(begin(waveletNames), end(waveletNames), [i = 1]() mutable {
-        return std::string("db") + std::to_string(i);
-        ++i;
-    });
+    auto waveletNames      = std::vector<std::string>(38);
+    std::generate(begin(waveletNames), end(waveletNames),
+                  [i = 1]() mutable
+                  {
+                      return std::string("db") + std::to_string(i);
+                      ++i;
+                  });
 
-    for (auto const& name : waveletNames) {
-        auto obj = dsp::Wavelet { name.c_str() };
-        auto t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
-        auto t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        auto t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        auto t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
+    for (auto const& name : waveletNames)
+    {
+        auto obj = dsp::Wavelet{name.c_str()};
+        auto t1  = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
+        auto t2  = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        auto t3  = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        auto t4  = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
         REQUIRE(fabs(t1) <= epsilon);
         REQUIRE(fabs(t2) <= epsilon);
         REQUIRE(fabs(t3) <= epsilon);
         REQUIRE(fabs(t4) <= epsilon);
 
-        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
+        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++)
+        {
             auto t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             REQUIRE(fabs(t5) <= epsilon);
         }
@@ -264,29 +244,32 @@ auto dbCoefTests()
 auto coifCoefTests()
 {
     float epsilon = 1e-6;
-    float t1 = NAN;
-    float t2 = NAN;
-    float t3 = NAN;
-    float t4 = NAN;
-    float t5 = NAN;
+    float t1      = NAN;
+    float t2      = NAN;
+    float t3      = NAN;
+    float t4      = NAN;
+    float t5      = NAN;
     std::vector<std::string> waveletNames;
     waveletNames.resize(17);
-    for (std::size_t i = 0; i < waveletNames.size(); i++) {
+    for (std::size_t i = 0; i < waveletNames.size(); i++)
+    {
         waveletNames[i] = std::string("coif") + std::to_string(i + 1);
     }
 
-    for (auto const& name : waveletNames) {
-        auto obj = dsp::Wavelet { name.c_str() };
-        t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
-        t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
+    for (auto const& name : waveletNames)
+    {
+        auto obj = dsp::Wavelet{name.c_str()};
+        t1       = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
+        t2       = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        t3       = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        t4       = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
         REQUIRE(std::fabs(t1) <= epsilon);
         REQUIRE(std::fabs(t2) <= epsilon);
         REQUIRE(std::fabs(t3) <= epsilon);
         REQUIRE(std::fabs(t4) <= epsilon);
-        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
+        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++)
+        {
             t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             REQUIRE(std::fabs(t5) <= epsilon);
         }
@@ -296,29 +279,29 @@ auto coifCoefTests()
 auto symCoefTests()
 {
     float epsilon = 1e-6;
-    float t1 = NAN;
-    float t2 = NAN;
-    float t3 = NAN;
-    float t4 = NAN;
-    float t5 = NAN;
+    float t1      = NAN;
+    float t2      = NAN;
+    float t3      = NAN;
+    float t4      = NAN;
+    float t5      = NAN;
     std::vector<std::string> waveletNames;
-    for (std::size_t i = 1; i < 20; i++) {
-        waveletNames.push_back(std::string("sym") + std::to_string(i + 1));
-    }
+    for (std::size_t i = 1; i < 20; i++) { waveletNames.push_back(std::string("sym") + std::to_string(i + 1)); }
 
-    for (auto const& name : waveletNames) {
-        auto obj = dsp::Wavelet { name.c_str() };
-        t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
-        t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
+    for (auto const& name : waveletNames)
+    {
+        auto obj = dsp::Wavelet{name.c_str()};
+        t1       = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
+        t2       = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        t3       = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        t4       = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
         REQUIRE(std::fabs(t1) <= epsilon);
         REQUIRE(std::fabs(t2) <= epsilon);
         REQUIRE(std::fabs(t3) <= epsilon);
         REQUIRE(std::fabs(t4) <= epsilon);
 
-        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
+        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++)
+        {
             t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             REQUIRE(std::fabs(t5) <= epsilon);
         }
@@ -345,8 +328,9 @@ auto biorCoefTests()
     waveletNames.emplace_back("bior5.5");
     waveletNames.emplace_back("bior6.8");
 
-    for (auto const& name : waveletNames) {
-        auto obj = dsp::Wavelet { name.c_str() };
+    for (auto const& name : waveletNames)
+    {
+        auto obj = dsp::Wavelet{name.c_str()};
 
         auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
         auto const t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0F);
@@ -369,12 +353,12 @@ auto biorCoefTests()
 auto rBiorCoefTests()
 {
     float epsilon = 1e-6;
-    float t1 = NAN;
-    float t2 = NAN;
-    float t3 = NAN;
-    float t4 = NAN;
-    float t5 = NAN;
-    float t6 = NAN;
+    float t1      = NAN;
+    float t2      = NAN;
+    float t3      = NAN;
+    float t4      = NAN;
+    float t5      = NAN;
+    float t6      = NAN;
     std::vector<std::string> waveletNames;
     waveletNames.emplace_back("rbior1.1");
     waveletNames.emplace_back("rbior1.3");
@@ -392,8 +376,9 @@ auto rBiorCoefTests()
     waveletNames.emplace_back("rbior5.5");
     waveletNames.emplace_back("rbior6.8");
 
-    for (auto const& name : waveletNames) {
-        auto obj = dsp::Wavelet { name.c_str() };
+    for (auto const& name : waveletNames)
+    {
+        auto obj = dsp::Wavelet{name.c_str()};
 
         t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
         t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0F);

@@ -1,23 +1,21 @@
-#include "lt/dsp/wavelets/Denoise.hpp"
+#include "mc/dsp/wavelets/Denoise.hpp"
 
-#include "lt/cmath.hpp"
-#include "lt/cstdlib.hpp"
-#include "lt/cstring.hpp"
-#include "lt/format.hpp"
-#include "lt/memory.hpp"
+#include "mc/cmath.hpp"
+#include "mc/cstdlib.hpp"
+#include "mc/cstring.hpp"
+#include "mc/format.hpp"
+#include "mc/memory.hpp"
 
-namespace dsp = lt::dsp;
+namespace dsp = mc::dsp;
 
 static auto rmse(int n, float const* x, float const* y) -> float
 {
     float rms = NAN;
-    int i = 0;
+    int i     = 0;
 
     rms = 0.0F;
 
-    for (i = 0; i < n; ++i) {
-        rms += (x[i] - y[i]) * (x[i] - y[i]);
-    }
+    for (i = 0; i < n; ++i) { rms += (x[i] - y[i]) * (x[i] - y[i]); }
 
     rms = std::sqrt(rms / (float)n);
 
@@ -26,26 +24,28 @@ static auto rmse(int n, float const* x, float const* y) -> float
 
 static auto corrcoef(int n, float const* x, float const* y) -> float
 {
-    float cc = NAN;
-    float xm = NAN;
-    float ym = NAN;
-    float tx = NAN;
-    float ty = NAN;
-    float num = NAN;
+    float cc   = NAN;
+    float xm   = NAN;
+    float ym   = NAN;
+    float tx   = NAN;
+    float ty   = NAN;
+    float num  = NAN;
     float den1 = NAN;
     float den2 = NAN;
-    int i = 0;
+    int i      = 0;
     xm = ym = 0.0F;
-    for (i = 0; i < n; ++i) {
+    for (i = 0; i < n; ++i)
+    {
         xm += x[i];
         ym += y[i];
     }
 
-    xm = xm / n;
-    ym = ym / n;
+    xm  = xm / n;
+    ym  = ym / n;
     num = den1 = den2 = 0.0F;
 
-    for (i = 0; i < n; ++i) {
+    for (i = 0; i < n; ++i)
+    {
         tx = x[i] - xm;
         ty = y[i] - ym;
         num += (tx * ty);
@@ -60,21 +60,23 @@ static auto corrcoef(int n, float const* x, float const* y) -> float
 
 auto main() -> int
 {
-    char const* wname = "db5";
+    char const* wname  = "db5";
     char const* method = "dwt";
-    char const* ext = "sym";
+    char const* ext    = "sym";
     char const* thresh = "soft";
-    char const* level = "all";
+    char const* level  = "all";
 
     auto* ifp = std::fopen("testData/pieceregular1024.txt", "r");
-    auto i = 0;
-    if (ifp == nullptr) {
+    auto i    = 0;
+    if (ifp == nullptr)
+    {
         fmt::printf("Cannot Open File");
         std::exit(EXIT_FAILURE);
     }
 
     float temp[2400];
-    while (std::feof(ifp) == 0) {
+    while (std::feof(ifp) == 0)
+    {
         std::fscanf(ifp, "%f \n", &temp[i]);
         i++;
     }
@@ -87,43 +89,42 @@ auto main() -> int
     auto oup = std::make_unique<float[]>(n);
     auto sig = std::make_unique<float[]>(n);
 
-    for (i = 0; i < n; ++i) {
-        sig[i] = temp[i];
-    }
+    for (i = 0; i < n; ++i) { sig[i] = temp[i]; }
 
     ifp = std::fopen("testData/PieceRegular10.txt", "r");
-    i = 0;
-    if (ifp == nullptr) {
+    i   = 0;
+    if (ifp == nullptr)
+    {
         fmt::printf("Cannot Open File");
         std::exit(EXIT_FAILURE);
     }
 
-    while (std::feof(ifp) == 0) {
+    while (std::feof(ifp) == 0)
+    {
         std::fscanf(ifp, "%f \n", &temp[i]);
         i++;
     }
 
     std::fclose(ifp);
 
-    for (i = 0; i < n; ++i) {
-        inp[i] = temp[i];
-    }
+    for (i = 0; i < n; ++i) { inp[i] = temp[i]; }
     auto obj = dsp::DenoiseSet(n, j, wname);
-    setDenoiseMethod(obj, "visushrink"); // sureshrink is also the default. The other option with dwt and swt is visushrink.
+    setDenoiseMethod(obj,
+                     "visushrink");  // sureshrink is also the default. The other option with dwt and swt is visushrink.
     // modwt works only with modwtshrink method
-    setDenoiseWTMethod(obj, method); // Default is dwt. the other options are swt and modwt
-    setDenoiseWTExtension(obj, ext); // Default is sym. the other option is per
-    setDenoiseParameters(obj, thresh, level); // Default for thresh is soft. Other option is hard
+    setDenoiseWTMethod(obj, method);           // Default is dwt. the other options are swt and modwt
+    setDenoiseWTExtension(obj, ext);           // Default is sym. the other option is per
+    setDenoiseParameters(obj, thresh, level);  // Default for thresh is soft. Other option is hard
     // Default for level is all. The other option is first
 
     denoise(obj, inp.get(), oup.get());
 
     // Alternative to denoise_set*
     // Just use visushrink, modwtshrink and sureshrink functions
-    //visushrink(inp.get(),N,J,wname,method,ext,thresh,level,oup.get());
-    //sureshrink(inp.get(),N,J,wname,method,ext,thresh,level,oup.get());
+    // visushrink(inp.get(),N,J,wname,method,ext,thresh,level,oup.get());
+    // sureshrink(inp.get(),N,J,wname,method,ext,thresh,level,oup.get());
     // modwtshrink(sig.get(),N,J,wname,cmethod,ext,thresh,oup.get()); See modwtdenoisetest.c
-    //ofp = std::fopen("testData/denoiseds.txt", "w");
+    // ofp = std::fopen("testData/denoiseds.txt", "w");
 
     fmt::printf("Signal - Noisy Signal Stats \n");
     fmt::printf("RMSE %g\n", rmse(n, sig.get(), inp.get()));

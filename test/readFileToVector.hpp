@@ -1,22 +1,24 @@
 #pragma once
 
-#include "lt/format.hpp"
+#include "mc/format.hpp"
 
-#include "lt/cstdlib.hpp"
-#include "lt/iterator.hpp"
-#include "lt/vector.hpp"
+#include "mc/cstdlib.hpp"
+#include "mc/iterator.hpp"
+#include "mc/vector.hpp"
 
 inline auto readFileToVector(char const* filePath) -> std::vector<float>
 {
     auto* ifp = std::fopen(filePath, "r");
-    if (ifp == nullptr) {
+    if (ifp == nullptr)
+    {
         fmt::printf("Cannot Open File: %s\n", filePath);
         std::exit(EXIT_FAILURE);
     }
 
-    auto result = std::vector<float> {};
+    auto result = std::vector<float>{};
     result.reserve(8096 * 4);
-    while (std::feof(ifp) == 0) {
+    while (std::feof(ifp) == 0)
+    {
         auto temp = 0.0;
         std::fscanf(ifp, "%lf\n", &temp);
         result.push_back(temp);
