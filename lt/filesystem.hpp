@@ -1,18 +1,8 @@
 #pragma once
 
-#if __has_include(<filesystem>)
-    #include <filesystem>
-#endif
+#include <filesystem>
 
-#if defined(__cpp_lib_filesystem)
 namespace lt
 {
-namespace filesystem = std::filesystem;
+namespace fs = std::filesystem;
 }  // namespace lt
-#else
-    #include "boost/filesystem.hpp"
-namespace lt
-{
-namespace filesystem = boost::filesystem;
-}  // namespace lt
-#endif
