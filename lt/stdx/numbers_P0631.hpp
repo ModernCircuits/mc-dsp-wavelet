@@ -1,31 +1,35 @@
 #pragma once
 
 #if __has_include(<numbers>)
-#include <numbers>
+    #include <numbers>
 #endif
 
 #if defined(__cpp_lib_math_constants)
-namespace lt {
-namespace numbers {
-    using std::numbers::e; // NOLINT(readability-identifier-naming)
-    using std::numbers::egamma; // NOLINT(readability-identifier-naming)
-    using std::numbers::inv_pi; // NOLINT(readability-identifier-naming)
-    using std::numbers::inv_sqrt3; // NOLINT(readability-identifier-naming)
-    using std::numbers::inv_sqrtpi; // NOLINT(readability-identifier-naming)
-    using std::numbers::ln10; // NOLINT(readability-identifier-naming)
-    using std::numbers::ln2; // NOLINT(readability-identifier-naming)
-    using std::numbers::log10e; // NOLINT(readability-identifier-naming)
-    using std::numbers::log2e; // NOLINT(readability-identifier-naming)
-    using std::numbers::phi; // NOLINT(readability-identifier-naming)
-    using std::numbers::pi; // NOLINT(readability-identifier-naming)
-    using std::numbers::sqrt2; // NOLINT(readability-identifier-naming)
-    using std::numbers::sqrt3; // NOLINT(readability-identifier-naming)
-}
-}
+namespace lt
+{
+namespace numbers
+{
+using std::numbers::e;           // NOLINT(readability-identifier-naming)
+using std::numbers::egamma;      // NOLINT(readability-identifier-naming)
+using std::numbers::inv_pi;      // NOLINT(readability-identifier-naming)
+using std::numbers::inv_sqrt3;   // NOLINT(readability-identifier-naming)
+using std::numbers::inv_sqrtpi;  // NOLINT(readability-identifier-naming)
+using std::numbers::ln10;        // NOLINT(readability-identifier-naming)
+using std::numbers::ln2;         // NOLINT(readability-identifier-naming)
+using std::numbers::log10e;      // NOLINT(readability-identifier-naming)
+using std::numbers::log2e;       // NOLINT(readability-identifier-naming)
+using std::numbers::phi;         // NOLINT(readability-identifier-naming)
+using std::numbers::pi;          // NOLINT(readability-identifier-naming)
+using std::numbers::sqrt2;       // NOLINT(readability-identifier-naming)
+using std::numbers::sqrt3;       // NOLINT(readability-identifier-naming)
+}  // namespace numbers
+}  // namespace lt
 #else
-namespace lt {
-namespace numbers {
-    // clang-format off
+namespace lt
+{
+namespace numbers
+{
+// clang-format off
     template <typename T> constexpr auto e_v           = static_cast<T>(2.7182818284590452353602874713526625L); // NOLINT(readability-identifier-naming)
     template <typename T> constexpr auto log2e_v       = static_cast<T>(1.4426950408889634073599246810018921L); // NOLINT(readability-identifier-naming)
     template <typename T> constexpr auto log10e_v      = static_cast<T>(0.4342944819032518276511289189166051L); // NOLINT(readability-identifier-naming)
@@ -53,8 +57,8 @@ namespace numbers {
     constexpr double inv_sqrt3  = inv_sqrt3_v<double>;   // NOLINT(readability-identifier-naming)
     constexpr double egamma     = egamma_v<double>;      // NOLINT(readability-identifier-naming)
     constexpr double phi        = phi_v<double>;         // NOLINT(readability-identifier-naming)
-    // clang-format on
-} // namespace numbers
-} // namespace lt
+// clang-format on
+}  // namespace numbers
+}  // namespace lt
 
 #endif

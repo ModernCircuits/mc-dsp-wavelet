@@ -11,15 +11,16 @@
 #include "lt/vector.hpp"
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define REQUIRE(e)                                                              \
-    do {                                                                        \
-        if (!(e)) {                                                             \
-            fmt::print("TEST ASSERTION FAILED: {0}:{1}\n", __FILE__, __LINE__); \
-            std::exit(EXIT_FAILURE);                                            \
-        }                                                                       \
+#define REQUIRE(e)                                                                                                     \
+    do {                                                                                                               \
+        if (!(e))                                                                                                      \
+        {                                                                                                              \
+            fmt::print("TEST ASSERTION FAILED: {0}:{1}\n", __FILE__, __LINE__);                                        \
+            std::exit(EXIT_FAILURE);                                                                                   \
+        }                                                                                                              \
     } while (false)
 
-template <typename It1, typename It2>
+template<typename It1, typename It2>
 auto approxEqual(It1 f1, It1 l1, It2 f2, It2 l2, int epsilonFactor = 4) -> bool
 {
     // This function only makes sense when comparing two ranges
@@ -28,7 +29,8 @@ auto approxEqual(It1 f1, It1 l1, It2 f2, It2 l2, int epsilonFactor = 4) -> bool
     using v2_t = typename std::iterator_traits<It2>::value_type;
     static_assert(std::is_same<v1_t, v2_t>::value, "");
 
-    auto epsilonEqual = [epsilonFactor](auto l, auto r) {
+    auto epsilonEqual = [epsilonFactor](auto l, auto r)
+    {
         auto const epsilon = std::numeric_limits<v1_t>::epsilon();
         return std::fabs(l - r) < epsilon * epsilonFactor;
     };
@@ -36,7 +38,7 @@ auto approxEqual(It1 f1, It1 l1, It2 f2, It2 l2, int epsilonFactor = 4) -> bool
     return std::equal(f1, l1, f2, l2, epsilonEqual);
 }
 
-template <typename Container1, typename Container2>
+template<typename Container1, typename Container2>
 auto approxEqual(Container1 c1, Container2 c2, int epsilonFactor = 4) -> bool
 {
     return approxEqual(std::begin(c1), std::end(c1), std::begin(c2), std::end(c2), epsilonFactor);
@@ -57,7 +59,7 @@ auto relError(float const* data, float const* rec, std::size_t n) -> float;
 
 auto generateRnd() -> float;
 
-template <typename T>
+template<typename T>
 using TestData = std::vector<std::vector<T>>;
 
 auto split(std::string const& s, char delim) -> std::vector<std::string>;

@@ -2,9 +2,10 @@
 
 #include <complex>
 
-template <typename T>
+template<typename T>
 using Complex = std::complex<T>;
 
-namespace lt {
+namespace lt
+{
 using ::Complex;
 }

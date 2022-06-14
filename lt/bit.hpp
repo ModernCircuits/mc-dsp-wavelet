@@ -1,7 +1,7 @@
 #pragma once
 
 #if __has_include(<bit>)
-#include <bit>
+    #include <bit>
 #endif
 
 #include "lt/stdx/bit_P0476.hpp"
