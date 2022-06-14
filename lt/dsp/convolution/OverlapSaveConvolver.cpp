@@ -83,7 +83,6 @@ OverlapSaveConvolver::OverlapSaveConvolver(FloatSignal& signal, FloatSignal& pat
     , result_stride_{resultChunksize_ - patchSize_ + 1}
     , paddedPatchComplex_{resultChunksizeComplex_}
     , paddedSignal_{signal.data(), signalSize_, patchSize_ - 1, resultChunksize_ - (resultSize_ % result_stride_)}
-    , state_{State::Uninitialized}
 {
     LT_ASSERT(patchSize_ <= signalSize_);
 

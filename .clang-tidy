@@ -18,6 +18,21 @@ Checks: >
   -readability-const-return-type,
   -readability-identifier-length,
   -readability-magic-numbers,
+
+  -*-narrowing-conversions,
+  -*-avoid-c-arrays,
+  -*-private-member-variables-in-classes,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -*-private-member-variables-in-classes,
+  -*-pointer-arithmetic,
+  -readability-function-cognitive-complexity,
+  -bugprone-implicit-widening-of-multiplication-result,
+  -clang-analyzer-core.DivideZero,
+  -concurrency-mt-unsafe,
+  -cppcoreguidelines-pro-type-cstyle-cast,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-prefer-member-initializer,
+  -hicpp-no-array-decay,
 WarningsAsErrors: "*"
 FormatStyle: none
 CheckOptions:
@@ -29,14 +44,14 @@ CheckOptions:
     value: camelBack
   - key: readability-identifier-naming.ClassConstantCase
     value: camelBack
-  - key: readability-identifier-naming.PrivateMemberPrefix
+  - key: readability-identifier-naming.PrivateMemberSuffix
     value: _
   - key: readability-identifier-naming.EnumCase
     value: CamelCase
   - key: readability-identifier-naming.FunctionCase
     value: camelBack
-  - key: readability-identifier-naming.GlobalConstantCase
-    value: CamelCase
+  # - key: readability-identifier-naming.GlobalConstantCase
+  #   value: CamelCase
   - key: readability-identifier-naming.IgnoreMainLikeFunctions
     value: 1
   - key: readability-identifier-naming.ParameterCase

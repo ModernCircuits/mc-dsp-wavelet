@@ -28,7 +28,7 @@ struct FFT
     LT_NODISCARD auto direction() const noexcept -> FFTDirection;
     LT_NODISCARD auto size() const noexcept -> int;
 
-    auto perform(Complex<T> const* inp, Complex<T>* oup) -> void;
+    auto perform(Complex<T> const* inp, Complex<T>* output) -> void;
 
 private:
     int size_;

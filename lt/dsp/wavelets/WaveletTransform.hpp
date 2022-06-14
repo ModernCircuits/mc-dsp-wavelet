@@ -39,7 +39,7 @@ private:
     std::size_t signalLength_;
     std::string method_;
     SignalExtension ext_;
-    ConvolutionMethod cmethod_;
+    ConvolutionMethod cmethod_{ConvolutionMethod::direct};
 
     float* output_;
 
@@ -51,7 +51,7 @@ public:
     std::size_t MaxIter;         // Maximum Iterations J <= MaxIter
 
     std::size_t N{};  //
-    std::size_t cfftset;
+    std::size_t cfftset{0};
     std::size_t zpad{};
     std::size_t length[102]{};
     std::unique_ptr<float[]> params;

@@ -216,7 +216,7 @@ private:
         Xcorr
     };
 
-    State state_;  // Uninitialized after instantiation, Conv/Xcorr after respective op.
+    State state_{State::Uninitialized};  // Uninitialized after instantiation, Conv/Xcorr after respective op.
 };
 }  // namespace dsp
 }  // namespace lt

@@ -93,12 +93,11 @@ WaveletTransform::WaveletTransform(Wavelet& w, char const* method, std::size_t s
     , levels_{j}
     , signalLength_{siglength}
     , method_{method}
-    , cmethod_{ConvolutionMethod::direct}
     , convolver{nullptr}
     , modwtsiglength{siglength}
     , lenlength{levels_ + 2}
     , MaxIter{maxIterations(siglength, w.size())}
-    , cfftset{0}
+
 {
     auto const size = w.size();
 
@@ -192,7 +191,7 @@ auto WaveletTransform::approx() const -> span<float>
     Length of A(J) , N = wt->length[0]
     */
 
-    return span<float>(output_, static_cast<size_t>(length[0]));
+    return {output_, static_cast<size_t>(length[0])};
 }
 
 auto WaveletTransform::detail(std::size_t level) const -> span<float>
@@ -216,7 +215,7 @@ auto WaveletTransform::detail(std::size_t level) const -> span<float>
     auto iter = length[0];
     for (auto i = 1U; i < levels() - level; ++i) { iter += length[i]; }
 
-    return span<float>(&output_[iter], static_cast<size_t>(length[level]));
+    return {&output_[iter], static_cast<size_t>(length[level])};
 }
 
 static auto wconv(WaveletTransform& wt, float* sig, std::size_t n, float const* filt, std::size_t l, float* oup) -> void
