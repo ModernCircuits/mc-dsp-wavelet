@@ -1,4 +1,4 @@
-add_library(mc_dsp_wavelet_testdata ${CMAKE_SOURCE_DIR}/mc/testing/test.cpp ${CMAKE_SOURCE_DIR}/mc/testing/test.hpp)
+add_library(mc_dsp_wavelet_testdata ${CMAKE_SOURCE_DIR}/src/mc/testing/test.cpp ${CMAKE_SOURCE_DIR}/src/mc/testing/test.hpp)
 target_include_directories(mc_dsp_wavelet_testdata PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(mc_dsp_wavelet_testdata PUBLIC mc_dsp_wavelet)
 add_custom_command(
