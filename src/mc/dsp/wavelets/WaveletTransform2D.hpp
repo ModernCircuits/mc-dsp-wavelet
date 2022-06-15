@@ -38,7 +38,7 @@ private:
     std::string method_;
 };
 
-auto dwt(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>;
+auto dwt(WaveletTransform2D& wt, float const* inp) -> std::unique_ptr<float[]>;
 auto idwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void;
 auto swt2(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>;
 auto iswt2(WaveletTransform2D& wt, float const* wavecoeffs, float* oup) -> void;

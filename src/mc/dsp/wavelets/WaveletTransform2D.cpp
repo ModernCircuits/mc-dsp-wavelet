@@ -200,22 +200,22 @@ auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void
     }
 }
 
-auto dwt(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>
+auto dwt(WaveletTransform2D& wt, float const* inp) -> std::unique_ptr<float[]>
 {
-    int iter    = 0;
-    int n       = 0;
-    int rowsI   = 0;
-    int colsI   = 0;
-    int ir      = 0;
-    int ic      = 0;
-    int istride = 0;
-    int ostride = 0;
-    int aLL     = 0;
-    int aLH     = 0;
-    int aHL     = 0;
-    int aHH     = 0;
-    int cdim    = 0;
-    float* orig = nullptr;
+    int iter          = 0;
+    int n             = 0;
+    int rowsI         = 0;
+    int colsI         = 0;
+    int ir            = 0;
+    int ic            = 0;
+    int istride       = 0;
+    int ostride       = 0;
+    int aLL           = 0;
+    int aLH           = 0;
+    int aHL           = 0;
+    int aHH           = 0;
+    int cdim          = 0;
+    float const* orig = nullptr;
 
     auto j       = wt.J;
     wt.outlength = 0;

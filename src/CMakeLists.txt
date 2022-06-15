@@ -92,6 +92,14 @@ target_sources(mc_dsp_wavelet
     "mc/dsp/widget/TempoDetect.hpp"
 )
 
-add_executable(mc_dsp_wavelet_tests "mc/bit.test.cpp" "mc/dsp/widget/TempoDetect.test.cpp")
+add_executable(mc_dsp_wavelet_tests)
 catch_discover_tests(mc_dsp_wavelet_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 target_link_libraries(mc_dsp_wavelet_tests PRIVATE mc_dsp_wavelet Catch2::Catch2)
+target_sources(mc_dsp_wavelet_tests
+    PRIVATE
+
+    "mc/bit.test.cpp"
+    "mc/dsp/widget/TempoDetect.test.cpp"
+    "mc/dsp/wavelets/WaveletTransform.test.cpp"
+    "mc/dsp/wavelets/WaveletTransform2D.test.cpp"
+)
