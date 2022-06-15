@@ -9,7 +9,7 @@ struct TempoDetect
 {
     TempoDetect(std::size_t n, std::size_t levels);
 
-    [[nodiscard]] auto perform(mc::span<float> input, float sampleRate) -> float;
+    [[nodiscard]] auto operator()(mc::span<float> input, float sampleRate) -> float;
 
 private:
     dsp::Wavelet wave_;

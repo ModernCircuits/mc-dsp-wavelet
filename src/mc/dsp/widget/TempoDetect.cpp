@@ -32,7 +32,7 @@ TempoDetect::TempoDetect(std::size_t n, std::size_t levels) : wave_{"db4"}, wt_{
     wt_.convMethod(dsp::ConvolutionMethod::direct);
 }
 
-auto TempoDetect::perform(mc::span<float> input, float sampleRate) -> float
+auto TempoDetect::operator()(mc::span<float> input, float sampleRate) -> float
 {
 
     auto const levels        = 4;

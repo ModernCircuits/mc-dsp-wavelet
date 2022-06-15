@@ -61,7 +61,7 @@ TEST_CASE("dsp/wavelet: TempoDetect", "[dsp][wavelet]")
 
         auto detector  = mc::dsp::TempoDetect{windowSize, 4};
         auto subBuffer = channel.subspan(sampsNdx, windowSize);
-        auto bpm       = detector.perform(subBuffer, fs);
+        auto bpm       = detector(subBuffer, fs);
 
         if (bpm == 0.0) { continue; }
 
