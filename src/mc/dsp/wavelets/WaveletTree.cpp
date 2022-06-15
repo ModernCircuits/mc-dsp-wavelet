@@ -329,7 +329,7 @@ auto WaveletTree::coeffs(std::size_t x, std::size_t y, float* coeffs, std::size_
 
     ymax -= 1;
 
-    if (y < 0 || y > ymax)
+    if (y > ymax)
     {
         fmt::printf("Y co-ordinate must be >= 0 and <= %d", ymax);
         exit(-1);

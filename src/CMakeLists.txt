@@ -87,8 +87,11 @@ target_sources(mc_dsp_wavelet
     "mc/dsp/wavelets/filters/h.hpp"
     "mc/dsp/wavelets/filters/meyer.hpp"
     "mc/dsp/wavelets/filters/sym.hpp"
+
+    "mc/dsp/widget/TempoDetect.cpp"
+    "mc/dsp/widget/TempoDetect.hpp"
 )
 
-add_executable(mc_dsp_wavelet_tests "mc/bit.test.cpp")
-catch_discover_tests(mc_dsp_wavelet_tests)
+add_executable(mc_dsp_wavelet_tests "mc/bit.test.cpp" "mc/dsp/widget/TempoDetect.test.cpp")
+catch_discover_tests(mc_dsp_wavelet_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 target_link_libraries(mc_dsp_wavelet_tests PRIVATE mc_dsp_wavelet Catch2::Catch2)
