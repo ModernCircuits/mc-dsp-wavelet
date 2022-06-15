@@ -58,7 +58,7 @@ auto modwtReconstructionTest()
                     else { epsilon = 1e-6; }
 
                     auto const err = rmsError(out.get(), inp.get(), wt.signalLength());
-                    REQUIRE(err <= epsilon);
+                    MC_REQUIRE(err <= epsilon);
                 }
             }
         }
@@ -115,7 +115,7 @@ auto modwT2ReconstructionTest()
 
                     if (directFft == 0) { epsilon = 1e-4; }
                     else { epsilon = 1e-4; }
-                    REQUIRE(rmsError(out.get(), inp.get(), n) <= epsilon);
+                    MC_REQUIRE(rmsError(out.get(), inp.get(), n) <= epsilon);
                 }
             }
         }
@@ -202,7 +202,7 @@ auto dwtReconstructionTest()
                     dwt(wt, inp.get());
                     idwt(wt, out.get());
 
-                    REQUIRE(rmsError(out.get(), inp.get(), wt.signalLength()) <= epsilon);
+                    MC_REQUIRE(rmsError(out.get(), inp.get(), wt.signalLength()) <= epsilon);
                 }
             }
         }
@@ -228,15 +228,15 @@ auto dbCoefTests()
         auto t3  = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
         auto t4  = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
-        REQUIRE(fabs(t1) <= epsilon);
-        REQUIRE(fabs(t2) <= epsilon);
-        REQUIRE(fabs(t3) <= epsilon);
-        REQUIRE(fabs(t4) <= epsilon);
+        MC_REQUIRE(fabs(t1) <= epsilon);
+        MC_REQUIRE(fabs(t2) <= epsilon);
+        MC_REQUIRE(fabs(t3) <= epsilon);
+        MC_REQUIRE(fabs(t4) <= epsilon);
 
         for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++)
         {
             auto t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
-            REQUIRE(fabs(t5) <= epsilon);
+            MC_REQUIRE(fabs(t5) <= epsilon);
         }
     }
 }
@@ -264,14 +264,14 @@ auto coifCoefTests()
         t3       = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
         t4       = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
-        REQUIRE(std::fabs(t1) <= epsilon);
-        REQUIRE(std::fabs(t2) <= epsilon);
-        REQUIRE(std::fabs(t3) <= epsilon);
-        REQUIRE(std::fabs(t4) <= epsilon);
+        MC_REQUIRE(std::fabs(t1) <= epsilon);
+        MC_REQUIRE(std::fabs(t2) <= epsilon);
+        MC_REQUIRE(std::fabs(t3) <= epsilon);
+        MC_REQUIRE(std::fabs(t4) <= epsilon);
         for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++)
         {
             t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
-            REQUIRE(std::fabs(t5) <= epsilon);
+            MC_REQUIRE(std::fabs(t5) <= epsilon);
         }
     }
 }
@@ -295,15 +295,15 @@ auto symCoefTests()
         t3       = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
         t4       = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
-        REQUIRE(std::fabs(t1) <= epsilon);
-        REQUIRE(std::fabs(t2) <= epsilon);
-        REQUIRE(std::fabs(t3) <= epsilon);
-        REQUIRE(std::fabs(t4) <= epsilon);
+        MC_REQUIRE(std::fabs(t1) <= epsilon);
+        MC_REQUIRE(std::fabs(t2) <= epsilon);
+        MC_REQUIRE(std::fabs(t3) <= epsilon);
+        MC_REQUIRE(std::fabs(t4) <= epsilon);
 
         for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++)
         {
             t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
-            REQUIRE(std::fabs(t5) <= epsilon);
+            MC_REQUIRE(std::fabs(t5) <= epsilon);
         }
     }
 }
@@ -341,12 +341,12 @@ auto biorCoefTests()
         auto const t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
         auto const t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
 
-        REQUIRE(fabs(t1) <= epsilon);
-        REQUIRE(fabs(t2) <= epsilon);
-        REQUIRE(fabs(t3) <= epsilon);
-        REQUIRE(fabs(t4) <= epsilon);
-        REQUIRE(fabs(t5) <= epsilon);
-        REQUIRE(fabs(t6) <= epsilon);
+        MC_REQUIRE(fabs(t1) <= epsilon);
+        MC_REQUIRE(fabs(t2) <= epsilon);
+        MC_REQUIRE(fabs(t3) <= epsilon);
+        MC_REQUIRE(fabs(t4) <= epsilon);
+        MC_REQUIRE(fabs(t5) <= epsilon);
+        MC_REQUIRE(fabs(t6) <= epsilon);
     }
 }
 
@@ -389,12 +389,12 @@ auto rBiorCoefTests()
         t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
         t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
 
-        REQUIRE(std::fabs(t1) <= epsilon);
-        REQUIRE(std::fabs(t2) <= epsilon);
-        REQUIRE(std::fabs(t3) <= epsilon);
-        REQUIRE(std::fabs(t4) <= epsilon);
-        REQUIRE(std::fabs(t5) <= epsilon);
-        REQUIRE(std::fabs(t6) <= epsilon);
+        MC_REQUIRE(std::fabs(t1) <= epsilon);
+        MC_REQUIRE(std::fabs(t2) <= epsilon);
+        MC_REQUIRE(std::fabs(t3) <= epsilon);
+        MC_REQUIRE(std::fabs(t4) <= epsilon);
+        MC_REQUIRE(std::fabs(t5) <= epsilon);
+        MC_REQUIRE(std::fabs(t6) <= epsilon);
     }
 }
 

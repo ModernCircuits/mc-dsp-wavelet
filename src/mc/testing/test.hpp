@@ -13,7 +13,7 @@
 #include "mc/vector.hpp"
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define REQUIRE(e)                                                                                                     \
+#define MC_REQUIRE(e)                                                                                                  \
     do {                                                                                                               \
         if (!(e))                                                                                                      \
         {                                                                                                              \

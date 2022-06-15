@@ -98,8 +98,13 @@ target_link_libraries(mc_dsp_wavelet_tests PRIVATE mc_dsp_wavelet Catch2::Catch2
 target_sources(mc_dsp_wavelet_tests
     PRIVATE
 
+    "mc/testing/test.cpp"
+    "mc/testing/test.hpp"
+
     "mc/bit.test.cpp"
-    "mc/dsp/widget/TempoDetect.test.cpp"
+    "mc/dsp/convolution/convolute.test.cpp"
+    "mc/dsp/convolution/OverlapSaveConvolver.test.cpp"
     "mc/dsp/wavelets/WaveletTransform.test.cpp"
     "mc/dsp/wavelets/WaveletTransform2D.test.cpp"
+    "mc/dsp/widget/TempoDetect.test.cpp"
 )

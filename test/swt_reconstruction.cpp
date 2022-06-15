@@ -84,7 +84,7 @@ auto swtReconstructionTest()
 
                     if (symPer == 0) { wt.extension(dsp::SignalExtension::periodic); }
                     else if (symPer == 1 && directFft == 1) { wt.extension(dsp::SignalExtension::symmetric); }
-                    else { REQUIRE(false); }
+                    else { MC_REQUIRE(false); }
 
                     swt(wt, inp.get());
                     iswt(wt, out.get());
@@ -93,7 +93,7 @@ auto swtReconstructionTest()
                     else { epsilon = 1e-5; }
 
                     err = rmsError(out.get(), inp.get(), wt.signalLength());
-                    REQUIRE(err <= epsilon);
+                    MC_REQUIRE(err <= epsilon);
                 }
             }
         }
@@ -181,7 +181,7 @@ auto swT2ReconstructionTest()
                     if (directFft == 0) { epsilon = 1e-4; }
                     else { epsilon = 1e-4; }
 
-                    REQUIRE(rmsError(out.get(), inp.get(), n) <= epsilon);
+                    MC_REQUIRE(rmsError(out.get(), inp.get(), n) <= epsilon);
                 }
             }
         }

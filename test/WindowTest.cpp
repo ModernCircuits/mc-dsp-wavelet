@@ -30,53 +30,53 @@ auto testWindow() -> bool
     auto window = std::vector<T>(size, T(0));
 
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::triangular, true);
-    REQUIRE(allPositive(window));
+    MC_REQUIRE(allPositive(window));
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::triangular, false);
-    REQUIRE(allPositive(window));
-    REQUIRE(allLessEqualOne(window));
+    MC_REQUIRE(allPositive(window));
+    MC_REQUIRE(allLessEqualOne(window));
 
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::hann, true);
-    REQUIRE(allPositive(window));
+    MC_REQUIRE(allPositive(window));
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::hann, false);
-    REQUIRE(allPositive(window));
-    REQUIRE(allLessEqualOne(window));
+    MC_REQUIRE(allPositive(window));
+    MC_REQUIRE(allLessEqualOne(window));
 
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::hamming, true);
-    REQUIRE(allPositive(window));
+    MC_REQUIRE(allPositive(window));
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::hamming, false);
-    REQUIRE(allPositive(window));
-    REQUIRE(allLessEqualOne(window));
+    MC_REQUIRE(allPositive(window));
+    MC_REQUIRE(allLessEqualOne(window));
 
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::blackman, true);
-    REQUIRE(allPositive(window));
+    MC_REQUIRE(allPositive(window));
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::blackman, false);
-    REQUIRE(allPositive(window));
-    REQUIRE(allLessEqualOne(window));
+    MC_REQUIRE(allPositive(window));
+    MC_REQUIRE(allLessEqualOne(window));
 
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::blackmanHarris, true);
-    REQUIRE(allPositive(window));
+    MC_REQUIRE(allPositive(window));
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::blackmanHarris, false);
-    REQUIRE(allPositive(window));
-    REQUIRE(allLessEqualOne(window));
+    MC_REQUIRE(allPositive(window));
+    MC_REQUIRE(allLessEqualOne(window));
 
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::rectangular, true);
-    REQUIRE(allPositive(window));
-    REQUIRE(allLessEqualOne(window));
+    MC_REQUIRE(allPositive(window));
+    MC_REQUIRE(allLessEqualOne(window));
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::rectangular, false);
-    REQUIRE(allPositive(window));
-    REQUIRE(allEqual(window, T(1.0)));
+    MC_REQUIRE(allPositive(window));
+    MC_REQUIRE(allEqual(window, T(1.0)));
 
     auto signal = std::vector<T>(size, T(0.5));
     dsp::multiplyWithWindow(begin(signal), end(signal), cbegin(window), cend(window));
-    REQUIRE(allPositive(signal));
-    REQUIRE(allEqual(signal, T(0.5)));
+    MC_REQUIRE(allPositive(signal));
+    MC_REQUIRE(allEqual(signal, T(0.5)));
 
-    REQUIRE(toString(dsp::WindowFunction::rectangular) == "Rectangular");
-    REQUIRE(toString(dsp::WindowFunction::triangular) == "Triangular");
-    REQUIRE(toString(dsp::WindowFunction::hann) == "Hann");
-    REQUIRE(toString(dsp::WindowFunction::hamming) == "Hamming");
-    REQUIRE(toString(dsp::WindowFunction::blackman) == "Blackman");
-    REQUIRE(toString(dsp::WindowFunction::blackmanHarris) == "Blackman-Harris");
+    MC_REQUIRE(toString(dsp::WindowFunction::rectangular) == "Rectangular");
+    MC_REQUIRE(toString(dsp::WindowFunction::triangular) == "Triangular");
+    MC_REQUIRE(toString(dsp::WindowFunction::hann) == "Hann");
+    MC_REQUIRE(toString(dsp::WindowFunction::hamming) == "Hamming");
+    MC_REQUIRE(toString(dsp::WindowFunction::blackman) == "Blackman");
+    MC_REQUIRE(toString(dsp::WindowFunction::blackmanHarris) == "Blackman-Harris");
 
     return true;
 }
