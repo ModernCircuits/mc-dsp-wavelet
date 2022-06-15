@@ -5,6 +5,8 @@
 
 #include "mc/testing/test.hpp"
 
+#include <catch2/catch_test_macros.hpp>
+
 namespace dsp = mc::dsp;
 
 struct FFTRealToComplexTestCase
@@ -25,10 +27,11 @@ auto readFFTRealToComplexTestData(char const* path) -> FFTRealToComplexTestCase
     return result;
 }
 
-auto main() -> int
+TEST_CASE("dsp/fft: realToComplex", "[dsp][fft]")
 {
+
     auto const testFiles = std::vector<char const*>{
-        "testData/fft_real_to_complex_01.txt",
+        "test_data/raw/fft_real_to_complex_01.txt",
     };
 
     auto closeEnough = [](auto l, auto r) -> bool
@@ -41,16 +44,11 @@ auto main() -> int
 
     for (auto const* testFile : testFiles)
     {
-        fmt::print("Testing: {0} ...\n", testFile);
         auto testCase = readFFTRealToComplexTestData(testFile);
 
         auto fft    = dsp::RFFT{static_cast<int>(testCase.input.size()), dsp::FFTDirection::forward};
         auto output = std::vector<Complex<float>>(testCase.expected.size());
         fft.performRealToComplex(mc::data(testCase.input), mc::data(output));
-        MC_REQUIRE(std::equal(begin(output), end(output), begin(testCase.expected), closeEnough));
-
-        fmt::print("Testing: {0} done\n", testFile);
+        REQUIRE(std::equal(begin(output), end(output), begin(testCase.expected), closeEnough));
     }
-
-    return EXIT_SUCCESS;
 }

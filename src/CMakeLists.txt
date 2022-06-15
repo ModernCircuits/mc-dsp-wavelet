@@ -104,6 +104,8 @@ target_sources(mc_dsp_wavelet_tests
     "mc/bit.test.cpp"
     "mc/dsp/convolution/convolute.test.cpp"
     "mc/dsp/convolution/OverlapSaveConvolver.test.cpp"
+    "mc/dsp/fft/FFT.test.cpp"
+    "mc/dsp/fft/Window.test.cpp"
     "mc/dsp/wavelets/WaveletTransform.test.cpp"
     "mc/dsp/wavelets/WaveletTransform2D.test.cpp"
     "mc/dsp/widget/TempoDetect.test.cpp"

@@ -20,10 +20,6 @@ endfunction()
 add_executable(bpm_detector "bpm_detector.cpp")
 target_link_libraries(bpm_detector PRIVATE mc_dsp_wavelet mc_dsp_wavelet_testdata mc::CodeCoverage)
 
-mc_dsp_wavelet_add_test(FFTTest)
-mc_dsp_wavelet_add_test(WindowTest)
-mc_dsp_wavelet_add_test(StdHeadersTest)
-
 mc_dsp_wavelet_add_test(cwttest)
 mc_dsp_wavelet_add_test(dwttest)
 mc_dsp_wavelet_add_test(swttest)
