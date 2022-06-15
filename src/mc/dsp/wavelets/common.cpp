@@ -12,42 +12,35 @@ namespace mc::dsp
 auto dwtPerStride(float const* inp, int n, float const* lpd, float const* hpd, int lpdLen, float* cA, int lenCA,
                   float* cD, int istride, int ostride) -> void
 {
-    int l      = 0;
-    int l2     = 0;
-    int isodd  = 0;
-    int i      = 0;
-    int t      = 0;
-    int lenAvg = 0;
-    int is     = 0;
-    int os     = 0;
 
-    lenAvg = lpdLen;
-    l2     = lenAvg / 2;
-    isodd  = n % 2;
+    auto const l2    = lpdLen / 2;
+    auto const isodd = n % 2;
 
-    for (i = 0; i < lenCA; ++i)
+    for (auto i = 0; i < lenCA; ++i)
     {
-        t      = 2 * i + l2;
-        os     = i * ostride;
+        auto const t  = 2 * i + l2;
+        auto const os = i * ostride;
+
         cA[os] = 0.0F;
         cD[os] = 0.0F;
-        for (l = 0; l < lenAvg; ++l)
+
+        for (auto l = 0; l < lpdLen; ++l)
         {
             if ((t - l) >= l2 && (t - l) < n)
             {
-                is = (t - l) * istride;
+                auto const is = (t - l) * istride;
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
             }
             else if ((t - l) < l2 && (t - l) >= 0)
             {
-                is = (t - l) * istride;
+                auto const is = (t - l) * istride;
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
             }
             else if ((t - l) < 0 && isodd == 0)
             {
-                is = (t - l + n) * istride;
+                auto const is = (t - l + n) * istride;
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
             }
@@ -55,34 +48,34 @@ auto dwtPerStride(float const* inp, int n, float const* lpd, float const* hpd, i
             {
                 if ((t - l) != -1)
                 {
-                    is = (t - l + n + 1) * istride;
+                    auto const is = (t - l + n + 1) * istride;
                     cA[os] += lpd[l] * inp[is];
                     cD[os] += hpd[l] * inp[is];
                 }
                 else
                 {
-                    is = (n - 1) * istride;
+                    auto const is = (n - 1) * istride;
                     cA[os] += lpd[l] * inp[is];
                     cD[os] += hpd[l] * inp[is];
                 }
             }
             else if ((t - l) >= n && isodd == 0)
             {
-                is = (t - l - n) * istride;
+                auto const is = (t - l - n) * istride;
                 cA[os] += lpd[l] * inp[is];
                 cD[os] += hpd[l] * inp[is];
             }
             else if ((t - l) >= n && isodd == 1)
             {
-                is = (t - l - (n + 1)) * istride;
                 if (t - l != n)
                 {
+                    auto const is = (t - l - (n + 1)) * istride;
                     cA[os] += lpd[l] * inp[is];
                     cD[os] += hpd[l] * inp[is];
                 }
                 else
                 {
-                    is = (n - 1) * istride;
+                    auto const is = (n - 1) * istride;
                     cA[os] += lpd[l] * inp[is];
                     cD[os] += hpd[l] * inp[is];
                 }
@@ -94,40 +87,25 @@ auto dwtPerStride(float const* inp, int n, float const* lpd, float const* hpd, i
 auto dwtSymStride(float const* inp, int n, float const* lpd, float const* hpd, int lpdLen, float* cA, int lenCA,
                   float* cD, int istride, int ostride) -> void
 {
-    int i      = 0;
-    int l      = 0;
-    int t      = 0;
-    int lenAvg = 0;
-    int is     = 0;
-    int os     = 0;
-    lenAvg     = lpdLen;
-
-    for (i = 0; i < lenCA; ++i)
+    for (auto i = 0; i < lenCA; ++i)
     {
-        t      = 2 * i + 1;
-        os     = i * ostride;
+        auto const t  = 2 * i + 1;
+        auto const os = i * ostride;
+
         cA[os] = 0.0F;
         cD[os] = 0.0F;
-        for (l = 0; l < lenAvg; ++l)
+
+        for (auto l = 0; l < lpdLen; ++l)
         {
-            if ((t - l) >= 0 && (t - l) < n)
+            auto const is = [&]
             {
-                is = (t - l) * istride;
-                cA[os] += lpd[l] * inp[is];
-                cD[os] += hpd[l] * inp[is];
-            }
-            else if ((t - l) < 0)
-            {
-                is = (-t + l - 1) * istride;
-                cA[os] += lpd[l] * inp[is];
-                cD[os] += hpd[l] * inp[is];
-            }
-            else if ((t - l) >= n)
-            {
-                is = (2 * n - t + l - 1) * istride;
-                cA[os] += lpd[l] * inp[is];
-                cD[os] += hpd[l] * inp[is];
-            }
+                if ((t - l) >= 0 && (t - l) < n) { return (t - l) * istride; }
+                else if ((t - l) < 0) { return (-t + l - 1) * istride; }
+                return (2 * n - t + l - 1) * istride;
+            }();
+
+            cA[os] += lpd[l] * inp[is];
+            cD[os] += hpd[l] * inp[is];
         }
     }
 }
