@@ -23,8 +23,8 @@ auto testConvolute(std::vector<std::vector<T>> const& testData) -> bool
 
 TEST_CASE("dsp/convolution: convolute", "[dsp][convolution]")
 {
-    auto const testFile = GENERATE("test_data/raw/conv_xcorr_01.txt", "test_data/raw/conv_xcorr_02.txt",
-                                   "test_data/raw/conv_xcorr_03.txt", "test_data/raw/conv_xcorr_04.txt");
+    auto const* const testFile = GENERATE("test_data/raw/conv_xcorr_01.txt", "test_data/raw/conv_xcorr_02.txt",
+                                          "test_data/raw/conv_xcorr_03.txt", "test_data/raw/conv_xcorr_04.txt");
 
     auto const testData = loadTestData(testFile);
     CHECK(testData.size() == 4U);

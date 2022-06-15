@@ -10,8 +10,8 @@ namespace dsp = mc::dsp;
 
 TEST_CASE("dsp/convolution: OverlapSaveConvolver", "[dsp][convolution]")
 {
-    auto const testFile = GENERATE("test_data/raw/conv_xcorr_01.txt", "test_data/raw/conv_xcorr_02.txt",
-                                   "test_data/raw/conv_xcorr_03.txt", "test_data/raw/conv_xcorr_04.txt");
+    auto const* const testFile = GENERATE("test_data/raw/conv_xcorr_01.txt", "test_data/raw/conv_xcorr_02.txt",
+                                          "test_data/raw/conv_xcorr_03.txt", "test_data/raw/conv_xcorr_04.txt");
 
     auto testData = loadTestData(testFile);
     CHECK(testData.size() == 4U);

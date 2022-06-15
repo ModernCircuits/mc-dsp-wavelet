@@ -63,7 +63,7 @@ public:
     AudioFile();
 
     /** Constructor, using a given file path to load a file */
-    AudioFile(std::string filePath);
+    explicit AudioFile(std::string filePath);
 
     /** Loads an audio file from a given file path.
      * @Returns true if the file was successfully loaded

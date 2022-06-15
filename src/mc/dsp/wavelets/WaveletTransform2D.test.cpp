@@ -25,7 +25,7 @@ static auto generateRandomTestData(std::size_t n) -> std::vector<float>
     std::generate(data.begin(), data.end(), [&]() { return dis(gen); });
     return data;
 }
-static constexpr auto const epsilon = 6e-7f;
+static constexpr auto const epsilon = 6e-7F;
 
 #define DWT_IDWT_ROUNDTRIP(waveletName)                                                                                \
     TEST_CASE("dsp/wavelet: WaveletTransform2D(dwt/idwt) - " waveletName, "[dsp][wavelet]")                            \
