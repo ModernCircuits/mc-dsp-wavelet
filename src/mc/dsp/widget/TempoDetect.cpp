@@ -35,7 +35,7 @@ TempoDetect::TempoDetect(std::size_t n, std::size_t levels) : wave_{"db4"}, wt_{
 auto TempoDetect::operator()(mc::span<float> input, float sampleRate) -> float
 {
 
-    auto const levels        = 4;
+    auto const levels        = wt_.levels();
     auto const maxDecimation = std::pow(2.0F, levels - 1);
     auto const minNdx        = std::floor(60.0F / 220.0F * (sampleRate / maxDecimation));
     auto const maxNdx        = std::floor(60.0F / 40.0F * (sampleRate / maxDecimation));

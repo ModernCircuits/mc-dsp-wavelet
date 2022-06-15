@@ -9,27 +9,26 @@ CLANG_TIDY_ARGS = ./scripts/run-clang-tidy.py -clang-tidy-binary ${CLANG_TIDY_BI
 
 .PHONY: tidy-check
 tidy-check:
-	${CLANG_TIDY_ARGS} -quiet -p $(BUILD_DIR) -header-filter $(shell realpath ./mc) $(shell realpath ./mc)
+	${CLANG_TIDY_ARGS} -quiet -p $(BUILD_DIR) -header-filter $(shell realpath ./src) $(shell realpath ./src)
 
 .PHONY: tidy-fix
 tidy-fix:
-	${CLANG_TIDY_ARGS} -fix -quiet -p $(BUILD_DIR) -header-filter $(shell realpath ./mc) $(shell realpath ./mc)
+	${CLANG_TIDY_ARGS} -fix -quiet -p $(BUILD_DIR) -header-filter $(shell realpath ./src) $(shell realpath ./src)
 
 
 .PHONY: coverage
 coverage:
 	cmake -S . -G Ninja -B cmake-build-coverage -D CMAKE_BUILD_TYPE=Debug -D MC_BUILD_COVERAGE=TRUE
 	cmake --build cmake-build-coverage
-	# cd cmake-build-coverage && ctest -C Debug -j 4
-	./cmake-build-coverage/test/bpm_detector /home/tobante/Music/Loops/Drums.wav
+	cd cmake-build-coverage && ctest -C Debug -j 4
 
 .PHONY: coverage-html
 coverage-html: coverage
-	cd cmake-build-coverage && gcovr --html --html-details --exclude-unreachable-branches -o coverage.html -r ../mc -j ${shell nproc} -s .
+	cd cmake-build-coverage && gcovr --html --html-details --exclude-unreachable-branches -o coverage.html -r ../src -j ${shell nproc} -s .
 
 .PHONY: coverage-xml
 coverage-xml: coverage
-	cd cmake-build-coverage && gcovr --xml-pretty --exclude-unreachable-branches -o coverage.xml  -r ../mc -j ${shell nproc} -s .
+	cd cmake-build-coverage && gcovr --xml-pretty --exclude-unreachable-branches -o coverage.xml  -r ../src -j ${shell nproc} -s .
 
 .PHONY: stats
 stats:
@@ -37,8 +36,8 @@ stats:
 
 .PHONY: format
 format:
-	@find mc -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs ${CLANG_FORMAT_BIN} -i
+	@find src -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs ${CLANG_FORMAT_BIN} -i
 
 .PHONY: format-check
 format-check:
-	@find mc -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs -n 1 -P 1 -I{} -t sh -c '${CLANG_FORMAT_BIN} -style=file {} | diff - {}'
+	@find src -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs -n 1 -P 1 -I{} -t sh -c '${CLANG_FORMAT_BIN} -style=file {} | diff - {}'

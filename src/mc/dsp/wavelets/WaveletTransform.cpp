@@ -167,6 +167,18 @@ WaveletTransform::WaveletTransform(Wavelet& w, char const* method, std::size_t s
     }
 }
 
+auto WaveletTransform::wave() const noexcept -> Wavelet const& { return *wave_; }
+
+auto WaveletTransform::levels() const noexcept -> int { return static_cast<int>(levels_); }
+
+auto WaveletTransform::signalLength() const noexcept -> std::size_t { return signalLength_; }
+
+auto WaveletTransform::method() const noexcept -> std::string const& { return method_; }
+
+auto WaveletTransform::extension() const noexcept -> SignalExtension { return ext_; }
+
+auto WaveletTransform::convMethod() const noexcept -> ConvolutionMethod { return cmethod_; }
+
 auto WaveletTransform::convMethod(ConvolutionMethod method) -> void { cmethod_ = method; }
 
 auto WaveletTransform::extension(SignalExtension ext) -> void

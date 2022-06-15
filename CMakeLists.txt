@@ -45,4 +45,5 @@ find_package(pffft REQUIRED)
 add_subdirectory(3rd_party/span)
 
 add_subdirectory(src)
-add_subdirectory(test)
+
+# add_subdirectory(test)

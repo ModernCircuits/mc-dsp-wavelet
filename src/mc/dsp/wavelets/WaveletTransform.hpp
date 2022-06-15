@@ -16,16 +16,16 @@ struct WaveletTransform
 {
     WaveletTransform(Wavelet& wave, char const* method, std::size_t siglength, std::size_t j);
 
-    [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *wave_; }
-    [[nodiscard]] auto levels() const noexcept -> int { return static_cast<int>(levels_); }
-    [[nodiscard]] auto signalLength() const noexcept -> std::size_t { return signalLength_; }
-    [[nodiscard]] auto method() const noexcept -> std::string const& { return method_; }
+    [[nodiscard]] auto wave() const noexcept -> Wavelet const&;
+    [[nodiscard]] auto levels() const noexcept -> int;
+    [[nodiscard]] auto signalLength() const noexcept -> std::size_t;
+    [[nodiscard]] auto method() const noexcept -> std::string const&;
 
     auto extension(SignalExtension ext) -> void;
-    [[nodiscard]] auto extension() const noexcept -> SignalExtension { return ext_; }
+    [[nodiscard]] auto extension() const noexcept -> SignalExtension;
 
     auto convMethod(ConvolutionMethod method) -> void;
-    [[nodiscard]] auto convMethod() const noexcept -> ConvolutionMethod { return cmethod_; }
+    [[nodiscard]] auto convMethod() const noexcept -> ConvolutionMethod;
 
     [[nodiscard]] auto output() const -> span<float>;
     [[nodiscard]] auto approx() const -> span<float>;
