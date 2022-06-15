@@ -10,7 +10,6 @@
 #include "mc/utility.hpp"
 
 #include "mc/testing/test.hpp"
-#include "readFileToVector.hpp"
 
 namespace dsp = mc::dsp;
 

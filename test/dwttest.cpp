@@ -8,13 +8,12 @@
 #include "mc/utility.hpp"
 
 #include "mc/testing/test.hpp"
-#include "readFileToVector.hpp"
 
 namespace dsp = mc::dsp;
 
 auto main() -> int
 {
-    auto const input = readFileToVector("testData/signal.txt");
+    auto const input = readFileToVector<float>("testData/signal.txt");
     auto const n     = 256;
 
     auto obj = dsp::Wavelet{"db4"};

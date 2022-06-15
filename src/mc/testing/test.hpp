@@ -2,8 +2,10 @@
 
 #include "mc/algorithm.hpp"
 #include "mc/cmath.hpp"
+#include "mc/cstdlib.hpp"
 #include "mc/format.hpp"
 #include "mc/fstream.hpp"
+#include "mc/iterator.hpp"
 #include "mc/limits.hpp"
 #include "mc/sstream.hpp"
 #include "mc/string.hpp"
@@ -65,3 +67,27 @@ using TestData = std::vector<std::vector<T>>;
 auto split(std::string const& s, char delim) -> std::vector<std::string>;
 auto loadTestData(char const* filePath) -> TestData<float>;
 auto toFloat(TestData<float> const& d) -> TestData<float>;
+
+template<typename T>
+[[nodiscard]] auto readFileToVector(char const* filePath) -> std::vector<T>
+{
+    auto in = std::ifstream{filePath};
+    if (!in) { throw std::invalid_argument{fmt::format("Cannot Open File: %s\n", filePath)}; }
+
+    auto result = std::vector<T>{};
+    result.reserve(8096 * 4);
+
+    auto line = std::string{};
+    while (std::getline(in, line))
+    {
+        if (!line.empty())
+        {
+            auto i = T{};
+            std::istringstream{line} >> i;
+            result.push_back(i);
+        }
+    }
+
+    in.close();
+    return result;
+}

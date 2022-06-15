@@ -8,7 +8,6 @@
 #include "mc/utility.hpp"
 
 #include "mc/testing/test.hpp"
-#include "readFileToVector.hpp"
 
 namespace dsp = mc::dsp;
 
@@ -20,7 +19,7 @@ auto main() -> int
     auto n = 177;
     auto j = 2;
 
-    auto inp = readFileToVector("testData/signal.txt");
+    auto inp = readFileToVector<float>("testData/signal.txt");
     auto out = std::make_unique<float[]>(n);
 
     auto wt = dsp::WaveletTransform(wave, "modwt", n, j);

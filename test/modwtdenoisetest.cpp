@@ -6,7 +6,7 @@
 #include "mc/format.hpp"
 #include "mc/memory.hpp"
 
-#include "readFileToVector.hpp"
+#include "mc/testing/test.hpp"
 
 namespace dsp = mc::dsp;
 
@@ -62,8 +62,8 @@ auto main() -> int
     auto const* thresh  = "soft";
     auto const* cmethod = "direct";
 
-    auto const inp = readFileToVector("testData/PieceRegular10.txt");
-    auto sig       = readFileToVector("testData/pieceregular1024.txt");
+    auto const inp = readFileToVector<float>("testData/PieceRegular10.txt");
+    auto sig       = readFileToVector<float>("testData/pieceregular1024.txt");
 
     auto const n = sig.size();
     auto const j = 4;
