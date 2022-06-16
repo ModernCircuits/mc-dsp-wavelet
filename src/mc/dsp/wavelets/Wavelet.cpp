@@ -10,6 +10,7 @@
 #include "mc/cmath.hpp"
 #include "mc/cstring.hpp"
 #include "mc/format.hpp"
+#include "mc/iterator.hpp"
 #include "mc/memory.hpp"
 #include "mc/numbers.hpp"
 #include "mc/string_view.hpp"
@@ -42,62 +43,43 @@ auto qmfWrev(T const* in, int n, T* out)
 auto waveletFilterLength(char const* name) -> int
 {
     int len = strlen(name);
-    int i   = 0;
     int n   = 0;
     if (name == string_view{"haar"} || name == string_view{"db1"}) { return 2; }
     if (len > 2 && strstr(name, "db") != nullptr)
     {
         auto newStr = std::make_unique<char[]>((len - 2 + 1));
-        for (i = 2; i < len + 1; i++) { newStr[i - 2] = name[i]; }
+        for (auto i = 2; i < len + 1; i++) { newStr[i - 2] = name[i]; }
 
         n = atoi(newStr.get());
-        if (n > 38)
-        {
-            fmt::printf("\n Filter Not in Database \n");
-            return -1;
-        }
+        if (n > 38) { throw std::invalid_argument("wavelet filter not in database"); }
 
         return n * 2;
     }
     if (name == string_view{"bior1.1"}) { return 2; }
-
     if (name == string_view{"bior1.3"}) { return 6; }
-
     if (name == string_view{"bior1.5"}) { return 10; }
-
     if (name == string_view{"bior2.2"}) { return 6; }
-
     if (name == string_view{"bior2.4"}) { return 10; }
-
     if (name == string_view{"bior2.6"}) { return 14; }
     if (name == string_view{"bior2.8"}) { return 18; }
-
     if (name == string_view{"bior3.1"}) { return 4; }
     if (name == string_view{"bior3.3"}) { return 8; }
     if (name == string_view{"bior3.5"}) { return 12; }
-
     if (name == string_view{"bior3.7"}) { return 16; }
     if (name == string_view{"bior3.9"}) { return 20; }
     if (name == string_view{"bior4.4"}) { return 10; }
     if (name == string_view{"bior5.5"}) { return 12; }
     if (name == string_view{"bior6.8"}) { return 18; }
     if (name == string_view{"rbior1.1"}) { return 2; }
-
     if (name == string_view{"rbior1.3"}) { return 6; }
-
     if (name == string_view{"rbior1.5"}) { return 10; }
-
     if (name == string_view{"rbior2.2"}) { return 6; }
-
     if (name == string_view{"rbior2.4"}) { return 10; }
-
     if (name == string_view{"rbior2.6"}) { return 14; }
     if (name == string_view{"rbior2.8"}) { return 18; }
-
     if (name == string_view{"rbior3.1"}) { return 4; }
     if (name == string_view{"rbior3.3"}) { return 8; }
     if (name == string_view{"rbior3.5"}) { return 12; }
-
     if (name == string_view{"rbior3.7"}) { return 16; }
     if (name == string_view{"rbior3.9"}) { return 20; }
     if (name == string_view{"rbior4.4"}) { return 10; }
@@ -106,34 +88,26 @@ auto waveletFilterLength(char const* name) -> int
     if (len > 4 && strstr(name, "coif") != nullptr)
     {
         auto newStr = std::make_unique<char[]>((len - 4 + 1));
-        for (i = 4; i < len + 1; i++) { newStr[i - 4] = name[i]; }
+        for (auto i = 4; i < len + 1; i++) { newStr[i - 4] = name[i]; }
 
         n = atoi(newStr.get());
-        if (n > 17)
-        {
-            fmt::printf("\n Filter Not in Database \n");
-            return -1;
-        }
+        if (n > 17) { throw std::invalid_argument("wavelet filter not in database"); }
 
         return n * 6;
     }
     if (len > 3 && strstr(name, "sym") != nullptr)
     {
         auto newStr = std::make_unique<char[]>((len - 3 + 1));
-        for (i = 3; i < len + 1; i++) { newStr[i - 3] = name[i]; }
+        for (auto i = 3; i < len + 1; i++) { newStr[i - 3] = name[i]; }
 
         n = atoi(newStr.get());
-        if (n > 20 || n < 2)
-        {
-            fmt::printf("\n Filter Not in Database \n");
-            return -1;
-        }
+        if (n > 20 || n < 2) { throw std::invalid_argument("wavelet filter not in database"); }
 
         return n * 2;
     }
     if (strcmp(name, "meyer") == 0) { return 102; }
-    fmt::printf("\n Filter Not in Database \n");
-    return -1;
+
+    throw std::invalid_argument("wavelet filter not in database");
 }
 
 static auto fillDauberchies(char const* name, float* lp1, float* hp1, float* lp2, float* hp2)
@@ -210,9 +184,7 @@ static auto fillDauberchies(char const* name, float* lp1, float* hp1, float* lp2
 
 auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* lp2, float* hp2) -> int
 {
-    int i = 0;
-    int n = waveletFilterLength(name);
-
+    auto const n        = waveletFilterLength(name);
     auto const nameView = std::string_view{name};
     if (nameView.find("haar") != std::string_view::npos) { return fillDauberchies(name, lp1, hp1, lp2, hp2); }
     if (nameView.find("db") != std::string_view::npos) { return fillDauberchies(name, lp1, hp1, lp2, hp2); }
@@ -494,7 +466,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif1, coif1 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -509,7 +481,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif2, coif2 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -524,7 +496,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif3, coif3 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -539,7 +511,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif4, coif4 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -554,7 +526,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif5, coif5 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -569,7 +541,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif6, coif6 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -584,7 +556,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif7, coif7 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -599,7 +571,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif8, coif8 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -614,7 +586,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif9, coif9 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -629,7 +601,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif10, coif10 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -643,7 +615,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif11, coif11 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -657,7 +629,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif12, coif12 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -671,7 +643,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif13, coif13 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -685,7 +657,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif14, coif14 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -699,7 +671,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif15, coif15 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -713,7 +685,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif16, coif16 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -727,7 +699,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         auto coeffTemp = std::make_unique<float[]>(n);
 
         std::copy(coif17, coif17 + n, coeffTemp.get());
-        for (i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
+        for (auto i = 0; i < n; ++i) { coeffTemp[i] *= static_cast<float>(numbers::sqrt2); }
 
         std::reverse_copy(coeffTemp.get(), coeffTemp.get() + n, lp1);
         qmfWrev(coeffTemp.get(), n, hp1);
@@ -747,14 +719,17 @@ Wavelet::Wavelet(char const* name)
     : name_{name}
     , size_{static_cast<std::size_t>(waveletFilterLength(name))}
     , params_{std::make_unique<float[]>(4 * size_)}
-    , lpd_{&params_[0], size_}
-    , hpd_{&params_[size_], size_}
-    , lpr_{&params_[2 * size_], size_}
-    , hpr_{&params_[3 * size_], size_}
 {
-    auto* p = params_.get();
-    if (name != nullptr) { waveletFilterCoefficients(name, p, p + size_, p + 2 * size_, p + 3 * size_); }
+    waveletFilterCoefficients(name, data(lpd()), data(hpd()), data(lpr()), data(hpr()));
 }
+
+auto Wavelet::size() const noexcept -> std::size_t { return size_; }
+auto Wavelet::name() const noexcept -> std::string const& { return name_; }
+
+auto Wavelet::lpd() const noexcept -> span<float> { return {&params_[0], size()}; }
+auto Wavelet::hpd() const noexcept -> span<float> { return {&params_[size()], size()}; }
+auto Wavelet::lpr() const noexcept -> span<float> { return {&params_[size() * 2U], size()}; }
+auto Wavelet::hpr() const noexcept -> span<float> { return {&params_[size() * 3U], size()}; }
 
 auto summary(Wavelet const& obj) -> void
 {
