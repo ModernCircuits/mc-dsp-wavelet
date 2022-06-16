@@ -251,7 +251,7 @@ static constexpr auto ipow2(int n) -> int
     return p;
 }
 
-auto dwt(WaveletPacketTransform& wt, float const* inp) -> void
+auto dwpt(WaveletPacketTransform& wt, float const* inp) -> void
 {
     int iter  = 0;
     int p2    = 0;
@@ -555,7 +555,7 @@ static auto idwtSym(WaveletPacketTransform& wt, float const* cA, int lenCA, floa
     }
 }
 
-auto idwt(WaveletPacketTransform& wt, float* dwtop) -> void
+auto idwpt(WaveletPacketTransform& wt, float* dwtop) -> void
 {
     int k     = 0;
     int l     = 0;

@@ -122,93 +122,6 @@ auto modwT2ReconstructionTest()
     }
 }
 
-auto dwtReconstructionTest()
-{
-
-    int i         = 0;
-    float epsilon = 1e-5;
-
-    auto n = 8096;
-
-    auto inp = std::make_unique<float[]>(n);
-    auto out = std::make_unique<float[]>(n);
-
-    std::random_device rd{};
-    auto gen = std::mt19937{rd()};
-    auto dis = std::uniform_real_distribution<float>{0.0F, 1.0F};
-
-    for (i = 0; i < n; ++i) { inp[i] = dis(gen); }
-    std::vector<std::string> waveletNames;
-
-    for (std::size_t j = 0; j < 36; j++) { waveletNames.push_back(std::string("db") + std::to_string(j + 1)); }
-    for (std::size_t j = 0; j < 17; j++) { waveletNames.push_back(std::string("coif") + std::to_string(j + 1)); }
-    for (std::size_t j = 1; j < 20; j++) { waveletNames.push_back(std::string("sym") + std::to_string(j + 1)); }
-
-    waveletNames.emplace_back("bior1.1");
-    waveletNames.emplace_back("bior1.3");
-    waveletNames.emplace_back("bior1.5");
-    waveletNames.emplace_back("bior2.2");
-    waveletNames.emplace_back("bior2.4");
-    waveletNames.emplace_back("bior2.6");
-    waveletNames.emplace_back("bior2.8");
-    waveletNames.emplace_back("bior3.1");
-    waveletNames.emplace_back("bior3.3");
-    waveletNames.emplace_back("bior3.5");
-    waveletNames.emplace_back("bior3.7");
-    waveletNames.emplace_back("bior3.9");
-    waveletNames.emplace_back("bior4.4");
-    waveletNames.emplace_back("bior5.5");
-    waveletNames.emplace_back("bior6.8");
-
-    waveletNames.emplace_back("rbior1.1");
-    waveletNames.emplace_back("rbior1.3");
-    waveletNames.emplace_back("rbior1.5");
-    waveletNames.emplace_back("rbior2.2");
-    waveletNames.emplace_back("rbior2.4");
-    waveletNames.emplace_back("rbior2.6");
-    waveletNames.emplace_back("rbior2.8");
-    waveletNames.emplace_back("rbior3.1");
-    waveletNames.emplace_back("rbior3.3");
-    waveletNames.emplace_back("rbior3.5");
-    waveletNames.emplace_back("rbior3.7");
-    waveletNames.emplace_back("rbior3.9");
-    waveletNames.emplace_back("rbior4.4");
-    waveletNames.emplace_back("rbior5.5");
-    waveletNames.emplace_back("rbior6.8");
-
-    for (std::size_t ent = 0; ent < 2; ent++)
-    {
-        for (std::size_t symPer = 0; symPer < 2; symPer++)
-        {
-            for (auto const& name : waveletNames)
-            {
-                auto obj = dsp::Wavelet{name.c_str()};
-                for (auto j = 1; j < 3; j++)
-                {
-                    // J = 3;
-
-                    auto wt = dsp::WaveletPacketTransform(&obj, n, j);  // Initialize the wavelet transform object
-                    if (symPer == 0)
-                    {
-                        dsp::setDWPTExtension(wt,
-                                              "sym");  // Options are "per" and "sym".
-                        // Symmetric is the default option
-                    }
-                    else { dsp::setDWPTExtension(wt, "per"); }
-
-                    if (ent == 0) { dsp::setDWPTEntropy(wt, "shannon", 0); }
-                    else { dsp::setDWPTEntropy(wt, "logenergy", 0); }
-
-                    dwt(wt, inp.get());
-                    idwt(wt, out.get());
-
-                    MC_REQUIRE(rmsError(out.get(), inp.get(), wt.signalLength()) <= epsilon);
-                }
-            }
-        }
-    }
-}
-
 auto dbCoefTests()
 {
     constexpr auto epsilon = 1e-6;
@@ -352,13 +265,8 @@ auto biorCoefTests()
 
 auto rBiorCoefTests()
 {
-    float epsilon = 1e-6;
-    float t1      = NAN;
-    float t2      = NAN;
-    float t3      = NAN;
-    float t4      = NAN;
-    float t5      = NAN;
-    float t6      = NAN;
+    auto const epsilon = 1e-6f;
+
     std::vector<std::string> waveletNames;
     waveletNames.emplace_back("rbior1.1");
     waveletNames.emplace_back("rbior1.3");
@@ -380,14 +288,14 @@ auto rBiorCoefTests()
     {
         auto obj = dsp::Wavelet{name.c_str()};
 
-        t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
-        t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0F);
+        auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
+        auto const t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0F);
 
-        t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
+        auto const t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        auto const t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
 
-        t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
+        auto const t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        auto const t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
 
         MC_REQUIRE(std::fabs(t1) <= epsilon);
         MC_REQUIRE(std::fabs(t2) <= epsilon);
@@ -424,10 +332,6 @@ auto main() -> int
 
     fmt::printf("Running MODWT ReconstructionTests ... ");
     modwtReconstructionTest();
-    fmt::printf("DONE \n");
-
-    fmt::printf("Running DWPT ReconstructionTests ... ");
-    dwtReconstructionTest();
     fmt::printf("DONE \n");
 
     fmt::printf("Running MODWT2 ReconstructionTests ... ");

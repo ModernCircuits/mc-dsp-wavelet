@@ -42,8 +42,8 @@ private:
     int signalLength_{};  // Length of the original signal.
 };
 
-auto dwt(WaveletPacketTransform& wt, float const* inp) -> void;
-auto idwt(WaveletPacketTransform& wt, float* dwtop) -> void;
+auto dwpt(WaveletPacketTransform& wt, float const* inp) -> void;
+auto idwpt(WaveletPacketTransform& wt, float* dwtop) -> void;
 
 auto setDWPTExtension(WaveletPacketTransform& wt, char const* extension) -> void;
 auto setDWPTEntropy(WaveletPacketTransform& wt, char const* entropy, float eparam) -> void;

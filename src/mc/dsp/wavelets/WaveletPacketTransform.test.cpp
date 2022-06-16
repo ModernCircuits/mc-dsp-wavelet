@@ -1,5 +1,6 @@
 #include "mc/dsp/wavelets.hpp"
 
+#include "mc/iterator.hpp"
 #include "mc/memory.hpp"
 
 #include <catch2/catch_test_macros.hpp>
@@ -25,23 +26,23 @@ static auto generateRandomTestData(std::size_t n) -> std::vector<float>
     std::generate(data.begin(), data.end(), [&]() { return dis(gen); });
     return data;
 }
-static constexpr auto const epsilon = 6e-7F;
 
 #define DWT_IDWT_ROUNDTRIP(waveletName)                                                                                \
-    TEST_CASE("dsp/wavelet: WaveletTransform(dwt/idwt) - " waveletName, "[dsp][wavelet]")                              \
+    TEST_CASE("dsp/wavelet: WaveletPacketTransform(dwpt/idwpt) - " waveletName, "[dsp][wavelet]")                      \
     {                                                                                                                  \
-        auto convolutionMethod = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);                \
-        auto extension         = GENERATE(dsp::SignalExtension::periodic, dsp::SignalExtension::symmetric);            \
-        auto levels            = GENERATE(1, 2, 3);                                                                    \
-        auto const n           = 11'025;                                                                               \
-        auto const inp         = generateRandomTestData(n);                                                            \
-        auto out               = makeZeros<float>(n);                                                                  \
-        auto wavelet           = dsp::Wavelet{waveletName};                                                            \
-        auto wt                = dsp::WaveletTransform(wavelet, "dwt", n, levels);                                     \
-        wt.extension(extension);                                                                                       \
-        wt.convMethod(convolutionMethod);                                                                              \
-        dwt(wt, data(inp));                                                                                            \
-        idwt(wt, out.get());                                                                                           \
+        static constexpr auto epsilon = 1e-5F;                                                                         \
+        auto extension                = GENERATE("sym", "per");                                                        \
+        auto entropy                  = GENERATE("shannon", "logenergy");                                              \
+        auto levels                   = GENERATE(1, 2);                                                                \
+        auto n                        = 8096;                                                                          \
+        auto inp                      = generateRandomTestData(n);                                                     \
+        auto out                      = std::make_unique<float[]>(n);                                                  \
+        auto obj                      = dsp::Wavelet{waveletName};                                                     \
+        auto wt                       = dsp::WaveletPacketTransform(&obj, n, levels);                                  \
+        dsp::setDWPTExtension(wt, extension);                                                                          \
+        dsp::setDWPTEntropy(wt, entropy, 0);                                                                           \
+        dwpt(wt, data(inp));                                                                                           \
+        idwpt(wt, out.get());                                                                                          \
         REQUIRE(rmsError(out.get(), data(inp), wt.signalLength()) <= epsilon);                                         \
     }
 
