@@ -8,24 +8,23 @@
 
 namespace dsp = mc::dsp;
 
-static constexpr auto const epsilon = 6e-7F;
-
-#define DWT_IDWT_ROUNDTRIP(waveletName)                                                                                \
-    TEST_CASE("dsp/wavelet: WaveletTransform(dwt/idwt) - " waveletName, "[dsp][wavelet]")                              \
-    {                                                                                                                  \
-        auto convolutionMethod = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);                \
-        auto extension         = GENERATE(dsp::SignalExtension::periodic, dsp::SignalExtension::symmetric);            \
-        auto levels            = GENERATE(1, 2, 3);                                                                    \
-        auto const n           = 11'025;                                                                               \
-        auto const inp         = generateRandomTestData(n);                                                            \
-        auto out               = makeZeros<float>(n);                                                                  \
-        auto wavelet           = dsp::Wavelet{waveletName};                                                            \
-        auto wt                = dsp::WaveletTransform(wavelet, "dwt", n, levels);                                     \
-        wt.extension(extension);                                                                                       \
-        wt.convMethod(convolutionMethod);                                                                              \
-        dwt(wt, data(inp));                                                                                            \
-        idwt(wt, out.get());                                                                                           \
-        REQUIRE(rmsError(out.get(), data(inp), wt.signalLength()) <= epsilon);                                         \
+#define DWT_IDWT_ROUNDTRIP(waveletName)                                                                                  \
+    TEST_CASE("dsp/wavelet: WaveletTransform(dwt/idwt) - " waveletName, "[dsp][wavelet]")                                \
+    {                                                                                                                    \
+        static constexpr auto const epsilon = 6e-7F;                                                                     \
+        auto convolutionMethod              = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);     \
+        auto extension                      = GENERATE(dsp::SignalExtension::periodic, dsp::SignalExtension::symmetric); \
+        auto levels                         = GENERATE(1, 2, 3);                                                         \
+        auto const n                        = 11'025;                                                                    \
+        auto const inp                      = generateRandomTestData(n);                                                 \
+        auto out                            = makeZeros<float>(n);                                                       \
+        auto wavelet                        = dsp::Wavelet{waveletName};                                                 \
+        auto wt                             = dsp::WaveletTransform(wavelet, "dwt", n, levels);                          \
+        wt.extension(extension);                                                                                         \
+        wt.convMethod(convolutionMethod);                                                                                \
+        dwt(wt, data(inp));                                                                                              \
+        idwt(wt, out.get());                                                                                             \
+        REQUIRE(rmsError(out.get(), data(inp), wt.signalLength()) <= epsilon);                                           \
     }
 
 DWT_IDWT_ROUNDTRIP("db1")       // NOLINT
@@ -133,14 +132,15 @@ DWT_IDWT_ROUNDTRIP("rbior6.8")  // NOLINT
 #define SWT_ISWT_ROUNDTRIP(waveletName)                                                                                \
     TEST_CASE("dsp/wavelet: WaveletTransform(swt/iswt) - " waveletName, "[dsp][wavelet]")                              \
     {                                                                                                                  \
-        auto convolutionMethod = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);                \
-        auto extension         = GENERATE(dsp::SignalExtension::periodic);                                             \
-        auto levels            = GENERATE(1, 2, 3);                                                                    \
-        auto const n           = 4096U;                                                                                \
-        auto const inp         = generateRandomTestData(n);                                                            \
-        auto out               = makeZeros<float>(n);                                                                  \
-        auto wavelet           = dsp::Wavelet{waveletName};                                                            \
-        auto wt                = dsp::WaveletTransform(wavelet, "swt", n, levels);                                     \
+        static constexpr auto const epsilon = 6e-6F;                                                                   \
+        auto convolutionMethod              = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);   \
+        auto extension                      = GENERATE(dsp::SignalExtension::periodic);                                \
+        auto levels                         = GENERATE(1, 2, 3);                                                       \
+        auto const n                        = 4096U;                                                                   \
+        auto const inp                      = generateRandomTestData(n);                                               \
+        auto out                            = makeZeros<float>(n);                                                     \
+        auto wavelet                        = dsp::Wavelet{waveletName};                                               \
+        auto wt                             = dsp::WaveletTransform(wavelet, "swt", n, levels);                        \
         wt.extension(extension);                                                                                       \
         wt.convMethod(convolutionMethod);                                                                              \
         swt(wt, data(inp));                                                                                            \
@@ -253,14 +253,15 @@ SWT_ISWT_ROUNDTRIP("rbior6.8")  // NOLINT
 #define MODWT_IMODWT_ROUNDTRIP(waveletName)                                                                            \
     TEST_CASE("dsp/wavelet: WaveletTransform(modwt/imodwt) - " waveletName, "[dsp][wavelet]")                          \
     {                                                                                                                  \
-        auto convolutionMethod = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);                \
-        auto extension         = GENERATE(dsp::SignalExtension::periodic);                                             \
-        auto levels            = GENERATE(1, 2);                                                                       \
-        auto const n           = 4096U;                                                                                \
-        auto const inp         = generateRandomTestData(n);                                                            \
-        auto out               = makeZeros<float>(n);                                                                  \
-        auto wavelet           = dsp::Wavelet{waveletName};                                                            \
-        auto wt                = dsp::WaveletTransform(wavelet, "modwt", n, levels);                                   \
+        static constexpr auto const epsilon = 6e-7F;                                                                   \
+        auto convolutionMethod              = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);   \
+        auto extension                      = GENERATE(dsp::SignalExtension::periodic);                                \
+        auto levels                         = GENERATE(1, 2);                                                          \
+        auto const n                        = 4096U;                                                                   \
+        auto const inp                      = generateRandomTestData(n);                                               \
+        auto out                            = makeZeros<float>(n);                                                     \
+        auto wavelet                        = dsp::Wavelet{waveletName};                                               \
+        auto wt                             = dsp::WaveletTransform(wavelet, "modwt", n, levels);                      \
         wt.extension(extension);                                                                                       \
         wt.convMethod(convolutionMethod);                                                                              \
         modwt(wt, data(inp));                                                                                          \

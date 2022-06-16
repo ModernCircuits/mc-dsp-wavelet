@@ -134,8 +134,8 @@ DWT_IDWT_ROUNDTRIP("rbior6.8")  // NOLINT
     TEST_CASE("dsp/wavelet: WaveletTransform2D(modwt/imodwt) - " waveletName, "[dsp][wavelet]")                        \
     {                                                                                                                  \
         auto levels     = GENERATE(1);                                                                                 \
-        auto const rows = 512;                                                                                         \
-        auto const cols = 500;                                                                                         \
+        auto const rows = 256;                                                                                         \
+        auto const cols = 256;                                                                                         \
         auto const n    = rows * cols;                                                                                 \
         auto inp        = generateRandomTestData(n);                                                                   \
         auto out        = makeZeros<float>(n);                                                                         \
