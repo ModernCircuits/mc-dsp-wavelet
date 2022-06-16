@@ -12,16 +12,6 @@
 #include "mc/type_traits.hpp"
 #include "mc/vector.hpp"
 
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define MC_REQUIRE(e)                                                                                                  \
-    do {                                                                                                               \
-        if (!(e))                                                                                                      \
-        {                                                                                                              \
-            fmt::print("TEST ASSERTION FAILED: {0}:{1}\n", __FILE__, __LINE__);                                        \
-            std::exit(EXIT_FAILURE);                                                                                   \
-        }                                                                                                              \
-    } while (false)
-
 template<typename It1, typename It2>
 auto approxEqual(It1 f1, It1 l1, It2 f2, It2 l2, int epsilonFactor = 4) -> bool
 {

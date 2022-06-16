@@ -42,7 +42,7 @@ auto dwt(WaveletTransform2D& wt, float const* inp) -> std::unique_ptr<float[]>;
 auto idwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void;
 auto swt2(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>;
 auto iswt2(WaveletTransform2D& wt, float const* wavecoeffs, float* oup) -> void;
-auto modwt(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>;
+auto modwt(WaveletTransform2D& wt, float const* inp) -> std::unique_ptr<float[]>;
 auto imodwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void;
 auto getWT2Coeffs(WaveletTransform2D& wt, float* wcoeffs, int level, char const* type, int* rows, int* cols) -> float*;
 auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void;

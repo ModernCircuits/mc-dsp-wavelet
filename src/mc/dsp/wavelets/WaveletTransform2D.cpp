@@ -109,26 +109,19 @@ WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, std::s
                                        std::size_t j)
 {
 
-    auto const size = wave.size();
-
-    auto const maxRows = maxIterations(rows, size);
-    auto const maxCols = maxIterations(cols, size);
-
-    auto const maxIter = (maxRows < maxCols) ? maxRows : maxCols;
+    auto const maxRows = maxIterations(rows, wave.size());
+    auto const maxCols = maxIterations(cols, wave.size());
+    auto const maxIter = std::min(maxRows, maxCols);
 
     if (j > maxIter)
     {
-        fmt::print("\nError - The Signal Can only be iterated {0} times using this wavelet. Exiting\n", maxIter);
+        throw std::invalid_argument{fmt::format("signal can only be iterated {0} times using this wavelet", maxIter)};
     }
 
     std::size_t sumacc{0};
     if (j == 1U) { sumacc = 4U; }
     else if (j > 1U) { sumacc = j * 3U + 1U; }
-    else
-    {
-        fmt::print("Error : J should be >= 1 \n");
-        exit(-1);
-    }
+    else { throw std::invalid_argument{fmt::format("j = {0}, should be >= 1", j)}; }
 
     this->params    = std::make_unique<int[]>(2U * j + sumacc);
     this->outlength = 0;
@@ -763,29 +756,29 @@ auto iswt2(WaveletTransform2D& wt, float const* wavecoeffs, float* oup) -> void
     }
 }
 
-auto modwt(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>
+auto modwt(WaveletTransform2D& wt, float const* inp) -> std::unique_ptr<float[]>
 {
-    int j       = 0;
-    int iter    = 0;
-    int m       = 0;
-    int n       = 0;
-    int lp      = 0;
-    int rowsN   = 0;
-    int colsN   = 0;
-    int rowsI   = 0;
-    int colsI   = 0;
-    int ir      = 0;
-    int ic      = 0;
-    int istride = 0;
-    int ostride = 0;
-    int aLL     = 0;
-    int aLH     = 0;
-    int aHL     = 0;
-    int aHH     = 0;
-    int cdim    = 0;
-    int clen    = 0;
-    float* orig = nullptr;
-    float s     = NAN;
+    int j             = 0;
+    int iter          = 0;
+    int m             = 0;
+    int n             = 0;
+    int lp            = 0;
+    int rowsN         = 0;
+    int colsN         = 0;
+    int rowsI         = 0;
+    int colsI         = 0;
+    int ir            = 0;
+    int ic            = 0;
+    int istride       = 0;
+    int ostride       = 0;
+    int aLL           = 0;
+    int aLH           = 0;
+    int aHL           = 0;
+    int aHH           = 0;
+    int cdim          = 0;
+    int clen          = 0;
+    float const* orig = nullptr;
+    float s           = NAN;
 
     j            = wt.J;
     m            = 1;

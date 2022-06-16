@@ -106,6 +106,7 @@ target_sources(mc_dsp_wavelet_tests
     "mc/dsp/convolution/OverlapSaveConvolver.test.cpp"
     "mc/dsp/fft/FFT.test.cpp"
     "mc/dsp/fft/Window.test.cpp"
+    "mc/dsp/wavelets/Wavelet.test.cpp"
     "mc/dsp/wavelets/WaveletPacketTransform.test.cpp"
     "mc/dsp/wavelets/WaveletTransform.test.cpp"
     "mc/dsp/wavelets/WaveletTransform2D.test.cpp"
