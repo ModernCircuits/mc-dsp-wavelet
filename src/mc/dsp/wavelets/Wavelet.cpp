@@ -110,7 +110,7 @@ auto waveletFilterLength(char const* name) -> int
     throw std::invalid_argument("wavelet filter not in database");
 }
 
-static auto fillDauberchies(char const* name, float* lp1, float* hp1, float* lp2, float* hp2)
+auto fillDauberchies(char const* name, float* lp1, float* hp1, float* lp2, float* hp2)
 {
     using namespace std::string_view_literals;
 

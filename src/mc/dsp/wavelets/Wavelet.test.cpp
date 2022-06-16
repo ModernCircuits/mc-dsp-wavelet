@@ -159,7 +159,7 @@ TEST_CASE("dsp/wavelet: biorCoefTests", "[dsp][wavelet]")
 
 TEST_CASE("dsp/wavelet: rbiorCoefTests", "[dsp][wavelet]")
 {
-    auto const epsilon = 1e-6f;
+    auto const epsilon = 1e-6F;
 
     std::vector<std::string> waveletNames;
     waveletNames.emplace_back("rbior1.1");

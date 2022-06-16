@@ -100,7 +100,7 @@ auto dwtSymStride(float const* inp, int n, float const* lpd, float const* hpd, i
             auto const is = [&]
             {
                 if ((t - l) >= 0 && (t - l) < n) { return (t - l) * istride; }
-                else if ((t - l) < 0) { return (-t + l - 1) * istride; }
+                if ((t - l) < 0) { return (-t + l - 1) * istride; }
                 return (2 * n - t + l - 1) * istride;
             }();
 
