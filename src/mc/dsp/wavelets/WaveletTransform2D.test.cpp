@@ -1,30 +1,13 @@
 #include "mc/dsp/wavelets.hpp"
 
 #include "mc/memory.hpp"
+#include "mc/testing/test.hpp"
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-#include <random>
-
 namespace dsp = mc::dsp;
 
-static auto rmsError(float const* data, float const* rec, std::size_t n) -> float
-{
-    float sum = 0;
-    for (std::size_t i = 0; i < n; ++i) { sum += (data[i] - rec[i]) * (data[i] - rec[i]); }
-    return std::sqrt(sum / ((float)n - 1));
-}
-
-static auto generateRandomTestData(std::size_t n) -> std::vector<float>
-{
-    std::vector<float> data(n);
-    auto rd  = std::random_device{};
-    auto gen = std::mt19937{rd()};
-    auto dis = std::uniform_real_distribution<float>{-1.0F, 1.0F};
-    std::generate(data.begin(), data.end(), [&]() { return dis(gen); });
-    return data;
-}
 static constexpr auto const epsilon = 6e-7F;
 
 #define DWT_IDWT_ROUNDTRIP(waveletName)                                                                                \

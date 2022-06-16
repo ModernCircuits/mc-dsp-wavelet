@@ -5,58 +5,9 @@
 #include "mc/cstring.hpp"
 #include "mc/format.hpp"
 #include "mc/memory.hpp"
+#include "mc/testing/test.hpp"
 
 namespace dsp = mc::dsp;
-
-static auto rmse(int n, float const* x, float const* y) -> float
-{
-    float rms = NAN;
-    int i     = 0;
-
-    rms = 0.0F;
-
-    for (i = 0; i < n; ++i) { rms += (x[i] - y[i]) * (x[i] - y[i]); }
-
-    rms = std::sqrt(rms / (float)n);
-
-    return rms;
-}
-
-static auto corrcoef(int n, float const* x, float const* y) -> float
-{
-    float cc   = NAN;
-    float xm   = NAN;
-    float ym   = NAN;
-    float tx   = NAN;
-    float ty   = NAN;
-    float num  = NAN;
-    float den1 = NAN;
-    float den2 = NAN;
-    int i      = 0;
-    xm = ym = 0.0F;
-    for (i = 0; i < n; ++i)
-    {
-        xm += x[i];
-        ym += y[i];
-    }
-
-    xm  = xm / n;
-    ym  = ym / n;
-    num = den1 = den2 = 0.0F;
-
-    for (i = 0; i < n; ++i)
-    {
-        tx = x[i] - xm;
-        ty = y[i] - ym;
-        num += (tx * ty);
-        den1 += (tx * tx);
-        den2 += (ty * ty);
-    }
-
-    cc = num / std::sqrt(den1 * den2);
-
-    return cc;
-}
 
 auto main() -> int
 {
@@ -127,11 +78,11 @@ auto main() -> int
     // ofp = std::fopen("testData/denoiseds.txt", "w");
 
     fmt::printf("Signal - Noisy Signal Stats \n");
-    fmt::printf("RMSE %g\n", rmse(n, sig.get(), inp.get()));
+    fmt::printf("RMSE %g\n", rmsError(sig.get(), inp.get(), n));
     fmt::printf("Corr Coeff %g\n", corrcoef(n, sig.get(), inp.get()));
 
     fmt::printf("Signal - DeNoised Signal Stats \n");
-    fmt::printf("RMSE %g\n", rmse(n, sig.get(), oup.get()));
+    fmt::printf("RMSE %g\n", rmsError(sig.get(), oup.get(), n));
     fmt::printf("Corr Coeff %g\n", corrcoef(n, sig.get(), oup.get()));
 
     return 0;

@@ -91,3 +91,7 @@ template<typename T>
     in.close();
     return result;
 }
+
+auto generateRandomTestData(std::size_t n) -> std::vector<float>;
+
+auto corrcoef(int n, float const* x, float const* y) -> float;
