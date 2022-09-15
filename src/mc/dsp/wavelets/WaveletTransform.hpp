@@ -5,9 +5,10 @@
 #include "mc/dsp/wavelets/SignalExtension.hpp"
 #include "mc/dsp/wavelets/Wavelet.hpp"
 
-#include "mc/preprocessor.hpp"
-#include "mc/span.hpp"
-#include "mc/string.hpp"
+#include <mc/core/config.hpp>
+#include <mc/core/memory.hpp>
+#include <mc/core/span.hpp>
+#include <mc/core/string.hpp>
 
 namespace mc::dsp
 {

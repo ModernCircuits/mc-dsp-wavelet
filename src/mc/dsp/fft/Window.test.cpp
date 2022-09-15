@@ -1,10 +1,10 @@
 #include "mc/dsp/fft.hpp"
 
-#include "mc/format.hpp"
+#include <mc/core/format.hpp>
 
 #include <catch2/catch_template_test_macros.hpp>
 
-namespace dsp = mc::dsp;
+using namespace mc;
 
 TEMPLATE_TEST_CASE("dsp/fft: Window", "[dsp][fft]", float, double)
 {

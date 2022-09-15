@@ -1,16 +1,16 @@
 #pragma once
 
-#include "mc/algorithm.hpp"
-#include "mc/cmath.hpp"
-#include "mc/cstdlib.hpp"
-#include "mc/format.hpp"
-#include "mc/fstream.hpp"
-#include "mc/iterator.hpp"
-#include "mc/limits.hpp"
-#include "mc/sstream.hpp"
-#include "mc/string.hpp"
-#include "mc/type_traits.hpp"
-#include "mc/vector.hpp"
+#include <mc/core/algorithm.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/cstdlib.hpp>
+#include <mc/core/format.hpp>
+#include <mc/core/fstream.hpp>
+#include <mc/core/iterator.hpp>
+#include <mc/core/limits.hpp>
+#include <mc/core/sstream.hpp>
+#include <mc/core/string.hpp>
+#include <mc/core/type_traits.hpp>
+#include <mc/core/vector.hpp>
 
 template<typename It1, typename It2>
 auto approxEqual(It1 f1, It1 l1, It2 f2, It2 l2, int epsilonFactor = 4) -> bool

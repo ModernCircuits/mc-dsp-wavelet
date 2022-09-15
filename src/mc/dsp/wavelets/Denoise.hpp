@@ -2,11 +2,11 @@
 
 #include "mc/dsp/wavelets.hpp"
 
-#include "mc/cfloat.hpp"
-#include "mc/cmath.hpp"
-#include "mc/cstdlib.hpp"
-#include "mc/cstring.hpp"
-#include "mc/string.hpp"
+#include <mc/core/cfloat.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/cstdlib.hpp>
+#include <mc/core/cstring.hpp>
+#include <mc/core/string.hpp>
 
 namespace mc::dsp
 {

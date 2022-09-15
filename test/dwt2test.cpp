@@ -1,13 +1,15 @@
 #include "mc/dsp/wavelets.hpp"
 
-#include "mc/cmath.hpp"
-#include "mc/cstdlib.hpp"
-#include "mc/cstring.hpp"
-#include "mc/format.hpp"
+#include <mc/core/cmath.hpp>
+#include <mc/core/cstdlib.hpp>
+#include <mc/core/cstring.hpp>
+#include <mc/core/format.hpp>
 
 #include "mc/testing/test.hpp"
 
-namespace dsp = mc::dsp;
+#include <fmt/printf.h>
+
+using namespace mc;
 
 auto main() -> int
 {

@@ -2,12 +2,12 @@
 
 #include "mc/dsp/convolution.hpp"
 
-#include "mc/algorithm.hpp"
-#include "mc/cmath.hpp"
-#include "mc/format.hpp"
-#include "mc/numeric.hpp"
-#include "mc/preprocessor.hpp"
-#include "mc/utility.hpp"
+#include <mc/core/algorithm.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/config.hpp>
+#include <mc/core/format.hpp>
+#include <mc/core/numeric.hpp>
+#include <mc/core/utility.hpp>
 
 namespace mc::dsp
 {

@@ -1,14 +1,16 @@
 #include "mc/dsp/wavelets/Denoise.hpp"
 
-#include "mc/cmath.hpp"
-#include "mc/cstdlib.hpp"
-#include "mc/cstring.hpp"
-#include "mc/format.hpp"
-#include "mc/memory.hpp"
+#include <mc/core/cmath.hpp>
+#include <mc/core/cstdlib.hpp>
+#include <mc/core/cstring.hpp>
+#include <mc/core/format.hpp>
+#include <mc/core/memory.hpp>
 
 #include "mc/testing/test.hpp"
 
-namespace dsp = mc::dsp;
+#include <fmt/printf.h>
+
+using namespace mc;
 
 // modwtshrink can also be called from the denoise object.
 // See denoisetest.cpp for more information.

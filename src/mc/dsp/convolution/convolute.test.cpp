@@ -1,12 +1,12 @@
 #include "mc/dsp/convolution.hpp"
 
-#include "mc/format.hpp"
 #include "mc/testing/test.hpp"
+#include <mc/core/format.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-namespace dsp = mc::dsp;
+using namespace mc;
 
 template<typename T>
 auto testConvolute(std::vector<std::vector<T>> const& testData) -> bool

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "mc/algorithm.hpp"
-#include "mc/cstddef.hpp"
+#include <mc/core/algorithm.hpp>
+#include <mc/core/cstddef.hpp>
 
 namespace mc::dsp
 {

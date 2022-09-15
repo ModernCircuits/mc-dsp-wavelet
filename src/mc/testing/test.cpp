@@ -1,6 +1,6 @@
-#include "mc/cmath.hpp"
-#include "mc/cstdlib.hpp"
-#include "mc/random.hpp"
+#include <mc/core/cmath.hpp>
+#include <mc/core/cstdlib.hpp>
+#include <mc/core/random.hpp>
 
 #include "mc/testing/test.hpp"
 

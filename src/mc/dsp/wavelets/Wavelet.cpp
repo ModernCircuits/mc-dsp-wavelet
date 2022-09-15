@@ -7,15 +7,16 @@
 #include "mc/dsp/wavelets/filters/meyer.hpp"
 #include "mc/dsp/wavelets/filters/sym.hpp"
 
-#include "mc/cmath.hpp"
-#include "mc/cstring.hpp"
-#include "mc/format.hpp"
-#include "mc/iterator.hpp"
-#include "mc/memory.hpp"
-#include "mc/numbers.hpp"
-#include "mc/string_view.hpp"
-#include "mc/utility.hpp"
+#include <mc/core/cmath.hpp>
+#include <mc/core/cstring.hpp>
+#include <mc/core/format.hpp>
+#include <mc/core/iterator.hpp>
+#include <mc/core/memory.hpp>
+#include <mc/core/numbers.hpp>
+#include <mc/core/string_view.hpp>
+#include <mc/core/utility.hpp>
 
+#include <fmt/printf.h>
 namespace mc::dsp
 {
 
@@ -44,7 +45,7 @@ auto waveletFilterLength(char const* name) -> int
 {
     int len = strlen(name);
     int n   = 0;
-    if (name == string_view{"haar"} || name == string_view{"db1"}) { return 2; }
+    if (name == StringView{"haar"} || name == StringView{"db1"}) { return 2; }
     if (len > 2 && strstr(name, "db") != nullptr)
     {
         auto newStr = std::make_unique<char[]>((len - 2 + 1));
@@ -55,36 +56,36 @@ auto waveletFilterLength(char const* name) -> int
 
         return n * 2;
     }
-    if (name == string_view{"bior1.1"}) { return 2; }
-    if (name == string_view{"bior1.3"}) { return 6; }
-    if (name == string_view{"bior1.5"}) { return 10; }
-    if (name == string_view{"bior2.2"}) { return 6; }
-    if (name == string_view{"bior2.4"}) { return 10; }
-    if (name == string_view{"bior2.6"}) { return 14; }
-    if (name == string_view{"bior2.8"}) { return 18; }
-    if (name == string_view{"bior3.1"}) { return 4; }
-    if (name == string_view{"bior3.3"}) { return 8; }
-    if (name == string_view{"bior3.5"}) { return 12; }
-    if (name == string_view{"bior3.7"}) { return 16; }
-    if (name == string_view{"bior3.9"}) { return 20; }
-    if (name == string_view{"bior4.4"}) { return 10; }
-    if (name == string_view{"bior5.5"}) { return 12; }
-    if (name == string_view{"bior6.8"}) { return 18; }
-    if (name == string_view{"rbior1.1"}) { return 2; }
-    if (name == string_view{"rbior1.3"}) { return 6; }
-    if (name == string_view{"rbior1.5"}) { return 10; }
-    if (name == string_view{"rbior2.2"}) { return 6; }
-    if (name == string_view{"rbior2.4"}) { return 10; }
-    if (name == string_view{"rbior2.6"}) { return 14; }
-    if (name == string_view{"rbior2.8"}) { return 18; }
-    if (name == string_view{"rbior3.1"}) { return 4; }
-    if (name == string_view{"rbior3.3"}) { return 8; }
-    if (name == string_view{"rbior3.5"}) { return 12; }
-    if (name == string_view{"rbior3.7"}) { return 16; }
-    if (name == string_view{"rbior3.9"}) { return 20; }
-    if (name == string_view{"rbior4.4"}) { return 10; }
-    if (name == string_view{"rbior5.5"}) { return 12; }
-    if (name == string_view{"rbior6.8"}) { return 18; }
+    if (name == StringView{"bior1.1"}) { return 2; }
+    if (name == StringView{"bior1.3"}) { return 6; }
+    if (name == StringView{"bior1.5"}) { return 10; }
+    if (name == StringView{"bior2.2"}) { return 6; }
+    if (name == StringView{"bior2.4"}) { return 10; }
+    if (name == StringView{"bior2.6"}) { return 14; }
+    if (name == StringView{"bior2.8"}) { return 18; }
+    if (name == StringView{"bior3.1"}) { return 4; }
+    if (name == StringView{"bior3.3"}) { return 8; }
+    if (name == StringView{"bior3.5"}) { return 12; }
+    if (name == StringView{"bior3.7"}) { return 16; }
+    if (name == StringView{"bior3.9"}) { return 20; }
+    if (name == StringView{"bior4.4"}) { return 10; }
+    if (name == StringView{"bior5.5"}) { return 12; }
+    if (name == StringView{"bior6.8"}) { return 18; }
+    if (name == StringView{"rbior1.1"}) { return 2; }
+    if (name == StringView{"rbior1.3"}) { return 6; }
+    if (name == StringView{"rbior1.5"}) { return 10; }
+    if (name == StringView{"rbior2.2"}) { return 6; }
+    if (name == StringView{"rbior2.4"}) { return 10; }
+    if (name == StringView{"rbior2.6"}) { return 14; }
+    if (name == StringView{"rbior2.8"}) { return 18; }
+    if (name == StringView{"rbior3.1"}) { return 4; }
+    if (name == StringView{"rbior3.3"}) { return 8; }
+    if (name == StringView{"rbior3.5"}) { return 12; }
+    if (name == StringView{"rbior3.7"}) { return 16; }
+    if (name == StringView{"rbior3.9"}) { return 20; }
+    if (name == StringView{"rbior4.4"}) { return 10; }
+    if (name == StringView{"rbior5.5"}) { return 12; }
+    if (name == StringView{"rbior6.8"}) { return 18; }
     if (len > 4 && strstr(name, "coif") != nullptr)
     {
         auto newStr = std::make_unique<char[]>((len - 4 + 1));
@@ -185,13 +186,13 @@ auto fillDauberchies(char const* name, float* lp1, float* hp1, float* lp2, float
 auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* lp2, float* hp2) -> int
 {
     auto const n        = waveletFilterLength(name);
-    auto const nameView = std::string_view{name};
-    if (nameView.find("haar") != std::string_view::npos) { return fillDauberchies(name, lp1, hp1, lp2, hp2); }
-    if (nameView.find("db") != std::string_view::npos) { return fillDauberchies(name, lp1, hp1, lp2, hp2); }
-    if (nameView.find("sym") != std::string_view::npos) { return fillDauberchies(name, lp1, hp1, lp2, hp2); }
-    if (nameView.find("meyer") != std::string_view::npos) { return fillDauberchies(name, lp1, hp1, lp2, hp2); }
+    auto const nameView = StringView{name};
+    if (nameView.find("haar") != StringView::npos) { return fillDauberchies(name, lp1, hp1, lp2, hp2); }
+    if (nameView.find("db") != StringView::npos) { return fillDauberchies(name, lp1, hp1, lp2, hp2); }
+    if (nameView.find("sym") != StringView::npos) { return fillDauberchies(name, lp1, hp1, lp2, hp2); }
+    if (nameView.find("meyer") != StringView::npos) { return fillDauberchies(name, lp1, hp1, lp2, hp2); }
 
-    if (name == string_view{"bior1.1"})
+    if (name == StringView{"bior1.1"})
     {
         std::reverse_copy(hm111, hm111 + n, lp1);
         qmfWrev(h1 + 4, n, hp1);
@@ -200,7 +201,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior1.3"})
+    if (name == StringView{"bior1.3"})
     {
         std::reverse_copy(hm113, hm113 + n, lp1);
         qmfWrev(h1 + 2, n, hp1);
@@ -209,7 +210,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior1.5"})
+    if (name == StringView{"bior1.5"})
     {
         std::reverse_copy(hm115, hm115 + n, lp1);
         qmfWrev(h1, n, hp1);
@@ -218,7 +219,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior2.2"})
+    if (name == StringView{"bior2.2"})
     {
         std::reverse_copy(hm222, hm222 + n, lp1);
         qmfWrev(h2 + 6, n, hp1);
@@ -227,7 +228,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior2.4"})
+    if (name == StringView{"bior2.4"})
     {
         std::reverse_copy(hm224, hm224 + n, lp1);
         qmfWrev(h2 + 4, n, hp1);
@@ -236,7 +237,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior2.6"})
+    if (name == StringView{"bior2.6"})
     {
         std::reverse_copy(hm226, hm226 + n, lp1);
         qmfWrev(h2 + 2, n, hp1);
@@ -245,7 +246,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior2.8"})
+    if (name == StringView{"bior2.8"})
     {
         std::reverse_copy(hm228, hm228 + n, lp1);
         qmfWrev(h2, n, hp1);
@@ -254,7 +255,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior3.1"})
+    if (name == StringView{"bior3.1"})
     {
         std::reverse_copy(hm331, hm331 + n, lp1);
         qmfWrev(h3 + 8, n, hp1);
@@ -263,7 +264,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior3.3"})
+    if (name == StringView{"bior3.3"})
     {
         std::reverse_copy(hm333, hm333 + n, lp1);
         qmfWrev(h3 + 6, n, hp1);
@@ -272,7 +273,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior3.5"})
+    if (name == StringView{"bior3.5"})
     {
         std::reverse_copy(hm335, hm335 + n, lp1);
         qmfWrev(h3 + 4, n, hp1);
@@ -281,7 +282,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior3.7"})
+    if (name == StringView{"bior3.7"})
     {
         std::reverse_copy(hm337, hm337 + n, lp1);
         qmfWrev(h3 + 2, n, hp1);
@@ -290,7 +291,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior3.9"})
+    if (name == StringView{"bior3.9"})
     {
         std::reverse_copy(hm339, hm339 + n, lp1);
         qmfWrev(h3, n, hp1);
@@ -299,7 +300,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior4.4"})
+    if (name == StringView{"bior4.4"})
     {
         std::reverse_copy(hm444, hm444 + n, lp1);
         qmfWrev(h4, n, hp1);
@@ -308,7 +309,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior5.5"})
+    if (name == StringView{"bior5.5"})
     {
         std::reverse_copy(hm555, hm555 + n, lp1);
         qmfWrev(h5, n, hp1);
@@ -317,7 +318,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"bior6.8"})
+    if (name == StringView{"bior6.8"})
     {
         std::reverse_copy(hm668, hm668 + n, lp1);
         qmfWrev(h6, n, hp1);
@@ -326,7 +327,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior1.1"})
+    if (name == StringView{"rbior1.1"})
     {
         std::reverse_copy(h1 + 4, h1 + 4 + n, lp1);
         qmfWrev(hm111, n, hp1);
@@ -335,7 +336,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior1.3"})
+    if (name == StringView{"rbior1.3"})
     {
         std::reverse_copy(h1 + 2, h1 + 2 + n, lp1);
         qmfWrev(hm113, n, hp1);
@@ -344,7 +345,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior1.5"})
+    if (name == StringView{"rbior1.5"})
     {
         std::reverse_copy(h1, h1 + n, lp1);
         qmfWrev(hm115, n, hp1);
@@ -353,7 +354,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior2.2"})
+    if (name == StringView{"rbior2.2"})
     {
         std::reverse_copy(h2 + 6, h2 + 6 + n, lp1);
         qmfWrev(hm222, n, hp1);
@@ -362,7 +363,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior2.4"})
+    if (name == StringView{"rbior2.4"})
     {
         std::reverse_copy(h2 + 4, h2 + 4 + n, lp1);
         qmfWrev(hm224, n, hp1);
@@ -371,7 +372,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior2.6"})
+    if (name == StringView{"rbior2.6"})
     {
         std::reverse_copy(h2 + 2, h2 + 2 + n, lp1);
         qmfWrev(hm226, n, hp1);
@@ -380,7 +381,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior2.8"})
+    if (name == StringView{"rbior2.8"})
     {
         std::reverse_copy(h2, h2 + n, lp1);
         qmfWrev(hm228, n, hp1);
@@ -389,7 +390,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior3.1"})
+    if (name == StringView{"rbior3.1"})
     {
         std::reverse_copy(h3 + 8, h3 + 8 + n, lp1);
         qmfWrev(hm331, n, hp1);
@@ -398,7 +399,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior3.3"})
+    if (name == StringView{"rbior3.3"})
     {
         std::reverse_copy(h3 + 6, h3 + 6 + n, lp1);
         qmfWrev(hm333, n, hp1);
@@ -407,7 +408,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior3.5"})
+    if (name == StringView{"rbior3.5"})
     {
         std::reverse_copy(h3 + 4, h3 + 4 + n, lp1);
         qmfWrev(hm335, n, hp1);
@@ -416,7 +417,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior3.7"})
+    if (name == StringView{"rbior3.7"})
     {
         std::reverse_copy(h3 + 2, h3 + 2 + n, lp1);
         qmfWrev(hm337, n, hp1);
@@ -425,7 +426,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior3.9"})
+    if (name == StringView{"rbior3.9"})
     {
         std::reverse_copy(h3, h3 + n, lp1);
         qmfWrev(hm339, n, hp1);
@@ -434,7 +435,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior4.4"})
+    if (name == StringView{"rbior4.4"})
     {
         std::reverse_copy(h4, h4 + n, lp1);
         qmfWrev(hm444, n, hp1);
@@ -443,7 +444,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior5.5"})
+    if (name == StringView{"rbior5.5"})
     {
         std::reverse_copy(h5, h5 + n, lp1);
         qmfWrev(hm555, n, hp1);
@@ -452,7 +453,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"rbior6.8"})
+    if (name == StringView{"rbior6.8"})
     {
         std::reverse_copy(h6, h6 + n, lp1);
         qmfWrev(hm668, n, hp1);
@@ -461,7 +462,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"coif1"})
+    if (name == StringView{"coif1"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -476,7 +477,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"coif2"})
+    if (name == StringView{"coif2"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -491,7 +492,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"coif3"})
+    if (name == StringView{"coif3"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -506,7 +507,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"coif4"})
+    if (name == StringView{"coif4"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -521,7 +522,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"coif5"})
+    if (name == StringView{"coif5"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -536,7 +537,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"coif6"})
+    if (name == StringView{"coif6"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -551,7 +552,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"coif7"})
+    if (name == StringView{"coif7"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -566,7 +567,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"coif8"})
+    if (name == StringView{"coif8"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -581,7 +582,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"coif9"})
+    if (name == StringView{"coif9"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -596,7 +597,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
         return n;
     }
 
-    if (name == string_view{"coif10"})
+    if (name == StringView{"coif10"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -610,7 +611,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         return n;
     }
-    if (name == string_view{"coif11"})
+    if (name == StringView{"coif11"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -624,7 +625,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         return n;
     }
-    if (name == string_view{"coif12"})
+    if (name == StringView{"coif12"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -638,7 +639,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         return n;
     }
-    if (name == string_view{"coif13"})
+    if (name == StringView{"coif13"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -652,7 +653,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         return n;
     }
-    if (name == string_view{"coif14"})
+    if (name == StringView{"coif14"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -666,7 +667,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         return n;
     }
-    if (name == string_view{"coif15"})
+    if (name == StringView{"coif15"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -680,7 +681,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         return n;
     }
-    if (name == string_view{"coif16"})
+    if (name == StringView{"coif16"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 
@@ -694,7 +695,7 @@ auto waveletFilterCoefficients(char const* name, float* lp1, float* hp1, float* 
 
         return n;
     }
-    if (name == string_view{"coif17"})
+    if (name == StringView{"coif17"})
     {
         auto coeffTemp = std::make_unique<float[]>(n);
 

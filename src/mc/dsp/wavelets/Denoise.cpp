@@ -1,15 +1,16 @@
 #include "Denoise.hpp"
 
-#include "mc/algorithm.hpp"
-#include "mc/cmath.hpp"
-#include "mc/cstdlib.hpp"
-#include "mc/cstring.hpp"
-#include "mc/format.hpp"
-#include "mc/memory.hpp"
-#include "mc/numeric.hpp"
-#include "mc/string_view.hpp"
-#include "mc/utility.hpp"
+#include <mc/core/algorithm.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/cstdlib.hpp>
+#include <mc/core/cstring.hpp>
+#include <mc/core/format.hpp>
+#include <mc/core/memory.hpp>
+#include <mc/core/numeric.hpp>
+#include <mc/core/string_view.hpp>
+#include <mc/core/utility.hpp>
 
+#include <fmt/printf.h>
 namespace mc::dsp
 {
 
@@ -51,12 +52,12 @@ auto visushrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
     }
 
     auto wt = WaveletTransform{wave, method, n, j};
-    if (method == string_view{"dwt"})
+    if (method == StringView{"dwt"})
     {
-        wt.extension(ext == string_view{"per"} ? SignalExtension::periodic : SignalExtension::symmetric);
+        wt.extension(ext == StringView{"per"} ? SignalExtension::periodic : SignalExtension::symmetric);
         dwt(wt, signal);
     }
-    else if (method == string_view{"swt"}) { swt(wt, signal); }
+    else if (method == StringView{"swt"}) { swt(wt, signal); }
     else
     {
         fmt::printf("Acceptable WT methods are - dwt,swt and modwt\n");
@@ -72,7 +73,7 @@ auto visushrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
 
     auto dout = std::make_unique<float[]>(dlen);
 
-    if (level == string_view{"first"})
+    if (level == StringView{"first"})
     {
         for (std::size_t i = 1; i < j; ++i) { iter += wt.length[i]; }
 
@@ -81,7 +82,7 @@ auto visushrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
         sigma = median(dout.get(), dlen) / 0.6745;
         for (it = 0; cmp_less(it, j); ++it) { lnoise[it] = sigma; }
     }
-    else if (level == string_view{"all"})
+    else if (level == StringView{"all"})
     {
         for (it = 0; cmp_less(it, j); ++it)
         {
@@ -106,14 +107,14 @@ auto visushrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
         dlen  = wt.length[it + 1];
         td    = std::sqrt(2.0F * std::log(dwtLen)) * sigma;
 
-        if (thresh == string_view{"hard"})
+        if (thresh == StringView{"hard"})
         {
             for (std::size_t i = 0; i < dlen; ++i)
             {
                 if (fabs(wt.output()[iter + i]) < td) { wt.output()[iter + i] = 0; }
             }
         }
-        else if (thresh == string_view{"soft"})
+        else if (thresh == StringView{"soft"})
         {
             for (std::size_t i = 0; i < dlen; ++i)
             {
@@ -130,8 +131,8 @@ auto visushrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
         iter += wt.length[it + 1];
     }
 
-    if (method == string_view{"dwt"}) { idwt(wt, denoised); }
-    else if (method == string_view{"swt"}) { iswt(wt, denoised); }
+    if (method == StringView{"dwt"}) { idwt(wt, denoised); }
+    else if (method == StringView{"swt"}) { iswt(wt, denoised); }
 }
 
 auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext,
@@ -169,12 +170,12 @@ auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
 
     auto wt = WaveletTransform(wave, method, n, j);
 
-    if (method == string_view{"dwt"})
+    if (method == StringView{"dwt"})
     {
-        wt.extension(ext == string_view{"per"} ? SignalExtension::periodic : SignalExtension::symmetric);
+        wt.extension(ext == StringView{"per"} ? SignalExtension::periodic : SignalExtension::symmetric);
         dwt(wt, signal);
     }
-    else if (method == string_view{"swt"}) { swt(wt, signal); }
+    else if (method == StringView{"swt"}) { swt(wt, signal); }
     else
     {
         fmt::printf("Acceptable WT methods are - dwt and swt\n");
@@ -191,7 +192,7 @@ auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
 
     iter = wt.length[0];
 
-    if (level == string_view{"first"})
+    if (level == StringView{"first"})
     {
         for (std::size_t i = 1; i < j; ++i) { iter += wt.length[i]; }
 
@@ -200,7 +201,7 @@ auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
         sigma = median(dout.get(), dlen) / 0.6745;
         for (it = 0; cmp_less(it, j); ++it) { lnoise[it] = sigma; }
     }
-    else if (level == string_view{"all"})
+    else if (level == StringView{"all"})
     {
         for (it = 0; cmp_less(it, j); ++it)
         {
@@ -225,14 +226,14 @@ auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
         if (sigma < 0.00000001) { td = 0; }
         else
         {
-            tv   = std::sqrt(2.0F * std::log(dwtLen));
+            tv   = mc::sqrt(2.0F * mc::log((float)dwtLen));
             norm = 0.0F;
             for (auto i = 0; i < dwtLen; ++i)
             {
                 norm += (wt.output()[len + i] * wt.output()[len + i] / (sigma * sigma));
             }
             te = (norm - (float)dwtLen) / (float)dwtLen;
-            ct = pow(std::log((float)dwtLen) / std::log(2.0F), 1.5) / std::sqrt((float)dwtLen);
+            ct = mc::pow(mc::log((float)dwtLen) / mc::log(2.0F), 1.5F) / mc::sqrt((float)dwtLen);
 
             if (te < ct) { td = tv; }
             else
@@ -262,14 +263,14 @@ auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
 
         td = td * sigma;
 
-        if (thresh == string_view{"hard"})
+        if (thresh == StringView{"hard"})
         {
             for (auto i = 0; i < dwtLen; ++i)
             {
                 if (fabs(wt.output()[len + i]) < td) { wt.output()[len + i] = 0; }
             }
         }
-        else if (thresh == string_view{"soft"})
+        else if (thresh == StringView{"soft"})
         {
             for (auto i = 0; i < dwtLen; ++i)
             {
@@ -286,8 +287,8 @@ auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, 
         len += wt.length[it + 1];
     }
 
-    if (method == string_view{"dwt"}) { idwt(wt, denoised); }
-    else if (method == string_view{"swt"}) { iswt(wt, denoised); }
+    if (method == StringView{"dwt"}) { idwt(wt, denoised); }
+    else if (method == StringView{"swt"}) { iswt(wt, denoised); }
 }
 
 auto modwtshrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* cmethod, char const* ext,
@@ -314,22 +315,22 @@ auto modwtshrink(float* signal, std::size_t n, std::size_t j, char const* wname,
 
     auto wt = WaveletTransform(wave, "modwt", n, j);
 
-    if ((ext == string_view{"sym"}) && (cmethod == string_view{"fft"}))
+    if ((ext == StringView{"sym"}) && (cmethod == StringView{"fft"}))
     {
         wt.convMethod(ConvolutionMethod::fft);
         wt.extension(SignalExtension::symmetric);
     }
-    else if ((ext == string_view{"sym"}) && (cmethod == string_view{"direct"}))
+    else if ((ext == StringView{"sym"}) && (cmethod == StringView{"direct"}))
     {
         fmt::printf("Symmetric Extension is not available for direct method");
         std::exit(-1);
     }
-    else if ((ext == string_view{"per"}) && (cmethod == string_view{"direct"}))
+    else if ((ext == StringView{"per"}) && (cmethod == StringView{"direct"}))
     {
         wt.convMethod(ConvolutionMethod::direct);
         wt.extension(SignalExtension::periodic);
     }
-    else if ((ext == string_view{"per"}) && (cmethod == string_view{"fft"}))
+    else if ((ext == StringView{"per"}) && (cmethod == StringView{"fft"}))
     {
         wt.convMethod(ConvolutionMethod::fft);
         wt.extension(SignalExtension::periodic);
@@ -371,14 +372,14 @@ auto modwtshrink(float* signal, std::size_t n, std::size_t j, char const* wname,
         dlen  = wt.length[it + 1];
         td    = std::sqrt(2.0F * llen / m) * sigma;
 
-        if (thresh == string_view{"hard"})
+        if (thresh == StringView{"hard"})
         {
             for (std::size_t i = 0; i < dlen; ++i)
             {
                 if (fabs(wt.output()[iter + i]) < td) { wt.output()[iter + i] = 0; }
             }
         }
-        else if (thresh == string_view{"soft"})
+        else if (thresh == StringView{"soft"})
         {
             for (std::size_t i = 0; i < dlen; ++i)
             {
@@ -403,7 +404,7 @@ auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void
 {
     if (obj.dmethod == "sureshrink")
     {
-        if (obj.wmethod == string_view{"MODWT"})
+        if (obj.wmethod == StringView{"MODWT"})
         {
             fmt::printf("sureshrink method only works with swt and dwt. Please use setDenoiseWTMethod to set the "
                         "correct method\n");
@@ -414,7 +415,7 @@ auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void
     }
     else if (obj.dmethod == "visushrink")
     {
-        if (obj.wmethod == string_view{"MODWT"})
+        if (obj.wmethod == StringView{"MODWT"})
         {
             fmt::printf("visushrink method only works with swt and dwt. Please use setDenoiseWTMethod to set the "
                         "correct method\n");
@@ -425,7 +426,7 @@ auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void
     }
     else if (obj.dmethod == "modwtshrink")
     {
-        if (obj.wmethod != string_view{"MODWT"})
+        if (obj.wmethod != StringView{"MODWT"})
         {
             fmt::printf(
                 "modwtshrink method only works with modwt. Please use setDenoiseWTMethod to set the correct method\n");
@@ -456,7 +457,7 @@ auto setDenoiseMethod(DenoiseSet& obj, char const* dmethod) -> void
 auto setDenoiseWTMethod(DenoiseSet& obj, char const* wmethod) -> void
 {
     obj.wmethod = wmethod;
-    if (!((wmethod == string_view{"dwt"}) || (wmethod == string_view{"swt"}) || (wmethod == string_view{"MODWT"})))
+    if (!((wmethod == StringView{"dwt"}) || (wmethod == StringView{"swt"}) || (wmethod == StringView{"MODWT"})))
     {
         fmt::printf("Wavelet decomposition method can be one of dwt, modwt or swt.\n");
         std::exit(-1);
@@ -478,8 +479,8 @@ auto setDenoiseParameters(DenoiseSet& obj, char const* thresh, char const* level
 {
 
     // Set thresholding
-    if (thresh == string_view{"soft"}) { obj.thresh = "soft"; }
-    else if (thresh == string_view{"hard"}) { obj.thresh = "hard"; }
+    if (thresh == StringView{"soft"}) { obj.thresh = "soft"; }
+    else if (thresh == StringView{"hard"}) { obj.thresh = "hard"; }
     else
     {
         fmt::printf("Thresholding Method - soft or hard");
@@ -488,8 +489,8 @@ auto setDenoiseParameters(DenoiseSet& obj, char const* thresh, char const* level
 
     // Set Noise estimation at the first level or at all levels
 
-    if (level == string_view{"first"}) { obj.level = "first"; }
-    else if (level == string_view{"all"}) { obj.level = "all"; }
+    if (level == StringView{"first"}) { obj.level = "first"; }
+    else if (level == StringView{"all"}) { obj.level = "all"; }
     else
     {
         fmt::printf("Noise Estimation at level - first or all");

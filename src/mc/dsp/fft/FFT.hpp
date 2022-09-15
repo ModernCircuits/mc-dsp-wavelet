@@ -6,10 +6,10 @@
 #include "mc/dsp/fft/backend/KissFFT.hpp"
 #include "mc/dsp/fft/backend/PFFFT.hpp"
 
-#include "mc/algorithm.hpp"
-#include "mc/complex.hpp"
-#include "mc/memory.hpp"
-#include "mc/preprocessor.hpp"
+#include <mc/core/algorithm.hpp>
+#include <mc/core/complex.hpp>
+#include <mc/core/config.hpp>
+#include <mc/core/memory.hpp>
 
 namespace mc::dsp
 {

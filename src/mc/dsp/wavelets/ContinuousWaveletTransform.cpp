@@ -4,13 +4,15 @@
 #include "mc/dsp/fft/FFT.hpp"
 #include "mc/dsp/wavelets/common.hpp"
 
-#include "mc/cassert.hpp"
-#include "mc/cmath.hpp"
-#include "mc/cstdlib.hpp"
-#include "mc/cstring.hpp"
-#include "mc/format.hpp"
-#include "mc/memory.hpp"
-#include "mc/string_view.hpp"
+#include <mc/core/cassert.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/cstdlib.hpp>
+#include <mc/core/cstring.hpp>
+#include <mc/core/format.hpp>
+#include <mc/core/memory.hpp>
+#include <mc/core/string_view.hpp>
+
+#include <fmt/printf.h>
 
 namespace
 {
@@ -705,7 +707,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, float p
     params   = std::make_unique<float[]>(nj2 + 2 * j + n);
 
     int motherTmp{0};
-    if ((wave == string_view{"morlet"}) || (wave == string_view{"morl"}))
+    if ((wave == StringView{"morlet"}) || (wave == StringView{"morl"}))
     {
         s0Tmp     = 2 * dtIn;
         djTmp     = 0.4875;
@@ -718,7 +720,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, float p
         if (param == 0) { param = 6.0F; }
         wave_ = "morlet";
     }
-    else if (wave == string_view{"paul"})
+    else if (wave == StringView{"paul"})
     {
         s0Tmp     = 2 * dtIn;
         djTmp     = 0.4875;
@@ -731,7 +733,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(char const* wave, float p
         if (param == 0) { param = 4.0F; }
         wave_ = "paul";
     }
-    else if ((wave == string_view{"dgauss"}) || (wave == string_view{"dog"}))
+    else if ((wave == StringView{"dgauss"}) || (wave == StringView{"dog"}))
     {
         s0Tmp     = 2 * dtIn;
         djTmp     = 0.4875;

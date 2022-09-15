@@ -4,13 +4,14 @@
 #include "mc/dsp/fft/FFT.hpp"
 #include "mc/dsp/wavelets/common.hpp"
 
-#include "mc/cassert.hpp"
-#include "mc/cmath.hpp"
-#include "mc/cstring.hpp"
-#include "mc/format.hpp"
-#include "mc/string_view.hpp"
-#include "mc/utility.hpp"
+#include <mc/core/cassert.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/cstring.hpp>
+#include <mc/core/format.hpp>
+#include <mc/core/string_view.hpp>
+#include <mc/core/utility.hpp>
 
+#include <fmt/printf.h>
 namespace mc::dsp
 {
 
@@ -126,8 +127,8 @@ WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, std::s
     this->params    = std::make_unique<int[]>(2U * j + sumacc);
     this->outlength = 0;
     if (method == nullptr) { this->ext = "per"; }
-    else if ((method == string_view{"dwt"}) || (method == string_view{"DWT"})) { this->ext = "per"; }
-    else if ((method == string_view{"swt"}) || (method == string_view{"SWT"}))
+    else if ((method == StringView{"dwt"}) || (method == StringView{"DWT"})) { this->ext = "per"; }
+    else if ((method == StringView{"swt"}) || (method == StringView{"SWT"}))
     {
         if ((testSWTlength(rows, j) == 0) || (testSWTlength(cols, j) == 0))
         {
@@ -137,7 +138,7 @@ WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, std::s
 
         this->ext = "per";
     }
-    else if ((method == string_view{"MODWT"}) || (method == string_view{"modwt"}))
+    else if ((method == StringView{"MODWT"}) || (method == StringView{"modwt"}))
     {
         if (strstr(wave.name().c_str(), "haar") == nullptr)
         {
@@ -172,19 +173,19 @@ WaveletTransform2D::WaveletTransform2D(Wavelet& wave, char const* method, std::s
 
 auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void
 {
-    if (wt.method() == string_view{"dwt"})
+    if (wt.method() == StringView{"dwt"})
     {
-        if (extension == string_view{"sym"}) { wt.ext = "sym"; }
-        else if (extension == string_view{"per"}) { wt.ext = "per"; }
+        if (extension == StringView{"sym"}) { wt.ext = "sym"; }
+        else if (extension == StringView{"per"}) { wt.ext = "per"; }
         else
         {
             fmt::printf("Signal extension can be either per or sym");
             exit(-1);
         }
     }
-    else if ((wt.method() == string_view{"swt"}) || (wt.method() == "modwt"))
+    else if ((wt.method() == StringView{"swt"}) || (wt.method() == "modwt"))
     {
-        if (extension == string_view{"per"}) { wt.ext = "per"; }
+        if (extension == StringView{"per"}) { wt.ext = "per"; }
         else
         {
             fmt::printf("Signal extension can only be per");
@@ -218,7 +219,7 @@ auto dwt(WaveletTransform2D& wt, float const* inp) -> std::unique_ptr<float[]>
     auto lp    = wt.wave().lpd().size();
     auto clen  = j * 3;
 
-    if (wt.ext == string_view{"per"})
+    if (wt.ext == StringView{"per"})
     {
         auto idx = 2 * j;
         while (idx > 0)
@@ -291,7 +292,7 @@ auto dwt(WaveletTransform2D& wt, float const* inp) -> std::unique_ptr<float[]>
         return wavecoeff;
     }
 
-    MC_ASSERT(wt.ext == string_view{"sym"});
+    MC_ASSERT(wt.ext == StringView{"sym"});
 
     auto idx = 2 * j;
     while (idx > 0)
@@ -385,7 +386,7 @@ auto idwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void
     auto const cols = wt.cols();
     auto const j    = wt.J;
 
-    if (wt.ext == string_view{"per"})
+    if (wt.ext == StringView{"per"})
     {
         auto const n  = rows > cols ? 2 * rows : 2 * cols;
         auto const lf = (wt.wave().lpr().size() + wt.wave().hpr().size()) / 2;
@@ -469,7 +470,7 @@ auto idwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void
 
         return;
     }
-    MC_ASSERT(wt.ext == string_view{"sym"});
+    MC_ASSERT(wt.ext == StringView{"sym"});
 
     auto const n  = rows > cols ? 2 * rows - 1 : 2 * cols - 1;
     auto const lf = (wt.wave().lpr().size() + wt.wave().hpr().size()) / 2;

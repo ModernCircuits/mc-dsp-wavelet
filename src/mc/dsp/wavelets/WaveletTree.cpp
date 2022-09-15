@@ -2,11 +2,13 @@
 
 #include "mc/dsp/wavelets/common.hpp"
 
-#include "mc/cassert.hpp"
-#include "mc/cmath.hpp"
-#include "mc/format.hpp"
-#include "mc/string_view.hpp"
-#include "mc/utility.hpp"
+#include <mc/core/cassert.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/format.hpp>
+#include <mc/core/string_view.hpp>
+#include <mc/core/utility.hpp>
+
+#include <fmt/printf.h>
 
 namespace mc::dsp
 {
@@ -191,7 +193,7 @@ auto wtree(WaveletTree& wt, float const* inp) -> void
     n  = tempLen;
     lp = wt.wave->lpd().size();
 
-    if (wt.extension() == string_view{"per"})
+    if (wt.extension() == StringView{"per"})
     {
         auto i = j;
         p2     = 2;
@@ -231,7 +233,7 @@ auto wtree(WaveletTree& wt, float const* inp) -> void
             np      = n2;
         }
     }
-    else if (wt.extension() == string_view{"sym"})
+    else if (wt.extension() == StringView{"sym"})
     {
         auto i = j;
         p2     = 2;
@@ -354,7 +356,7 @@ auto WaveletTree::coeffs(std::size_t x, std::size_t y, float* coeffs, std::size_
 
 auto WaveletTree::extension(char const* newExtension) noexcept -> void
 {
-    MC_ASSERT((newExtension == string_view{"sym"}) || (newExtension == string_view{"per"}));
+    MC_ASSERT((newExtension == StringView{"sym"}) || (newExtension == StringView{"per"}));
     ext_ = newExtension;
 }
 

@@ -2,13 +2,13 @@
 
 #include "mc/dsp/fft/WindowFunction.hpp"
 
-#include "mc/algorithm.hpp"
-#include "mc/cassert.hpp"
-#include "mc/cmath.hpp"
-#include "mc/cstddef.hpp"
-#include "mc/functional.hpp"
-#include "mc/numbers.hpp"
-#include "mc/vector.hpp"
+#include <mc/core/algorithm.hpp>
+#include <mc/core/cassert.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/cstddef.hpp>
+#include <mc/core/functional.hpp>
+#include <mc/core/numbers.hpp>
+#include <mc/core/vector.hpp>
 
 namespace mc::dsp
 {

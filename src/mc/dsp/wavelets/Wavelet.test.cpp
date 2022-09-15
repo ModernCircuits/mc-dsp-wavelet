@@ -1,20 +1,20 @@
 #include "mc/dsp/wavelets.hpp"
 
-#include "mc/algorithm.hpp"
-#include "mc/cmath.hpp"
-#include "mc/cstdlib.hpp"
-#include "mc/cstring.hpp"
-#include "mc/format.hpp"
-#include "mc/memory.hpp"
-#include "mc/random.hpp"
-#include "mc/sstream.hpp"
-#include "mc/vector.hpp"
+#include <mc/core/algorithm.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/cstdlib.hpp>
+#include <mc/core/cstring.hpp>
+#include <mc/core/format.hpp>
+#include <mc/core/memory.hpp>
+#include <mc/core/random.hpp>
+#include <mc/core/sstream.hpp>
+#include <mc/core/vector.hpp>
 
 #include "mc/testing/test.hpp"
 
 #include <catch2/catch_test_macros.hpp>
 
-namespace dsp = mc::dsp;
+using namespace mc;
 
 TEST_CASE("dsp/wavelet: dbCoefTests", "[dsp][wavelet]")
 {

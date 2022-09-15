@@ -1,10 +1,10 @@
 #include "FFT.hpp"
 
-#include "mc/cassert.hpp"
-#include "mc/cmath.hpp"
-#include "mc/format.hpp"
+#include <mc/core/cassert.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/format.hpp>
 
-#include "mc/memory.hpp"
+#include <mc/core/memory.hpp>
 
 namespace
 {

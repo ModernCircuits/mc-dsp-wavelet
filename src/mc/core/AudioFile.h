@@ -21,17 +21,17 @@
 #ifndef AS_AudioFile_h
 #define AS_AudioFile_h
 
-#include "mc/algorithm.hpp"
-#include "mc/cassert.hpp"
-#include "mc/cstring.hpp"
-#include "mc/format.hpp"
-#include "mc/fstream.hpp"
-#include "mc/iterator.hpp"
-#include "mc/limits.hpp"
-#include "mc/preprocessor.hpp"
-#include "mc/string.hpp"
-#include "mc/unordered_map.hpp"
-#include "mc/vector.hpp"
+#include <mc/core/algorithm.hpp>
+#include <mc/core/cassert.hpp>
+#include <mc/core/config.hpp>
+#include <mc/core/cstring.hpp>
+#include <mc/core/format.hpp>
+#include <mc/core/fstream.hpp>
+#include <mc/core/iterator.hpp>
+#include <mc/core/limits.hpp>
+#include <mc/core/string.hpp>
+#include <mc/core/unordered_map.hpp>
+#include <mc/core/vector.hpp>
 
 // disable some warnings on Windows
 #if defined(_MSC_VER)

@@ -4,14 +4,15 @@
 #include "mc/dsp/fft/FFT.hpp"
 #include "mc/dsp/wavelets/common.hpp"
 
-#include "mc/cassert.hpp"
-#include "mc/cmath.hpp"
-#include "mc/cstdlib.hpp"
-#include "mc/cstring.hpp"
-#include "mc/format.hpp"
-#include "mc/string_view.hpp"
-#include "mc/utility.hpp"
+#include <mc/core/cassert.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/cstdlib.hpp>
+#include <mc/core/cstring.hpp>
+#include <mc/core/format.hpp>
+#include <mc/core/string_view.hpp>
+#include <mc/core/utility.hpp>
 
+#include <fmt/printf.h>
 namespace mc::dsp
 {
 
@@ -75,7 +76,7 @@ auto entropyL(float const* x, int n) -> float
 
 auto costfunc(float* x, int n, char const* entropy, float p) -> float
 {
-    auto e = string_view{entropy};
+    auto e = StringView{entropy};
     if (e == "shannon") { return entropyS(x, n); }
     if (e == "threshold") { return entropyT(x, n, p); }
     if (e == "norm") { return entropyN(x, n, p); }
@@ -302,7 +303,7 @@ auto dwpt(WaveletPacketTransform& wt, float const* inp) -> void
     // set eparam value here
     wt.costvalues[0] = costfunc(orig.get(), wt.signalLength(), wt.entropy.c_str(), eparam);
     auto it2         = 1;
-    if (wt.ext == string_view{"per"})
+    if (wt.ext == StringView{"per"})
     {
         auto i = jj;
         p2     = 2;
@@ -342,7 +343,7 @@ auto dwpt(WaveletPacketTransform& wt, float const* inp) -> void
             np      = n2;
         }
     }
-    else if (wt.ext == string_view{"sym"})
+    else if (wt.ext == StringView{"sym"})
     {
         auto i = jj;
         p2     = 2;
@@ -597,7 +598,7 @@ auto idwpt(WaveletPacketTransform& wt, float* dwtop) -> void
             ptemp[i] = 0;
         }
 
-        if (wt.ext == string_view{"per"})
+        if (wt.ext == StringView{"per"})
         {
             index = 0;
             for (auto i = 0; i < j; ++i)
@@ -696,7 +697,7 @@ auto idwpt(WaveletPacketTransform& wt, float* dwtop) -> void
                 indexp = index2;
             }
         }
-        else if (wt.ext == string_view{"sym"})
+        else if (wt.ext == StringView{"sym"})
         {
             index = 0;
 
@@ -804,8 +805,8 @@ auto idwpt(WaveletPacketTransform& wt, float* dwtop) -> void
 
 auto setDWPTExtension(WaveletPacketTransform& wt, char const* extension) -> void
 {
-    if (extension == string_view{"sym"}) { wt.ext = "sym"; }
-    else if (extension == string_view{"per"}) { wt.ext = "per"; }
+    if (extension == StringView{"sym"}) { wt.ext = "sym"; }
+    else if (extension == StringView{"per"}) { wt.ext = "per"; }
     else { throw std::invalid_argument("Signal extension can be either per or sym"); }
 }
 

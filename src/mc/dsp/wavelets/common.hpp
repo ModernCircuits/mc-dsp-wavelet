@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mc/cstddef.hpp"
+#include <mc/core/cstddef.hpp>
 
 namespace mc::dsp
 {

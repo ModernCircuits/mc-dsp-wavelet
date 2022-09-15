@@ -5,14 +5,15 @@
 #include "mc/dsp/fft/FFT.hpp"
 #include "mc/dsp/wavelets/common.hpp"
 
-#include "mc/cassert.hpp"
-#include "mc/cmath.hpp"
-#include "mc/cstdlib.hpp"
-#include "mc/cstring.hpp"
-#include "mc/format.hpp"
-#include "mc/iterator.hpp"
-#include "mc/string_view.hpp"
+#include <mc/core/cassert.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/cstdlib.hpp>
+#include <mc/core/cstring.hpp>
+#include <mc/core/format.hpp>
+#include <mc/core/iterator.hpp>
+#include <mc/core/string_view.hpp>
 
+#include <fmt/printf.h>
 namespace mc::dsp
 {
 
@@ -112,13 +113,13 @@ WaveletTransform::WaveletTransform(Wavelet& w, char const* method, std::size_t s
         this->outlength = siglength + 2 * levels_ * (size + 1);
         ext_            = SignalExtension::symmetric;
     }
-    else if ((method == string_view{"dwt"}) || (method == string_view{"DWT"}))
+    else if ((method == StringView{"dwt"}) || (method == StringView{"DWT"}))
     {
         this->params    = std::make_unique<float[]>(siglength + 2 * levels_ * (size + 1));
         this->outlength = siglength + 2 * levels_ * (size + 1);
         ext_            = SignalExtension::symmetric;
     }
-    else if ((method == string_view{"swt"}) || (method == string_view{"SWT"}))
+    else if ((method == StringView{"swt"}) || (method == StringView{"SWT"}))
     {
         if (testSWTlength(siglength, levels_) == 0)
         {
@@ -129,7 +130,7 @@ WaveletTransform::WaveletTransform(Wavelet& w, char const* method, std::size_t s
         this->outlength = siglength * (levels_ + 1);
         ext_            = SignalExtension::periodic;
     }
-    else if ((method == string_view{"MODWT"}) || (method == string_view{"modwt"}))
+    else if ((method == StringView{"MODWT"}) || (method == StringView{"modwt"}))
     {
 
         if (strstr(w.name().c_str(), "haar") == nullptr)
@@ -153,15 +154,15 @@ WaveletTransform::WaveletTransform(Wavelet& w, char const* method, std::size_t s
     }
 
     this->output_ = &this->params[0];
-    if ((method == string_view{"dwt"}) || (method == string_view{"DWT"}))
+    if ((method == StringView{"dwt"}) || (method == StringView{"DWT"}))
     {
         for (std::size_t i = 0; i < siglength + 2 * levels() * (size + 1); ++i) { this->params[i] = 0.0F; }
     }
-    else if ((method == string_view{"swt"}) || (method == string_view{"SWT"}))
+    else if ((method == StringView{"swt"}) || (method == StringView{"SWT"}))
     {
         for (std::size_t i = 0; i < siglength * (levels() + 1); ++i) { this->params[i] = 0.0F; }
     }
-    else if ((method == string_view{"MODWT"}) || (method == string_view{"modwt"}))
+    else if ((method == StringView{"MODWT"}) || (method == StringView{"modwt"}))
     {
         for (std::size_t i = 0; i < siglength * 2 * (levels() + 1); ++i) { this->params[i] = 0.0F; }
     }
@@ -712,8 +713,8 @@ static auto swtDirect(WaveletTransform& wt, float const* inp) -> void
 
 auto swt(WaveletTransform& wt, float const* inp) -> void
 {
-    if ((wt.method() == string_view{"swt"}) && (wt.convMethod() == ConvolutionMethod::direct)) { swtDirect(wt, inp); }
-    else if ((wt.method() == string_view{"swt"}) && (wt.convMethod() == ConvolutionMethod::fft)) { swtFft(wt, inp); }
+    if ((wt.method() == StringView{"swt"}) && (wt.convMethod() == ConvolutionMethod::direct)) { swtDirect(wt, inp); }
+    else if ((wt.method() == StringView{"swt"}) && (wt.convMethod() == ConvolutionMethod::fft)) { swtFft(wt, inp); }
     else { throw std::invalid_argument("SWT Only accepts two methods - direct and fft"); }
 }
 

@@ -1,9 +1,9 @@
 #include "FFTConvolver.hpp"
 
-#include "mc/algorithm.hpp"
-#include "mc/cmath.hpp"
-#include "mc/memory.hpp"
-#include "mc/preprocessor.hpp"
+#include <mc/core/algorithm.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/config.hpp>
+#include <mc/core/memory.hpp>
 
 namespace mc::dsp
 {

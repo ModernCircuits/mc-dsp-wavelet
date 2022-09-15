@@ -1,6 +1,6 @@
 #include "WindowFunction.hpp"
 
-#include "mc/cassert.hpp"
+#include <mc/core/cassert.hpp>
 
 namespace mc::dsp
 {

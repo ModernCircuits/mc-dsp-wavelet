@@ -1,7 +1,7 @@
 #pragma once
 
-#include "mc/preprocessor.hpp"
-#include "mc/string.hpp"
+#include <mc/core/config.hpp>
+#include <mc/core/string.hpp>
 
 namespace mc::dsp
 {

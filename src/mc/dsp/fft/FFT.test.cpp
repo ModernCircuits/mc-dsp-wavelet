@@ -1,13 +1,13 @@
 #include "mc/dsp/fft.hpp"
 
-#include "mc/format.hpp"
-#include "mc/iterator.hpp"
+#include <mc/core/format.hpp>
+#include <mc/core/iterator.hpp>
 
 #include "mc/testing/test.hpp"
 
 #include <catch2/catch_test_macros.hpp>
 
-namespace dsp = mc::dsp;
+using namespace mc;
 
 struct FFTRealToComplexTestCase
 {

@@ -1,12 +1,12 @@
 #include "mc/dsp/wavelets.hpp"
 
-#include "mc/memory.hpp"
 #include "mc/testing/test.hpp"
+#include <mc/core/memory.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-namespace dsp = mc::dsp;
+using namespace mc;
 
 #define DWT_IDWT_ROUNDTRIP(waveletName)                                                                                  \
     TEST_CASE("dsp/wavelet: WaveletTransform(dwt/idwt) - " waveletName, "[dsp][wavelet]")                                \

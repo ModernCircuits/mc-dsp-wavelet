@@ -1,14 +1,14 @@
 #pragma once
 
-#include "mc/algorithm.hpp"
-#include "mc/array.hpp"
-#include "mc/cmath.hpp"
-#include "mc/complex.hpp"
-#include "mc/cstring.hpp"
-#include "mc/iterator.hpp"
-#include "mc/memory.hpp"
-#include "mc/preprocessor.hpp"
-#include "mc/vector.hpp"
+#include <mc/core/algorithm.hpp>
+#include <mc/core/array.hpp>
+#include <mc/core/cmath.hpp>
+#include <mc/core/complex.hpp>
+#include <mc/core/config.hpp>
+#include <mc/core/cstring.hpp>
+#include <mc/core/iterator.hpp>
+#include <mc/core/memory.hpp>
+#include <mc/core/vector.hpp>
 
 #include "fftw3.h"
 

@@ -1,10 +1,10 @@
 #include "OverlapSaveConvolver.hpp"
 
-#include "mc/algorithm.hpp"
-#include "mc/bit.hpp"
-#include "mc/cassert.hpp"
-#include "mc/climits.hpp"
-#include "mc/cstring.hpp"
+#include <mc/core/algorithm.hpp>
+#include <mc/core/bit.hpp>
+#include <mc/core/cassert.hpp>
+#include <mc/core/climits.hpp>
+#include <mc/core/cstring.hpp>
 
 namespace mc::dsp
 {

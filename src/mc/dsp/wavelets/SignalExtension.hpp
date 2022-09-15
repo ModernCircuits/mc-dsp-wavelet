@@ -1,8 +1,8 @@
 #pragma once
 
-#include "mc/cstddef.hpp"
-#include "mc/preprocessor.hpp"
-#include "mc/string.hpp"
+#include <mc/core/config.hpp>
+#include <mc/core/cstddef.hpp>
+#include <mc/core/string.hpp>
 
 namespace mc::dsp
 {
