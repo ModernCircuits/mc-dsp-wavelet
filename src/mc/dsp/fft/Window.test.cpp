@@ -26,7 +26,7 @@ TEMPLATE_TEST_CASE("dsp/fft: Window", "[dsp][fft]", float, double)
     };
 
     auto size   = std::size_t(2048);
-    auto window = std::vector<T>(size, T(0));
+    auto window = Vector<T>(size, T(0));
 
     dsp::fillWindow(begin(window), end(window), dsp::WindowFunction::triangular, true);
     REQUIRE(allPositive(window));
@@ -65,7 +65,7 @@ TEMPLATE_TEST_CASE("dsp/fft: Window", "[dsp][fft]", float, double)
     REQUIRE(allPositive(window));
     REQUIRE(allEqual(window, T(1.0)));
 
-    auto signal = std::vector<T>(size, T(0.5));
+    auto signal = Vector<T>(size, T(0.5));
     dsp::multiplyWithWindow(begin(signal), end(signal), cbegin(window), cend(window));
     REQUIRE(allPositive(signal));
     REQUIRE(allEqual(signal, T(0.5)));

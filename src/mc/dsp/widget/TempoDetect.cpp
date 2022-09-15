@@ -48,7 +48,7 @@ auto TempoDetect::operator()(Span<float> input, float sampleRate) -> float
     auto cD = Span<float>{};
 
     auto cDMinlen = 0.0F;
-    auto cDSum    = std::vector<float>{};
+    auto cDSum    = Vector<float>{};
     dwt(wt_, input.data());
     for (auto loop{0}; loop < levels; ++loop) {
         if (loop == 0) {

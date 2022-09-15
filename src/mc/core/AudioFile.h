@@ -63,7 +63,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     class AudioFile
     {
     public:
-        using AudioBuffer = std::vector<std::vector<T>>;
+        using AudioBuffer = Vector<Vector<T>>;
 
         /** Constructor */
         AudioFile();
@@ -157,9 +157,9 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
             BigEndian
         };
 
-        auto determineAudioFileFormat(std::vector<uint8_t>& fileData) -> AudioFileFormat;
-        auto decodeWaveFile(std::vector<uint8_t>& fileData) -> bool;
-        auto decodeAiffFile(std::vector<uint8_t>& fileData) -> bool;
+        auto determineAudioFileFormat(Vector<uint8_t>& fileData) -> AudioFileFormat;
+        auto decodeWaveFile(Vector<uint8_t>& fileData) -> bool;
+        auto decodeAiffFile(Vector<uint8_t>& fileData) -> bool;
 
         auto saveToWaveFile(String filePath) -> bool;
         auto saveToAiffFile(String filePath) -> bool;
@@ -167,18 +167,18 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
         void clearAudioBuffer();
 
         auto fourBytesToInt(
-            std::vector<uint8_t>& source,
+            Vector<uint8_t>& source,
             int startIndex,
             Endianness endianness = Endianness::LittleEndian
         ) -> int32_t;
         auto twoBytesToInt(
-            std::vector<uint8_t>& source,
+            Vector<uint8_t>& source,
             int startIndex,
             Endianness endianness = Endianness::LittleEndian
         ) -> int16_t;
-        auto getIndexOfString(std::vector<uint8_t>& source, String const& s) -> int;
+        auto getIndexOfString(Vector<uint8_t>& source, String const& s) -> int;
         auto getIndexOfChunk(
-            std::vector<uint8_t>& source,
+            Vector<uint8_t>& source,
             String const& chunkHeaderID,
             int startIndex,
             Endianness endianness = Endianness::LittleEndian
@@ -190,31 +190,30 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
         auto sampleToSingleByte(T sample) -> uint8_t;
         auto singleByteToSample(uint8_t sample) -> T;
 
-        auto getAiffSampleRate(std::vector<uint8_t>& fileData, int sampleRateStartIndex)
+        auto getAiffSampleRate(Vector<uint8_t>& fileData, int sampleRateStartIndex)
             -> uint32_t;
         auto tenByteMatch(
-            std::vector<uint8_t>& v1,
+            Vector<uint8_t>& v1,
             int startIndex1,
-            std::vector<uint8_t>& v2,
+            Vector<uint8_t>& v2,
             int startIndex2
         ) -> bool;
-        void addSampleRateToAiffData(std::vector<uint8_t>& fileData, uint32_t sampleRate);
+        void addSampleRateToAiffData(Vector<uint8_t>& fileData, uint32_t sampleRate);
         auto clamp(T value, T minValue, T maxValue) -> T;
 
-        void addStringToFileData(std::vector<uint8_t>& fileData, String const& s);
+        void addStringToFileData(Vector<uint8_t>& fileData, String const& s);
         void addInt32ToFileData(
-            std::vector<uint8_t>& fileData,
+            Vector<uint8_t>& fileData,
             int32_t i,
             Endianness endianness = Endianness::LittleEndian
         );
         void addInt16ToFileData(
-            std::vector<uint8_t>& fileData,
+            Vector<uint8_t>& fileData,
             int16_t i,
             Endianness endianness = Endianness::LittleEndian
         );
 
-        auto writeDataToFile(std::vector<uint8_t>& fileData, String const& filePath)
-            -> bool;
+        auto writeDataToFile(Vector<uint8_t>& fileData, String const& filePath) -> bool;
 
         void reportError(String const& errorMessage);
 
@@ -225,7 +224,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     };
 
     // Pre-defined 10-byte representations of common sample rates
-    static std::unordered_map<uint32_t, std::vector<uint8_t>> aiffSampleRateTable = {
+    static std::unordered_map<uint32_t, Vector<uint8_t>> aiffSampleRateTable = {
         {   8000,   {64, 11, 250, 0, 0, 0, 0, 0, 0, 0}},
         {  11025,  {64, 12, 172, 68, 0, 0, 0, 0, 0, 0}},
         {  16000,   {64, 12, 250, 0, 0, 0, 0, 0, 0, 0}},
@@ -438,7 +437,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
             return false;
         }
 
-        std::vector<uint8_t> fileData;
+        Vector<uint8_t> fileData;
 
         file.unsetf(std::ios::skipws);
 
@@ -467,7 +466,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     }
 
     template<class T>
-    auto AudioFile<T>::decodeWaveFile(std::vector<uint8_t> & fileData)->bool
+    auto AudioFile<T>::decodeWaveFile(Vector<uint8_t> & fileData)->bool
     {
         // -----------------------------------------------------------
         // HEADER CHUNK
@@ -612,7 +611,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     }
 
     template<class T>
-    auto AudioFile<T>::decodeAiffFile(std::vector<uint8_t> & fileData)->bool
+    auto AudioFile<T>::decodeAiffFile(Vector<uint8_t> & fileData)->bool
     {
         // -----------------------------------------------------------
         // HEADER CHUNK
@@ -767,7 +766,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
     template<class T>
     auto AudioFile<T>::getAiffSampleRate(
-        std::vector<uint8_t> & fileData,
+        Vector<uint8_t> & fileData,
         int sampleRateStartIndex
     )
         ->uint32_t
@@ -783,9 +782,9 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
     template<class T>
     auto AudioFile<T>::tenByteMatch(
-        std::vector<uint8_t> & v1,
+        Vector<uint8_t> & v1,
         int startIndex1,
-        std::vector<uint8_t>& v2,
+        Vector<uint8_t>& v2,
         int startIndex2
     )
         ->bool
@@ -799,7 +798,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
     template<class T>
     void AudioFile<T>::addSampleRateToAiffData(
-        std::vector<uint8_t> & fileData,
+        Vector<uint8_t> & fileData,
         uint32_t sampleRate
     )
     {
@@ -822,7 +821,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     template<class T>
     auto AudioFile<T>::saveToWaveFile(String filePath)->bool
     {
-        std::vector<uint8_t> fileData;
+        Vector<uint8_t> fileData;
 
         int32_t dataChunkSize
             = getNumSamplesPerChannel() * (getNumChannels() * bitDepth_ / 8);
@@ -932,7 +931,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     template<class T>
     auto AudioFile<T>::saveToAiffFile(String filePath)->bool
     {
-        std::vector<uint8_t> fileData;
+        Vector<uint8_t> fileData;
 
         int32_t numBytesPerSample        = bitDepth_ / 8;
         int32_t numBytesPerFrame         = numBytesPerSample * getNumChannels();
@@ -1030,10 +1029,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     }
 
     template<class T>
-    auto AudioFile<T>::writeDataToFile(
-        std::vector<uint8_t> & fileData,
-        String const& filePath
-    )
+    auto AudioFile<T>::writeDataToFile(Vector<uint8_t> & fileData, String const& filePath)
         ->bool
     {
         std::ofstream outputFile(filePath, std::ios::binary);
@@ -1053,14 +1049,14 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     }
 
     template<class T>
-    void AudioFile<T>::addStringToFileData(std::vector<uint8_t> & fileData, String const& s)
+    void AudioFile<T>::addStringToFileData(Vector<uint8_t> & fileData, String const& s)
     {
         for (char i : s) { fileData.push_back((uint8_t)i); }
     }
 
     template<class T>
     void AudioFile<T>::addInt32ToFileData(
-        std::vector<uint8_t> & fileData,
+        Vector<uint8_t> & fileData,
         int32_t i,
         Endianness endianness
     )
@@ -1084,7 +1080,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
     template<class T>
     void AudioFile<T>::addInt16ToFileData(
-        std::vector<uint8_t> & fileData,
+        Vector<uint8_t> & fileData,
         int16_t i,
         Endianness endianness
     )
@@ -1112,8 +1108,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     }
 
     template<class T>
-    auto AudioFile<T>::determineAudioFileFormat(std::vector<uint8_t> & fileData)
-        ->AudioFileFormat
+    auto AudioFile<T>::determineAudioFileFormat(Vector<uint8_t> & fileData)->AudioFileFormat
     {
         String header(fileData.begin(), fileData.begin() + 4);
 
@@ -1124,7 +1119,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
     template<class T>
     auto AudioFile<T>::fourBytesToInt(
-        std::vector<uint8_t> & source,
+        Vector<uint8_t> & source,
         int startIndex,
         Endianness endianness
     )
@@ -1145,7 +1140,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
     template<class T>
     auto AudioFile<T>::twoBytesToInt(
-        std::vector<uint8_t> & source,
+        Vector<uint8_t> & source,
         int startIndex,
         Endianness endianness
     )
@@ -1164,7 +1159,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
     template<class T>
     auto AudioFile<T>::getIndexOfString(
-        std::vector<uint8_t> & source,
+        Vector<uint8_t> & source,
         String const& stringToSearchFor
     )
         ->int
@@ -1186,7 +1181,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
     template<class T>
     auto AudioFile<T>::getIndexOfChunk(
-        std::vector<uint8_t> & source,
+        Vector<uint8_t> & source,
         String const& chunkHeaderID,
         int startIndex,
         Endianness endianness

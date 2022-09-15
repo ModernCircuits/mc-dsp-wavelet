@@ -10,8 +10,8 @@ using namespace mc;
 
 struct FFTRealToComplexTestCase
 {
-    std::vector<float> input{};
-    std::vector<Complex<float>> expected{};
+    Vector<float> input{};
+    Vector<Complex<float>> expected{};
 };
 
 auto readFFTRealToComplexTestData(char const* path) -> FFTRealToComplexTestCase
@@ -28,7 +28,7 @@ auto readFFTRealToComplexTestData(char const* path) -> FFTRealToComplexTestCase
 TEST_CASE("dsp/fft: realToComplex", "[dsp][fft]")
 {
 
-    auto const testFiles = std::vector<char const*>{
+    auto const testFiles = Vector<char const*>{
         "test_data/raw/fft_real_to_complex_01.txt",
     };
 
@@ -45,7 +45,7 @@ TEST_CASE("dsp/fft: realToComplex", "[dsp][fft]")
         auto fft = dsp::RFFT{
             static_cast<int>(testCase.input.size()),
             dsp::FFTDirection::forward};
-        auto output = std::vector<Complex<float>>(testCase.expected.size());
+        auto output = Vector<Complex<float>>(testCase.expected.size());
         fft.performRealToComplex(mc::data(testCase.input), mc::data(output));
         REQUIRE(
             std::equal(begin(output), end(output), begin(testCase.expected), closeEnough)

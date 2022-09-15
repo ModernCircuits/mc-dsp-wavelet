@@ -58,21 +58,21 @@ auto relError(float const* data, float const* rec, std::size_t n) -> float;
 auto generateRnd() -> float;
 
 template<typename T>
-using TestData = std::vector<std::vector<T>>;
+using TestData = Vector<Vector<T>>;
 
-auto split(String const& s, char delim) -> std::vector<String>;
+auto split(String const& s, char delim) -> Vector<String>;
 auto loadTestData(char const* filePath) -> TestData<float>;
 auto toFloat(TestData<float> const& d) -> TestData<float>;
 
 template<typename T>
-[[nodiscard]] auto readFileToVector(char const* filePath) -> std::vector<T>
+[[nodiscard]] auto readFileToVector(char const* filePath) -> Vector<T>
 {
     auto in = std::ifstream{filePath};
     if (!in) {
         throw std::invalid_argument{fmt::format("Cannot Open File: %s\n", filePath)};
     }
 
-    auto result = std::vector<T>{};
+    auto result = Vector<T>{};
     result.reserve(8096 * 4);
 
     auto line = String{};
@@ -88,7 +88,7 @@ template<typename T>
     return result;
 }
 
-auto generateRandomTestData(std::size_t n) -> std::vector<float>;
+auto generateRandomTestData(std::size_t n) -> Vector<float>;
 
 auto corrcoef(int n, float const* x, float const* y) -> float;
 

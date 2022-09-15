@@ -9,13 +9,13 @@
 using namespace mc;
 
 template<typename T>
-auto testConvolute(std::vector<std::vector<T>> const& testData) -> bool
+auto testConvolute(Vector<Vector<T>> const& testData) -> bool
 {
     auto const& signal   = testData[0];
     auto const& patch    = testData[1];
     auto const& expected = testData[2];
 
-    auto output = std::vector<T>(expected.size());
+    auto output = Vector<T>(expected.size());
     dsp::convolute(
         mc::data(signal),
         mc::size(signal),

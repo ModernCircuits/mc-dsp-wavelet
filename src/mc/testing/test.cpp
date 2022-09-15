@@ -77,9 +77,9 @@ auto generateRnd() -> float
     return dis(gen);
 }
 
-auto split(String const& s, char delim) -> std::vector<String>
+auto split(String const& s, char delim) -> Vector<String>
 {
-    auto result = std::vector<String>{};
+    auto result = Vector<String>{};
     auto ss     = std::stringstream(s);
     auto item   = String{};
 
@@ -91,7 +91,7 @@ auto loadTestData(char const* filePath) -> TestData<float>
 {
     auto parseLine = [](auto const& line) {
         auto splits = split(line, ' ');
-        auto values = std::vector<float>{};
+        auto values = Vector<float>{};
         for (auto const& s : splits) { values.push_back(std::stod(s)); }
         return values;
     };
@@ -120,9 +120,9 @@ auto toFloat(TestData<float> const& d) -> TestData<float>
     return result;
 }
 
-auto generateRandomTestData(std::size_t n) -> std::vector<float>
+auto generateRandomTestData(std::size_t n) -> Vector<float>
 {
-    std::vector<float> data(n);
+    Vector<float> data(n);
     auto rd  = std::random_device{};
     auto gen = std::mt19937{rd()};
     auto dis = std::uniform_real_distribution<float>{-1.0F, 1.0F};

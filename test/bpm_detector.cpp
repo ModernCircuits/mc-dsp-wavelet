@@ -53,7 +53,7 @@ struct BpmDetect
         auto cD = mc::Span<float>{};
 
         auto cDMinlen = 0.0F;
-        auto cDSum    = std::vector<float>{};
+        auto cDSum    = Vector<float>{};
         dwt(wt_, input.data());
         for (auto loop{0}; loop < levels; ++loop) {
             if (loop == 0) {
@@ -209,7 +209,7 @@ auto main(int argc, char** argv) -> int
     auto const maxWindowIndex = mc::size(channel) / windowSize;
 
     auto sampsNdx = 0U;
-    auto bpms     = std::vector<float>{};
+    auto bpms     = Vector<float>{};
     for (auto windowNdx{0U}; windowNdx < maxWindowIndex; ++windowNdx) {
         if (sampsNdx + windowSize >= mc::size(channel)) {
             fmt::print("ERROR");
