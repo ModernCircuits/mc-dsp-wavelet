@@ -1,12 +1,11 @@
-#include "mc/dsp/wavelets.hpp"
+#include <mc/dsp/wavelets.hpp>
 
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/cstring.hpp>
 #include <mc/core/format.hpp>
 #include <mc/core/memory.hpp>
-
-#include "mc/testing/test.hpp"
+#include <mc/testing/test.hpp>
 
 #include <fmt/printf.h>
 
@@ -24,12 +23,17 @@ auto main() -> int
 
     auto const j = std::size_t{1};
 
-    auto wt = dsp::WaveletTransform(obj, "swt", n, j);  // Initialize the wavelet transform object
+    auto wt = dsp::WaveletTransform(
+        obj,
+        "swt",
+        n,
+        j
+    );  // Initialize the wavelet transform object
     wt.convMethod(dsp::ConvolutionMethod::direct);
 
     swt(wt, inp.data());  // Perform SWT
-    // SWT output can be accessed using wt.output vector. Use wt_summary to find out how to extract appx and detail
-    // coefficients
+    // SWT output can be accessed using wt.output vector. Use wt_summary to find out how to
+    // extract appx and detail coefficients
 
     for (std::size_t i = 0; i < wt.outlength; ++i) { fmt::printf("%g ", wt.output()[i]); }
 
@@ -40,7 +44,8 @@ auto main() -> int
 
     fmt::printf(
         "\n MAX %g \n",
-        absmax(diff.get(), wt.signalLength()));  // If Reconstruction succeeded then the output should be a small value.
+        absmax(diff.get(), wt.signalLength())
+    );  // If Reconstruction succeeded then the output should be a small value.
 
     summary(wt);  // Prints the full summary.
 

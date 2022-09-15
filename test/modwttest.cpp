@@ -1,4 +1,4 @@
-#include "mc/dsp/wavelets.hpp"
+#include <mc/dsp/wavelets.hpp>
 
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
@@ -6,8 +6,7 @@
 #include <mc/core/format.hpp>
 #include <mc/core/memory.hpp>
 #include <mc/core/utility.hpp>
-
-#include "mc/testing/test.hpp"
+#include <mc/testing/test.hpp>
 
 #include <fmt/printf.h>
 
@@ -30,7 +29,9 @@ auto main() -> int
     // Use wt_summary to find out how to extract appx and detail coefficients
     modwt(wt, inp.data());  // Perform MODWT
 
-    for (auto i = 0; mc::cmp_less(i, wt.outlength); ++i) { fmt::printf("%g ", wt.output()[i]); }
+    for (auto i = 0; mc::cmp_less(i, wt.outlength); ++i) {
+        fmt::printf("%g ", wt.output()[i]);
+    }
 
     imodwt(wt, out.get());  // Perform ISWT (if needed)
 

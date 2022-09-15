@@ -1,11 +1,10 @@
-#include "mc/dsp/wavelets.hpp"
+#include <mc/dsp/wavelets.hpp>
 
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/cstring.hpp>
 #include <mc/core/format.hpp>
-
-#include "mc/testing/test.hpp"
+#include <mc/testing/test.hpp>
 
 #include <fmt/printf.h>
 
@@ -26,10 +25,8 @@ auto main() -> int
     auto j  = 2;
     auto wt = dsp::WaveletTransform2D(obj, "modwt", rows, cols, j);
 
-    for (auto i = 0; i < rows; ++i)
-    {
-        for (auto k = 0; k < cols; ++k)
-        {
+    for (auto i = 0; i < rows; ++i) {
+        for (auto k = 0; k < cols; ++k) {
             // inp[i*cols + k] = i*cols + k;
             inp[i * cols + k] = generateRnd();
             oup[i * cols + k] = 0.0F;

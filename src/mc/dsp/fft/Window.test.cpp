@@ -1,4 +1,4 @@
-#include "mc/dsp/fft.hpp"
+#include <mc/dsp/fft.hpp>
 
 #include <mc/core/format.hpp>
 
@@ -10,20 +10,17 @@ TEMPLATE_TEST_CASE("dsp/fft: Window", "[dsp][fft]", float, double)
 {
     using T = TestType;
 
-    auto allEqual = [](auto const& range, auto val)
-    {
+    auto allEqual = [](auto const& range, auto val) {
         auto equals = [val](auto v) { return v == val; };
         return std::all_of(cbegin(range), cend(range), equals);
     };
 
-    auto allPositive = [](auto const& range)
-    {
+    auto allPositive = [](auto const& range) {
         auto positive = [](auto v) { return v >= T(0); };
         return std::all_of(cbegin(range), cend(range), positive);
     };
 
-    auto allLessEqualOne = [](auto const& range)
-    {
+    auto allLessEqualOne = [](auto const& range) {
         auto lessEqual = [](auto v) { return v <= T(1); };
         return std::all_of(cbegin(range), cend(range), lessEqual);
     };

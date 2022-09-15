@@ -1,14 +1,14 @@
 #pragma once
 
-#include "mc/dsp/convolution/FFTConvolver.hpp"
-#include "mc/dsp/wavelets/Wavelet.hpp"
-
 #include <mc/core/config.hpp>
+
+#include <mc/dsp/convolution/FFTConvolver.hpp>
+#include <mc/dsp/wavelets/Wavelet.hpp>
+
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 struct WaveletTree
 {
     WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t j);

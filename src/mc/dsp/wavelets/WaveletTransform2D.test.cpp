@@ -1,7 +1,7 @@
-#include "mc/dsp/wavelets.hpp"
+#include <mc/dsp/wavelets.hpp>
 
-#include "mc/testing/test.hpp"
 #include <mc/core/memory.hpp>
+#include <mc/testing/test.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
@@ -10,22 +10,29 @@ using namespace mc;
 
 static constexpr auto const epsilon = 6e-7F;
 
-#define DWT_IDWT_ROUNDTRIP(waveletName)                                                                                \
-    TEST_CASE("dsp/wavelet: WaveletTransform2D(dwt/idwt) - " waveletName, "[dsp][wavelet]")                            \
-    {                                                                                                                  \
-        auto extension  = GENERATE(dsp::SignalExtension::periodic, dsp::SignalExtension::symmetric);                   \
-        auto levels     = GENERATE(1);                                                                                 \
-        auto const rows = 256;                                                                                         \
-        auto const cols = 200;                                                                                         \
-        auto const n    = rows * cols;                                                                                 \
-        auto const inp  = generateRandomTestData(n);                                                                   \
-        auto out        = makeZeros<float>(n);                                                                         \
-        auto wavelet    = dsp::Wavelet{waveletName};                                                                   \
-        auto wt         = dsp::WaveletTransform2D(wavelet, "dwt", rows, cols, levels);                                 \
-        setDWT2Extension(wt, extension == dsp::SignalExtension::symmetric ? "sym" : "per");                            \
-        auto wavecoeffs = dwt(wt, data(inp));                                                                          \
-        idwt(wt, wavecoeffs.get(), out.get());                                                                         \
-        REQUIRE(rmsError(out.get(), data(inp), n) <= epsilon);                                                         \
+#define DWT_IDWT_ROUNDTRIP(waveletName)                                                    \
+    TEST_CASE(                                                                             \
+        "dsp/wavelet: WaveletTransform2D(dwt/idwt) - " waveletName,                        \
+        "[dsp][wavelet]"                                                                   \
+    )                                                                                      \
+    {                                                                                      \
+        auto extension                                                                     \
+            = GENERATE(dsp::SignalExtension::periodic, dsp::SignalExtension::symmetric);   \
+        auto levels     = GENERATE(1);                                                     \
+        auto const rows = 256;                                                             \
+        auto const cols = 200;                                                             \
+        auto const n    = rows * cols;                                                     \
+        auto const inp  = generateRandomTestData(n);                                       \
+        auto out        = makeZeros<float>(n);                                             \
+        auto wavelet    = dsp::Wavelet{waveletName};                                       \
+        auto wt         = dsp::WaveletTransform2D(wavelet, "dwt", rows, cols, levels);     \
+        setDWT2Extension(                                                                  \
+            wt,                                                                            \
+            extension == dsp::SignalExtension::symmetric ? "sym" : "per"                   \
+        );                                                                                 \
+        auto wavecoeffs = dwt(wt, data(inp));                                              \
+        idwt(wt, wavecoeffs.get(), out.get());                                             \
+        REQUIRE(rmsError(out.get(), data(inp), n) <= epsilon);                             \
     }
 
 DWT_IDWT_ROUNDTRIP("db1")     // NOLINT
@@ -130,21 +137,24 @@ DWT_IDWT_ROUNDTRIP("rbior4.4")  // NOLINT
 DWT_IDWT_ROUNDTRIP("rbior5.5")  // NOLINT
 DWT_IDWT_ROUNDTRIP("rbior6.8")  // NOLINT
 
-#define MODWT_IMODWT_ROUNDTRIP(waveletName)                                                                            \
-    TEST_CASE("dsp/wavelet: WaveletTransform2D(modwt/imodwt) - " waveletName, "[dsp][wavelet]")                        \
-    {                                                                                                                  \
-        auto levels     = GENERATE(1);                                                                                 \
-        auto const rows = 256;                                                                                         \
-        auto const cols = 256;                                                                                         \
-        auto const n    = rows * cols;                                                                                 \
-        auto inp        = generateRandomTestData(n);                                                                   \
-        auto out        = makeZeros<float>(n);                                                                         \
-        auto wavelet    = dsp::Wavelet{waveletName};                                                                   \
-        auto wt         = dsp::WaveletTransform2D(wavelet, "modwt", rows, cols, levels);                               \
-        setDWT2Extension(wt, "per");                                                                                   \
-        auto wavecoeffs = modwt(wt, data(inp));                                                                        \
-        imodwt(wt, wavecoeffs.get(), out.get());                                                                       \
-        REQUIRE(rmsError(out.get(), data(inp), n) <= epsilon);                                                         \
+#define MODWT_IMODWT_ROUNDTRIP(waveletName)                                                \
+    TEST_CASE(                                                                             \
+        "dsp/wavelet: WaveletTransform2D(modwt/imodwt) - " waveletName,                    \
+        "[dsp][wavelet]"                                                                   \
+    )                                                                                      \
+    {                                                                                      \
+        auto levels     = GENERATE(1);                                                     \
+        auto const rows = 256;                                                             \
+        auto const cols = 256;                                                             \
+        auto const n    = rows * cols;                                                     \
+        auto inp        = generateRandomTestData(n);                                       \
+        auto out        = makeZeros<float>(n);                                             \
+        auto wavelet    = dsp::Wavelet{waveletName};                                       \
+        auto wt         = dsp::WaveletTransform2D(wavelet, "modwt", rows, cols, levels);   \
+        setDWT2Extension(wt, "per");                                                       \
+        auto wavecoeffs = modwt(wt, data(inp));                                            \
+        imodwt(wt, wavecoeffs.get(), out.get());                                           \
+        REQUIRE(rmsError(out.get(), data(inp), n) <= epsilon);                             \
     }
 
 MODWT_IMODWT_ROUNDTRIP("db1")     // NOLINT
@@ -219,21 +229,24 @@ MODWT_IMODWT_ROUNDTRIP("sym18")  // NOLINT
 MODWT_IMODWT_ROUNDTRIP("sym19")  // NOLINT
 MODWT_IMODWT_ROUNDTRIP("sym20")  // NOLINT
 
-#define SWT2_ISWT2_ROUNDTRIP(waveletName)                                                                              \
-    TEST_CASE("dsp/wavelet: WaveletTransform2D(swt2/iswt2) - " waveletName, "[dsp][wavelet]")                          \
-    {                                                                                                                  \
-        auto levels     = GENERATE(1, 2);                                                                              \
-        auto const rows = 512;                                                                                         \
-        auto const cols = 500;                                                                                         \
-        auto const n    = rows * cols;                                                                                 \
-        auto inp        = generateRandomTestData(n);                                                                   \
-        auto out        = makeZeros<float>(n);                                                                         \
-        auto wavelet    = dsp::Wavelet{waveletName};                                                                   \
-        auto wt         = dsp::WaveletTransform2D(wavelet, "swt", rows, cols, levels);                                 \
-        setDWT2Extension(wt, "per");                                                                                   \
-        auto wavecoeffs = swt2(wt, data(inp));                                                                         \
-        iswt2(wt, wavecoeffs.get(), out.get());                                                                        \
-        REQUIRE(rmsError(out.get(), data(inp), n) <= epsilon);                                                         \
+#define SWT2_ISWT2_ROUNDTRIP(waveletName)                                                  \
+    TEST_CASE(                                                                             \
+        "dsp/wavelet: WaveletTransform2D(swt2/iswt2) - " waveletName,                      \
+        "[dsp][wavelet]"                                                                   \
+    )                                                                                      \
+    {                                                                                      \
+        auto levels     = GENERATE(1, 2);                                                  \
+        auto const rows = 512;                                                             \
+        auto const cols = 500;                                                             \
+        auto const n    = rows * cols;                                                     \
+        auto inp        = generateRandomTestData(n);                                       \
+        auto out        = makeZeros<float>(n);                                             \
+        auto wavelet    = dsp::Wavelet{waveletName};                                       \
+        auto wt         = dsp::WaveletTransform2D(wavelet, "swt", rows, cols, levels);     \
+        setDWT2Extension(wt, "per");                                                       \
+        auto wavecoeffs = swt2(wt, data(inp));                                             \
+        iswt2(wt, wavecoeffs.get(), out.get());                                            \
+        REQUIRE(rmsError(out.get(), data(inp), n) <= epsilon);                             \
     }
 
 SWT2_ISWT2_ROUNDTRIP("db1")     // NOLINT

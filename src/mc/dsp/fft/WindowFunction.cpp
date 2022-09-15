@@ -2,12 +2,10 @@
 
 #include <mc/core/cassert.hpp>
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 auto toString(WindowFunction wf) -> std::string
 {
-    switch (wf)
-    {
+    switch (wf) {
         case WindowFunction::rectangular: return "Rectangular";
         case WindowFunction::triangular: return "Triangular";
         case WindowFunction::hann: return "Hann";

@@ -1,21 +1,26 @@
 #pragma once
 
-#include "mc/dsp/convolution/ConvolutionMethod.hpp"
-#include "mc/dsp/convolution/FFTConvolver.hpp"
-#include "mc/dsp/wavelets/SignalExtension.hpp"
-#include "mc/dsp/wavelets/Wavelet.hpp"
-
 #include <mc/core/config.hpp>
+
+#include <mc/dsp/convolution/ConvolutionMethod.hpp>
+#include <mc/dsp/convolution/FFTConvolver.hpp>
+#include <mc/dsp/wavelets/SignalExtension.hpp>
+#include <mc/dsp/wavelets/Wavelet.hpp>
+
 #include <mc/core/memory.hpp>
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 
 struct WaveletTransform
 {
-    WaveletTransform(Wavelet& wave, char const* method, std::size_t siglength, std::size_t j);
+    WaveletTransform(
+        Wavelet& wave,
+        char const* method,
+        std::size_t siglength,
+        std::size_t j
+    );
 
     [[nodiscard]] auto wave() const noexcept -> Wavelet const&;
     [[nodiscard]] auto levels() const noexcept -> int;

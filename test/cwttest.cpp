@@ -1,10 +1,9 @@
-#include "mc/dsp/wavelets.hpp"
+#include <mc/dsp/wavelets.hpp>
 
 #include <mc/core/cmath.hpp>
 #include <mc/core/format.hpp>
 #include <mc/core/memory.hpp>
-
-#include "mc/testing/test.hpp"
+#include <mc/testing/test.hpp>
 
 #include <fmt/printf.h>
 
@@ -58,9 +57,11 @@ auto main() -> int
 
     mn = 0.0F;
 
-    for (i = 0; i < n; ++i)
-    {
-        mn += std::sqrt(wt.output[i].real() * wt.output[i].real() + wt.output[i].imag() * wt.output[i].imag());
+    for (i = 0; i < n; ++i) {
+        mn += std::sqrt(
+            wt.output[i].real() * wt.output[i].real()
+            + wt.output[i].imag() * wt.output[i].imag()
+        );
     }
 
     summary(wt);
@@ -72,11 +73,16 @@ auto main() -> int
     nd = n / 2 - 1;
 
     fmt::printf("%-15s%-15s%-15s%-15s \n", "j", "Scale", "Period", "ABS(w)^2");
-    for (k = 0; k < wt.J; ++k)
-    {
+    for (k = 0; k < wt.J; ++k) {
         iter = nd + k * n;
-        fmt::printf("%-15d%-15lf%-15lf%-15lf \n", k, wt.scale[k], wt.period[k],
-                    wt.output[iter].real() * wt.output[iter].real() + wt.output[iter].imag() * wt.output[iter].imag());
+        fmt::printf(
+            "%-15d%-15lf%-15lf%-15lf \n",
+            k,
+            wt.scale[k],
+            wt.period[k],
+            wt.output[iter].real() * wt.output[iter].real()
+                + wt.output[iter].imag() * wt.output[iter].imag()
+        );
     }
 
     icwt(wt, oup.get());
@@ -88,8 +94,7 @@ auto main() -> int
 
     for (i = n - 10; i < n; ++i) { fmt::printf("%-15d%-15lf%-15lf \n", i, inp[i], oup[i]); }
 
-    for (i = 0; i < n; ++i)
-    {
+    for (i = 0; i < n; ++i) {
         // fmt::printf("%g %g \n", oup[i] ,inp[i] - wt.smean);
         td = inp[i];
         tn = oup[i] - td;

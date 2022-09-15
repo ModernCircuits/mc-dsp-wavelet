@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mc/dsp/wavelets.hpp"
+#include <mc/dsp/wavelets.hpp>
 
 #include <mc/core/cfloat.hpp>
 #include <mc/core/cmath.hpp>
@@ -8,8 +8,7 @@
 #include <mc/core/cstring.hpp>
 #include <mc/core/string.hpp>
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 
 struct DenoiseSet
 {
@@ -27,14 +26,40 @@ struct DenoiseSet
     std::string dmethod;  // Denoising Method -sureshrink or visushrink
 };
 
-auto visushrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext,
-                char const* thresh, char const* level, float* denoised) -> void;
+auto visushrink(
+    float* signal,
+    std::size_t n,
+    std::size_t j,
+    char const* wname,
+    char const* method,
+    char const* ext,
+    char const* thresh,
+    char const* level,
+    float* denoised
+) -> void;
 
-auto sureshrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* method, char const* ext,
-                char const* thresh, char const* level, float* denoised) -> void;
+auto sureshrink(
+    float* signal,
+    std::size_t n,
+    std::size_t j,
+    char const* wname,
+    char const* method,
+    char const* ext,
+    char const* thresh,
+    char const* level,
+    float* denoised
+) -> void;
 
-auto modwtshrink(float* signal, std::size_t n, std::size_t j, char const* wname, char const* cmethod, char const* ext,
-                 char const* thresh, float* denoised) -> void;
+auto modwtshrink(
+    float* signal,
+    std::size_t n,
+    std::size_t j,
+    char const* wname,
+    char const* cmethod,
+    char const* ext,
+    char const* thresh,
+    float* denoised
+) -> void;
 
 auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void;
 

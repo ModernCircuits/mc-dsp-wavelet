@@ -1,17 +1,16 @@
 #pragma once
 
-#include "mc/dsp/fft/FFTBackend.hpp"
+#include <mc/dsp/fft/FFTBackend.hpp>
+#include <mc/dsp/fft/FFTDirection.hpp>
 
 #include <mc/core/complex.hpp>
 
 #include "kissfft/kissfft.hh"
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 
 struct KissFFT
-{
-};
+{};
 
 template<>
 struct FFTBackend<float, KissFFT>
@@ -26,8 +25,12 @@ struct FFTBackend<float, KissFFT>
 
     static auto destroy(handle_type& /*handle*/) {}
 
-    static auto perform(handle_type& handle, Complex<float> const* in, Complex<float>* out, FFTDirection direction)
-        -> void
+    static auto perform(
+        handle_type& handle,
+        Complex<float> const* in,
+        Complex<float>* out,
+        FFTDirection direction
+    ) -> void
     {
         (void)direction;
         handle.transform(in, out);

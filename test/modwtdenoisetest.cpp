@@ -1,14 +1,14 @@
-#include "mc/dsp/wavelets/Denoise.hpp"
+#include <mc/dsp/wavelets/Denoise.hpp>
 
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/cstring.hpp>
 #include <mc/core/format.hpp>
 #include <mc/core/memory.hpp>
-
-#include "mc/testing/test.hpp"
+#include <mc/testing/test.hpp>
 
 #include <fmt/printf.h>
+
 
 using namespace mc;
 

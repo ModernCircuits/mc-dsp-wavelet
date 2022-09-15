@@ -1,4 +1,4 @@
-#include "mc/dsp/wavelets.hpp"
+#include <mc/dsp/wavelets.hpp>
 
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
@@ -15,7 +15,9 @@ auto main() -> int
     auto obj     = dsp::Wavelet{"db3"};
     auto const n = 147;
     auto inp     = std::make_unique<float[]>(n);
-    for (auto i = 1; i < n + 1; ++i) { inp[i - 1] = -0.25 * i * i * i + 25 * i * i + 10 * i; }
+    for (auto i = 1; i < n + 1; ++i) {
+        inp[i - 1] = -0.25 * i * i * i + 25 * i * i + 10 * i;
+    }
     auto const j = 3;
 
     auto wt = dsp::WaveletTree(&obj, n, j);

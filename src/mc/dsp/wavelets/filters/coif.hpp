@@ -1,7 +1,6 @@
 #pragma once
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 
 // All coif coefficents have to be multiplied by std::sqrt(2)
 constexpr float coif1[6] = {

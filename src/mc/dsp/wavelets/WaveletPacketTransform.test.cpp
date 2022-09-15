@@ -1,31 +1,34 @@
-#include "mc/dsp/wavelets.hpp"
+#include <mc/dsp/wavelets.hpp>
 
-#include "mc/testing/test.hpp"
 #include <mc/core/iterator.hpp>
 #include <mc/core/memory.hpp>
+#include <mc/testing/test.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
 using namespace mc;
 
-#define DWT_IDWT_ROUNDTRIP(waveletName)                                                                                \
-    TEST_CASE("dsp/wavelet: WaveletPacketTransform(dwpt/idwpt) - " waveletName, "[dsp][wavelet]")                      \
-    {                                                                                                                  \
-        static constexpr auto epsilon = 1e-5F;                                                                         \
-        auto extension                = GENERATE("sym", "per");                                                        \
-        auto entropy                  = GENERATE("shannon", "logenergy");                                              \
-        auto levels                   = GENERATE(1, 2);                                                                \
-        auto n                        = 8096;                                                                          \
-        auto inp                      = generateRandomTestData(n);                                                     \
-        auto out                      = std::make_unique<float[]>(n);                                                  \
-        auto obj                      = dsp::Wavelet{waveletName};                                                     \
-        auto wt                       = dsp::WaveletPacketTransform(&obj, n, levels);                                  \
-        dsp::setDWPTExtension(wt, extension);                                                                          \
-        dsp::setDWPTEntropy(wt, entropy, 0);                                                                           \
-        dwpt(wt, data(inp));                                                                                           \
-        idwpt(wt, out.get());                                                                                          \
-        REQUIRE(rmsError(out.get(), data(inp), wt.signalLength()) <= epsilon);                                         \
+#define DWT_IDWT_ROUNDTRIP(waveletName)                                                    \
+    TEST_CASE(                                                                             \
+        "dsp/wavelet: WaveletPacketTransform(dwpt/idwpt) - " waveletName,                  \
+        "[dsp][wavelet]"                                                                   \
+    )                                                                                      \
+    {                                                                                      \
+        static constexpr auto epsilon = 1e-5F;                                             \
+        auto extension                = GENERATE("sym", "per");                            \
+        auto entropy                  = GENERATE("shannon", "logenergy");                  \
+        auto levels                   = GENERATE(1, 2);                                    \
+        auto n                        = 8096;                                              \
+        auto inp                      = generateRandomTestData(n);                         \
+        auto out                      = std::make_unique<float[]>(n);                      \
+        auto obj                      = dsp::Wavelet{waveletName};                         \
+        auto wt                       = dsp::WaveletPacketTransform(&obj, n, levels);      \
+        dsp::setDWPTExtension(wt, extension);                                              \
+        dsp::setDWPTEntropy(wt, entropy, 0);                                               \
+        dwpt(wt, data(inp));                                                               \
+        idwpt(wt, out.get());                                                              \
+        REQUIRE(rmsError(out.get(), data(inp), wt.signalLength()) <= epsilon);             \
     }
 
 DWT_IDWT_ROUNDTRIP("db1")       // NOLINT

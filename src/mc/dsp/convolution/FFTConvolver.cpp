@@ -1,15 +1,14 @@
 #include "FFTConvolver.hpp"
 
+#include <mc/core/config.hpp>
+
 #include <mc/core/algorithm.hpp>
 #include <mc/core/cmath.hpp>
-#include <mc/core/config.hpp>
 #include <mc/core/memory.hpp>
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 
-namespace
-{
+namespace {
 [[nodiscard]] auto factorf(std::size_t m) -> std::size_t
 {
     auto n = m;
@@ -34,20 +33,27 @@ FFTConvolver::FFTConvolver(std::size_t signalSize, std::size_t patchSize)
     , totalSize_{findnexte(signalSize + patchSize_ - 1U)}
     , forwardFFT_{std::make_unique<RFFT>(totalSize_, FFTDirection::forward)}
     , backwardFFT_{std::make_unique<RFFT>(totalSize_, FFTDirection::backward)}
-{
-}
+{}
 
-auto FFTConvolver::convolute(float const* signal, float const* patch, float* output) const -> void
+auto FFTConvolver::convolute(float const* signal, float const* patch, float* output) const
+    -> void
 {
     std::fill(signalScratch_.get(), std::next(signalScratch_.get(), totalSize_), 0.0F);
     std::fill(patchScratch_.get(), std::next(patchScratch_.get(), totalSize_), 0.0F);
     std::fill(tmp_.get(), std::next(tmp_.get(), totalSize_), 0.0F);
-    std::fill(signalScratchOut_.get(), std::next(signalScratchOut_.get(), totalSize_), Complex<float>{});
-    std::fill(patchScratchOut_.get(), std::next(patchScratchOut_.get(), totalSize_), Complex<float>{});
+    std::fill(
+        signalScratchOut_.get(),
+        std::next(signalScratchOut_.get(), totalSize_),
+        Complex<float>{}
+    );
+    std::fill(
+        patchScratchOut_.get(),
+        std::next(patchScratchOut_.get(), totalSize_),
+        Complex<float>{}
+    );
     std::fill(tmpOut_.get(), std::next(tmpOut_.get(), totalSize_), 0.0F);
 
-    for (auto i = std::size_t{0}; i < totalSize_; i++)
-    {
+    for (auto i = std::size_t{0}; i < totalSize_; i++) {
         if (i < signalSize_) { signalScratch_[i] = signal[i]; }
         if (i < patchSize_) { patchScratch_[i] = patch[i]; }
     }
@@ -55,7 +61,9 @@ auto FFTConvolver::convolute(float const* signal, float const* patch, float* out
     forwardFFT_->performRealToComplex(signalScratch_.get(), signalScratchOut_.get());
     forwardFFT_->performRealToComplex(patchScratch_.get(), patchScratchOut_.get());
 
-    for (auto i = std::size_t{0}; i < totalSize_; i++) { tmp_[i] = signalScratchOut_[i] * patchScratchOut_[i]; }
+    for (auto i = std::size_t{0}; i < totalSize_; i++) {
+        tmp_[i] = signalScratchOut_[i] * patchScratchOut_[i];
+    }
 
     backwardFFT_->performComplexToReal(tmp_.get(), tmpOut_.get());
 

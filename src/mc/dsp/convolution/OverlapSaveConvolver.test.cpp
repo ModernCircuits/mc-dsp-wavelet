@@ -1,7 +1,7 @@
-#include "mc/dsp/convolution.hpp"
+#include <mc/dsp/convolution.hpp>
 
-#include "mc/testing/test.hpp"
 #include <mc/core/format.hpp>
+#include <mc/testing/test.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
@@ -12,8 +12,10 @@ TEST_CASE("dsp/convolution: OverlapSaveConvolver", "[dsp][convolution]")
 {
     // TODO(tobi): Fails on windows
 
-    // auto const* const testFile = GENERATE("test_data/raw/conv_xcorr_01.txt", "test_data/raw/conv_xcorr_02.txt",
-    //                                       "test_data/raw/conv_xcorr_03.txt", "test_data/raw/conv_xcorr_04.txt");
+    // auto const* const testFile = GENERATE("test_data/raw/conv_xcorr_01.txt",
+    // "test_data/raw/conv_xcorr_02.txt",
+    //                                       "test_data/raw/conv_xcorr_03.txt",
+    //                                       "test_data/raw/conv_xcorr_04.txt");
 
     // auto testData = loadTestData(testFile);
     // CHECK(testData.size() == 4U);

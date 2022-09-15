@@ -1,9 +1,8 @@
 #pragma once
 
-#include "mc/dsp/wavelets.hpp"
+#include <mc/dsp/wavelets.hpp>
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 
 struct TempoDetect
 {

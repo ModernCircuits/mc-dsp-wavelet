@@ -1,7 +1,6 @@
 #pragma once
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 
 constexpr float daubechies1[2] = {
     7.071067811865475244008443621048490392848359376884740365883398e-01,

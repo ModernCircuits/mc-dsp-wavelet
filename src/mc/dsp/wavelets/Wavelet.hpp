@@ -1,12 +1,12 @@
 #pragma once
 
 #include <mc/core/config.hpp>
+
 #include <mc/core/memory.hpp>
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 struct Wavelet
 {
     explicit Wavelet(char const* wname);
@@ -32,8 +32,7 @@ auto summary(Wavelet const& obj) -> void;
 
 }  // namespace mc::dsp
 
-namespace mc
-{
+namespace mc {
 template<typename T>
 auto makeZeros(std::size_t length) -> std::unique_ptr<T[]>
 {

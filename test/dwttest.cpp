@@ -1,4 +1,4 @@
-#include "mc/dsp/wavelets.hpp"
+#include <mc/dsp/wavelets.hpp>
 
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
@@ -6,8 +6,7 @@
 #include <mc/core/format.hpp>
 #include <mc/core/memory.hpp>
 #include <mc/core/utility.hpp>
-
-#include "mc/testing/test.hpp"
+#include <mc/testing/test.hpp>
 
 #include <fmt/printf.h>
 
@@ -27,13 +26,17 @@ auto main() -> int
     // Use wt_summary to find out how to extract appx and detail coefficients
     dwt(wt, input.data());
 
-    for (auto i = 0; mc::cmp_less(i, wt.outlength); ++i) { fmt::printf("%g ", wt.output()[i]); }
+    for (auto i = 0; mc::cmp_less(i, wt.outlength); ++i) {
+        fmt::printf("%g ", wt.output()[i]);
+    }
 
     auto out = std::make_unique<float[]>(n);
     idwt(wt, out.get());
 
     auto diff = std::make_unique<float[]>(n);
-    for (auto i = 0; mc::cmp_less(i, wt.signalLength()); ++i) { diff[i] = out[i] - input[i]; }
+    for (auto i = 0; mc::cmp_less(i, wt.signalLength()); ++i) {
+        diff[i] = out[i] - input[i];
+    }
 
     // If Reconstruction succeeded then the output should be a small value.
     fmt::printf("\n MAX %g \n", absmax(diff.get(), wt.signalLength()));

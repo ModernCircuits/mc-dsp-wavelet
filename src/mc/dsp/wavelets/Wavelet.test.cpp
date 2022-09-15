@@ -1,4 +1,4 @@
-#include "mc/dsp/wavelets.hpp"
+#include <mc/dsp/wavelets.hpp>
 
 #include <mc/core/algorithm.hpp>
 #include <mc/core/cmath.hpp>
@@ -9,8 +9,7 @@
 #include <mc/core/random.hpp>
 #include <mc/core/sstream.hpp>
 #include <mc/core/vector.hpp>
-
-#include "mc/testing/test.hpp"
+#include <mc/testing/test.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -20,15 +19,12 @@ TEST_CASE("dsp/wavelet: dbCoefTests", "[dsp][wavelet]")
 {
     constexpr auto epsilon = 1e-6;
     auto waveletNames      = std::vector<std::string>(38);
-    std::generate(begin(waveletNames), end(waveletNames),
-                  [i = 1]() mutable
-                  {
-                      return std::string("db") + std::to_string(i);
-                      ++i;
-                  });
+    std::generate(begin(waveletNames), end(waveletNames), [i = 1]() mutable {
+        return std::string("db") + std::to_string(i);
+        ++i;
+    });
 
-    for (auto const& name : waveletNames)
-    {
+    for (auto const& name : waveletNames) {
         auto obj = dsp::Wavelet{name.c_str()};
         auto t1  = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
         auto t2  = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
@@ -40,8 +36,7 @@ TEST_CASE("dsp/wavelet: dbCoefTests", "[dsp][wavelet]")
         REQUIRE(fabs(t3) <= epsilon);
         REQUIRE(fabs(t4) <= epsilon);
 
-        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++)
-        {
+        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
             auto t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             REQUIRE(fabs(t5) <= epsilon);
         }
@@ -58,13 +53,11 @@ TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
     float t5      = NAN;
     std::vector<std::string> waveletNames;
     waveletNames.resize(17);
-    for (std::size_t i = 0; i < waveletNames.size(); i++)
-    {
+    for (std::size_t i = 0; i < waveletNames.size(); i++) {
         waveletNames[i] = std::string("coif") + std::to_string(i + 1);
     }
 
-    for (auto const& name : waveletNames)
-    {
+    for (auto const& name : waveletNames) {
         auto obj = dsp::Wavelet{name.c_str()};
         t1       = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
         t2       = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
@@ -75,8 +68,7 @@ TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
         REQUIRE(std::fabs(t2) <= epsilon);
         REQUIRE(std::fabs(t3) <= epsilon);
         REQUIRE(std::fabs(t4) <= epsilon);
-        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++)
-        {
+        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
             t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             REQUIRE(std::fabs(t5) <= epsilon);
         }
@@ -92,10 +84,11 @@ TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
     float t4      = NAN;
     float t5      = NAN;
     std::vector<std::string> waveletNames;
-    for (std::size_t i = 1; i < 20; i++) { waveletNames.push_back(std::string("sym") + std::to_string(i + 1)); }
+    for (std::size_t i = 1; i < 20; i++) {
+        waveletNames.push_back(std::string("sym") + std::to_string(i + 1));
+    }
 
-    for (auto const& name : waveletNames)
-    {
+    for (auto const& name : waveletNames) {
         auto obj = dsp::Wavelet{name.c_str()};
         t1       = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
         t2       = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
@@ -107,8 +100,7 @@ TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
         REQUIRE(std::fabs(t3) <= epsilon);
         REQUIRE(std::fabs(t4) <= epsilon);
 
-        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++)
-        {
+        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
             t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             REQUIRE(std::fabs(t5) <= epsilon);
         }
@@ -135,8 +127,7 @@ TEST_CASE("dsp/wavelet: biorCoefTests", "[dsp][wavelet]")
     waveletNames.emplace_back("bior5.5");
     waveletNames.emplace_back("bior6.8");
 
-    for (auto const& name : waveletNames)
-    {
+    for (auto const& name : waveletNames) {
         auto obj = dsp::Wavelet{name.c_str()};
 
         auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
@@ -178,8 +169,7 @@ TEST_CASE("dsp/wavelet: rbiorCoefTests", "[dsp][wavelet]")
     waveletNames.emplace_back("rbior5.5");
     waveletNames.emplace_back("rbior6.8");
 
-    for (auto const& name : waveletNames)
-    {
+    for (auto const& name : waveletNames) {
         auto obj = dsp::Wavelet{name.c_str()};
 
         auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);

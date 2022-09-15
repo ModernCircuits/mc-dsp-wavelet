@@ -1,7 +1,6 @@
 #pragma once
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 enum struct FFTDirection
 {
     forward  = 0,

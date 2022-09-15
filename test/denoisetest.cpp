@@ -1,13 +1,14 @@
-#include "mc/dsp/wavelets/Denoise.hpp"
+#include <mc/dsp/wavelets/Denoise.hpp>
 
-#include "mc/testing/test.hpp"
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/cstring.hpp>
 #include <mc/core/format.hpp>
 #include <mc/core/memory.hpp>
+#include <mc/testing/test.hpp>
 
 #include <fmt/printf.h>
+
 
 using namespace mc;
 
@@ -21,15 +22,13 @@ auto main() -> int
 
     auto* ifp = std::fopen("test_data/raw/pieceregular1024.txt", "r");
     auto i    = 0;
-    if (ifp == nullptr)
-    {
+    if (ifp == nullptr) {
         fmt::printf("Cannot Open File");
         std::exit(EXIT_FAILURE);
     }
 
     float temp[2400];
-    while (std::feof(ifp) == 0)
-    {
+    while (std::feof(ifp) == 0) {
         std::fscanf(ifp, "%f \n", &temp[i]);
         i++;
     }
@@ -46,14 +45,12 @@ auto main() -> int
 
     ifp = std::fopen("test_data/raw/PieceRegular10.txt", "r");
     i   = 0;
-    if (ifp == nullptr)
-    {
+    if (ifp == nullptr) {
         fmt::printf("Cannot Open File");
         std::exit(EXIT_FAILURE);
     }
 
-    while (std::feof(ifp) == 0)
-    {
+    while (std::feof(ifp) == 0) {
         std::fscanf(ifp, "%f \n", &temp[i]);
         i++;
     }
@@ -62,12 +59,18 @@ auto main() -> int
 
     for (i = 0; i < n; ++i) { inp[i] = temp[i]; }
     auto obj = dsp::DenoiseSet(n, j, wname);
-    setDenoiseMethod(obj,
-                     "visushrink");  // sureshrink is also the default. The other option with dwt and swt is visushrink.
+    setDenoiseMethod(
+        obj,
+        "visushrink"
+    );  // sureshrink is also the default. The other option with dwt and swt is visushrink.
     // modwt works only with modwtshrink method
-    setDenoiseWTMethod(obj, method);           // Default is dwt. the other options are swt and modwt
-    setDenoiseWTExtension(obj, ext);           // Default is sym. the other option is per
-    setDenoiseParameters(obj, thresh, level);  // Default for thresh is soft. Other option is hard
+    setDenoiseWTMethod(obj, method);  // Default is dwt. the other options are swt and modwt
+    setDenoiseWTExtension(obj, ext);  // Default is sym. the other option is per
+    setDenoiseParameters(
+        obj,
+        thresh,
+        level
+    );  // Default for thresh is soft. Other option is hard
     // Default for level is all. The other option is first
 
     denoise(obj, inp.get(), oup.get());

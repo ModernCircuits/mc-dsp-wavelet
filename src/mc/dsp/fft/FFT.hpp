@@ -1,18 +1,17 @@
 #pragma once
 
-#include "mc/dsp/fft/FFTBackend.hpp"
-#include "mc/dsp/fft/FFTDirection.hpp"
+#include <mc/core/config.hpp>
 
-#include "mc/dsp/fft/backend/KissFFT.hpp"
-#include "mc/dsp/fft/backend/PFFFT.hpp"
+#include <mc/dsp/fft/backend/KissFFT.hpp>
+#include <mc/dsp/fft/backend/PFFFT.hpp>
+#include <mc/dsp/fft/FFTBackend.hpp>
+#include <mc/dsp/fft/FFTDirection.hpp>
 
 #include <mc/core/algorithm.hpp>
 #include <mc/core/complex.hpp>
-#include <mc/core/config.hpp>
 #include <mc/core/memory.hpp>
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 
 template<typename T, typename BackendTag>
 struct FFT
@@ -39,8 +38,7 @@ FFT<T, BackendTag>::FFT(int n, FFTDirection direction)
     : size_{n}
     , direction_{direction}
     , engine_{FFTBackend<T, BackendTag>::construct(static_cast<std::size_t>(n), direction)}
-{
-}
+{}
 
 template<typename T, typename BackendTag>
 FFT<T, BackendTag>::~FFT()

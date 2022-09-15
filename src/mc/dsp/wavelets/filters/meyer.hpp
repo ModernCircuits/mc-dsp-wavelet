@@ -1,7 +1,6 @@
 #pragma once
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 
 constexpr float meyer[102] = {
     -0.000001509740857, 0.000001278766757,  0.000000449585560,

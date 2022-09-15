@@ -1,20 +1,21 @@
 #pragma once
 
-#include "mc/dsp/convolution/FFTConvolver.hpp"
-#include "mc/dsp/wavelets/Wavelet.hpp"
-
 #include <mc/core/config.hpp>
+
+#include <mc/dsp/convolution/FFTConvolver.hpp>
+#include <mc/dsp/wavelets/Wavelet.hpp>
+
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 
 struct WaveletPacketTransform
 {
     WaveletPacketTransform(Wavelet* wave, std::size_t siglength, std::size_t j);
 
     [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *wave_; }
+
     [[nodiscard]] auto signalLength() const noexcept -> int { return signalLength_; }
 
     FFTConvolver* cobj{};

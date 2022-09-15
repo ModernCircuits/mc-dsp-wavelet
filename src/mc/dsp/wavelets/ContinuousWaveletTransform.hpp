@@ -1,26 +1,35 @@
 #pragma once
 
-#include "mc/dsp/convolution/FFTConvolver.hpp"
-
 #include <mc/core/config.hpp>
+
+#include <mc/dsp/convolution/FFTConvolver.hpp>
+
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 
-namespace mc::dsp
-{
+namespace mc::dsp {
 
 struct ContinuousWaveletTransform
 {
-    ContinuousWaveletTransform(char const* wave, float param, int siglength, float dt, int j);
+    ContinuousWaveletTransform(
+        char const* wave,
+        float param,
+        int siglength,
+        float dt,
+        int j
+    );
 
     [[nodiscard]] auto wave() const noexcept -> std::string const& { return wave_; }
+
     auto scales(float s0, float dj, char const* type, int power) -> void;
 
     int signalLength;
-    int J;             // Total Number of Scales
-    float s0;          // Smallest scale. It depends on the sampling rate. s0 <= 2 * dt for most wavelets
-    float dt;          // Sampling Rate
-    float dj;          // Separation between scales. eg., scale = s0 * 2 ^ ( [0:N-1] *dj ) or scale = s0 *[0:N-1] * dj
+    int J;     // Total Number of Scales
+    float s0;  // Smallest scale. It depends on the sampling rate. s0 <= 2 * dt for most
+               // wavelets
+    float dt;  // Sampling Rate
+    float dj;  // Separation between scales. eg., scale = s0 * 2 ^ ( [0:N-1] *dj ) or scale
+               // = s0 *[0:N-1] * dj
     std::string type;  // Scale Type - Power or Linear
     int pow;           // Base of Power in case type = pow. Typical value is pow = 2
     int sflag;

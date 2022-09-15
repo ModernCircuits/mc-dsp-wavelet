@@ -21,8 +21,7 @@ auto approxEqual(It1 f1, It1 l1, It2 f2, It2 l2, int epsilonFactor = 4) -> bool
     using v2_t = typename std::iterator_traits<It2>::value_type;
     static_assert(std::is_same<v1_t, v2_t>::value);
 
-    auto epsilonEqual = [epsilonFactor](auto l, auto r)
-    {
+    auto epsilonEqual = [epsilonFactor](auto l, auto r) {
         auto const epsilon = std::numeric_limits<v1_t>::epsilon();
         return std::fabs(l - r) < epsilon * epsilonFactor;
     };
@@ -33,7 +32,13 @@ auto approxEqual(It1 f1, It1 l1, It2 f2, It2 l2, int epsilonFactor = 4) -> bool
 template<typename Container1, typename Container2>
 auto approxEqual(Container1 c1, Container2 c2, int epsilonFactor = 4) -> bool
 {
-    return approxEqual(std::begin(c1), std::end(c1), std::begin(c2), std::end(c2), epsilonFactor);
+    return approxEqual(
+        std::begin(c1),
+        std::end(c1),
+        std::begin(c2),
+        std::end(c2),
+        epsilonFactor
+    );
 }
 
 auto absmax(float* array, std::size_t n) -> float;
@@ -62,16 +67,16 @@ template<typename T>
 [[nodiscard]] auto readFileToVector(char const* filePath) -> std::vector<T>
 {
     auto in = std::ifstream{filePath};
-    if (!in) { throw std::invalid_argument{fmt::format("Cannot Open File: %s\n", filePath)}; }
+    if (!in) {
+        throw std::invalid_argument{fmt::format("Cannot Open File: %s\n", filePath)};
+    }
 
     auto result = std::vector<T>{};
     result.reserve(8096 * 4);
 
     auto line = std::string{};
-    while (std::getline(in, line))
-    {
-        if (!line.empty())
-        {
+    while (std::getline(in, line)) {
+        if (!line.empty()) {
             auto i = T{};
             std::istringstream{line} >> i;
             result.push_back(i);
