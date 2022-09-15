@@ -15,7 +15,7 @@ auto main() -> int
     auto obj     = dsp::Wavelet{"bior3.5"};
     auto const n = std::size_t{256};
 
-    auto const inp = readFileToVector<float>("testData/signal.txt");
+    auto const inp = readFileToVector<float>("test_data/raw/signal.txt");
 
     auto out  = std::make_unique<float[]>(n);
     auto diff = std::make_unique<float[]>(n);

@@ -19,7 +19,7 @@ auto main() -> int
     auto n = 177;
     auto j = 2;
 
-    auto inp = readFileToVector<float>("testData/signal.txt");
+    auto inp = readFileToVector<float>("test_data/raw/signal.txt");
     auto out = std::make_unique<float[]>(n);
 
     auto wt = dsp::WaveletTransform(wave, "modwt", n, j);

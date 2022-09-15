@@ -1,24 +1,11 @@
-add_library(mc_dsp_wavelet_testdata ${CMAKE_SOURCE_DIR}/src/mc/testing/test.cpp ${CMAKE_SOURCE_DIR}/src/mc/testing/test.hpp)
-target_include_directories(mc_dsp_wavelet_testdata PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(mc_dsp_wavelet_testdata PUBLIC mc_dsp_wavelet)
-add_custom_command(
-    TARGET
-    mc_dsp_wavelet_testdata
-    COMMAND
-    ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_CURRENT_SOURCE_DIR}/testData
-    $<TARGET_FILE_DIR:mc_dsp_wavelet_testdata>/testData
-    POST_BUILD
-)
-
 function(mc_dsp_wavelet_add_test _target)
     add_executable(${_target} "${_target}.cpp")
-    add_test(NAME ${_target} COMMAND ${_target})
-    target_link_libraries(${_target} PRIVATE mc_dsp_wavelet mc_dsp_wavelet_testdata mc::CodeCoverage)
+    add_test(NAME ${_target} COMMAND ${_target} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    target_link_libraries(${_target} PRIVATE mc_dsp_wavelet mc::CodeCoverage)
 endfunction()
 
-add_executable(bpm_detector "bpm_detector.cpp")
-target_link_libraries(bpm_detector PRIVATE mc_dsp_wavelet mc_dsp_wavelet_testdata mc::CodeCoverage)
+# add_executable(bpm_detector "bpm_detector.cpp")
+# target_link_libraries(bpm_detector PRIVATE mc_dsp_wavelet mc::CodeCoverage)
 
 mc_dsp_wavelet_add_test(cwttest)
 mc_dsp_wavelet_add_test(dwttest)

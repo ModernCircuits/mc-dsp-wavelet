@@ -45,7 +45,7 @@ auto main() -> int
 
     auto wt = dsp::ContinuousWaveletTransform{wave, param, n, dt, j};
 
-    auto const inp = readFileToVector<float>("testData/sst_nino3.dat");
+    auto const inp = readFileToVector<float>("test_data/raw/sst_nino3.dat");
     auto oup       = std::make_unique<float[]>(n);
 
     wt.scales(s0, dj, type, a0);

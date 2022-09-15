@@ -13,7 +13,7 @@ namespace dsp = mc::dsp;
 
 auto main() -> int
 {
-    auto const input = readFileToVector<float>("testData/signal.txt");
+    auto const input = readFileToVector<float>("test_data/raw/signal.txt");
     auto const n     = 256;
 
     auto obj = dsp::Wavelet{"db4"};

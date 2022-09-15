@@ -17,7 +17,7 @@ auto main() -> int
     char const* thresh = "soft";
     char const* level  = "all";
 
-    auto* ifp = std::fopen("testData/pieceregular1024.txt", "r");
+    auto* ifp = std::fopen("test_data/raw/pieceregular1024.txt", "r");
     auto i    = 0;
     if (ifp == nullptr)
     {
@@ -42,7 +42,7 @@ auto main() -> int
 
     for (i = 0; i < n; ++i) { sig[i] = temp[i]; }
 
-    ifp = std::fopen("testData/PieceRegular10.txt", "r");
+    ifp = std::fopen("test_data/raw/PieceRegular10.txt", "r");
     i   = 0;
     if (ifp == nullptr)
     {
@@ -75,7 +75,7 @@ auto main() -> int
     // visushrink(inp.get(),N,J,wname,method,ext,thresh,level,oup.get());
     // sureshrink(inp.get(),N,J,wname,method,ext,thresh,level,oup.get());
     // modwtshrink(sig.get(),N,J,wname,cmethod,ext,thresh,oup.get()); See modwtdenoisetest.c
-    // ofp = std::fopen("testData/denoiseds.txt", "w");
+    // ofp = std::fopen("test_data/raw/denoiseds.txt", "w");
 
     fmt::printf("Signal - Noisy Signal Stats \n");
     fmt::printf("RMSE %g\n", rmsError(sig.get(), inp.get(), n));

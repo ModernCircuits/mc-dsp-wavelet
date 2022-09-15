@@ -90,6 +90,9 @@ target_sources(mc_dsp_wavelet
 
     "mc/dsp/widget/TempoDetect.cpp"
     "mc/dsp/widget/TempoDetect.hpp"
+
+    "mc/testing/test.cpp"
+    "mc/testing/test.hpp"
 )
 
 add_executable(mc_dsp_wavelet_tests)
@@ -98,8 +101,6 @@ target_link_libraries(mc_dsp_wavelet_tests PRIVATE mc_dsp_wavelet Catch2::Catch2
 target_sources(mc_dsp_wavelet_tests
     PRIVATE
 
-    "mc/testing/test.cpp"
-    "mc/testing/test.hpp"
 
     "mc/bit.test.cpp"
     "mc/dsp/convolution/convolute.test.cpp"
