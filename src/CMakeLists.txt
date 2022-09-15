@@ -1,9 +1,17 @@
+cmake_minimum_required(VERSION 3.15)
+project(mc-dsp-wavelet)
 
-add_library(mc_dsp_wavelet)
-target_include_directories(mc_dsp_wavelet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(mc_dsp_wavelet
+find_package(mc-dsp REQUIRED)
+find_package(FFTW3f REQUIRED)
+find_package(kissfft REQUIRED)
+find_package(pffft REQUIRED)
+
+add_library(mc-dsp-wavelet)
+add_library(mc::dsp-wavelet ALIAS mc-dsp-wavelet)
+target_include_directories(mc-dsp-wavelet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(mc-dsp-wavelet
     PUBLIC
-        mc-core::mc-core
+        mc-dsp::mc-dsp
 
         FFTW3::fftw3f
         kissfft::kissfft
@@ -14,103 +22,76 @@ target_link_libraries(mc_dsp_wavelet
         mc::CodeCoverage
 )
 
-target_sources(mc_dsp_wavelet
+target_sources(mc-dsp-wavelet
     PRIVATE
-    "mc/algorithm.hpp"
-    "mc/array.hpp"
-    "mc/bit.hpp"
-    "mc/cassert.hpp"
-    "mc/cfloat.hpp"
-    "mc/cmath.hpp"
-    "mc/complex.hpp"
-    "mc/cstddef.hpp"
-    "mc/cstdlib.hpp"
-    "mc/cstring.hpp"
-    "mc/filesystem.hpp"
-    "mc/format.hpp"
-    "mc/fstream.hpp"
-    "mc/functional.hpp"
-    "mc/iterator.hpp"
-    "mc/limits.hpp"
-    "mc/memory.hpp"
-    "mc/numbers.hpp"
-    "mc/numeric.hpp"
-    "mc/optional.hpp"
-    "mc/random.hpp"
-    "mc/span.hpp"
-    "mc/sstream.hpp"
-    "mc/string.hpp"
-    "mc/string_view.hpp"
-    "mc/type_traits.hpp"
-    "mc/unordered_map.hpp"
-    "mc/utility.hpp"
-    "mc/vector.hpp"
+        "mc/core/AudioFile.h"
 
-    "mc/core/AudioFile.h"
+        "mc/dsp/convolution.hpp"
+        "mc/dsp/convolution/FFTConvolver.cpp"
+        "mc/dsp/convolution/FFTConvolver.hpp"
+        "mc/dsp/convolution/ConvolutionMethod.hpp"
+        "mc/dsp/convolution/OverlapSaveConvolver.cpp"
+        "mc/dsp/convolution/OverlapSaveConvolver.hpp"
 
-    "mc/dsp/convolution.hpp"
-    "mc/dsp/convolution/FFTConvolver.cpp"
-    "mc/dsp/convolution/FFTConvolver.hpp"
-    "mc/dsp/convolution/ConvolutionMethod.hpp"
-    "mc/dsp/convolution/OverlapSaveConvolver.cpp"
-    "mc/dsp/convolution/OverlapSaveConvolver.hpp"
+        "mc/dsp/fft.hpp"
+        "mc/dsp/fft/FFT.hpp"
+        "mc/dsp/fft/FFT.cpp"
+        "mc/dsp/fft/STFT.hpp"
+        "mc/dsp/fft/STFT.cpp"
+        "mc/dsp/fft/Window.hpp"
+        "mc/dsp/fft/WindowFunction.hpp"
+        "mc/dsp/fft/WindowFunction.cpp"
 
-    "mc/dsp/fft.hpp"
-    "mc/dsp/fft/FFT.hpp"
-    "mc/dsp/fft/FFT.cpp"
-    "mc/dsp/fft/STFT.hpp"
-    "mc/dsp/fft/STFT.cpp"
-    "mc/dsp/fft/Window.hpp"
-    "mc/dsp/fft/WindowFunction.hpp"
-    "mc/dsp/fft/WindowFunction.cpp"
+        "mc/dsp/wavelets.hpp"
+        "mc/dsp/wavelets/common.cpp"
+        "mc/dsp/wavelets/common.hpp"
+        "mc/dsp/wavelets/ContinuousWaveletTransform.cpp"
+        "mc/dsp/wavelets/ContinuousWaveletTransform.hpp"
+        "mc/dsp/wavelets/Denoise.hpp"
+        "mc/dsp/wavelets/Denoise.cpp"
+        "mc/dsp/wavelets/SignalExtension.hpp"
+        "mc/dsp/wavelets/Wavelet.cpp"
+        "mc/dsp/wavelets/Wavelet.hpp"
+        "mc/dsp/wavelets/WaveletPacketTransform.cpp"
+        "mc/dsp/wavelets/WaveletPacketTransform.hpp"
+        "mc/dsp/wavelets/WaveletTransform2D.cpp"
+        "mc/dsp/wavelets/WaveletTransform2D.hpp"
+        "mc/dsp/wavelets/WaveletTransform.cpp"
+        "mc/dsp/wavelets/WaveletTransform.hpp"
+        "mc/dsp/wavelets/WaveletTree.cpp"
+        "mc/dsp/wavelets/WaveletTree.hpp"
 
-    "mc/dsp/wavelets.hpp"
-    "mc/dsp/wavelets/common.cpp"
-    "mc/dsp/wavelets/common.hpp"
-    "mc/dsp/wavelets/ContinuousWaveletTransform.cpp"
-    "mc/dsp/wavelets/ContinuousWaveletTransform.hpp"
-    "mc/dsp/wavelets/Denoise.hpp"
-    "mc/dsp/wavelets/Denoise.cpp"
-    "mc/dsp/wavelets/SignalExtension.hpp"
-    "mc/dsp/wavelets/Wavelet.cpp"
-    "mc/dsp/wavelets/Wavelet.hpp"
-    "mc/dsp/wavelets/WaveletPacketTransform.cpp"
-    "mc/dsp/wavelets/WaveletPacketTransform.hpp"
-    "mc/dsp/wavelets/WaveletTransform2D.cpp"
-    "mc/dsp/wavelets/WaveletTransform2D.hpp"
-    "mc/dsp/wavelets/WaveletTransform.cpp"
-    "mc/dsp/wavelets/WaveletTransform.hpp"
-    "mc/dsp/wavelets/WaveletTree.cpp"
-    "mc/dsp/wavelets/WaveletTree.hpp"
+        "mc/dsp/wavelets/filters/coif.hpp"
+        "mc/dsp/wavelets/filters/daubechies.hpp"
+        "mc/dsp/wavelets/filters/h.hpp"
+        "mc/dsp/wavelets/filters/meyer.hpp"
+        "mc/dsp/wavelets/filters/sym.hpp"
 
-    "mc/dsp/wavelets/filters/coif.hpp"
-    "mc/dsp/wavelets/filters/daubechies.hpp"
-    "mc/dsp/wavelets/filters/h.hpp"
-    "mc/dsp/wavelets/filters/meyer.hpp"
-    "mc/dsp/wavelets/filters/sym.hpp"
+        "mc/dsp/widget/TempoDetect.cpp"
+        "mc/dsp/widget/TempoDetect.hpp"
 
-    "mc/dsp/widget/TempoDetect.cpp"
-    "mc/dsp/widget/TempoDetect.hpp"
-
-    "mc/testing/test.cpp"
-    "mc/testing/test.hpp"
+        "mc/testing/test.cpp"
+        "mc/testing/test.hpp"
 )
 
-add_executable(mc_dsp_wavelet_tests)
-catch_discover_tests(mc_dsp_wavelet_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-target_link_libraries(mc_dsp_wavelet_tests PRIVATE mc_dsp_wavelet Catch2::Catch2)
-target_sources(mc_dsp_wavelet_tests
+find_package(Catch2 REQUIRED)
+include(Catch)
+
+add_executable(mc-dsp-wavelet_tests)
+catch_discover_tests(mc-dsp-wavelet_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+target_link_libraries(mc-dsp-wavelet_tests PRIVATE mc-dsp-wavelet Catch2::Catch2)
+target_sources(mc-dsp-wavelet_tests
     PRIVATE
+        "mc/dsp/convolution/convolute.test.cpp"
+        "mc/dsp/convolution/OverlapSaveConvolver.test.cpp"
 
+        "mc/dsp/fft/FFT.test.cpp"
+        "mc/dsp/fft/Window.test.cpp"
 
-    "mc/bit.test.cpp"
-    "mc/dsp/convolution/convolute.test.cpp"
-    "mc/dsp/convolution/OverlapSaveConvolver.test.cpp"
-    "mc/dsp/fft/FFT.test.cpp"
-    "mc/dsp/fft/Window.test.cpp"
-    "mc/dsp/wavelets/Wavelet.test.cpp"
-    "mc/dsp/wavelets/WaveletPacketTransform.test.cpp"
-    "mc/dsp/wavelets/WaveletTransform.test.cpp"
-    "mc/dsp/wavelets/WaveletTransform2D.test.cpp"
-    "mc/dsp/widget/TempoDetect.test.cpp"
+        "mc/dsp/wavelets/Wavelet.test.cpp"
+        "mc/dsp/wavelets/WaveletPacketTransform.test.cpp"
+        "mc/dsp/wavelets/WaveletTransform.test.cpp"
+        "mc/dsp/wavelets/WaveletTransform2D.test.cpp"
+
+        "mc/dsp/widget/TempoDetect.test.cpp"
 )

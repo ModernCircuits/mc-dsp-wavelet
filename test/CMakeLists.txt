@@ -1,8 +1,11 @@
 function(mc_dsp_wavelet_add_test _target)
     add_executable(${_target} "${_target}.cpp")
     add_test(NAME ${_target} COMMAND ${_target} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-    target_link_libraries(${_target} PRIVATE mc_dsp_wavelet mc::CodeCoverage)
+    target_link_libraries(${_target} PRIVATE mc::dsp-wavelet mc::CodeCoverage)
 endfunction()
+
+find_package(Catch2 REQUIRED)
+include(Catch)
 
 # add_executable(bpm_detector "bpm_detector.cpp")
 # target_link_libraries(bpm_detector PRIVATE mc_dsp_wavelet mc::CodeCoverage)
