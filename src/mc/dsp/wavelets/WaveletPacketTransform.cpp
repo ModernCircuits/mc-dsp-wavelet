@@ -120,7 +120,7 @@ WaveletPacketTransform::WaveletPacketTransform(
         p2 *= 2;
     }
 
-    this->params    = std::make_unique<float[]>(elength + 4 * nodess + 2 * j + 6);
+    this->params    = makeUnique<float[]>(elength + 4 * nodess + 2 * j + 6);
     this->outlength = siglength + 2 * (j + 1) * (size + 1);
     this->ext       = "sym";
     this->entropy   = "shannon";
@@ -264,9 +264,9 @@ auto dwpt(WaveletPacketTransform& wt, float const* inp) -> void
     }
 
     auto eparam     = wt.eparam;
-    auto orig       = std::make_unique<float[]>(tempLen);
-    auto tree       = std::make_unique<float[]>((tempLen * (jj + 1) + elength));
-    auto nodelength = std::make_unique<int[]>(nodes);
+    auto orig       = makeUnique<float[]>(tempLen);
+    auto tree       = makeUnique<float[]>((tempLen * (jj + 1) + elength));
+    auto nodelength = makeUnique<int[]>(nodes);
 
     for (auto i = 0; i < wt.signalLength(); ++i) { orig[i] = inp[i]; }
 
@@ -565,10 +565,10 @@ auto idwpt(WaveletPacketTransform& wt, float* dwtop) -> void
     auto lf     = (wt.wave().lpr().size() + wt.wave().hpr().size()) / 2;
     auto xlen   = powJ * (appLen + 2 * lf);
 
-    auto xLp    = std::make_unique<float[]>(2 * (wt.length[j] + lf));
-    auto x      = std::make_unique<float[]>(xlen);
-    auto out    = std::make_unique<float[]>(wt.length[j]);
-    auto out2   = std::make_unique<float[]>(wt.length[j]);
+    auto xLp    = makeUnique<float[]>(2 * (wt.length[j] + lf));
+    auto x      = makeUnique<float[]>(xlen);
+    auto out    = makeUnique<float[]>(wt.length[j]);
+    auto out2   = makeUnique<float[]>(wt.length[j]);
     auto prep   = makeZeros<int>(powJ);
     auto ptemp  = makeZeros<int>(powJ);
     auto n1     = 1;

@@ -18,8 +18,8 @@ auto main() -> int
 
     auto const inp = readFileToVector<float>("test_data/raw/signal.txt");
 
-    auto out  = std::make_unique<float[]>(n);
-    auto diff = std::make_unique<float[]>(n);
+    auto out  = makeUnique<float[]>(n);
+    auto diff = makeUnique<float[]>(n);
 
     auto const j = std::size_t{1};
 

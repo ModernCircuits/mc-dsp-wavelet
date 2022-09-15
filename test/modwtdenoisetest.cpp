@@ -25,7 +25,7 @@ auto main() -> int
 
     auto const n = sig.size();
     auto const j = 4;
-    auto out     = std::make_unique<float[]>(n);
+    auto out     = makeUnique<float[]>(n);
 
     dsp::modwtshrink(sig.data(), n, j, wname, cmethod, ext, thresh, out.get());
 

@@ -31,8 +31,8 @@ FFTConvolver::FFTConvolver(std::size_t signalSize, std::size_t patchSize)
     : signalSize_{signalSize}
     , patchSize_{patchSize}
     , totalSize_{findnexte(signalSize + patchSize_ - 1U)}
-    , forwardFFT_{std::make_unique<RFFT>(totalSize_, FFTDirection::forward)}
-    , backwardFFT_{std::make_unique<RFFT>(totalSize_, FFTDirection::backward)}
+    , forwardFFT_{makeUnique<RFFT>(totalSize_, FFTDirection::forward)}
+    , backwardFFT_{makeUnique<RFFT>(totalSize_, FFTDirection::backward)}
 {}
 
 auto FFTConvolver::convolute(float const* signal, float const* patch, float* output) const

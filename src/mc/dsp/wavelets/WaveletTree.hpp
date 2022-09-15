@@ -34,7 +34,7 @@ struct WaveletTree
     std::size_t length[102]{};
     float* output;
     unsigned* coeflength;
-    std::unique_ptr<float[]> params;
+    UniquePtr<float[]> params;
     unsigned* nodeLength_{nullptr};
 
 private:

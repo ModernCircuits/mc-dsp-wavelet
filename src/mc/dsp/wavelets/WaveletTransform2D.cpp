@@ -164,7 +164,7 @@ WaveletTransform2D::WaveletTransform2D(
         throw std::invalid_argument{fmt::format("j = {0}, should be >= 1", j)};
     }
 
-    this->params    = std::make_unique<int[]>(2U * j + sumacc);
+    this->params    = makeUnique<int[]>(2U * j + sumacc);
     this->outlength = 0;
     if (method == nullptr) {
         this->ext = "per";
@@ -226,7 +226,7 @@ auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void
     }
 }
 
-auto dwt(WaveletTransform2D& wt, float const* inp) -> std::unique_ptr<float[]>
+auto dwt(WaveletTransform2D& wt, float const* inp) -> UniquePtr<float[]>
 {
     int iter          = 0;
     int n             = 0;
@@ -671,7 +671,7 @@ auto idwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void
     }
 }
 
-auto swt2(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>
+auto swt2(WaveletTransform2D& wt, float* inp) -> UniquePtr<float[]>
 {
     int j       = 0;
     int iter    = 0;
@@ -719,8 +719,8 @@ auto swt2(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>
     ic    = wt.cols();
     colsI = wt.dimensions[2 * j - 1];
 
-    auto lpDn1 = std::make_unique<float[]>(ir * colsI);
-    auto hpDn1 = std::make_unique<float[]>(ir * colsI);
+    auto lpDn1 = makeUnique<float[]>(ir * colsI);
+    auto hpDn1 = makeUnique<float[]>(ir * colsI);
 
     for (iter = 0; iter < j; ++iter) {
         if (iter > 0) { m = 2 * m; }
@@ -920,7 +920,7 @@ auto iswt2(WaveletTransform2D& wt, float const* wavecoeffs, float* oup) -> void
     }
 }
 
-auto modwt(WaveletTransform2D& wt, float const* inp) -> std::unique_ptr<float[]>
+auto modwt(WaveletTransform2D& wt, float const* inp) -> UniquePtr<float[]>
 {
     int j             = 0;
     int iter          = 0;
@@ -963,7 +963,7 @@ auto modwt(WaveletTransform2D& wt, float const* inp) -> std::unique_ptr<float[]>
     wt.outlength += (rowsN * colsN);
     n              = wt.outlength;
     auto wavecoeff = makeZeros<float>(wt.outlength);
-    auto filt      = std::make_unique<float[]>(2 * lp);
+    auto filt      = makeUnique<float[]>(2 * lp);
     s              = std::sqrt(2.0F);
     for (auto i = 0; i < lp; ++i) {
         filt[i]      = wt.wave().lpd()[i] / s;
@@ -975,8 +975,8 @@ auto modwt(WaveletTransform2D& wt, float const* inp) -> std::unique_ptr<float[]>
     ic    = wt.cols();
     colsI = wt.dimensions[2 * j - 1];
 
-    auto lpDn1 = std::make_unique<float[]>(ir * colsI);
-    auto hpDn1 = std::make_unique<float[]>(ir * colsI);
+    auto lpDn1 = makeUnique<float[]>(ir * colsI);
+    auto hpDn1 = makeUnique<float[]>(ir * colsI);
 
     for (iter = 0; iter < j; ++iter) {
         if (iter > 0) { m = 2 * m; }

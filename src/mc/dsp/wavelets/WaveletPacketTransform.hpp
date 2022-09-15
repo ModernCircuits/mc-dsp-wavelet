@@ -36,7 +36,7 @@ struct WaveletPacketTransform
     int* nodeindex{};
     int* numnodeslevel{};
     int* coeflength{};
-    std::unique_ptr<float[]> params;
+    UniquePtr<float[]> params;
 
 private:
     Wavelet* wave_{nullptr};

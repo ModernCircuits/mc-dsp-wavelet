@@ -13,8 +13,8 @@ namespace mc::dsp {
 
 RFFT::RFFT(int n, FFTDirection direction)
 {
-    data_ = std::make_unique<Complex<float>[]>(n / 2);
-    cobj_ = std::make_unique<FFT<float, KissFFT>>(n / 2, direction);
+    data_ = makeUnique<Complex<float>[]>(n / 2);
+    cobj_ = makeUnique<FFT<float, KissFFT>>(n / 2, direction);
 
     for (auto k = 0; k < n / 2; ++k) {
         auto const theta = pi2 * k / n;
@@ -26,8 +26,8 @@ RFFT::RFFT(int n, FFTDirection direction)
 auto RFFT::performRealToComplex(float const* inp, Complex<float>* oup) -> void
 {
     auto const n2 = cobj_->size();
-    auto cinp     = std::make_unique<Complex<float>[]>(n2);
-    auto coup     = std::make_unique<Complex<float>[]>(n2);
+    auto cinp     = makeUnique<Complex<float>[]>(n2);
+    auto coup     = makeUnique<Complex<float>[]>(n2);
 
     for (auto i = 0; i < n2; ++i) {
         cinp[i].real(inp[2 * i]);
@@ -67,8 +67,8 @@ auto RFFT::performRealToComplex(float const* inp, Complex<float>* oup) -> void
 auto RFFT::performComplexToReal(Complex<float> const* inp, float* oup) -> void
 {
     auto const n = static_cast<std::size_t>(cobj_->size());
-    auto cinp    = std::make_unique<Complex<float>[]>(n);
-    auto coup    = std::make_unique<Complex<float>[]>(n);
+    auto cinp    = makeUnique<Complex<float>[]>(n);
+    auto coup    = makeUnique<Complex<float>[]>(n);
 
     for (auto i = std::size_t{0}; i < n; ++i) {
         auto const temp1 = -inp[i].imag() - inp[n - i].imag();

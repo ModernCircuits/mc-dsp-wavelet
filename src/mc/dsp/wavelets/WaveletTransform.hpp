@@ -48,7 +48,7 @@ private:
     float* output_;
 
 public:
-    std::unique_ptr<FFTConvolver> convolver;
+    UniquePtr<FFTConvolver> convolver;
     std::size_t modwtsiglength;  // Modified signal length for MODWT
     std::size_t outlength;       // Length of the output DWT vector
     std::size_t lenlength;       // Length of the Output Dimension Vector "length"
@@ -58,7 +58,7 @@ public:
     std::size_t cfftset{0};
     std::size_t zpad{};
     std::size_t length[102]{};
-    std::unique_ptr<float[]> params;
+    UniquePtr<float[]> params;
 };
 
 auto dwt(WaveletTransform& wt, float const* inp) -> void;

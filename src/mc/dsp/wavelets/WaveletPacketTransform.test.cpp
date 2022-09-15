@@ -21,7 +21,7 @@ using namespace mc;
         auto levels                   = GENERATE(1, 2);                                    \
         auto n                        = 8096;                                              \
         auto inp                      = generateRandomTestData(n);                         \
-        auto out                      = std::make_unique<float[]>(n);                      \
+        auto out                      = makeUnique<float[]>(n);                            \
         auto obj                      = dsp::Wavelet{waveletName};                         \
         auto wt                       = dsp::WaveletPacketTransform(&obj, n, levels);      \
         dsp::setDWPTExtension(wt, extension);                                              \

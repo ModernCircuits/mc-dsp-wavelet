@@ -30,10 +30,10 @@ auto main() -> int
         fmt::printf("%g ", wt.output()[i]);
     }
 
-    auto out = std::make_unique<float[]>(n);
+    auto out = makeUnique<float[]>(n);
     idwt(wt, out.get());
 
-    auto diff = std::make_unique<float[]>(n);
+    auto diff = makeUnique<float[]>(n);
     for (auto i = 0; mc::cmp_less(i, wt.signalLength()); ++i) {
         diff[i] = out[i] - input[i];
     }

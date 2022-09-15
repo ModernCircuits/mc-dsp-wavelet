@@ -17,22 +17,20 @@ private:
     std::size_t patchSize_;
     std::size_t totalSize_;
 
-    std::unique_ptr<RFFT> forwardFFT_;
-    std::unique_ptr<RFFT> backwardFFT_;
+    UniquePtr<RFFT> forwardFFT_;
+    UniquePtr<RFFT> backwardFFT_;
 
-    std::unique_ptr<float[]> signalScratch_{std::make_unique<float[]>(totalSize_)};
-    std::unique_ptr<Complex<float>[]> signalScratchOut_ {
-        std::make_unique<Complex<float>[]>(totalSize_)
+    UniquePtr<float[]> signalScratch_{makeUnique<float[]>(totalSize_)};
+    UniquePtr<Complex<float>[]> signalScratchOut_ {
+        makeUnique<Complex<float>[]>(totalSize_)
         };
 
-    std::unique_ptr<float[]> patchScratch_{std::make_unique<float[]>(totalSize_)};
-    std::unique_ptr<Complex<float>[]> patchScratchOut_ {
-        std::make_unique<Complex<float>[]>(totalSize_)
+    UniquePtr<float[]> patchScratch_{makeUnique<float[]>(totalSize_)};
+    UniquePtr<Complex<float>[]> patchScratchOut_ {
+        makeUnique<Complex<float>[]>(totalSize_)
         };
 
-    std::unique_ptr<Complex<float>[]> tmp_ {
-        std::make_unique<Complex<float>[]>(totalSize_)
-        };
-    std::unique_ptr<float[]> tmpOut_{std::make_unique<float[]>(totalSize_)};
+    UniquePtr<Complex<float>[]> tmp_ { makeUnique<Complex<float>[]>(totalSize_) };
+    UniquePtr<float[]> tmpOut_{makeUnique<float[]>(totalSize_)};
 };
 }  // namespace mc::dsp

@@ -42,8 +42,7 @@ WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t 
         elength += temp2;
     }
 
-    this->params
-        = std::make_unique<float[]>(signalLength * (j + 1) + elength + nodess + j + 1);
+    this->params = makeUnique<float[]>(signalLength * (j + 1) + elength + nodess + j + 1);
     this->outlength = signalLength * (j + 1) + elength;
     this->ext_      = "sym";
 
@@ -164,7 +163,7 @@ auto wtree(WaveletTree& wt, float const* inp) -> void
     wt.outlength     = 0;
     wt.zpad          = 0;
 
-    auto orig = std::make_unique<float[]>(tempLen);
+    auto orig = makeUnique<float[]>(tempLen);
 
     for (std::size_t i = 0; i < wt.siglength; ++i) { orig[i] = inp[i]; }
 

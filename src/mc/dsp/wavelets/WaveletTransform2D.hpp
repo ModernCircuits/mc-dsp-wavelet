@@ -37,7 +37,7 @@ struct WaveletTransform2D
     int N{};  //
     int* dimensions{};
     int* coeffaccess{};
-    std::unique_ptr<int[]> params;
+    UniquePtr<int[]> params;
 
 private:
     Wavelet* wave_{nullptr};
@@ -46,11 +46,11 @@ private:
     String method_;
 };
 
-auto dwt(WaveletTransform2D& wt, float const* inp) -> std::unique_ptr<float[]>;
+auto dwt(WaveletTransform2D& wt, float const* inp) -> UniquePtr<float[]>;
 auto idwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void;
-auto swt2(WaveletTransform2D& wt, float* inp) -> std::unique_ptr<float[]>;
+auto swt2(WaveletTransform2D& wt, float* inp) -> UniquePtr<float[]>;
 auto iswt2(WaveletTransform2D& wt, float const* wavecoeffs, float* oup) -> void;
-auto modwt(WaveletTransform2D& wt, float const* inp) -> std::unique_ptr<float[]>;
+auto modwt(WaveletTransform2D& wt, float const* inp) -> UniquePtr<float[]>;
 auto imodwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void;
 auto getWT2Coeffs(
     WaveletTransform2D& wt,

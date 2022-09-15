@@ -72,8 +72,8 @@ struct RFFT
     auto performComplexToReal(Complex<float> const* inp, float* oup) -> void;
 
 private:
-    std::unique_ptr<FFT<float, KissFFT>> cobj_;
-    std::unique_ptr<Complex<float>[]> data_;
+    UniquePtr<FFT<float, KissFFT>> cobj_;
+    UniquePtr<Complex<float>[]> data_;
 };
 
 }  // namespace mc::dsp

@@ -36,9 +36,9 @@ auto main() -> int
     auto n = i;
     auto j = 4;
 
-    auto inp = std::make_unique<float[]>(n);
-    auto oup = std::make_unique<float[]>(n);
-    auto sig = std::make_unique<float[]>(n);
+    auto inp = makeUnique<float[]>(n);
+    auto oup = makeUnique<float[]>(n);
+    auto sig = makeUnique<float[]>(n);
 
     for (i = 0; i < n; ++i) { sig[i] = temp[i]; }
 

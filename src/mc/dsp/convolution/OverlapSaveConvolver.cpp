@@ -115,16 +115,11 @@ OverlapSaveConvolver::OverlapSaveConvolver(
     // and make complex counterparts too, as well as the corresponding xcorr signals
     for (std::size_t i = 0; i <= paddedSignal_.size() - resultChunksize_;
          i += result_stride_) {
-        inputChunks_.push_back(
-            std::make_unique<FloatSignal>(&paddedSignal_[i], resultChunksize_)
+        inputChunks_.push_back(makeUnique<FloatSignal>(&paddedSignal_[i], resultChunksize_)
         );
-        inputChunksComplex_.push_back(
-            std::make_unique<ComplexSignal>(resultChunksizeComplex_)
-        );
-        resultChunks_.push_back(std::make_unique<FloatSignal>(resultChunksize_));
-        resultChunksComplex_.push_back(
-            std::make_unique<ComplexSignal>(resultChunksizeComplex_)
-        );
+        inputChunksComplex_.push_back(makeUnique<ComplexSignal>(resultChunksizeComplex_));
+        resultChunks_.push_back(makeUnique<FloatSignal>(resultChunksize_));
+        resultChunksComplex_.push_back(makeUnique<ComplexSignal>(resultChunksizeComplex_));
     }
     // make one forward plan per signal chunk, and one for the patch
     // Also backward plans for the xcorr chunks

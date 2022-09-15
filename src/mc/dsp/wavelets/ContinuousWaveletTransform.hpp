@@ -43,7 +43,7 @@ struct ContinuousWaveletTransform
     float* scale;
     float* period;
     float* coi;
-    std::unique_ptr<float[]> params;
+    UniquePtr<float[]> params;
 
 private:
     // Wavelet - morl/morlet,paul,dog/dgauss

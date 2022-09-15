@@ -21,7 +21,7 @@ auto main() -> int
     auto j = 2;
 
     auto inp = readFileToVector<float>("test_data/raw/signal.txt");
-    auto out = std::make_unique<float[]>(n);
+    auto out = makeUnique<float[]>(n);
 
     auto wt = dsp::WaveletTransform(wave, "modwt", n, j);
 
@@ -35,7 +35,7 @@ auto main() -> int
 
     imodwt(wt, out.get());  // Perform ISWT (if needed)
 
-    auto diff = std::make_unique<float[]>(n);
+    auto diff = makeUnique<float[]>(n);
     for (auto i = 0; mc::cmp_less(i, wt.signalLength()); ++i) { diff[i] = out[i] - inp[i]; }
 
     // If Reconstruction succeeded then the output should be a small value.

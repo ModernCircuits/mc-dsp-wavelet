@@ -237,16 +237,16 @@ private:
     FloatSignal paddedSignal_;
 
     // the deconstructed signal
-    Vector<std::unique_ptr<FloatSignal>> inputChunks_;
-    Vector<std::unique_ptr<ComplexSignal>> inputChunksComplex_;
+    Vector<UniquePtr<FloatSignal>> inputChunks_;
+    Vector<UniquePtr<ComplexSignal>> inputChunksComplex_;
 
     // the corresponding chunks holding convs/xcorrs
-    Vector<std::unique_ptr<FloatSignal>> resultChunks_;
-    Vector<std::unique_ptr<ComplexSignal>> resultChunksComplex_;
+    Vector<UniquePtr<FloatSignal>> resultChunks_;
+    Vector<UniquePtr<ComplexSignal>> resultChunksComplex_;
 
     // the corresponding plans (plus the plan of the patch)
-    Vector<std::unique_ptr<FftForwardPlan>> forwardPlans_;
-    Vector<std::unique_ptr<FftBackwardPlan>> backwardPlans_;
+    Vector<UniquePtr<FftForwardPlan>> forwardPlans_;
+    Vector<UniquePtr<FftBackwardPlan>> backwardPlans_;
 
     // Basic state management to prevent getters from being called prematurely.
     // Also to adapt the extractResult getter, since Conv and Xcorr padding behaves

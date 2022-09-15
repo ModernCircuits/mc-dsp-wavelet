@@ -94,8 +94,8 @@ auto nsfftFd(
     auto const n = obj->size();
     auto const l = n / 2;
 
-    auto temp1 = std::make_unique<float[]>(l);
-    auto temp2 = std::make_unique<float[]>(l);
+    auto temp1 = makeUnique<float[]>(l);
+    auto temp2 = makeUnique<float[]>(l);
 
     auto const delta = (ub - lb) / n;
     auto const den   = 2 * (ub - lb);
@@ -156,10 +156,10 @@ auto nsfftBk(
         exit(1);
     }
 
-    auto temp1 = std::make_unique<float[]>(l);
-    auto temp2 = std::make_unique<float[]>(l);
-    auto w     = std::make_unique<float[]>(n);
-    auto inpt  = std::make_unique<Complex<float>[]>(n);
+    auto temp1 = makeUnique<float[]>(l);
+    auto temp2 = makeUnique<float[]>(l);
+    auto w     = makeUnique<float[]>(n);
+    auto inpt  = makeUnique<Complex<float>[]>(n);
 
     auto const delta = (ub - lb) / n;
     auto const den   = 2 * (ub - lb);
@@ -502,13 +502,13 @@ auto cwavelet(
         exit(-1);
     }
 
-    auto obj  = std::make_unique<FFT<float, KissFFT>>(npad, FFTDirection::forward);
-    auto iobj = std::make_unique<FFT<float, KissFFT>>(npad, FFTDirection::backward);
+    auto obj  = makeUnique<FFT<float, KissFFT>>(npad, FFTDirection::forward);
+    auto iobj = makeUnique<FFT<float, KissFFT>>(npad, FFTDirection::backward);
 
-    auto ypad     = std::make_unique<Complex<float>[]>(npad);
-    auto yfft     = std::make_unique<Complex<float>[]>(npad);
-    auto daughter = std::make_unique<Complex<float>[]>(npad);
-    auto kwave    = std::make_unique<float[]>(npad);
+    auto ypad     = makeUnique<Complex<float>[]>(npad);
+    auto yfft     = makeUnique<Complex<float>[]>(npad);
+    auto daughter = makeUnique<Complex<float>[]>(npad);
+    auto kwave    = makeUnique<float[]>(npad);
     ymean         = 0.0F;
 
     for (auto i = 0; i < n; ++i) { ymean += y[i]; }
@@ -676,12 +676,12 @@ auto cdelta(int mother, float param, float psi0) -> float
     auto const dj   = 1.0F / subscale;
     auto const jtot = 16 * (int)subscale;
 
-    auto delta  = std::make_unique<float[]>(n);
-    auto wave   = std::make_unique<float[]>(2 * n * jtot);
-    auto coi    = std::make_unique<float[]>(n);
-    auto scale  = std::make_unique<float[]>(jtot);
-    auto period = std::make_unique<float[]>(jtot);
-    auto mval   = std::make_unique<float[]>(n);
+    auto delta  = makeUnique<float[]>(n);
+    auto wave   = makeUnique<float[]>(2 * n * jtot);
+    auto coi    = makeUnique<float[]>(n);
+    auto scale  = makeUnique<float[]>(jtot);
+    auto period = makeUnique<float[]>(jtot);
+    auto mval   = makeUnique<float[]>(n);
 
     delta[0] = 1;
 
@@ -768,7 +768,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(
 
     auto n   = siglength;
     auto nj2 = 2 * n * j;
-    params   = std::make_unique<float[]>(nj2 + 2 * j + n);
+    params   = makeUnique<float[]>(nj2 + 2 * j + n);
 
     int motherTmp{0};
     if ((wave == StringView{"morlet"}) || (wave == StringView{"morl"})) {
@@ -968,11 +968,11 @@ auto meyer(int n, float lb, float ub, float* phi, float* psi, float* tgrid) -> v
         exit(1);
     }
 
-    auto obj  = std::make_unique<FFT<float, KissFFT>>(n, FFTDirection::backward);
-    auto w    = std::make_unique<float[]>(n);
-    auto phiw = std::make_unique<Complex<float>[]>(n);
-    auto psiw = std::make_unique<Complex<float>[]>(n);
-    auto oup  = std::make_unique<Complex<float>[]>(n);
+    auto obj  = makeUnique<FFT<float, KissFFT>>(n, FFTDirection::backward);
+    auto w    = makeUnique<float[]>(n);
+    auto phiw = makeUnique<Complex<float>[]>(n);
+    auto psiw = makeUnique<Complex<float>[]>(n);
+    auto oup  = makeUnique<Complex<float>[]>(n);
 
     auto const delta = 2 * (ub - lb) / pi2;
 

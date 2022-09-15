@@ -25,7 +25,7 @@ private:
     // When all filters are of the same length.
     // [Matlab uses zero-padding to make all filters of the same length]
     std::size_t size_;
-    std::unique_ptr<float[]> params_;
+    UniquePtr<float[]> params_;
 };
 
 auto summary(Wavelet const& obj) -> void;
@@ -34,9 +34,9 @@ auto summary(Wavelet const& obj) -> void;
 
 namespace mc {
 template<typename T>
-auto makeZeros(std::size_t length) -> std::unique_ptr<T[]>
+auto makeZeros(std::size_t length) -> UniquePtr<T[]>
 {
-    auto ptr = std::make_unique<T[]>(length);
+    auto ptr = makeUnique<T[]>(length);
     for (std::size_t i{0}; i < length; ++i) { ptr[i] = T{}; }
     return ptr;
 }

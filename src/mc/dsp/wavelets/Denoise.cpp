@@ -77,14 +77,14 @@ auto visushrink(
         std::exit(-1);
     }
 
-    auto lnoise = std::make_unique<float[]>(j);
+    auto lnoise = makeUnique<float[]>(j);
 
     // Set sigma
 
     auto iter = wt.length[0];
     auto dlen = wt.length[j];
 
-    auto dout = std::make_unique<float[]>(dlen);
+    auto dout = makeUnique<float[]>(dlen);
 
     if (level == StringView{"first"}) {
         for (std::size_t i = 1; i < j; ++i) { iter += wt.length[i]; }
@@ -204,10 +204,10 @@ auto sureshrink(
     len  = wt.length[0];
     dlen = wt.length[j];
 
-    auto dout   = std::make_unique<float[]>(dlen);
-    auto risk   = std::make_unique<float[]>(dlen);
-    auto dsum   = std::make_unique<float[]>(dlen);
-    auto lnoise = std::make_unique<float[]>(j);
+    auto dout   = makeUnique<float[]>(dlen);
+    auto risk   = makeUnique<float[]>(dlen);
+    auto dsum   = makeUnique<float[]>(dlen);
+    auto lnoise = makeUnique<float[]>(j);
 
     iter = wt.length[0];
 
@@ -356,13 +356,13 @@ auto modwtshrink(
 
     modwt(wt, signal);
 
-    auto lnoise = std::make_unique<float[]>(j);
+    auto lnoise = makeUnique<float[]>(j);
 
     // Set sigma
 
     auto iter = wt.length[0];
     auto dlen = wt.length[j];
-    auto dout = std::make_unique<float[]>(dlen);
+    auto dout = makeUnique<float[]>(dlen);
 
     for (it = 0; cmp_less(it, j); ++it) {
         dlen = wt.length[it + 1];
