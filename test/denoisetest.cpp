@@ -9,7 +9,6 @@
 
 #include <fmt/printf.h>
 
-
 using namespace mc;
 
 auto main() -> int

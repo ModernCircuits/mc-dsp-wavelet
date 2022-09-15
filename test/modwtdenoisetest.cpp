@@ -9,7 +9,6 @@
 
 #include <fmt/printf.h>
 
-
 using namespace mc;
 
 // modwtshrink can also be called from the denoise object.
