@@ -1,0 +1,39 @@
+name: Coverage
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  linux:
+    name: Linux
+    strategy:
+      matrix:
+        cxx: [17, 20, 23]
+      fail-fast: false
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          lfs: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt update -y
+          sudo apt install -y ninja-build gcovr lcov
+
+          pip3 install conan
+          conan config set general.revisions_enabled=1
+
+      - name: Run coverage build
+        run: CXX_STD="${{ matrix.cxx }}" make coverage-xml
+
+      - uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./cmake-build-coverage/coverage.xml
+          fail_ci_if_error: true

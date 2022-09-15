@@ -1,11 +1,21 @@
-export PATH := $(shell pwd)/scripts:$(PATH)
+CXX_STD ?= 17
+
+BUILD_DIR ?= cmake-build-debug
 
 BUILD_DIR ?= build
-
+PYTHON_BIN ?= python3
 CLANG_FORMAT_BIN ?= clang-format
-CLANG_REPLACEMENTS_BIN ?= clang-apply-replacements-14
-CLANG_TIDY_BIN ?= clang-tidy-14
-CLANG_TIDY_ARGS = ./scripts/run-clang-tidy.py -clang-tidy-binary ${CLANG_TIDY_BIN} -clang-apply-replacements-binary ${CLANG_REPLACEMENTS_BIN} -j $(shell nproc)
+CLANG_REPLACEMENTS_BIN ?= clang-apply-replacements
+CLANG_TIDY_BIN ?= clang-tidy
+RUN_CLANGTIDY_BIN ?= $(shell which run-clang-tidy)
+
+CLANG_TIDY_ARGS =  ${PYTHON_BIN}
+CLANG_TIDY_ARGS += ${RUN_CLANGTIDY_BIN}
+CLANG_TIDY_ARGS += -clang-tidy-binary
+CLANG_TIDY_ARGS += ${CLANG_TIDY_BIN}
+CLANG_TIDY_ARGS += -clang-apply-replacements-binary
+CLANG_TIDY_ARGS += ${CLANG_REPLACEMENTS_BIN}
+CLANG_TIDY_ARGS += -j $(shell nproc)
 
 .PHONY: tidy-check
 tidy-check:
@@ -15,20 +25,28 @@ tidy-check:
 tidy-fix:
 	${CLANG_TIDY_ARGS} -fix -quiet -p $(BUILD_DIR) -header-filter $(shell realpath ./src) $(shell realpath ./src)
 
+.PHONY: check
+check:
+	pre-commit run --all-files
 
 .PHONY: coverage
 coverage:
-	cmake -S . -G Ninja -B cmake-build-coverage -D CMAKE_BUILD_TYPE=Debug -D MC_BUILD_COVERAGE=TRUE
+	cmake -S. -GNinja -Bcmake-build-coverage -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_STANDARD=${CXX_STD} -D MC_BUILD_COVERAGE=TRUE
 	cmake --build cmake-build-coverage
-	cd cmake-build-coverage && ctest -C Debug -j $(shell nproc)
+	ctest --test-dir cmake-build-coverage -C Debug --output-on-failure
 
 .PHONY: coverage-html
 coverage-html: coverage
-	cd cmake-build-coverage && gcovr --html --html-details --exclude-unreachable-branches -o coverage.html -r ../src -j ${shell nproc} -s .
+	gcovr --html --html-details -e ".*test\.cpp" --exclude-unreachable-branches -r src -j ${shell nproc} -s cmake-build-coverage -o cmake-build-coverage/coverage.html
 
 .PHONY: coverage-xml
 coverage-xml: coverage
-	cd cmake-build-coverage && gcovr --xml-pretty --exclude-unreachable-branches -o coverage.xml  -r ../src -j ${shell nproc} -s .
+	gcovr --xml-pretty -e ".*test\.cpp" --exclude-unreachable-branches -r src -j ${shell nproc} -s cmake-build-coverage -o cmake-build-coverage/coverage.xml
+
+
+.PHONY: report
+report:
+	cd cmake-build-coverage && genhtml cov.info --output-directory lcov
 
 .PHONY: stats
 stats:
