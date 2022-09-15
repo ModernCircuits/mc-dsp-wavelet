@@ -14,10 +14,10 @@ struct Wavelet
     [[nodiscard]] auto size() const noexcept -> std::size_t;
     [[nodiscard]] auto name() const noexcept -> std::string const&;
 
-    [[nodiscard]] auto lpd() const noexcept -> span<float>;
-    [[nodiscard]] auto hpd() const noexcept -> span<float>;
-    [[nodiscard]] auto lpr() const noexcept -> span<float>;
-    [[nodiscard]] auto hpr() const noexcept -> span<float>;
+    [[nodiscard]] auto lpd() const noexcept -> Span<float>;
+    [[nodiscard]] auto hpd() const noexcept -> Span<float>;
+    [[nodiscard]] auto lpr() const noexcept -> Span<float>;
+    [[nodiscard]] auto hpr() const noexcept -> Span<float>;
 
 private:
     std::string name_;

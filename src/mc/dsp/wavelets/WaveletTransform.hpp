@@ -27,9 +27,9 @@ struct WaveletTransform
     auto convMethod(ConvolutionMethod method) -> void;
     [[nodiscard]] auto convMethod() const noexcept -> ConvolutionMethod;
 
-    [[nodiscard]] auto output() const -> span<float>;
-    [[nodiscard]] auto approx() const -> span<float>;
-    [[nodiscard]] auto detail(std::size_t level) const -> span<float>;
+    [[nodiscard]] auto output() const -> Span<float>;
+    [[nodiscard]] auto approx() const -> Span<float>;
+    [[nodiscard]] auto detail(std::size_t level) const -> Span<float>;
 
 private:
     Wavelet* wave_;

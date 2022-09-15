@@ -11,7 +11,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-auto median(mc::span<float> data) -> float
+auto median(mc::Span<float> data) -> float
 {
     if (mc::empty(data)) { return 0.0; }
 
@@ -21,7 +21,7 @@ auto median(mc::span<float> data) -> float
     return size % 2 == 0 ? (data[mid] + data[mid - 1]) / 2 : data[mid];
 }
 
-auto mode(mc::span<float> arr) -> float
+auto mode(mc::Span<float> arr) -> float
 {
     auto const n   = arr.size();
     float count    = 1;
@@ -48,7 +48,7 @@ TEST_CASE("dsp/wavelet: TempoDetect", "[dsp][wavelet]")
     audioFile.load("./test_data/wav/Drums.wav");
 
     auto const fs = static_cast<float>(audioFile.getSampleRate());
-    auto channel  = mc::span<float>(audioFile.samples[0].data(), audioFile.samples[0].size());
+    auto channel  = mc::Span<float>(audioFile.samples[0].data(), audioFile.samples[0].size());
 
     auto const windowSize     = static_cast<std::size_t>(std::floor(3.0 * fs));
     auto const maxWindowIndex = mc::size(channel) / windowSize;

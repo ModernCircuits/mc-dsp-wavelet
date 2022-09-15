@@ -187,12 +187,12 @@ auto WaveletTransform::extension(SignalExtension ext) -> void
     ext_ = ext;
 }
 
-auto WaveletTransform::output() const -> span<float>
+auto WaveletTransform::output() const -> Span<float>
 {
-    return span<float>{output_, static_cast<std::size_t>(outlength)};
+    return Span<float>{output_, static_cast<std::size_t>(outlength)};
 }
 
-auto WaveletTransform::approx() const -> span<float>
+auto WaveletTransform::approx() const -> Span<float>
 {
     /*
     Wavelet decomposition is stored as
@@ -204,7 +204,7 @@ auto WaveletTransform::approx() const -> span<float>
     return {output_, static_cast<size_t>(length[0])};
 }
 
-auto WaveletTransform::detail(std::size_t level) const -> span<float>
+auto WaveletTransform::detail(std::size_t level) const -> Span<float>
 {
     /*
     returns Detail coefficents at the jth level where j = J,J-1,...,1

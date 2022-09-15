@@ -3,14 +3,15 @@ add_library(mc_dsp_wavelet)
 target_include_directories(mc_dsp_wavelet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(mc_dsp_wavelet
     PUBLIC
-    mc::Span
-    FFTW3::fftw3f
-    kissfft::kissfft
-    pffft::pffft
-    fmt::fmt
-    mc::CompilerOptions
-    mc::CompilerWarnings
-    mc::CodeCoverage
+        mc-core::mc-core
+
+        FFTW3::fftw3f
+        kissfft::kissfft
+        pffft::pffft
+
+        mc::CompilerOptions
+        mc::CompilerWarnings
+        mc::CodeCoverage
 )
 
 target_sources(mc_dsp_wavelet

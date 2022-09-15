@@ -20,7 +20,7 @@ auto mean(It f, It l) -> float
     return sum / static_cast<float>(std::distance(f, l));
 }
 
-auto peakDetect(mc::span<float> data) -> std::size_t
+auto peakDetect(mc::Span<float> data) -> std::size_t
 {
     auto peaks = std::minmax_element(data.begin(), data.end());
     if (std::fabs(*peaks.first) >= std::fabs(*peaks.second)) { return std::distance(data.begin(), peaks.first); }
@@ -35,7 +35,7 @@ struct BpmDetect
         wt_.convMethod(dsp::ConvolutionMethod::direct);
     }
 
-    [[nodiscard]] auto perform(mc::span<float> input, float sampleRate) -> float
+    [[nodiscard]] auto perform(mc::Span<float> input, float sampleRate) -> float
     {
 
         auto const levels        = 4;
@@ -43,8 +43,8 @@ struct BpmDetect
         auto const minNdx        = std::floor(60.0F / 220.0F * (sampleRate / maxDecimation));
         auto const maxNdx        = std::floor(60.0F / 40.0F * (sampleRate / maxDecimation));
 
-        auto cA = mc::span<float>{};
-        auto cD = mc::span<float>{};
+        auto cA = mc::Span<float>{};
+        auto cD = mc::Span<float>{};
 
         auto cDMinlen = 0.0F;
         auto cDSum    = std::vector<float>{};
@@ -117,7 +117,7 @@ struct BpmDetect
         auto correl = x.extractResult();
 
         auto midpoint          = static_cast<std::size_t>(std::floor(correl.size() / 2.0F));
-        auto correlMidpointTmp = mc::span<float>{correl.data(), correl.size()}.subspan(midpoint);
+        auto correlMidpointTmp = mc::Span<float>{correl.data(), correl.size()}.subspan(midpoint);
         auto const peakNdx     = peakDetect(correlMidpointTmp.subspan(minNdx, maxNdx - minNdx));
 
         auto const peakNdxAdjusted = peakNdx + minNdx;
@@ -130,7 +130,7 @@ private:
     dsp::WaveletTransform wt_;
 };
 
-auto median(mc::span<float> data) -> float
+auto median(mc::Span<float> data) -> float
 {
     if (mc::empty(data)) { return 0.0; }
 
@@ -140,7 +140,7 @@ auto median(mc::span<float> data) -> float
     return size % 2 == 0 ? (data[mid] + data[mid - 1]) / 2 : data[mid];
 }
 
-auto mode(mc::span<float> arr) -> float
+auto mode(mc::Span<float> arr) -> float
 {
     auto const n   = arr.size();
     float count    = 1;
@@ -176,7 +176,7 @@ auto main(int argc, char** argv) -> int
     auto const fs = static_cast<float>(audioFile.getSampleRate());
     // auto const numSamples = static_cast<size_t>(audioFile.getNumSamplesPerChannel());
 
-    auto channel = mc::span<float>(audioFile.samples[0].data(), audioFile.samples[0].size());
+    auto channel = mc::Span<float>(audioFile.samples[0].data(), audioFile.samples[0].size());
     // channel = channel.subspan(static_cast<std::size_t>(mc::size(audioFile.samples[0]) * (0.05 / 100.0)));
     // channel = channel.last(static_cast<std::size_t>(mc::size(audioFile.samples[0]) * (0.05 / 100.0)));
 

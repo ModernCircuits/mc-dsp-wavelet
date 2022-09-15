@@ -726,10 +726,10 @@ Wavelet::Wavelet(char const* name)
 auto Wavelet::size() const noexcept -> std::size_t { return size_; }
 auto Wavelet::name() const noexcept -> std::string const& { return name_; }
 
-auto Wavelet::lpd() const noexcept -> span<float> { return {&params_[0], size()}; }
-auto Wavelet::hpd() const noexcept -> span<float> { return {&params_[size()], size()}; }
-auto Wavelet::lpr() const noexcept -> span<float> { return {&params_[size() * 2U], size()}; }
-auto Wavelet::hpr() const noexcept -> span<float> { return {&params_[size() * 3U], size()}; }
+auto Wavelet::lpd() const noexcept -> Span<float> { return {&params_[0], size()}; }
+auto Wavelet::hpd() const noexcept -> Span<float> { return {&params_[size()], size()}; }
+auto Wavelet::lpr() const noexcept -> Span<float> { return {&params_[size() * 2U], size()}; }
+auto Wavelet::hpr() const noexcept -> Span<float> { return {&params_[size() * 3U], size()}; }
 
 auto summary(Wavelet const& obj) -> void
 {

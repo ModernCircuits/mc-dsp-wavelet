@@ -1,9 +1,9 @@
 [requires]
-catch2/3.0.1
+mc-dsp/0.9.0@modern-circuits/stable
 fftw/3.3.9
-fmt/8.1.1
 kissfft/131.1.0
 pffft/cci.20210511
+catch2/3.1.0
 
 [options]
 fftw:precision=single

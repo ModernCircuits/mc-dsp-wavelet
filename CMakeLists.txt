@@ -37,12 +37,11 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(Catch)
 endif()
 
+find_package(mc-dsp REQUIRED)
 find_package(FFTW3f REQUIRED)
-find_package(fmt REQUIRED)
 find_package(kissfft REQUIRED)
 find_package(pffft REQUIRED)
 
-add_subdirectory(3rd_party/span)
 add_subdirectory(src)
 
 add_subdirectory(test)

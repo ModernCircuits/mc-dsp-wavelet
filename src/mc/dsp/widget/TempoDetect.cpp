@@ -19,7 +19,7 @@ auto mean(It f, It l) -> float
     return sum / static_cast<float>(std::distance(f, l));
 }
 
-auto peakDetect(mc::span<float> data) -> std::size_t
+auto peakDetect(Span<float> data) -> std::size_t
 {
     auto peaks = std::minmax_element(data.begin(), data.end());
     if (std::fabs(*peaks.first) >= std::fabs(*peaks.second)) { return std::distance(data.begin(), peaks.first); }
@@ -32,7 +32,7 @@ TempoDetect::TempoDetect(std::size_t n, std::size_t levels) : wave_{"db4"}, wt_{
     wt_.convMethod(dsp::ConvolutionMethod::direct);
 }
 
-auto TempoDetect::operator()(mc::span<float> input, float sampleRate) -> float
+auto TempoDetect::operator()(Span<float> input, float sampleRate) -> float
 {
 
     auto const levels        = wt_.levels();
@@ -40,8 +40,8 @@ auto TempoDetect::operator()(mc::span<float> input, float sampleRate) -> float
     auto const minNdx        = std::floor(60.0F / 220.0F * (sampleRate / maxDecimation));
     auto const maxNdx        = std::floor(60.0F / 40.0F * (sampleRate / maxDecimation));
 
-    auto cA = mc::span<float>{};
-    auto cD = mc::span<float>{};
+    auto cA = Span<float>{};
+    auto cD = Span<float>{};
 
     auto cDMinlen = 0.0F;
     auto cDSum    = std::vector<float>{};
@@ -113,7 +113,7 @@ auto TempoDetect::operator()(mc::span<float> input, float sampleRate) -> float
     auto correl = x.extractResult();
 
     auto midpoint          = static_cast<std::size_t>(std::floor(correl.size() / 2.0F));
-    auto correlMidpointTmp = mc::span<float>{correl.data(), correl.size()}.subspan(midpoint);
+    auto correlMidpointTmp = Span<float>{correl.data(), correl.size()}.subspan(midpoint);
     auto const peakNdx     = peakDetect(correlMidpointTmp.subspan(minNdx, maxNdx - minNdx));
 
     auto const peakNdxAdjusted = peakNdx + minNdx;
