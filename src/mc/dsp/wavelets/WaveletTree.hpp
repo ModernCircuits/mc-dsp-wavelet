@@ -14,13 +14,13 @@ struct WaveletTree
     WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t j);
 
     auto extension(char const* newExtension) noexcept -> void;
-    [[nodiscard]] auto extension() const noexcept -> std::string const&;
+    [[nodiscard]] auto extension() const noexcept -> String const&;
 
     auto nodeLength(std::size_t x) -> std::size_t;
     auto coeffs(std::size_t x, std::size_t y, float* coeffs, std::size_t n) const -> void;
 
     Wavelet* wave;
-    std::string method;
+    String method;
     std::size_t siglength;  // Length of the original signal.
     std::size_t outlength;  // Length of the output DWT vector
     std::size_t lenlength;  // Length of the Output Dimension Vector "length"
@@ -38,7 +38,7 @@ struct WaveletTree
     unsigned* nodeLength_{nullptr};
 
 private:
-    std::string ext_;
+    String ext_;
 };
 
 auto wtree(WaveletTree& wt, float const* inp) -> void;

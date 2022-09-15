@@ -19,7 +19,7 @@ struct ContinuousWaveletTransform
         int j
     );
 
-    [[nodiscard]] auto wave() const noexcept -> std::string const& { return wave_; }
+    [[nodiscard]] auto wave() const noexcept -> String const& { return wave_; }
 
     auto scales(float s0, float dj, char const* type, int power) -> void;
 
@@ -30,8 +30,8 @@ struct ContinuousWaveletTransform
     float dt;  // Sampling Rate
     float dj;  // Separation between scales. eg., scale = s0 * 2 ^ ( [0:N-1] *dj ) or scale
                // = s0 *[0:N-1] * dj
-    std::string type;  // Scale Type - Power or Linear
-    int pow;           // Base of Power in case type = pow. Typical value is pow = 2
+    String type;  // Scale Type - Power or Linear
+    int pow;      // Base of Power in case type = pow. Typical value is pow = 2
     int sflag;
     int pflag;
     int npad;
@@ -47,7 +47,7 @@ struct ContinuousWaveletTransform
 
 private:
     // Wavelet - morl/morlet,paul,dog/dgauss
-    std::string wave_;
+    String wave_;
 };
 
 auto cwt(ContinuousWaveletTransform& wt, float const* inp) -> void;

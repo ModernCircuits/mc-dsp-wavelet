@@ -23,8 +23,8 @@ struct WaveletPacketTransform
     int lenlength{};  // Length of the Output Dimension Vector "length"
     int J{};          // Number of decomposition Levels
     int MaxIter{};    // Maximum Iterations J <= MaxIter
-    std::string ext;  // Type of Extension used - "per" or "sym"
-    std::string entropy;
+    String ext;       // Type of Extension used - "per" or "sym"
+    String entropy;
     float eparam{};
 
     int N{};  //

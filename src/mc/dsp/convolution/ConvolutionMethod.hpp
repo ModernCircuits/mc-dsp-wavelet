@@ -11,7 +11,7 @@ enum struct ConvolutionMethod
     fft,
 };
 
-[[nodiscard]] inline auto toString(ConvolutionMethod method) -> std::string
+[[nodiscard]] inline auto toString(ConvolutionMethod method) -> String
 {
     if (method == ConvolutionMethod::direct) { return "direct"; }
     return "fft";

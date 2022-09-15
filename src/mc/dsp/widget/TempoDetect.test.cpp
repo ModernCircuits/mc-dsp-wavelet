@@ -45,7 +45,7 @@ auto mode(mc::Span<float> arr) -> float
 
 TEST_CASE("dsp/wavelet: TempoDetect", "[dsp][wavelet]")
 {
-    auto audioFile = AudioFile<float>{};
+    auto audioFile = mc::AudioFile<float>{};
     audioFile.load("./test_data/wav/Drums.wav");
 
     auto const fs = static_cast<float>(audioFile.getSampleRate());

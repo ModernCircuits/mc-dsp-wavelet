@@ -344,7 +344,7 @@ auto WaveletTree::extension(char const* newExtension) noexcept -> void
     ext_ = newExtension;
 }
 
-auto WaveletTree::extension() const noexcept -> std::string const& { return ext_; }
+auto WaveletTree::extension() const noexcept -> String const& { return ext_; }
 
 auto summary(WaveletTree const& wt) -> void
 {

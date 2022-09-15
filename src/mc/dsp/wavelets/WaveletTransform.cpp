@@ -178,7 +178,7 @@ auto WaveletTransform::signalLength() const noexcept -> std::size_t
     return signalLength_;
 }
 
-auto WaveletTransform::method() const noexcept -> std::string const& { return method_; }
+auto WaveletTransform::method() const noexcept -> String const& { return method_; }
 
 auto WaveletTransform::extension() const noexcept -> SignalExtension { return ext_; }
 

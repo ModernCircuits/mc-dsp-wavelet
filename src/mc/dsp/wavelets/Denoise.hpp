@@ -14,16 +14,16 @@ struct DenoiseSet
 {
     DenoiseSet(int length, int j, char const* name);
 
-    int N{};              // signal length
-    int J{};              // Levels of Wavelet decomposition
-    std::string wname;    // Wavelet name
-    std::string wmethod;  // Wavelet decomposition method - dwt or swt
-    std::string cmethod;  // Cnvolution Method - direct or fft . Available only for modwt.
+    int N{};         // signal length
+    int J{};         // Levels of Wavelet decomposition
+    String wname;    // Wavelet name
+    String wmethod;  // Wavelet decomposition method - dwt or swt
+    String cmethod;  // Cnvolution Method - direct or fft . Available only for modwt.
     // SWT and DWT only use direct method.
-    std::string ext;      // Signal Extension - sym or per
-    std::string thresh;   // thresholding - soft or hard
-    std::string level;    // Noise Estimation level - first or all
-    std::string dmethod;  // Denoising Method -sureshrink or visushrink
+    String ext;      // Signal Extension - sym or per
+    String thresh;   // thresholding - soft or hard
+    String level;    // Noise Estimation level - first or all
+    String dmethod;  // Denoising Method -sureshrink or visushrink
 };
 
 auto visushrink(

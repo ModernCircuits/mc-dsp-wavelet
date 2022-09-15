@@ -12,6 +12,7 @@
 #include <mc/core/type_traits.hpp>
 #include <mc/core/vector.hpp>
 
+namespace mc {
 template<typename It1, typename It2>
 auto approxEqual(It1 f1, It1 l1, It2 f2, It2 l2, int epsilonFactor = 4) -> bool
 {
@@ -59,7 +60,7 @@ auto generateRnd() -> float;
 template<typename T>
 using TestData = std::vector<std::vector<T>>;
 
-auto split(std::string const& s, char delim) -> std::vector<std::string>;
+auto split(String const& s, char delim) -> std::vector<String>;
 auto loadTestData(char const* filePath) -> TestData<float>;
 auto toFloat(TestData<float> const& d) -> TestData<float>;
 
@@ -74,7 +75,7 @@ template<typename T>
     auto result = std::vector<T>{};
     result.reserve(8096 * 4);
 
-    auto line = std::string{};
+    auto line = String{};
     while (std::getline(in, line)) {
         if (!line.empty()) {
             auto i = T{};
@@ -90,3 +91,5 @@ template<typename T>
 auto generateRandomTestData(std::size_t n) -> std::vector<float>;
 
 auto corrcoef(int n, float const* x, float const* y) -> float;
+
+}  // namespace mc

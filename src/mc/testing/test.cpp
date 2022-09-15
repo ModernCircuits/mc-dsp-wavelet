@@ -3,6 +3,8 @@
 #include <mc/core/random.hpp>
 #include <mc/testing/test.hpp>
 
+namespace mc {
+
 auto absmax(float* array, std::size_t n) -> float
 {
     auto max = 0.0F;
@@ -75,11 +77,11 @@ auto generateRnd() -> float
     return dis(gen);
 }
 
-auto split(std::string const& s, char delim) -> std::vector<std::string>
+auto split(String const& s, char delim) -> std::vector<String>
 {
-    auto result = std::vector<std::string>{};
+    auto result = std::vector<String>{};
     auto ss     = std::stringstream(s);
-    auto item   = std::string{};
+    auto item   = String{};
 
     while (std::getline(ss, item, delim)) { result.push_back(item); }
     return result;
@@ -95,7 +97,7 @@ auto loadTestData(char const* filePath) -> TestData<float>
     };
 
     auto file   = std::fstream{filePath, std::ios::in};
-    auto tmp    = std::string{};
+    auto tmp    = String{};
     auto result = TestData<float>{};
 
     if (file.is_open()) {
@@ -161,3 +163,5 @@ auto corrcoef(int n, float const* x, float const* y) -> float
 
     return cc;
 }
+
+}  // namespace mc

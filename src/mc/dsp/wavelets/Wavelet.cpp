@@ -690,7 +690,7 @@ Wavelet::Wavelet(char const* name)
 
 auto Wavelet::size() const noexcept -> std::size_t { return size_; }
 
-auto Wavelet::name() const noexcept -> std::string const& { return name_; }
+auto Wavelet::name() const noexcept -> String const& { return name_; }
 
 auto Wavelet::lpd() const noexcept -> Span<float> { return {&params_[0], size()}; }
 

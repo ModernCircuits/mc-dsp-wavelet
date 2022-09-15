@@ -3,7 +3,7 @@
 #include <mc/core/cassert.hpp>
 
 namespace mc::dsp {
-auto toString(WindowFunction wf) -> std::string
+auto toString(WindowFunction wf) -> String
 {
     switch (wf) {
         case WindowFunction::rectangular: return "Rectangular";

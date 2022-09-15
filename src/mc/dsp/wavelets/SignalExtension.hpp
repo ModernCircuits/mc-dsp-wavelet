@@ -13,7 +13,7 @@ enum struct SignalExtension
     symmetric,
 };
 
-[[nodiscard]] inline auto toString(SignalExtension ext) -> std::string
+[[nodiscard]] inline auto toString(SignalExtension ext) -> String
 {
     if (ext == SignalExtension::periodic) { return "periodic"; }
     return "symmetric";

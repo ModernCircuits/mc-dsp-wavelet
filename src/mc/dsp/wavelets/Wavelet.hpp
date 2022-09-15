@@ -12,7 +12,7 @@ struct Wavelet
     explicit Wavelet(char const* wname);
 
     [[nodiscard]] auto size() const noexcept -> std::size_t;
-    [[nodiscard]] auto name() const noexcept -> std::string const&;
+    [[nodiscard]] auto name() const noexcept -> String const&;
 
     [[nodiscard]] auto lpd() const noexcept -> Span<float>;
     [[nodiscard]] auto hpd() const noexcept -> Span<float>;
@@ -20,7 +20,7 @@ struct Wavelet
     [[nodiscard]] auto hpr() const noexcept -> Span<float>;
 
 private:
-    std::string name_;
+    String name_;
 
     // When all filters are of the same length.
     // [Matlab uses zero-padding to make all filters of the same length]

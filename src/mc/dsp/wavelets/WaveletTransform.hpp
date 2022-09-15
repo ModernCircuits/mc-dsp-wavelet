@@ -25,7 +25,7 @@ struct WaveletTransform
     [[nodiscard]] auto wave() const noexcept -> Wavelet const&;
     [[nodiscard]] auto levels() const noexcept -> int;
     [[nodiscard]] auto signalLength() const noexcept -> std::size_t;
-    [[nodiscard]] auto method() const noexcept -> std::string const&;
+    [[nodiscard]] auto method() const noexcept -> String const&;
 
     auto extension(SignalExtension ext) -> void;
     [[nodiscard]] auto extension() const noexcept -> SignalExtension;
@@ -41,7 +41,7 @@ private:
     Wavelet* wave_;
     std::size_t levels_;
     std::size_t signalLength_;
-    std::string method_;
+    String method_;
     SignalExtension ext_;
     ConvolutionMethod cmethod_{ConvolutionMethod::direct};
 

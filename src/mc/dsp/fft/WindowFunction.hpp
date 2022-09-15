@@ -15,5 +15,5 @@ enum struct WindowFunction
     blackmanHarris,
 };
 
-[[nodiscard]] auto toString(WindowFunction wf) -> std::string;
+[[nodiscard]] auto toString(WindowFunction wf) -> String;
 }  // namespace mc::dsp

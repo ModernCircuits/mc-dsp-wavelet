@@ -9,6 +9,7 @@
 #include <mc/core/cstring.hpp>
 #include <mc/core/iterator.hpp>
 #include <mc/core/memory.hpp>
+#include <mc/core/string.hpp>
 #include <mc/core/vector.hpp>
 
 #include "fftw3.h"
@@ -184,7 +185,7 @@ struct OverlapSaveConvolver
     OverlapSaveConvolver(
         FloatSignal& signal,
         FloatSignal& patch,
-        std::string const& wisdomPath = ""
+        String const& wisdomPath = ""
     );
 
     auto convolute() -> void;

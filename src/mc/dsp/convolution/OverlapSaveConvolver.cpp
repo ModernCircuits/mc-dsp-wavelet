@@ -93,7 +93,7 @@ FftBackwardPlan::FftBackwardPlan(ComplexSignal& cs, FloatSignal& fs)
 OverlapSaveConvolver::OverlapSaveConvolver(
     FloatSignal& signal,
     FloatSignal& patch,
-    std::string const& /*wisdomPath*/
+    String const& /*wisdomPath*/
 )
     : signalSize_{signal.size()}
     , patchSize_{patch.size()}

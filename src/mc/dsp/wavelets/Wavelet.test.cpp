@@ -18,9 +18,9 @@ using namespace mc;
 TEST_CASE("dsp/wavelet: dbCoefTests", "[dsp][wavelet]")
 {
     constexpr auto epsilon = 1e-6;
-    auto waveletNames      = std::vector<std::string>(38);
+    auto waveletNames      = std::vector<String>(38);
     std::generate(begin(waveletNames), end(waveletNames), [i = 1]() mutable {
-        return std::string("db") + std::to_string(i);
+        return String("db") + std::to_string(i);
         ++i;
     });
 
@@ -51,10 +51,10 @@ TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
     float t3      = NAN;
     float t4      = NAN;
     float t5      = NAN;
-    std::vector<std::string> waveletNames;
+    std::vector<String> waveletNames;
     waveletNames.resize(17);
     for (std::size_t i = 0; i < waveletNames.size(); i++) {
-        waveletNames[i] = std::string("coif") + std::to_string(i + 1);
+        waveletNames[i] = String("coif") + std::to_string(i + 1);
     }
 
     for (auto const& name : waveletNames) {
@@ -83,9 +83,9 @@ TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
     float t3      = NAN;
     float t4      = NAN;
     float t5      = NAN;
-    std::vector<std::string> waveletNames;
+    std::vector<String> waveletNames;
     for (std::size_t i = 1; i < 20; i++) {
-        waveletNames.push_back(std::string("sym") + std::to_string(i + 1));
+        waveletNames.push_back(String("sym") + std::to_string(i + 1));
     }
 
     for (auto const& name : waveletNames) {
@@ -110,7 +110,7 @@ TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
 TEST_CASE("dsp/wavelet: biorCoefTests", "[dsp][wavelet]")
 {
     constexpr float epsilon = 1e-6;
-    std::vector<std::string> waveletNames;
+    std::vector<String> waveletNames;
     waveletNames.emplace_back("bior1.1");
     waveletNames.emplace_back("bior1.3");
     waveletNames.emplace_back("bior1.5");
@@ -152,7 +152,7 @@ TEST_CASE("dsp/wavelet: rbiorCoefTests", "[dsp][wavelet]")
 {
     auto const epsilon = 1e-6F;
 
-    std::vector<std::string> waveletNames;
+    std::vector<String> waveletNames;
     waveletNames.emplace_back("rbior1.1");
     waveletNames.emplace_back("rbior1.3");
     waveletNames.emplace_back("rbior1.5");
