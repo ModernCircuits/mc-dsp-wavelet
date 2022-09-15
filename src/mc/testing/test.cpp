@@ -92,7 +92,7 @@ auto loadTestData(char const* filePath) -> TestData<float>
     auto parseLine = [](auto const& line) {
         auto splits = split(line, ' ');
         auto values = Vector<float>{};
-        for (auto const& s : splits) { values.push_back(std::stod(s)); }
+        for (auto const& s : splits) { values.push_back(std::stof(s)); }
         return values;
     };
 

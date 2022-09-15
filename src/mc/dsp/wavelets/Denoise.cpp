@@ -91,7 +91,7 @@ auto visushrink(
 
         for (std::size_t i = 0; i < dlen; ++i) { dout[i] = fabs(wt.output()[iter + i]); }
 
-        sigma = median(dout.get(), dlen) / 0.6745;
+        sigma = median(dout.get(), dlen) / 0.6745F;
         for (it = 0; cmp_less(it, j); ++it) { lnoise[it] = sigma; }
     } else if (level == StringView{"all"}) {
         for (it = 0; cmp_less(it, j); ++it) {
@@ -99,7 +99,7 @@ auto visushrink(
             for (std::size_t i = 0; i < dlen; ++i) {
                 dout[i] = fabs(wt.output()[iter + i]);
             }
-            sigma      = median(dout.get(), dlen) / 0.6745;
+            sigma      = median(dout.get(), dlen) / 0.6745F;
             lnoise[it] = sigma;
             iter += dlen;
         }
@@ -216,13 +216,13 @@ auto sureshrink(
 
         for (auto i = 0; i < dlen; ++i) { dout[i] = fabs(wt.output()[iter + i]); }
 
-        sigma = median(dout.get(), dlen) / 0.6745;
+        sigma = median(dout.get(), dlen) / 0.6745F;
         for (it = 0; cmp_less(it, j); ++it) { lnoise[it] = sigma; }
     } else if (level == StringView{"all"}) {
         for (it = 0; cmp_less(it, j); ++it) {
             dlen = wt.length[it + 1];
             for (auto i = 0; i < dlen; ++i) { dout[i] = fabs(wt.output()[iter + i]); }
-            sigma      = median(dout.get(), dlen) / 0.6745;
+            sigma      = median(dout.get(), dlen) / 0.6745F;
             lnoise[it] = sigma;
             iter += dlen;
         }
@@ -368,7 +368,7 @@ auto modwtshrink(
         dlen = wt.length[it + 1];
         for (std::size_t i = 0; i < dlen; ++i) { dout[i] = fabs(wt.output()[iter + i]); }
 
-        sigma      = std::sqrt(2.0F) * median(dout.get(), dlen) / 0.6745;
+        sigma      = std::sqrt(2.0F) * median(dout.get(), dlen) / 0.6745F;
         lnoise[it] = sigma;
         iter += dlen;
     }
@@ -545,11 +545,8 @@ auto median(float* const x, int n) -> float
 
 auto minindex(float const* arr, int n) -> int
 {
-    float min = NAN;
-    int index = 0;
-
-    min   = DBL_MAX;
-    index = 0;
+    auto min   = std::numeric_limits<float>::max();
+    auto index = 0;
     for (auto i = 0; i < n; ++i) {
         if (arr[i] < min) {
             min   = arr[i];

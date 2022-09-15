@@ -15,7 +15,7 @@
 #include <fmt/printf.h>
 
 namespace {
-constexpr auto pi2 = 6.28318530717958647692528676655900577;
+constexpr auto pi2 = static_cast<float>(6.28318530717958647692528676655900577);
 }  // namespace
 
 namespace mc::dsp {
@@ -385,11 +385,11 @@ auto waveFunction(
     if (mother == 0) {
         // MORLET
         if (param < 0.0F) { param = 6.0F; }
-        norm = std::sqrt(2.0F * pi * scale1 / dt) * std::pow(pi, -0.25);
+        norm = std::sqrt(2.0F * pi * scale1 / dt) * std::pow(pi, -0.25F);
 
         for (k = 1; k <= nk / 2 + 1; ++k) {
             temp  = (scale1 * kwave[k - 1] - param);
-            expnt = -0.5 * temp * temp;
+            expnt = -0.5F * temp * temp;
             daughter[k - 1].real(norm * std::exp(expnt));
             daughter[k - 1].imag(0.0F);
         }
@@ -435,14 +435,14 @@ auto waveFunction(
             sign = 1;
         }
 
-        norm = std::sqrt(2.0F * pi * scale1 / dt) * std::sqrt(1.0F / cwtGamma(m + 0.50));
+        norm = std::sqrt(2.0F * pi * scale1 / dt) * std::sqrt(1.0F / cwtGamma(m + 0.50F));
         norm *= sign;
 
         if (re == 1) {
             for (k = 1; k <= nk; ++k) {
                 temp = scale1 * kwave[k - 1];
                 daughter[k - 1].real(
-                    norm * std::pow(temp, (float)m) * std::exp(-0.50 * std::pow(temp, 2.0F))
+                    norm * std::pow(temp, (float)m) * std::exp(-0.5F * std::pow(temp, 2.0F))
                 );
                 daughter[k - 1].imag(0.0F);
             }
@@ -451,7 +451,7 @@ auto waveFunction(
                 temp = scale1 * kwave[k - 1];
                 daughter[k - 1].real(0.0F);
                 daughter[k - 1].imag(
-                    norm * std::pow(temp, (float)m) * std::exp(-0.50 * std::pow(temp, 2.0F))
+                    norm * std::pow(temp, (float)m) * std::exp(-0.5F * std::pow(temp, 2.0F))
                 );
             }
         }
@@ -623,7 +623,7 @@ auto psi0(int mother, float param, float* val, int* real) -> void
             }
             coeff = sign * std::pow(2.0F, (float)m / 2) / cwtGamma(0.5);
             *val  = coeff * cwtGamma(((float)m + 1.0F) / 2.0F)
-                 / std::sqrt(cwtGamma(m + 0.50));
+                 / std::sqrt(cwtGamma(m + 0.5F));
         } else {
             *val = 0;
         }
@@ -655,7 +655,7 @@ auto cdelta(int mother, float param, float psi0) -> float
     auto s0{0.0F};
     auto n{1};
     auto subscale = 8.0F;
-    auto dt       = 0.25;
+    auto dt       = 0.25F;
 
     if (mother == 0) {
         n  = 16;
@@ -773,7 +773,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(
     int motherTmp{0};
     if ((wave == StringView{"morlet"}) || (wave == StringView{"morl"})) {
         s0Tmp     = 2 * dtIn;
-        djTmp     = 0.4875;
+        djTmp     = 0.4875F;
         motherTmp = 0;
         if (param < 0.0F) {
             fmt::printf("\n Morlet Wavelet Parameter should be >= 0 \n");
@@ -783,7 +783,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(
         wave_ = "morlet";
     } else if (wave == StringView{"paul"}) {
         s0Tmp     = 2 * dtIn;
-        djTmp     = 0.4875;
+        djTmp     = 0.4875F;
         motherTmp = 1;
         if (param < 0 || param > 20) {
             fmt::printf("\n Paul Wavelet Parameter should be > 0 and <= 20 \n");
@@ -793,7 +793,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(
         wave_ = "paul";
     } else if ((wave == StringView{"dgauss"}) || (wave == StringView{"dog"})) {
         s0Tmp     = 2 * dtIn;
-        djTmp     = 0.4875;
+        djTmp     = 0.4875F;
         motherTmp = 2;
         if (param < 0 || odd == 1) {
             fmt::printf("\n DOG Wavelet Parameter should be > 0 and even \n");
@@ -974,7 +974,7 @@ auto meyer(int n, float lb, float ub, float* phi, float* psi, float* tgrid) -> v
     auto psiw = makeUnique<Complex<float>[]>(n);
     auto oup  = makeUnique<Complex<float>[]>(n);
 
-    auto const delta = 2 * (ub - lb) / pi2;
+    auto const delta = 2.0F * (ub - lb) / pi2;
 
     auto j = (float)n;
     j *= -1.0F;
@@ -1047,7 +1047,7 @@ auto gauss(int n, int p, float lb, float ub, float* psi, float* t) -> void
     delta    = (ub - lb) / (n - 1);
     for (i = 1; i < n - 1; ++i) { t[i] = lb + delta * i; }
 
-    den = std::sqrt(cwtGamma(p + 0.5));
+    den = std::sqrt(cwtGamma(p + 0.5F));
 
     if ((p + 1) % 2 == 0) {
         num = 1.0F;

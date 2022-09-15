@@ -21,7 +21,7 @@ auto main() -> int
     auto oup  = makeUnique<float[]>(n);
     auto diff = makeUnique<float[]>(n);
 
-    for (std::size_t i = 1; i < n + 1; ++i) { inp[i - 1] = i; }
+    for (std::size_t i = 1; i < n + 1; ++i) { inp[i - 1] = static_cast<float>(i); }
 
     auto wt = dsp::WaveletPacketTransform(&obj, n, j);
     setDWPTExtension(wt, "per");

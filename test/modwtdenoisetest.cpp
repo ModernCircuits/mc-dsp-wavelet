@@ -31,11 +31,11 @@ auto main() -> int
 
     fmt::printf("Signal - Noisy Signal Stats \n");
     fmt::printf("RMSE %g\n", rmsError(sig.data(), inp.data(), n));
-    fmt::printf("Corr Coeff %g\n", corrcoef(n, sig.data(), inp.data()));
+    fmt::printf("Corr Coeff %g\n", corrcoef((int)n, sig.data(), inp.data()));
 
     fmt::printf("Signal - DeNoised Signal Stats \n");
     fmt::printf("RMSE %g\n", rmsError(sig.data(), out.get(), n));
-    fmt::printf("Corr Coeff %g\n", corrcoef(n, sig.data(), out.get()));
+    fmt::printf("Corr Coeff %g\n", corrcoef((int)n, sig.data(), out.get()));
 
     return 0;
 }

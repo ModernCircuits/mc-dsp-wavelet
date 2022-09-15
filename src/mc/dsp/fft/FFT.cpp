@@ -6,7 +6,7 @@
 #include <mc/core/memory.hpp>
 
 namespace {
-constexpr auto pi2 = 6.28318530717958647692528676655900577;
+constexpr auto pi2 = static_cast<float>(6.28318530717958647692528676655900577);
 }  // namespace
 
 namespace mc::dsp {
