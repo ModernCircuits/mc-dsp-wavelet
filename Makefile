@@ -33,7 +33,7 @@ check:
 coverage:
 	cmake -S. -GNinja -Bcmake-build-coverage -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_STANDARD=${CXX_STD} -D MC_BUILD_COVERAGE=TRUE
 	cmake --build cmake-build-coverage
-	ctest --test-dir cmake-build-coverage -C Debug --output-on-failure
+	ctest --test-dir cmake-build-coverage -C Debug --output-on-failure --parallel ${shell nproc}
 
 .PHONY: coverage-html
 coverage-html: coverage
