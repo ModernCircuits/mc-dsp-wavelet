@@ -13,7 +13,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-static auto median(mc::Span<float> data) -> float
+[[maybe_unused]] static auto median(mc::Span<float> data) -> float
 {
     if (mc::empty(data)) { return 0.0; }
 
@@ -23,7 +23,7 @@ static auto median(mc::Span<float> data) -> float
     return size % 2 == 0 ? (data[mid] + data[mid - 1]) / 2 : data[mid];
 }
 
-static auto mode(mc::Span<float const> arr) -> float
+[[maybe_unused]] static auto mode(mc::Span<float const> arr) -> float
 {
     auto const n   = arr.size();
     float count    = 1;
@@ -71,7 +71,7 @@ TEST_CASE("dsp/wavelet: TempoDetect", "[dsp][wavelet]")
     }
 
     auto outOfRange = [](auto b) { return b < 100.0 || b > 200.0; };
-    bpms.erase(std::remove_if(begin(bpms), end(bpms), outOfRange), end(bpms));
+    bpms.erase(ranges::remove_if(bpms, outOfRange), end(bpms));
 
     REQUIRE(std::round(median(bpms)) == 120.0);
     // REQUIRE(std::round(mode(bpms)) == 120.0);

@@ -154,7 +154,6 @@ auto sureshrink(
     float* denoised
 ) -> void
 {
-    int it     = 0;
     int dwtLen = 0;
     int minIdx = 0;
 
@@ -212,14 +211,18 @@ auto sureshrink(
     if (level == StringView{"first"}) {
         for (std::size_t i = 1; i < j; ++i) { iter += wt.length[i]; }
 
-        for (auto i = 0; i < dlen; ++i) { dout[i] = std::abs(wt.output()[iter + i]); }
+        for (auto i = 0; cmp_less(i, dlen); ++i) {
+            dout[i] = std::abs(wt.output()[iter + i]);
+        }
 
         sigma = median({dout.get(), dlen}) / 0.6745F;
         for (auto it = 0; cmp_less(it, j); ++it) { lnoise[it] = sigma; }
     } else if (level == StringView{"all"}) {
         for (auto it = 0; cmp_less(it, j); ++it) {
             dlen = wt.length[it + 1];
-            for (auto i = 0; i < dlen; ++i) { dout[i] = std::abs(wt.output()[iter + i]); }
+            for (auto i = 0; cmp_less(i, dlen); ++i) {
+                dout[i] = std::abs(wt.output()[iter + i]);
+            }
             sigma      = median({dout.get(), dlen}) / 0.6745F;
             lnoise[it] = sigma;
             iter += dlen;
@@ -311,8 +314,6 @@ auto modwtshrink(
     float* denoised
 ) -> void
 {
-
-    int it      = 0;
     float sigma = NAN;
     float td    = NAN;
     float tmp   = NAN;

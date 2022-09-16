@@ -8,9 +8,6 @@ endfunction()
 find_package(Catch2 REQUIRED)
 include(Catch)
 
-# add_executable(bpm_detector "bpm_detector.cpp")
-# target_link_libraries(bpm_detector PRIVATE mc_dsp_wavelet mc::CodeCoverage)
-
 mc_dsp_wavelet_add_test(cwttest)
 mc_dsp_wavelet_add_test(dwttest)
 mc_dsp_wavelet_add_test(swttest)
