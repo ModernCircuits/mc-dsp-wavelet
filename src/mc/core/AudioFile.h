@@ -18,8 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef AS_AudioFile_h
-#define AS_AudioFile_h
+#pragma once
 
 #include <mc/core/config.hpp>
 
@@ -199,7 +198,6 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
             int startIndex2
         ) -> bool;
         void addSampleRateToAiffData(Vector<uint8_t>& fileData, uint32_t sampleRate);
-        auto clamp(T value, T minValue, T maxValue) -> T;
 
         void addStringToFileData(Vector<uint8_t>& fileData, String const& s);
         void addInt32ToFileData(
@@ -1215,30 +1213,22 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     template<class T>
     auto AudioFile<T>::sampleToSixteenBitInt(T sample)->int16_t
     {
-        sample = clamp(sample, -1., 1.);
-        return static_cast<int16_t>(sample * 32767.);
+        sample = clamp(sample, T(-1), T(1));
+        return static_cast<int16_t>(sample * T(32767));
     }
 
     template<class T>
     auto AudioFile<T>::sampleToSingleByte(T sample)->uint8_t
     {
-        sample = clamp(sample, -1., 1.);
-        sample = (sample + 1.) / 2.;
-        return static_cast<uint8_t>(sample * 255.);
+        sample = clamp(sample, T(-1), T(1));
+        sample = (sample + T(1)) / T(2);
+        return static_cast<uint8_t>(sample * T(255));
     }
 
     template<class T>
     auto AudioFile<T>::singleByteToSample(uint8_t sample)->T
     {
-        return static_cast<T>(sample - 128) / static_cast<T>(128.);
-    }
-
-    template<class T>
-    auto AudioFile<T>::clamp(T value, T minValue, T maxValue)->T
-    {
-        value = std::min(value, maxValue);
-        value = std::max(value, minValue);
-        return value;
+        return static_cast<T>(sample - 128) / static_cast<T>(128.0);
     }
 
     template<class T>
@@ -1253,5 +1243,3 @@ __pragma(warning(pop))
 #elif defined(__GNUC__)
 _Pragma("GCC diagnostic pop")
 #endif
-
-#endif /* AudioFile_h */

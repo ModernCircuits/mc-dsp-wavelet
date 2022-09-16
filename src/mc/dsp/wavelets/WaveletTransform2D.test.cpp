@@ -10,6 +10,7 @@ using namespace mc;
 
 static constexpr auto const epsilon = 6e-7F;
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define DWT_IDWT_ROUNDTRIP(waveletName)                                                    \
     TEST_CASE(                                                                             \
         "dsp/wavelet: WaveletTransform2D(dwt/idwt) - " waveletName,                        \
@@ -137,6 +138,7 @@ DWT_IDWT_ROUNDTRIP("rbior4.4")  // NOLINT
 DWT_IDWT_ROUNDTRIP("rbior5.5")  // NOLINT
 DWT_IDWT_ROUNDTRIP("rbior6.8")  // NOLINT
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define MODWT_IMODWT_ROUNDTRIP(waveletName)                                                \
     TEST_CASE(                                                                             \
         "dsp/wavelet: WaveletTransform2D(modwt/imodwt) - " waveletName,                    \
@@ -229,6 +231,7 @@ MODWT_IMODWT_ROUNDTRIP("sym18")  // NOLINT
 MODWT_IMODWT_ROUNDTRIP("sym19")  // NOLINT
 MODWT_IMODWT_ROUNDTRIP("sym20")  // NOLINT
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define SWT2_ISWT2_ROUNDTRIP(waveletName)                                                  \
     TEST_CASE(                                                                             \
         "dsp/wavelet: WaveletTransform2D(swt2/iswt2) - " waveletName,                      \

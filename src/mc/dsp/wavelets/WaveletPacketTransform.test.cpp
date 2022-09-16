@@ -9,6 +9,7 @@
 
 using namespace mc;
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define DWT_IDWT_ROUNDTRIP(waveletName)                                                    \
     TEST_CASE(                                                                             \
         "dsp/wavelet: WaveletPacketTransform(dwpt/idwpt) - " waveletName,                  \
