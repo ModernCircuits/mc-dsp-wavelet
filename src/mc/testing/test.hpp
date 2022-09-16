@@ -7,6 +7,7 @@
 #include <mc/core/fstream.hpp>
 #include <mc/core/iterator.hpp>
 #include <mc/core/limits.hpp>
+#include <mc/core/span.hpp>
 #include <mc/core/sstream.hpp>
 #include <mc/core/stdexcept.hpp>
 #include <mc/core/string.hpp>
@@ -31,28 +32,13 @@ auto approxEqual(It1 f1, It1 l1, It2 f2, It2 l2, int epsilonFactor = 4) -> bool
     return std::equal(f1, l1, f2, l2, epsilonEqual);
 }
 
-template<typename Container1, typename Container2>
-auto approxEqual(Container1 c1, Container2 c2, int epsilonFactor = 4) -> bool
+template<typename T>
+auto approxEqual(Span<T const> lhs, Span<T const> rhs, int epsilonFactor = 4) -> bool
 {
-    return approxEqual(
-        std::begin(c1),
-        std::end(c1),
-        std::begin(c2),
-        std::end(c2),
-        epsilonFactor
-    );
+    return approxEqual(begin(lhs), end(lhs), begin(rhs), end(rhs), epsilonFactor);
 }
 
-auto absmax(float* array, std::size_t n) -> float;
-auto sum1(float const* array, std::size_t n) -> float;
-auto sum2(float const* array, std::size_t n) -> float;
-auto sum3(float const* array, std::size_t n) -> float;
-
-// np.sum(w[2*m:(2*N+2*m)]*w[0:2*N])
-auto sum4(float const* array, std::size_t n) -> float;
-// np.sum(w[2 * m:(2 * N)] * w[0:2 * N - 2 * m])
-auto sum5(float const* array, std::size_t n, std::size_t m) -> float;
-
+auto absmax(float const* array, std::size_t n) -> float;
 auto rmsError(float const* data, float const* rec, std::size_t n) -> float;
 auto relError(float const* data, float const* rec, std::size_t n) -> float;
 

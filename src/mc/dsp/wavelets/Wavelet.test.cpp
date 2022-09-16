@@ -15,6 +15,43 @@
 
 using namespace mc;
 
+static auto sum1(Span<float const> array) -> float
+{
+    auto sum = 0.0F;
+    for (auto i = std::size_t{0}; i < size(array); ++i) { sum += array[i]; }
+    return sum;
+}
+
+static auto sum2(Span<float const> array) -> float
+{
+    auto sum = 0.0F;
+    for (std::size_t i = 0; i < size(array); i += 2) { sum += array[i]; }
+    return sum;
+}
+
+static auto sum3(Span<float const> array) -> float
+{
+    auto sum = 0.0F;
+    for (std::size_t i = 1; i < size(array); i += 2) { sum += array[i]; }
+    return sum;
+}
+
+// np.sum(w[2*m:(2*N+2*m)]*w[0:2*N])
+static auto sum4(Span<float const> array) -> float
+{
+    auto sum = 0.0F;
+    for (std::size_t i = 0; i < size(array); i += 1) { sum += array[i] * array[i]; }
+    return sum;
+}
+
+// np.sum(w[2 * m:(2 * N)] * w[0:2 * N - 2 * m])
+static auto sum5(float const* array, std::size_t n, std::size_t m) -> float
+{
+    auto sum = 0.0F;
+    for (std::size_t i = 2 * m; i < n; i += 1) { sum += array[i] * array[i - 2 * m]; }
+    return sum;
+}
+
 TEST_CASE("dsp/wavelet: dbCoefTests", "[dsp][wavelet]")
 {
     constexpr auto epsilon = 1e-6;
@@ -26,10 +63,10 @@ TEST_CASE("dsp/wavelet: dbCoefTests", "[dsp][wavelet]")
 
     for (auto const& name : waveletNames) {
         auto obj = dsp::Wavelet{name.c_str()};
-        auto t1  = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
-        auto t2  = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        auto t3  = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        auto t4  = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
+        auto t1  = sum1(obj.lpr()) - mc::sqrt(2.0F);
+        auto t2  = sum2(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
+        auto t3  = sum3(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
+        auto t4  = sum4(obj.lpr()) - 1.0F;
 
         REQUIRE(std::abs(t1) <= epsilon);
         REQUIRE(std::abs(t2) <= epsilon);
@@ -55,10 +92,10 @@ TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
 
     for (auto const& name : waveletNames) {
         auto obj      = dsp::Wavelet{name.c_str()};
-        auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
-        auto const t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        auto const t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        auto const t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
+        auto const t1 = sum1(obj.lpr()) - mc::sqrt(2.0F);
+        auto const t2 = sum2(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
+        auto const t3 = sum3(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
+        auto const t4 = sum4(obj.lpr()) - 1.0F;
 
         REQUIRE(std::abs(t1) <= epsilon);
         REQUIRE(std::abs(t2) <= epsilon);
@@ -81,10 +118,10 @@ TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
 
     for (auto const& name : waveletNames) {
         auto obj      = dsp::Wavelet{name.c_str()};
-        auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
-        auto const t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        auto const t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        auto const t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
+        auto const t1 = sum1(obj.lpr()) - mc::sqrt(2.0F);
+        auto const t2 = sum2(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
+        auto const t3 = sum3(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
+        auto const t4 = sum4(obj.lpr()) - 1.0F;
 
         REQUIRE(std::abs(t1) <= epsilon);
         REQUIRE(std::abs(t2) <= epsilon);
@@ -121,14 +158,14 @@ TEST_CASE("dsp/wavelet: biorCoefTests", "[dsp][wavelet]")
     for (auto const& name : waveletNames) {
         auto obj = dsp::Wavelet{name.c_str()};
 
-        auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
-        auto const t2 = sum1(obj.lpd().data(), obj.lpd().size()) - mc::sqrt(2.0F);
+        auto const t1 = sum1(obj.lpr()) - mc::sqrt(2.0F);
+        auto const t2 = sum1(obj.lpd()) - mc::sqrt(2.0F);
 
-        auto const t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        auto const t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0F / mc::sqrt(2.0F);
+        auto const t3 = sum2(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
+        auto const t4 = sum2(obj.lpd()) - 1.0F / mc::sqrt(2.0F);
 
-        auto const t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        auto const t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0F / mc::sqrt(2.0F);
+        auto const t5 = sum3(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
+        auto const t6 = sum3(obj.lpd()) - 1.0F / mc::sqrt(2.0F);
 
         REQUIRE(std::abs(t1) <= epsilon);
         REQUIRE(std::abs(t2) <= epsilon);
@@ -163,14 +200,14 @@ TEST_CASE("dsp/wavelet: rbiorCoefTests", "[dsp][wavelet]")
     for (auto const& name : waveletNames) {
         auto obj = dsp::Wavelet{name.c_str()};
 
-        auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
-        auto const t2 = sum1(obj.lpd().data(), obj.lpd().size()) - mc::sqrt(2.0F);
+        auto const t1 = sum1(obj.lpr()) - mc::sqrt(2.0F);
+        auto const t2 = sum1(obj.lpd()) - mc::sqrt(2.0F);
 
-        auto const t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        auto const t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0F / mc::sqrt(2.0F);
+        auto const t3 = sum2(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
+        auto const t4 = sum2(obj.lpd()) - 1.0F / mc::sqrt(2.0F);
 
-        auto const t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        auto const t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0F / mc::sqrt(2.0F);
+        auto const t5 = sum3(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
+        auto const t6 = sum3(obj.lpd()) - 1.0F / mc::sqrt(2.0F);
 
         REQUIRE(std::abs(t1) <= epsilon);
         REQUIRE(std::abs(t2) <= epsilon);

@@ -16,14 +16,8 @@ auto testConvolute(Vector<Vector<T>> const& testData) -> bool
     auto const& expected = testData[2];
 
     auto output = Vector<T>(expected.size());
-    dsp::convolute(
-        mc::data(signal),
-        mc::size(signal),
-        mc::data(patch),
-        mc::size(patch),
-        mc::data(output)
-    );
-    CHECK(approxEqual(output, expected));
+    dsp::convolute(data(signal), size(signal), data(patch), size(patch), data(output));
+    CHECK(approxEqual<T>(output, expected));
     return true;
 }
 

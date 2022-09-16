@@ -5,50 +5,13 @@
 
 namespace mc {
 
-auto absmax(float* array, std::size_t n) -> float
+auto absmax(float const* array, std::size_t n) -> float
 {
     auto max = 0.0F;
     for (auto i = std::size_t{0}; i < n; ++i) {
         if (std::abs(array[i]) >= max) { max = std::abs(array[i]); }
     }
     return max;
-}
-
-auto sum1(float const* array, std::size_t n) -> float
-{
-    auto sum = 0.0F;
-    for (auto i = std::size_t{0}; i < n; ++i) { sum += array[i]; }
-    return sum;
-}
-
-auto sum2(float const* array, std::size_t n) -> float
-{
-    auto sum = 0.0F;
-    for (std::size_t i = 0; i < n; i += 2) { sum += array[i]; }
-    return sum;
-}
-
-auto sum3(float const* array, std::size_t n) -> float
-{
-    auto sum = 0.0F;
-    for (std::size_t i = 1; i < n; i += 2) { sum += array[i]; }
-    return sum;
-}
-
-// np.sum(w[2*m:(2*N+2*m)]*w[0:2*N])
-auto sum4(float const* array, std::size_t n) -> float
-{
-    auto sum = 0.0F;
-    for (std::size_t i = 0; i < n; i += 1) { sum += array[i] * array[i]; }
-    return sum;
-}
-
-// np.sum(w[2 * m:(2 * N)] * w[0:2 * N - 2 * m])
-auto sum5(float const* array, std::size_t n, std::size_t m) -> float
-{
-    auto sum = 0.0F;
-    for (std::size_t i = 2 * m; i < n; i += 1) { sum += array[i] * array[i - 2 * m]; }
-    return sum;
 }
 
 auto rmsError(float const* data, float const* rec, std::size_t n) -> float
