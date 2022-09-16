@@ -38,7 +38,7 @@ auto convolute(
             output[k] = 0.0;
             i++;
             auto const t1   = l + i;
-            auto const tmin = std::min<T>(t1, n);
+            auto const tmin = static_cast<T>(std::min(t1, n));
             for (auto m = i; m < tmin; m++) { output[k] += signal[m] * patch[k - m]; }
         }
         return;
@@ -55,7 +55,7 @@ auto convolute(
         output[k] = 0.0;
         i++;
         auto const t1   = n + i;
-        auto const tmin = std::min<T>(t1, l);
+        auto const tmin = static_cast<T>(std::min(t1, l));
         for (auto m = i; m < tmin; m++) { output[k] += patch[m] * signal[k - m]; }
     }
 }

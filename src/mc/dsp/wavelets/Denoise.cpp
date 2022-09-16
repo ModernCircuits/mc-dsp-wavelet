@@ -44,9 +44,7 @@ auto visushrink(
     float* denoised
 ) -> void
 {
-    int dwtLen  = 0;
-    int sgn     = 0;
-    int it      = 0;
+
     float sigma = NAN;
     float td    = NAN;
     float tmp   = NAN;
@@ -95,9 +93,9 @@ auto visushrink(
         }
 
         sigma = median({dout.get(), dlen}) / 0.6745F;
-        for (it = 0; cmp_less(it, j); ++it) { lnoise[it] = sigma; }
+        for (auto it = 0; cmp_less(it, j); ++it) { lnoise[it] = sigma; }
     } else if (level == StringView{"all"}) {
-        for (it = 0; cmp_less(it, j); ++it) {
+        for (auto it = 0; cmp_less(it, j); ++it) {
             dlen = wt.length[it + 1];
             for (std::size_t i = 0; i < dlen; ++i) {
                 dout[i] = std::abs(wt.output()[iter + i]);
@@ -111,9 +109,9 @@ auto visushrink(
         std::exit(-1);
     }
 
-    dwtLen = wt.outlength;
-    iter   = wt.length[0];
-    for (it = 0; cmp_less(it, j); ++it) {
+    auto dwtLen = wt.outlength;
+    iter        = wt.length[0];
+    for (auto it = 0; cmp_less(it, j); ++it) {
         sigma = lnoise[it];
         dlen  = wt.length[it + 1];
         td    = sqrt(2.0F * std::log(dwtLen)) * sigma;
@@ -127,7 +125,7 @@ auto visushrink(
                 if (std::abs(wt.output()[iter + i]) < td) {
                     wt.output()[iter + i] = 0;
                 } else {
-                    sgn                   = wt.output()[iter + i] >= 0 ? 1 : -1;
+                    auto const sgn        = wt.output()[iter + i] >= 0 ? 1 : -1;
                     tmp                   = sgn * (std::abs(wt.output()[iter + i]) - td);
                     wt.output()[iter + i] = tmp;
                 }
@@ -156,10 +154,10 @@ auto sureshrink(
     float* denoised
 ) -> void
 {
-    int it      = 0;
-    int dwtLen  = 0;
-    int minIdx  = 0;
-    int sgn     = 0;
+    int it     = 0;
+    int dwtLen = 0;
+    int minIdx = 0;
+
     int maxIter = 0;
     int iter    = 0;
     float sigma = NAN;
@@ -217,9 +215,9 @@ auto sureshrink(
         for (auto i = 0; i < dlen; ++i) { dout[i] = std::abs(wt.output()[iter + i]); }
 
         sigma = median({dout.get(), dlen}) / 0.6745F;
-        for (it = 0; cmp_less(it, j); ++it) { lnoise[it] = sigma; }
+        for (auto it = 0; cmp_less(it, j); ++it) { lnoise[it] = sigma; }
     } else if (level == StringView{"all"}) {
-        for (it = 0; cmp_less(it, j); ++it) {
+        for (auto it = 0; cmp_less(it, j); ++it) {
             dlen = wt.length[it + 1];
             for (auto i = 0; i < dlen; ++i) { dout[i] = std::abs(wt.output()[iter + i]); }
             sigma      = median({dout.get(), dlen}) / 0.6745F;
@@ -231,7 +229,7 @@ auto sureshrink(
         std::exit(-1);
     }
 
-    for (it = 0; cmp_less(it, j); ++it) {
+    for (auto it = 0; cmp_less(it, j); ++it) {
         dwtLen = wt.length[it + 1];
         sigma  = lnoise[it];
 
@@ -285,7 +283,7 @@ auto sureshrink(
                 if (std::abs(wt.output()[len + i]) < td) {
                     wt.output()[len + i] = 0;
                 } else {
-                    sgn                  = wt.output()[len + i] >= 0 ? 1 : -1;
+                    auto const sgn       = wt.output()[len + i] >= 0 ? 1 : -1;
                     temp                 = sgn * (std::abs(wt.output()[len + i]) - td);
                     wt.output()[len + i] = temp;
                 }
@@ -313,7 +311,7 @@ auto modwtshrink(
     float* denoised
 ) -> void
 {
-    int sgn     = 0;
+
     int it      = 0;
     float sigma = NAN;
     float td    = NAN;
@@ -364,7 +362,7 @@ auto modwtshrink(
     auto dlen = wt.length[j];
     auto dout = makeUnique<float[]>(dlen);
 
-    for (it = 0; cmp_less(it, j); ++it) {
+    for (auto it = 0; cmp_less(it, j); ++it) {
         dlen = wt.length[it + 1];
         for (std::size_t i = 0; i < dlen; ++i) {
             dout[i] = std::abs(wt.output()[iter + i]);
@@ -380,7 +378,7 @@ auto modwtshrink(
     // Thresholding
 
     iter = wt.length[0];
-    for (it = 0; cmp_less(it, j); ++it) {
+    for (auto it = 0; cmp_less(it, j); ++it) {
         sigma = lnoise[it];
         dlen  = wt.length[it + 1];
         td    = sqrt(2.0F * llen / m) * sigma;
@@ -394,7 +392,7 @@ auto modwtshrink(
                 if (std::abs(wt.output()[iter + i]) < td) {
                     wt.output()[iter + i] = 0;
                 } else {
-                    sgn                   = wt.output()[iter + i] >= 0 ? 1 : -1;
+                    auto const sgn        = wt.output()[iter + i] >= 0 ? 1 : -1;
                     tmp                   = sgn * (std::abs(wt.output()[iter + i]) - td);
                     wt.output()[iter + i] = tmp;
                 }

@@ -5,6 +5,7 @@
 #include <mc/core/cassert.hpp>
 #include <mc/core/cmath.hpp>
 #include <mc/core/format.hpp>
+#include <mc/core/iterator.hpp>
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
@@ -67,21 +68,15 @@ WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t 
 static auto
 wtreePer(WaveletTree& wt, float const* inp, int n, float* cA, int lenCA, float* cD) -> void
 {
-    int l      = 0;
-    int l2     = 0;
-    int isodd  = 0;
-    int t      = 0;
-    int lenAvg = 0;
-
-    lenAvg = wt.wave->lpd().size();
-    l2     = lenAvg / 2;
-    isodd  = n % 2;
+    auto const lenAvg = ssize(wt.wave->lpd());
+    auto const l2     = lenAvg / 2;
+    auto const isodd  = n % 2;
 
     for (auto i = 0; i < lenCA; ++i) {
-        t     = 2 * i + l2;
-        cA[i] = 0.0F;
-        cD[i] = 0.0F;
-        for (l = 0; l < lenAvg; ++l) {
+        auto t = 2 * i + l2;
+        cA[i]  = 0.0F;
+        cD[i]  = 0.0F;
+        for (auto l = 0; l < lenAvg; ++l) {
             if ((t - l) >= l2 && (t - l) < n) {
                 cA[i] += wt.wave->lpd()[l] * inp[t - l];
                 cD[i] += wt.wave->hpd()[l] * inp[t - l];
@@ -118,17 +113,13 @@ wtreePer(WaveletTree& wt, float const* inp, int n, float* cA, int lenCA, float* 
 static auto
 wtreeSym(WaveletTree& wt, float const* inp, int n, float* cA, int lenCA, float* cD) -> void
 {
-    int l      = 0;
-    int t      = 0;
-    int lenAvg = 0;
-
-    lenAvg = wt.wave->lpd().size();
+    auto const lenAvg = ssize(wt.wave->lpd());
 
     for (auto i = 0; i < lenCA; ++i) {
-        t     = 2 * i + 1;
-        cA[i] = 0.0F;
-        cD[i] = 0.0F;
-        for (l = 0; l < lenAvg; ++l) {
+        auto t = 2 * i + 1;
+        cA[i]  = 0.0F;
+        cD[i]  = 0.0F;
+        for (auto l = 0; l < lenAvg; ++l) {
             if ((t - l) >= 0 && (t - l) < n) {
                 cA[i] += wt.wave->lpd()[l] * inp[t - l];
                 cD[i] += wt.wave->hpd()[l] * inp[t - l];
