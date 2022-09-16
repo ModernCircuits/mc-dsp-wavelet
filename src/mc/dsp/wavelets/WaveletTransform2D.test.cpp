@@ -19,9 +19,9 @@ static constexpr auto const epsilon = 6e-7F;
     {                                                                                      \
         auto extension                                                                     \
             = GENERATE(dsp::SignalExtension::periodic, dsp::SignalExtension::symmetric);   \
-        auto levels     = GENERATE(1);                                                     \
-        auto const rows = 256;                                                             \
-        auto const cols = 200;                                                             \
+        auto levels     = GENERATE(as<std::size_t>{}, 1);                                  \
+        auto const rows = static_cast<std::size_t>(256);                                   \
+        auto const cols = static_cast<std::size_t>(200);                                   \
         auto const n    = rows * cols;                                                     \
         auto const inp  = generateRandomTestData(n);                                       \
         auto out        = makeZeros<float>(n);                                             \
@@ -145,9 +145,9 @@ DWT_IDWT_ROUNDTRIP("rbior6.8")  // NOLINT
         "[dsp][wavelet]"                                                                   \
     )                                                                                      \
     {                                                                                      \
-        auto levels     = GENERATE(1);                                                     \
-        auto const rows = 256;                                                             \
-        auto const cols = 256;                                                             \
+        auto levels     = GENERATE(as<std::size_t>{}, 1);                                  \
+        auto const rows = static_cast<std::size_t>(256);                                   \
+        auto const cols = static_cast<std::size_t>(256);                                   \
         auto const n    = rows * cols;                                                     \
         auto inp        = generateRandomTestData(n);                                       \
         auto out        = makeZeros<float>(n);                                             \
@@ -238,9 +238,9 @@ MODWT_IMODWT_ROUNDTRIP("sym20")  // NOLINT
         "[dsp][wavelet]"                                                                   \
     )                                                                                      \
     {                                                                                      \
-        auto levels     = GENERATE(1, 2);                                                  \
-        auto const rows = 512;                                                             \
-        auto const cols = 500;                                                             \
+        auto levels     = GENERATE(as<std::size_t>{}, 1, 2);                               \
+        auto const rows = static_cast<std::size_t>(512);                                   \
+        auto const cols = static_cast<std::size_t>(500);                                   \
         auto const n    = rows * cols;                                                     \
         auto inp        = generateRandomTestData(n);                                       \
         auto out        = makeZeros<float>(n);                                             \

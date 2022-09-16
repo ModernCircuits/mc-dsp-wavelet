@@ -17,7 +17,7 @@ using namespace mc;
             = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);       \
         auto extension                                                                     \
             = GENERATE(dsp::SignalExtension::periodic, dsp::SignalExtension::symmetric);   \
-        auto levels    = GENERATE(1, 2, 3);                                                \
+        auto levels    = GENERATE(as<std::size_t>{}, 1, 2, 3);                             \
         auto const n   = 11'025;                                                           \
         auto const inp = generateRandomTestData(n);                                        \
         auto out       = makeZeros<float>(n);                                              \
@@ -140,7 +140,7 @@ DWT_IDWT_ROUNDTRIP("rbior6.8")  // NOLINT
         auto convolutionMethod                                                             \
             = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);       \
         auto extension = GENERATE(dsp::SignalExtension::periodic);                         \
-        auto levels    = GENERATE(1, 2, 3);                                                \
+        auto levels    = GENERATE(as<std::size_t>{}, 1, 2, 3);                             \
         auto const n   = 4096U;                                                            \
         auto const inp = generateRandomTestData(n);                                        \
         auto out       = makeZeros<float>(n);                                              \
@@ -266,7 +266,7 @@ SWT_ISWT_ROUNDTRIP("rbior6.8")  // NOLINT
         auto convolutionMethod                                                             \
             = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);       \
         auto extension = GENERATE(dsp::SignalExtension::periodic);                         \
-        auto levels    = GENERATE(1, 2);                                                   \
+        auto levels    = GENERATE(as<std::size_t>{}, 1, 2);                                \
         auto const n   = 4096U;                                                            \
         auto const inp = generateRandomTestData(n);                                        \
         auto out       = makeZeros<float>(n);                                              \
