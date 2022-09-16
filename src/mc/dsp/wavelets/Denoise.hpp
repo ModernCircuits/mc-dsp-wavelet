@@ -71,8 +71,8 @@ auto setDenoiseWTExtension(DenoiseSet& obj, char const* extension) -> void;
 
 auto setDenoiseParameters(DenoiseSet& obj, char const* thresh, char const* level) -> void;
 
-auto median(float* x, int n) -> float;
+auto median(Span<float> signal) -> float;
 
-auto minindex(float const* arr, int n) -> int;
+auto minIndex(Span<float const> signal) -> int;
 
 }  // namespace mc::dsp

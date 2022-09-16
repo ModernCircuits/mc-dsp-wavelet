@@ -911,7 +911,7 @@ auto iswt2(WaveletTransform2D& wt, float const* wavecoeffs, float* oup) -> void
                 k1 = 0;
                 for (k = it2; k < cols; k += m) {
                     oup[i * cols + k]
-                        = 0.5 * (oup1[i1 * 2 * ic + k1] + oup2[i1 * 2 * ic + k1]);
+                        = 0.5F * (oup1[i1 * 2 * ic + k1] + oup2[i1 * 2 * ic + k1]);
                     k1++;
                 }
                 i1++;

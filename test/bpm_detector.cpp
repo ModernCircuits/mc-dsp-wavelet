@@ -144,17 +144,17 @@ private:
     dsp::WaveletTransform wt_;
 };
 
-auto median(mc::Span<float> data) -> float
+static auto median(mc::Span<float> data) -> float
 {
     if (mc::empty(data)) { return 0.0; }
 
-    std::sort(std::begin(data), std::end(data));
+    ranges::sort(data);
     auto const size = mc::size(data);
     auto const mid  = size / 2;
     return size % 2 == 0 ? (data[mid] + data[mid - 1]) / 2 : data[mid];
 }
 
-auto mode(mc::Span<float> arr) -> float
+static auto mode(mc::Span<float const> arr) -> float
 {
     auto const n   = arr.size();
     float count    = 1;
@@ -218,7 +218,7 @@ auto main(int argc, char** argv) -> int
     }
 
     auto outOfRange = [](auto b) { return b < 100.0 || b > 200.0; };
-    bpms.erase(std::remove_if(begin(bpms), end(bpms), outOfRange), end(bpms));
+    bpms.erase(ranges::remove_if(bpms, outOfRange), end(bpms));
 
     fmt::printf("Detected BPM (median): %.1f\n", std::round(median(bpms)));
     fmt::printf("Detected BPM (mode): %.1f\n", std::round(mode(bpms)));

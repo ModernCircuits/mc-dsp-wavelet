@@ -45,12 +45,12 @@ TEST_CASE("dsp/wavelet: dbCoefTests", "[dsp][wavelet]")
 
 TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
 {
-    float epsilon = 1e-6;
-    float t1      = NAN;
-    float t2      = NAN;
-    float t3      = NAN;
-    float t4      = NAN;
-    float t5      = NAN;
+    auto epsilon = 1e-6;
+    float t1     = NAN;
+    float t2     = NAN;
+    float t3     = NAN;
+    float t4     = NAN;
+    float t5     = NAN;
     Vector<String> waveletNames;
     waveletNames.resize(17);
     for (std::size_t i = 0; i < waveletNames.size(); i++) {
@@ -77,12 +77,12 @@ TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
 
 TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
 {
-    float epsilon = 1e-6;
-    float t1      = NAN;
-    float t2      = NAN;
-    float t3      = NAN;
-    float t4      = NAN;
-    float t5      = NAN;
+    auto epsilon = 1e-6;
+    float t1     = NAN;
+    float t2     = NAN;
+    float t3     = NAN;
+    float t4     = NAN;
+    float t5     = NAN;
     Vector<String> waveletNames;
     for (std::size_t i = 1; i < 20; i++) {
         waveletNames.push_back(String("sym") + std::to_string(i + 1));
@@ -109,7 +109,7 @@ TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
 
 TEST_CASE("dsp/wavelet: biorCoefTests", "[dsp][wavelet]")
 {
-    constexpr float epsilon = 1e-6;
+    constexpr auto epsilon = 1e-6;
     Vector<String> waveletNames;
     waveletNames.emplace_back("bior1.1");
     waveletNames.emplace_back("bior1.3");

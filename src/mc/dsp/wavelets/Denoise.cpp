@@ -5,6 +5,7 @@
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/cstring.hpp>
 #include <mc/core/format.hpp>
+#include <mc/core/iterator.hpp>
 #include <mc/core/memory.hpp>
 #include <mc/core/numeric.hpp>
 #include <mc/core/string_view.hpp>
@@ -93,7 +94,7 @@ auto visushrink(
             dout[i] = std::abs(wt.output()[iter + i]);
         }
 
-        sigma = median(dout.get(), dlen) / 0.6745F;
+        sigma = median({dout.get(), dlen}) / 0.6745F;
         for (it = 0; cmp_less(it, j); ++it) { lnoise[it] = sigma; }
     } else if (level == StringView{"all"}) {
         for (it = 0; cmp_less(it, j); ++it) {
@@ -101,7 +102,7 @@ auto visushrink(
             for (std::size_t i = 0; i < dlen; ++i) {
                 dout[i] = std::abs(wt.output()[iter + i]);
             }
-            sigma      = median(dout.get(), dlen) / 0.6745F;
+            sigma      = median({dout.get(), dlen}) / 0.6745F;
             lnoise[it] = sigma;
             iter += dlen;
         }
@@ -155,27 +156,24 @@ auto sureshrink(
     float* denoised
 ) -> void
 {
-    int filtLen  = 0;
-    int it       = 0;
-    int len      = 0;
-    int dlen     = 0;
-    int dwtLen   = 0;
-    int minIndex = 0;
-    int sgn      = 0;
-    int maxIter  = 0;
-    int iter     = 0;
-    float sigma  = NAN;
-    float norm   = NAN;
-    float td     = NAN;
-    float tv     = NAN;
-    float te     = NAN;
-    float ct     = NAN;
-    float thr    = NAN;
-    float temp   = NAN;
-    float xSum   = NAN;
+    int it      = 0;
+    int dwtLen  = 0;
+    int minIdx  = 0;
+    int sgn     = 0;
+    int maxIter = 0;
+    int iter    = 0;
+    float sigma = NAN;
+    float norm  = NAN;
+    float td    = NAN;
+    float tv    = NAN;
+    float te    = NAN;
+    float ct    = NAN;
+    float thr   = NAN;
+    float temp  = NAN;
+    float xSum  = NAN;
 
-    auto wave = Wavelet{wname};
-    filtLen   = wave.size();
+    auto wave          = Wavelet{wname};
+    auto const filtLen = wave.size();
 
     maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0F)) / std::log(2.0F));
     // Depends on J
@@ -203,8 +201,8 @@ auto sureshrink(
         std::exit(-1);
     }
 
-    len  = wt.length[0];
-    dlen = wt.length[j];
+    auto len  = wt.length[0];
+    auto dlen = wt.length[j];
 
     auto dout   = makeUnique<float[]>(dlen);
     auto risk   = makeUnique<float[]>(dlen);
@@ -218,13 +216,13 @@ auto sureshrink(
 
         for (auto i = 0; i < dlen; ++i) { dout[i] = std::abs(wt.output()[iter + i]); }
 
-        sigma = median(dout.get(), dlen) / 0.6745F;
+        sigma = median({dout.get(), dlen}) / 0.6745F;
         for (it = 0; cmp_less(it, j); ++it) { lnoise[it] = sigma; }
     } else if (level == StringView{"all"}) {
         for (it = 0; cmp_less(it, j); ++it) {
             dlen = wt.length[it + 1];
             for (auto i = 0; i < dlen; ++i) { dout[i] = std::abs(wt.output()[iter + i]); }
-            sigma      = median(dout.get(), dlen) / 0.6745F;
+            sigma      = median({dout.get(), dlen}) / 0.6745F;
             lnoise[it] = sigma;
             iter += dlen;
         }
@@ -237,7 +235,7 @@ auto sureshrink(
         dwtLen = wt.length[it + 1];
         sigma  = lnoise[it];
 
-        if (sigma < 0.00000001) {
+        if (sigma < 0.00000001F) {
             td = 0;
         } else {
             tv   = mc::sqrt(2.0F * mc::log((float)dwtLen));
@@ -270,9 +268,9 @@ auto sureshrink(
                                + dout[i] * ((float)dwtLen - 1 - (float)i))
                             / (float)dwtLen;
                 }
-                minIndex = minindex(risk.get(), dwtLen);
-                thr      = sqrt(dout[minIndex]);
-                td       = thr < tv ? thr : tv;
+                minIdx = minIndex({risk.get(), static_cast<std::size_t>(dwtLen)});
+                thr    = sqrt(dout[minIdx]);
+                td     = thr < tv ? thr : tv;
             }
         }
 
@@ -372,7 +370,7 @@ auto modwtshrink(
             dout[i] = std::abs(wt.output()[iter + i]);
         }
 
-        sigma      = sqrt(2.0F) * median(dout.get(), dlen) / 0.6745F;
+        sigma      = sqrt(2.0F) * median({dout.get(), dlen}) / 0.6745F;
         lnoise[it] = sigma;
         iter += dlen;
     }
@@ -533,32 +531,19 @@ auto setDenoiseParameters(DenoiseSet& obj, char const* thresh, char const* level
     }
 }
 
-auto median(float* const x, int n) -> float
+auto median(Span<float> signal) -> float
 {
-    std::sort(x, x + n, std::less<float>{});
+    ranges::sort(signal);
 
-    float sigma = NAN;
-    if ((n % 2) == 0) {
-        sigma = (x[n / 2 - 1] + x[n / 2]) / 2.0F;
-    } else {
-        sigma = x[n / 2];
-    }
-
-    return sigma;
+    auto const n = size(signal);
+    if ((n % 2UL) == 0UL) { return (signal[n / 2UL - 1UL] + signal[n / 2UL]) / 2.0F; }
+    return signal[n / 2];
 }
 
-auto minindex(float const* arr, int n) -> int
+auto minIndex(Span<float const> signal) -> int
 {
-    auto min   = std::numeric_limits<float>::max();
-    auto index = 0;
-    for (auto i = 0; i < n; ++i) {
-        if (arr[i] < min) {
-            min   = arr[i];
-            index = i;
-        }
-    }
-
-    return index;
+    auto const minimum = ranges::min_element(signal);
+    return static_cast<int>(std::distance(cbegin(signal), minimum));
 }
 
 }  // namespace mc::dsp
