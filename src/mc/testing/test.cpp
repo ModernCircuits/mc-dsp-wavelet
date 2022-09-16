@@ -9,7 +9,7 @@ auto absmax(float* array, std::size_t n) -> float
 {
     auto max = 0.0F;
     for (auto i = std::size_t{0}; i < n; ++i) {
-        if (std::fabs(array[i]) >= max) { max = std::fabs(array[i]); }
+        if (std::abs(array[i]) >= max) { max = std::abs(array[i]); }
     }
     return max;
 }
@@ -55,7 +55,7 @@ auto rmsError(float const* data, float const* rec, std::size_t n) -> float
 {
     float sum = 0;
     for (std::size_t i = 0; i < n; ++i) { sum += (data[i] - rec[i]) * (data[i] - rec[i]); }
-    return std::sqrt(sum / ((float)n - 1));
+    return sqrt(sum / ((float)n - 1));
 }
 
 auto relError(float const* data, float const* rec, std::size_t n) -> float
@@ -66,7 +66,7 @@ auto relError(float const* data, float const* rec, std::size_t n) -> float
         sum1 += (data[i] - rec[i]) * (data[i] - rec[i]);
         sum2 += data[i] * data[i];
     }
-    return std::sqrt(sum1) / std::sqrt(sum2);
+    return sqrt(sum1) / sqrt(sum2);
 }
 
 auto generateRnd() -> float
@@ -159,7 +159,7 @@ auto corrcoef(int n, float const* x, float const* y) -> float
         den2 += (ty * ty);
     }
 
-    cc = num / std::sqrt(den1 * den2);
+    cc = num / sqrt(den1 * den2);
 
     return cc;
 }

@@ -18,8 +18,8 @@ RFFT::RFFT(int n, FFTDirection direction)
 
     for (auto k = 0; k < n / 2; ++k) {
         auto const theta = pi2 * k / n;
-        data_[k].real(std::cos(theta));
-        data_[k].imag(std::sin(theta));
+        data_[k].real(cos(theta));
+        data_[k].imag(sin(theta));
     }
 }
 

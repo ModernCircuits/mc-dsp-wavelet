@@ -26,19 +26,19 @@ TEST_CASE("dsp/wavelet: dbCoefTests", "[dsp][wavelet]")
 
     for (auto const& name : waveletNames) {
         auto obj = dsp::Wavelet{name.c_str()};
-        auto t1  = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
-        auto t2  = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        auto t3  = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        auto t1  = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
+        auto t2  = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
+        auto t3  = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
         auto t4  = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
-        REQUIRE(fabs(t1) <= epsilon);
-        REQUIRE(fabs(t2) <= epsilon);
-        REQUIRE(fabs(t3) <= epsilon);
-        REQUIRE(fabs(t4) <= epsilon);
+        REQUIRE(std::abs(t1) <= epsilon);
+        REQUIRE(std::abs(t2) <= epsilon);
+        REQUIRE(std::abs(t3) <= epsilon);
+        REQUIRE(std::abs(t4) <= epsilon);
 
         for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
             auto t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
-            REQUIRE(fabs(t5) <= epsilon);
+            REQUIRE(std::abs(t5) <= epsilon);
         }
     }
 }
@@ -59,18 +59,18 @@ TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
 
     for (auto const& name : waveletNames) {
         auto obj = dsp::Wavelet{name.c_str()};
-        t1       = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
-        t2       = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        t3       = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        t1       = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
+        t2       = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
+        t3       = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
         t4       = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
-        REQUIRE(std::fabs(t1) <= epsilon);
-        REQUIRE(std::fabs(t2) <= epsilon);
-        REQUIRE(std::fabs(t3) <= epsilon);
-        REQUIRE(std::fabs(t4) <= epsilon);
+        REQUIRE(std::abs(t1) <= epsilon);
+        REQUIRE(std::abs(t2) <= epsilon);
+        REQUIRE(std::abs(t3) <= epsilon);
+        REQUIRE(std::abs(t4) <= epsilon);
         for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
             t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
-            REQUIRE(std::fabs(t5) <= epsilon);
+            REQUIRE(std::abs(t5) <= epsilon);
         }
     }
 }
@@ -90,19 +90,19 @@ TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
 
     for (auto const& name : waveletNames) {
         auto obj = dsp::Wavelet{name.c_str()};
-        t1       = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
-        t2       = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        t3       = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
+        t1       = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
+        t2       = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
+        t3       = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
         t4       = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
-        REQUIRE(std::fabs(t1) <= epsilon);
-        REQUIRE(std::fabs(t2) <= epsilon);
-        REQUIRE(std::fabs(t3) <= epsilon);
-        REQUIRE(std::fabs(t4) <= epsilon);
+        REQUIRE(std::abs(t1) <= epsilon);
+        REQUIRE(std::abs(t2) <= epsilon);
+        REQUIRE(std::abs(t3) <= epsilon);
+        REQUIRE(std::abs(t4) <= epsilon);
 
         for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
             t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
-            REQUIRE(std::fabs(t5) <= epsilon);
+            REQUIRE(std::abs(t5) <= epsilon);
         }
     }
 }
@@ -130,21 +130,21 @@ TEST_CASE("dsp/wavelet: biorCoefTests", "[dsp][wavelet]")
     for (auto const& name : waveletNames) {
         auto obj = dsp::Wavelet{name.c_str()};
 
-        auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
-        auto const t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0F);
+        auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
+        auto const t2 = sum1(obj.lpd().data(), obj.lpd().size()) - mc::sqrt(2.0F);
 
-        auto const t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        auto const t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
+        auto const t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
+        auto const t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0F / mc::sqrt(2.0F);
 
-        auto const t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        auto const t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
+        auto const t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
+        auto const t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0F / mc::sqrt(2.0F);
 
-        REQUIRE(fabs(t1) <= epsilon);
-        REQUIRE(fabs(t2) <= epsilon);
-        REQUIRE(fabs(t3) <= epsilon);
-        REQUIRE(fabs(t4) <= epsilon);
-        REQUIRE(fabs(t5) <= epsilon);
-        REQUIRE(fabs(t6) <= epsilon);
+        REQUIRE(std::abs(t1) <= epsilon);
+        REQUIRE(std::abs(t2) <= epsilon);
+        REQUIRE(std::abs(t3) <= epsilon);
+        REQUIRE(std::abs(t4) <= epsilon);
+        REQUIRE(std::abs(t5) <= epsilon);
+        REQUIRE(std::abs(t6) <= epsilon);
     }
 }
 
@@ -172,20 +172,20 @@ TEST_CASE("dsp/wavelet: rbiorCoefTests", "[dsp][wavelet]")
     for (auto const& name : waveletNames) {
         auto obj = dsp::Wavelet{name.c_str()};
 
-        auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - std::sqrt(2.0F);
-        auto const t2 = sum1(obj.lpd().data(), obj.lpd().size()) - std::sqrt(2.0F);
+        auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
+        auto const t2 = sum1(obj.lpd().data(), obj.lpd().size()) - mc::sqrt(2.0F);
 
-        auto const t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        auto const t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
+        auto const t3 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
+        auto const t4 = sum2(obj.lpd().data(), obj.lpd().size()) - 1.0F / mc::sqrt(2.0F);
 
-        auto const t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / std::sqrt(2.0F);
-        auto const t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0F / std::sqrt(2.0F);
+        auto const t5 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
+        auto const t6 = sum3(obj.lpd().data(), obj.lpd().size()) - 1.0F / mc::sqrt(2.0F);
 
-        REQUIRE(std::fabs(t1) <= epsilon);
-        REQUIRE(std::fabs(t2) <= epsilon);
-        REQUIRE(std::fabs(t3) <= epsilon);
-        REQUIRE(std::fabs(t4) <= epsilon);
-        REQUIRE(std::fabs(t5) <= epsilon);
-        REQUIRE(std::fabs(t6) <= epsilon);
+        REQUIRE(std::abs(t1) <= epsilon);
+        REQUIRE(std::abs(t2) <= epsilon);
+        REQUIRE(std::abs(t3) <= epsilon);
+        REQUIRE(std::abs(t4) <= epsilon);
+        REQUIRE(std::abs(t5) <= epsilon);
+        REQUIRE(std::abs(t6) <= epsilon);
     }
 }

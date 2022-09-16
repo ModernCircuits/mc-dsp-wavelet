@@ -34,8 +34,8 @@ TEST_CASE("dsp/fft: realToComplex", "[dsp][fft]")
 
     auto closeEnough = [](auto l, auto r) -> bool {
         auto const epsilon = std::numeric_limits<float>::epsilon();
-        auto const re      = std::fabs(l.real() - r.real()) < epsilon * 4;
-        auto const im      = std::fabs(l.imag() - r.imag()) < epsilon * 4;
+        auto const re      = std::abs(l.real() - r.real()) < epsilon * 4;
+        auto const im      = std::abs(l.imag() - r.imag()) < epsilon * 4;
         return re && im;
     };
 
@@ -46,9 +46,7 @@ TEST_CASE("dsp/fft: realToComplex", "[dsp][fft]")
             static_cast<int>(testCase.input.size()),
             dsp::FFTDirection::forward};
         auto output = Vector<Complex<float>>(testCase.expected.size());
-        fft.performRealToComplex(mc::data(testCase.input), mc::data(output));
-        REQUIRE(
-            std::equal(begin(output), end(output), begin(testCase.expected), closeEnough)
-        );
+        fft.performRealToComplex(data(testCase.input), data(output));
+        REQUIRE(ranges::equal(output, testCase.expected, closeEnough));
     }
 }

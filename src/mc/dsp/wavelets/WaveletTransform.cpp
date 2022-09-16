@@ -923,7 +923,7 @@ modwtPer(WaveletTransform& wt, int m, float const* inp, float* cA, int lenCA, fl
 {
     auto const lenAvg = wt.wave().lpd().size();
     auto filt         = makeUnique<float[]>(2 * lenAvg);
-    auto s            = std::sqrt(2.0F);
+    auto s            = sqrt(2.0F);
 
     for (std::size_t i = 0; i < lenAvg; ++i) {
         filt[i]          = wt.wave().lpd()[i] / s;
@@ -1007,7 +1007,7 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
     wt.length[0] = wt.length[j] = n;
     wt.outlength = wt.length[j + 1] = (j + 1) * n;
 
-    s = std::sqrt(2.0F);
+    s = sqrt(2.0F);
     for (iter = 1; iter < j; ++iter) { wt.length[iter] = n; }
 
     auto fftFd = makeUnique<FFT<float, KissFFT>>(n, FFTDirection::forward);
@@ -1118,7 +1118,7 @@ auto imodwtFft(WaveletTransform& wt, float* oup) -> void
     auto lenAvg = static_cast<std::size_t>(wt.wave().lpd().size());
     auto j      = static_cast<std::size_t>(wt.levels());
 
-    auto s     = std::sqrt(2.0F);
+    auto s     = sqrt(2.0F);
     auto fftFd = makeUnique<FFT<float, KissFFT>>(n, FFTDirection::forward);
     auto fftBd = makeUnique<FFT<float, KissFFT>>(n, FFTDirection::backward);
 
@@ -1222,7 +1222,7 @@ static auto imodwtPer(
 {
     auto const lenAvg = wt.wave().lpd().size();
     auto filt         = makeUnique<float[]>(2 * lenAvg);
-    auto s            = std::sqrt(2.0F);
+    auto s            = sqrt(2.0F);
 
     for (std::size_t i = 0; i < lenAvg; ++i) {
         filt[i]          = wt.wave().lpd()[i] / s;

@@ -24,7 +24,7 @@ auto approxEqual(It1 f1, It1 l1, It2 f2, It2 l2, int epsilonFactor = 4) -> bool
 
     auto epsilonEqual = [epsilonFactor](auto l, auto r) {
         auto const epsilon = std::numeric_limits<v1_t>::epsilon();
-        return std::fabs(l - r) < epsilon * epsilonFactor;
+        return std::abs(l - r) < epsilon * epsilonFactor;
     };
 
     return std::equal(f1, l1, f2, l2, epsilonEqual);

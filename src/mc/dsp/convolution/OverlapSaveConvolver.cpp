@@ -214,9 +214,10 @@ auto OverlapSaveConvolver::execute(bool const crossCorrelate) -> void
 
     for (std::size_t i = 0; i < resultChunks_.size(); i++) {
         backwardPlans_.at(i)->execute();
-        auto& chunk   = *resultChunks_.at(i);
-        auto divideBy = [this](auto arg) { return arg / resultChunksize_; };
-        std::transform(std::begin(chunk), std::end(chunk), std::begin(chunk), divideBy);
+        auto& chunk = *resultChunks_.at(i);
+        ranges::transform(chunk, begin(chunk), [this](auto arg) {
+            return arg / resultChunksize_;
+        });
     }
 }
 }  // namespace mc::dsp

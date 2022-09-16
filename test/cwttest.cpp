@@ -58,7 +58,7 @@ auto main() -> int
     mn = 0.0F;
 
     for (i = 0; i < n; ++i) {
-        mn += std::sqrt(
+        mn += mc::sqrt(
             wt.output[i].real() * wt.output[i].real()
             + wt.output[i].imag() * wt.output[i].imag()
         );
@@ -103,10 +103,10 @@ auto main() -> int
         reconMean += oup[i];
     }
 
-    reconVar = std::sqrt(num / n);
+    reconVar = mc::sqrt(num / n);
     reconMean /= n;
 
-    fmt::printf("\nRMS Error %g \n", std::sqrt(num) / std::sqrt(den));
+    fmt::printf("\nRMS Error %g \n", mc::sqrt(num) / mc::sqrt(den));
     fmt::printf("\nVariance %g \n", reconVar);
     fmt::printf("\nMean %g \n", reconMean);
 

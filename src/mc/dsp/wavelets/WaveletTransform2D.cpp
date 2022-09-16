@@ -842,7 +842,7 @@ auto iswt2(WaveletTransform2D& wt, float const* wavecoeffs, float* oup) -> void
         aLH = wt.coeffaccess[(j - iter) * 3 + 1];
         aHL = wt.coeffaccess[(j - iter) * 3 + 2];
         aHH = wt.coeffaccess[(j - iter) * 3 + 3];
-        m   = (int)std::pow(2.0F, (float)iter - 1);
+        m   = (int)pow(2.0F, (float)iter - 1);
 
         for (it2 = 0; it2 < m; ++it2) {
             ir  = 0;
@@ -964,7 +964,7 @@ auto modwt(WaveletTransform2D& wt, float const* inp) -> UniquePtr<float[]>
     n              = wt.outlength;
     auto wavecoeff = makeZeros<float>(wt.outlength);
     auto filt      = makeUnique<float[]>(2 * lp);
-    s              = std::sqrt(2.0F);
+    s              = sqrt(2.0F);
     for (auto i = 0; i < lp; ++i) {
         filt[i]      = wt.wave().lpd()[i] / s;
         filt[lp + i] = wt.wave().hpd()[i] / s;
@@ -1075,12 +1075,12 @@ auto imodwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void
     cols = wt.cols();
     j    = wt.J;
 
-    m = (int)std::pow(2.0F, (float)j - 1.0F);
+    m = (int)pow(2.0F, (float)j - 1.0F);
     // N = rows > cols ? rows : cols;
     lf = (wt.wave().lpr().size() + wt.wave().hpr().size()) / 2;
 
     auto filt = makeZeros<float>(2 * lf);
-    s         = std::sqrt(2.0F);
+    s         = sqrt(2.0F);
     for (auto i = 0; i < lf; ++i) {
         filt[i]      = wt.wave().lpd()[i] / s;
         filt[lf + i] = wt.wave().hpd()[i] / s;

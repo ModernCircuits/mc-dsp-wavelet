@@ -401,7 +401,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
         if (numChannels > originalNumChannels) {
             for (int i = originalNumChannels; i < numChannels; i++) {
                 samples[i].resize(originalNumSamplesPerChannel);
-                std::fill(samples[i].begin(), samples[i].end(), (T)0.);
+                ranges::fill(samples[i], T{0});
             }
         }
     }

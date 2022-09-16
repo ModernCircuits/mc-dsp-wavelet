@@ -35,7 +35,7 @@ auto entropyT(float* x, int n, float t) -> float
 
     auto val = 0.0F;
     for (auto i = 0; i < n; ++i) {
-        auto const x2 = std::fabs(x[i]);
+        auto const x2 = std::abs(x[i]);
         if (x2 > t) { val += 1; }
     }
 
@@ -48,7 +48,7 @@ auto entropyN(float* x, int n, float p) -> float
 
     auto val = 0.0F;
     for (auto i = 0; i < n; ++i) {
-        auto const x2 = std::fabs(x[i]);
+        auto const x2 = std::abs(x[i]);
         val += std::pow(x2, (float)p);
     }
 

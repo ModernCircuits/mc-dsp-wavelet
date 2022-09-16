@@ -15,9 +15,8 @@ namespace mc::dsp {
 template<typename T>
 auto ncos(std::size_t order, std::size_t i, std::size_t size) noexcept -> T
 {
-    return std::cos(
-        static_cast<T>(order * i) * static_cast<T>(numbers::pi) / static_cast<T>(size - 1)
-    );
+    auto const pi = static_cast<T>(numbers::pi);
+    return cos(static_cast<T>(order * i) * pi / static_cast<T>(size - 1));
 }
 
 template<typename It>
