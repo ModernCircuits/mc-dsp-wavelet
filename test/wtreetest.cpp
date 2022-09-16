@@ -16,7 +16,7 @@ auto main() -> int
     auto const n = 147;
     auto inp     = makeUnique<float[]>(n);
     for (auto i = 1; i < n + 1; ++i) {
-        inp[i - 1] = -0.25 * i * i * i + 25 * i * i + 10 * i;
+        inp[i - 1] = -0.25F * i * i * i + 25.0F * i * i + 10.0F * i;
     }
     auto const j = 3;
 

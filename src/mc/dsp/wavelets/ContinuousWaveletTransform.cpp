@@ -346,7 +346,7 @@ Computer Approximations, Hart, Et. Al., Wiley and sons, New York, 1968.
             sum = c[6];
             for (auto i = 0; i < 6; ++i) { sum = sum / y2 + c[i]; }
             sum = sum / y - y + spi;
-            sum += (y - .5) * std::log(y);
+            sum += (y - 0.5F) * std::log(y);
             oup = std::exp(sum);
         } else {
             return (xinf);
@@ -1006,11 +1006,11 @@ auto meyer(int n, float lb, float ub, float* phi, float* psi, float* tgrid) -> v
             psiw[i].imag(std::sin(w[i] / 2.0F) * sn);
         }
         if (wf > 2.0F * pi2 / 3.0F && wf <= 4 * pi2 / 3.0F) {
-            auto const x     = (1.5 * wf / pi2) - 1.0F;
+            auto const x     = (1.5F * wf / pi2) - 1.0F;
             auto const x2    = x * x;
             auto const x3    = x2 * x;
             auto const x4    = x3 * x;
-            auto const v     = x4 * (35 - 84 * x + 70 * x2 - 20 * x3);
+            auto const v     = x4 * (35.0F - 84.0F * x + 70.0F * x2 - 20.0F * x3);
             auto const theta = v * pi2 / 4.0F;
             auto const cs    = std::cos(theta);
 

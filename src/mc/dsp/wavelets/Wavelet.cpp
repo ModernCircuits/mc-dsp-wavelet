@@ -41,8 +41,9 @@ auto qmfWrev(T const* in, int n, T* out)
 
 auto waveletFilterLength(char const* name) -> int
 {
-    int len = strlen(name);
-    int n   = 0;
+    auto const len = static_cast<int>(std::strlen(name));
+    auto n         = 0;
+
     if (name == StringView{"haar"} || name == StringView{"db1"}) { return 2; }
     if (len > 2 && strstr(name, "db") != nullptr) {
         auto newStr = makeUnique<char[]>((len - 2 + 1));
@@ -113,44 +114,44 @@ auto fillDauberchies(char const* name, float* lp1, float* hp1, float* lp2, float
     using namespace std::string_view_literals;
 
     auto const* coeffs = static_cast<float*>(nullptr);
-    if (name == "haar"sv || name == "db1"sv) { coeffs = std::cbegin(daubechies1); }
-    if (name == "db2"sv) { coeffs = std::cbegin(daubechies2); }
-    if (name == "db3"sv) { coeffs = std::cbegin(daubechies3); }
-    if (name == "db4"sv) { coeffs = std::cbegin(daubechies4); }
-    if (name == "db5"sv) { coeffs = std::cbegin(daubechies5); }
-    if (name == "db6"sv) { coeffs = std::cbegin(daubechies6); }
-    if (name == "db7"sv) { coeffs = std::cbegin(daubechies7); }
-    if (name == "db8"sv) { coeffs = std::cbegin(daubechies8); }
-    if (name == "db9"sv) { coeffs = std::cbegin(daubechies9); }
-    if (name == "db10"sv) { coeffs = std::cbegin(daubechies10); }
-    if (name == "db11"sv) { coeffs = std::cbegin(daubechies11); }
-    if (name == "db12"sv) { coeffs = std::cbegin(daubechies12); }
-    if (name == "db13"sv) { coeffs = std::cbegin(daubechies13); }
-    if (name == "db14"sv) { coeffs = std::cbegin(daubechies14); }
-    if (name == "db15"sv) { coeffs = std::cbegin(daubechies15); }
-    if (name == "db16"sv) { coeffs = std::cbegin(daubechies16); }
-    if (name == "db17"sv) { coeffs = std::cbegin(daubechies17); }
-    if (name == "db18"sv) { coeffs = std::cbegin(daubechies18); }
-    if (name == "db19"sv) { coeffs = std::cbegin(daubechies19); }
-    if (name == "db20"sv) { coeffs = std::cbegin(daubechies20); }
-    if (name == "db21"sv) { coeffs = std::cbegin(daubechies21); }
-    if (name == "db22"sv) { coeffs = std::cbegin(daubechies22); }
-    if (name == "db23"sv) { coeffs = std::cbegin(daubechies23); }
-    if (name == "db24"sv) { coeffs = std::cbegin(daubechies24); }
-    if (name == "db25"sv) { coeffs = std::cbegin(daubechies25); }
-    if (name == "db26"sv) { coeffs = std::cbegin(daubechies26); }
-    if (name == "db27"sv) { coeffs = std::cbegin(daubechies27); }
-    if (name == "db28"sv) { coeffs = std::cbegin(daubechies28); }
-    if (name == "db29"sv) { coeffs = std::cbegin(daubechies29); }
-    if (name == "db30"sv) { coeffs = std::cbegin(daubechies30); }
-    if (name == "db31"sv) { coeffs = std::cbegin(daubechies31); }
-    if (name == "db32"sv) { coeffs = std::cbegin(daubechies32); }
-    if (name == "db33"sv) { coeffs = std::cbegin(daubechies33); }
-    if (name == "db34"sv) { coeffs = std::cbegin(daubechies34); }
-    if (name == "db35"sv) { coeffs = std::cbegin(daubechies35); }
-    if (name == "db36"sv) { coeffs = std::cbegin(daubechies36); }
-    if (name == "db37"sv) { coeffs = std::cbegin(daubechies37); }
-    if (name == "db38"sv) { coeffs = std::cbegin(daubechies38); }
+    if (name == "haar"sv || name == "db1"sv) { coeffs = std::data(daubechies1<float>); }
+    if (name == "db2"sv) { coeffs = std::data(daubechies2<float>); }
+    if (name == "db3"sv) { coeffs = std::data(daubechies3<float>); }
+    if (name == "db4"sv) { coeffs = std::data(daubechies4<float>); }
+    if (name == "db5"sv) { coeffs = std::data(daubechies5<float>); }
+    if (name == "db6"sv) { coeffs = std::data(daubechies6<float>); }
+    if (name == "db7"sv) { coeffs = std::data(daubechies7<float>); }
+    if (name == "db8"sv) { coeffs = std::data(daubechies8<float>); }
+    if (name == "db9"sv) { coeffs = std::data(daubechies9<float>); }
+    if (name == "db10"sv) { coeffs = std::data(daubechies10<float>); }
+    if (name == "db11"sv) { coeffs = std::data(daubechies11<float>); }
+    if (name == "db12"sv) { coeffs = std::data(daubechies12<float>); }
+    if (name == "db13"sv) { coeffs = std::data(daubechies13<float>); }
+    if (name == "db14"sv) { coeffs = std::data(daubechies14<float>); }
+    if (name == "db15"sv) { coeffs = std::data(daubechies15<float>); }
+    if (name == "db16"sv) { coeffs = std::data(daubechies16<float>); }
+    if (name == "db17"sv) { coeffs = std::data(daubechies17<float>); }
+    if (name == "db18"sv) { coeffs = std::data(daubechies18<float>); }
+    if (name == "db19"sv) { coeffs = std::data(daubechies19<float>); }
+    if (name == "db20"sv) { coeffs = std::data(daubechies20<float>); }
+    if (name == "db21"sv) { coeffs = std::data(daubechies21<float>); }
+    if (name == "db22"sv) { coeffs = std::data(daubechies22<float>); }
+    if (name == "db23"sv) { coeffs = std::data(daubechies23<float>); }
+    if (name == "db24"sv) { coeffs = std::data(daubechies24<float>); }
+    if (name == "db25"sv) { coeffs = std::data(daubechies25<float>); }
+    if (name == "db26"sv) { coeffs = std::data(daubechies26<float>); }
+    if (name == "db27"sv) { coeffs = std::data(daubechies27<float>); }
+    if (name == "db28"sv) { coeffs = std::data(daubechies28<float>); }
+    if (name == "db29"sv) { coeffs = std::data(daubechies29<float>); }
+    if (name == "db30"sv) { coeffs = std::data(daubechies30<float>); }
+    if (name == "db31"sv) { coeffs = std::data(daubechies31<float>); }
+    if (name == "db32"sv) { coeffs = std::data(daubechies32<float>); }
+    if (name == "db33"sv) { coeffs = std::data(daubechies33<float>); }
+    if (name == "db34"sv) { coeffs = std::data(daubechies34<float>); }
+    if (name == "db35"sv) { coeffs = std::data(daubechies35<float>); }
+    if (name == "db36"sv) { coeffs = std::data(daubechies36<float>); }
+    if (name == "db37"sv) { coeffs = std::data(daubechies37<float>); }
+    if (name == "db38"sv) { coeffs = std::data(daubechies38<float>); }
     if (name == "sym2"sv) { coeffs = std::data(sym2<float>); }
     if (name == "sym3"sv) { coeffs = std::data(sym3<float>); }
     if (name == "sym4"sv) { coeffs = std::data(sym4<float>); }
@@ -170,7 +171,7 @@ auto fillDauberchies(char const* name, float* lp1, float* hp1, float* lp2, float
     if (name == "sym18"sv) { coeffs = std::data(sym18<float>); }
     if (name == "sym19"sv) { coeffs = std::data(sym19<float>); }
     if (name == "sym20"sv) { coeffs = std::data(sym20<float>); }
-    if (name == "meyer"sv) { coeffs = std::cbegin(meyer); }
+    if (name == "meyer"sv) { coeffs = std::data(meyer<float>); }
 
     auto const n = waveletFilterLength(name);
     std::reverse_copy(coeffs, coeffs + n, lp1);
@@ -204,242 +205,242 @@ auto waveletFilterCoefficients(
     }
 
     if (name == StringView{"bior1.1"}) {
-        std::reverse_copy(hm111, hm111 + n, lp1);
-        qmfWrev(h1 + 4, n, hp1);
-        std::copy(h1 + 4, h1 + 4 + n, lp2);
-        qmfEven(hm111, n, hp2);
+        std::reverse_copy(data(hm111<float>), data(hm111<float>) + n, lp1);
+        qmfWrev(data(h1<float>) + 4, n, hp1);
+        std::copy(data(h1<float>) + 4, data(h1<float>) + 4 + n, lp2);
+        qmfEven(data(hm111<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior1.3"}) {
-        std::reverse_copy(hm113, hm113 + n, lp1);
-        qmfWrev(h1 + 2, n, hp1);
-        std::copy(h1 + 2, h1 + 2 + n, lp2);
-        qmfEven(hm113, n, hp2);
+        std::reverse_copy(data(hm113<float>), data(hm113<float>) + n, lp1);
+        qmfWrev(data(h1<float>) + 2, n, hp1);
+        std::copy(data(h1<float>) + 2, data(h1<float>) + 2 + n, lp2);
+        qmfEven(data(hm113<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior1.5"}) {
-        std::reverse_copy(hm115, hm115 + n, lp1);
-        qmfWrev(h1, n, hp1);
-        std::copy(h1, h1 + n, lp2);
-        qmfEven(hm115, n, hp2);
+        std::reverse_copy(data(hm115<float>), data(hm115<float>) + n, lp1);
+        qmfWrev(data(h1<float>), n, hp1);
+        std::copy(data(h1<float>), data(h1<float>) + n, lp2);
+        qmfEven(data(hm115<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior2.2"}) {
-        std::reverse_copy(hm222, hm222 + n, lp1);
-        qmfWrev(h2 + 6, n, hp1);
-        std::copy(h2 + 6, h2 + 6 + n, lp2);
-        qmfEven(hm222, n, hp2);
+        std::reverse_copy(data(hm222<float>), data(hm222<float>) + n, lp1);
+        qmfWrev(data(h2<float>) + 6, n, hp1);
+        std::copy(data(h2<float>) + 6, data(h2<float>) + 6 + n, lp2);
+        qmfEven(data(hm222<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior2.4"}) {
-        std::reverse_copy(hm224, hm224 + n, lp1);
-        qmfWrev(h2 + 4, n, hp1);
-        std::copy(h2 + 4, h2 + 4 + n, lp2);
-        qmfEven(hm224, n, hp2);
+        std::reverse_copy(data(hm224<float>), data(hm224<float>) + n, lp1);
+        qmfWrev(data(h2<float>) + 4, n, hp1);
+        std::copy(data(h2<float>) + 4, data(h2<float>) + 4 + n, lp2);
+        qmfEven(data(hm224<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior2.6"}) {
-        std::reverse_copy(hm226, hm226 + n, lp1);
-        qmfWrev(h2 + 2, n, hp1);
-        std::copy(h2 + 2, h2 + 2 + n, lp2);
-        qmfEven(hm226, n, hp2);
+        std::reverse_copy(data(hm226<float>), data(hm226<float>) + n, lp1);
+        qmfWrev(data(h2<float>) + 2, n, hp1);
+        std::copy(data(h2<float>) + 2, data(h2<float>) + 2 + n, lp2);
+        qmfEven(data(hm226<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior2.8"}) {
-        std::reverse_copy(hm228, hm228 + n, lp1);
-        qmfWrev(h2, n, hp1);
-        std::copy(h2, h2 + n, lp2);
-        qmfEven(hm228, n, hp2);
+        std::reverse_copy(data(hm228<float>), data(hm228<float>) + n, lp1);
+        qmfWrev(data(h2<float>), n, hp1);
+        std::copy(data(h2<float>), data(h2<float>) + n, lp2);
+        qmfEven(data(hm228<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior3.1"}) {
-        std::reverse_copy(hm331, hm331 + n, lp1);
-        qmfWrev(h3 + 8, n, hp1);
-        std::copy(h3 + 8, h3 + 8 + n, lp2);
-        qmfEven(hm331, n, hp2);
+        std::reverse_copy(data(hm331<float>), data(hm331<float>) + n, lp1);
+        qmfWrev(data(h3<float>) + 8, n, hp1);
+        std::copy(data(h3<float>) + 8, data(h3<float>) + 8 + n, lp2);
+        qmfEven(data(hm331<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior3.3"}) {
-        std::reverse_copy(hm333, hm333 + n, lp1);
-        qmfWrev(h3 + 6, n, hp1);
-        std::copy(h3 + 6, h3 + 6 + n, lp2);
-        qmfEven(hm333, n, hp2);
+        std::reverse_copy(data(hm333<float>), data(hm333<float>) + n, lp1);
+        qmfWrev(data(h3<float>) + 6, n, hp1);
+        std::copy(data(h3<float>) + 6, data(h3<float>) + 6 + n, lp2);
+        qmfEven(data(hm333<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior3.5"}) {
-        std::reverse_copy(hm335, hm335 + n, lp1);
-        qmfWrev(h3 + 4, n, hp1);
-        std::copy(h3 + 4, h3 + 4 + n, lp2);
-        qmfEven(hm335, n, hp2);
+        std::reverse_copy(data(hm335<float>), data(hm335<float>) + n, lp1);
+        qmfWrev(data(h3<float>) + 4, n, hp1);
+        std::copy(data(h3<float>) + 4, data(h3<float>) + 4 + n, lp2);
+        qmfEven(data(hm335<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior3.7"}) {
-        std::reverse_copy(hm337, hm337 + n, lp1);
-        qmfWrev(h3 + 2, n, hp1);
-        std::copy(h3 + 2, h3 + 2 + n, lp2);
-        qmfEven(hm337, n, hp2);
+        std::reverse_copy(data(hm337<float>), data(hm337<float>) + n, lp1);
+        qmfWrev(data(h3<float>) + 2, n, hp1);
+        std::copy(data(h3<float>) + 2, data(h3<float>) + 2 + n, lp2);
+        qmfEven(data(hm337<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior3.9"}) {
-        std::reverse_copy(hm339, hm339 + n, lp1);
-        qmfWrev(h3, n, hp1);
-        std::copy(h3, h3 + n, lp2);
-        qmfEven(hm339, n, hp2);
+        std::reverse_copy(data(hm339<float>), data(hm339<float>) + n, lp1);
+        qmfWrev(data(h3<float>), n, hp1);
+        std::copy(data(h3<float>), data(h3<float>) + n, lp2);
+        qmfEven(data(hm339<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior4.4"}) {
-        std::reverse_copy(hm444, hm444 + n, lp1);
-        qmfWrev(h4, n, hp1);
-        std::copy(h4, h4 + n, lp2);
-        qmfEven(hm444, n, hp2);
+        std::reverse_copy(data(hm444<float>), data(hm444<float>) + n, lp1);
+        qmfWrev(data(h4<float>), n, hp1);
+        std::copy(data(h4<float>), data(h4<float>) + n, lp2);
+        qmfEven(data(hm444<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior5.5"}) {
-        std::reverse_copy(hm555, hm555 + n, lp1);
-        qmfWrev(h5, n, hp1);
-        std::copy(h5, h5 + n, lp2);
-        qmfEven(hm555, n, hp2);
+        std::reverse_copy(data(hm555<float>), data(hm555<float>) + n, lp1);
+        qmfWrev(data(h5<float>), n, hp1);
+        std::copy(data(h5<float>), data(h5<float>) + n, lp2);
+        qmfEven(data(hm555<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"bior6.8"}) {
-        std::reverse_copy(hm668, hm668 + n, lp1);
-        qmfWrev(h6, n, hp1);
-        std::copy(h6, h6 + n, lp2);
-        qmfEven(hm668, n, hp2);
+        std::reverse_copy(data(hm668<float>), data(hm668<float>) + n, lp1);
+        qmfWrev(data(h6<float>), n, hp1);
+        std::copy(data(h6<float>), data(h6<float>) + n, lp2);
+        qmfEven(data(hm668<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior1.1"}) {
-        std::reverse_copy(h1 + 4, h1 + 4 + n, lp1);
-        qmfWrev(hm111, n, hp1);
-        std::copy(hm111, hm111 + n, lp2);
-        qmfEven(h1 + 4, n, hp2);
+        std::reverse_copy(data(h1<float>) + 4, data(h1<float>) + 4 + n, lp1);
+        qmfWrev(data(hm111<float>), n, hp1);
+        std::copy(data(hm111<float>), data(hm111<float>) + n, lp2);
+        qmfEven(data(h1<float>) + 4, n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior1.3"}) {
-        std::reverse_copy(h1 + 2, h1 + 2 + n, lp1);
-        qmfWrev(hm113, n, hp1);
-        std::copy(hm113, hm113 + n, lp2);
-        qmfEven(h1 + 2, n, hp2);
+        std::reverse_copy(data(h1<float>) + 2, data(h1<float>) + 2 + n, lp1);
+        qmfWrev(data(hm113<float>), n, hp1);
+        std::copy(data(hm113<float>), data(hm113<float>) + n, lp2);
+        qmfEven(data(h1<float>) + 2, n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior1.5"}) {
-        std::reverse_copy(h1, h1 + n, lp1);
-        qmfWrev(hm115, n, hp1);
-        std::copy(hm115, hm115 + n, lp2);
-        qmfEven(h1, n, hp2);
+        std::reverse_copy(data(h1<float>), data(h1<float>) + n, lp1);
+        qmfWrev(data(hm115<float>), n, hp1);
+        std::copy(data(hm115<float>), data(hm115<float>) + n, lp2);
+        qmfEven(data(h1<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior2.2"}) {
-        std::reverse_copy(h2 + 6, h2 + 6 + n, lp1);
-        qmfWrev(hm222, n, hp1);
-        std::copy(hm222, hm222 + n, lp2);
-        qmfEven(h2 + 6, n, hp2);
+        std::reverse_copy(data(h2<float>) + 6, data(h2<float>) + 6 + n, lp1);
+        qmfWrev(data(hm222<float>), n, hp1);
+        std::copy(data(hm222<float>), data(hm222<float>) + n, lp2);
+        qmfEven(data(h2<float>) + 6, n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior2.4"}) {
-        std::reverse_copy(h2 + 4, h2 + 4 + n, lp1);
-        qmfWrev(hm224, n, hp1);
-        std::copy(hm224, hm224 + n, lp2);
-        qmfEven(h2 + 4, n, hp2);
+        std::reverse_copy(data(h2<float>) + 4, data(h2<float>) + 4 + n, lp1);
+        qmfWrev(data(hm224<float>), n, hp1);
+        std::copy(data(hm224<float>), data(hm224<float>) + n, lp2);
+        qmfEven(data(h2<float>) + 4, n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior2.6"}) {
-        std::reverse_copy(h2 + 2, h2 + 2 + n, lp1);
-        qmfWrev(hm226, n, hp1);
-        std::copy(hm226, hm226 + n, lp2);
-        qmfEven(h2 + 2, n, hp2);
+        std::reverse_copy(data(h2<float>) + 2, data(h2<float>) + 2 + n, lp1);
+        qmfWrev(data(hm226<float>), n, hp1);
+        std::copy(data(hm226<float>), data(hm226<float>) + n, lp2);
+        qmfEven(data(h2<float>) + 2, n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior2.8"}) {
-        std::reverse_copy(h2, h2 + n, lp1);
-        qmfWrev(hm228, n, hp1);
-        std::copy(hm228, hm228 + n, lp2);
-        qmfEven(h2, n, hp2);
+        std::reverse_copy(data(h2<float>), data(h2<float>) + n, lp1);
+        qmfWrev(data(hm228<float>), n, hp1);
+        std::copy(data(hm228<float>), data(hm228<float>) + n, lp2);
+        qmfEven(data(h2<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior3.1"}) {
-        std::reverse_copy(h3 + 8, h3 + 8 + n, lp1);
-        qmfWrev(hm331, n, hp1);
-        std::copy(hm331, hm331 + n, lp2);
-        qmfEven(h3 + 8, n, hp2);
+        std::reverse_copy(data(h3<float>) + 8, data(h3<float>) + 8 + n, lp1);
+        qmfWrev(data(hm331<float>), n, hp1);
+        std::copy(data(hm331<float>), data(hm331<float>) + n, lp2);
+        qmfEven(data(h3<float>) + 8, n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior3.3"}) {
-        std::reverse_copy(h3 + 6, h3 + 6 + n, lp1);
-        qmfWrev(hm333, n, hp1);
-        std::copy(hm333, hm333 + n, lp2);
-        qmfEven(h3 + 6, n, hp2);
+        std::reverse_copy(data(h3<float>) + 6, data(h3<float>) + 6 + n, lp1);
+        qmfWrev(data(hm333<float>), n, hp1);
+        std::copy(data(hm333<float>), data(hm333<float>) + n, lp2);
+        qmfEven(data(h3<float>) + 6, n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior3.5"}) {
-        std::reverse_copy(h3 + 4, h3 + 4 + n, lp1);
-        qmfWrev(hm335, n, hp1);
-        std::copy(hm335, hm335 + n, lp2);
-        qmfEven(h3 + 4, n, hp2);
+        std::reverse_copy(data(h3<float>) + 4, data(h3<float>) + 4 + n, lp1);
+        qmfWrev(data(hm335<float>), n, hp1);
+        std::copy(data(hm335<float>), data(hm335<float>) + n, lp2);
+        qmfEven(data(h3<float>) + 4, n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior3.7"}) {
-        std::reverse_copy(h3 + 2, h3 + 2 + n, lp1);
-        qmfWrev(hm337, n, hp1);
-        std::copy(hm337, hm337 + n, lp2);
-        qmfEven(h3 + 2, n, hp2);
+        std::reverse_copy(data(h3<float>) + 2, data(h3<float>) + 2 + n, lp1);
+        qmfWrev(data(hm337<float>), n, hp1);
+        std::copy(data(hm337<float>), data(hm337<float>) + n, lp2);
+        qmfEven(data(h3<float>) + 2, n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior3.9"}) {
-        std::reverse_copy(h3, h3 + n, lp1);
-        qmfWrev(hm339, n, hp1);
-        std::copy(hm339, hm339 + n, lp2);
-        qmfEven(h3, n, hp2);
+        std::reverse_copy(data(h3<float>), data(h3<float>) + n, lp1);
+        qmfWrev(data(hm339<float>), n, hp1);
+        std::copy(data(hm339<float>), data(hm339<float>) + n, lp2);
+        qmfEven(data(h3<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior4.4"}) {
-        std::reverse_copy(h4, h4 + n, lp1);
-        qmfWrev(hm444, n, hp1);
-        std::copy(hm444, hm444 + n, lp2);
-        qmfEven(h4, n, hp2);
+        std::reverse_copy(data(h4<float>), data(h4<float>) + n, lp1);
+        qmfWrev(data(hm444<float>), n, hp1);
+        std::copy(data(hm444<float>), data(hm444<float>) + n, lp2);
+        qmfEven(data(h4<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior5.5"}) {
-        std::reverse_copy(h5, h5 + n, lp1);
-        qmfWrev(hm555, n, hp1);
-        std::copy(hm555, hm555 + n, lp2);
-        qmfEven(h5, n, hp2);
+        std::reverse_copy(data(h5<float>), data(h5<float>) + n, lp1);
+        qmfWrev(data(hm555<float>), n, hp1);
+        std::copy(data(hm555<float>), data(hm555<float>) + n, lp2);
+        qmfEven(data(h5<float>), n, hp2);
         return n;
     }
 
     if (name == StringView{"rbior6.8"}) {
-        std::reverse_copy(h6, h6 + n, lp1);
-        qmfWrev(hm668, n, hp1);
-        std::copy(hm668, hm668 + n, lp2);
-        qmfEven(h6, n, hp2);
+        std::reverse_copy(data(h6<float>), data(h6<float>) + n, lp1);
+        qmfWrev(data(hm668<float>), n, hp1);
+        std::copy(data(hm668<float>), data(hm668<float>) + n, lp2);
+        qmfEven(data(h6<float>), n, hp2);
         return n;
     }
 

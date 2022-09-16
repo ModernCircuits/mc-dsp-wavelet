@@ -136,7 +136,8 @@ auto TempoDetect::operator()(Span<float> input, float sampleRate) -> float
 
     auto midpoint          = static_cast<std::size_t>(std::floor(correl.size() / 2.0F));
     auto correlMidpointTmp = Span<float>{correl.data(), correl.size()}.subspan(midpoint);
-    auto const peakNdx     = peakDetect(correlMidpointTmp.subspan(minNdx, maxNdx - minNdx));
+    auto const peakNdx
+        = peakDetect(correlMidpointTmp.subspan((size_t)minNdx, (size_t)(maxNdx - minNdx)));
 
     auto const peakNdxAdjusted = peakNdx + minNdx;
     auto const bpm             = 60.0F / peakNdxAdjusted * (sampleRate / maxDecimation);
