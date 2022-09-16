@@ -9,6 +9,7 @@
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/cstring.hpp>
 #include <mc/core/format.hpp>
+#include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
@@ -31,7 +32,7 @@ auto entropyS(float const* x, int n) -> float
 
 auto entropyT(float* x, int n, float t) -> float
 {
-    if (t < 0) { throw std::invalid_argument("Threshold value must be >= 0"); }
+    if (t < 0) { throw InvalidArgument("Threshold value must be >= 0"); }
 
     auto val = 0.0F;
     for (auto i = 0; i < n; ++i) {
@@ -44,7 +45,7 @@ auto entropyT(float* x, int n, float t) -> float
 
 auto entropyN(float* x, int n, float p) -> float
 {
-    if (p < 1) { throw std::invalid_argument("Norm power value must be >= 1"); }
+    if (p < 1) { throw InvalidArgument("Norm power value must be >= 1"); }
 
     auto val = 0.0F;
     for (auto i = 0; i < n; ++i) {
@@ -77,7 +78,7 @@ auto costfunc(float* x, int n, char const* entropy, float p) -> float
         return entropyL(x, n);
     }
 
-    fmt::printf("Entropy must be one of shannon, threshold, norm or energy");
+    print("Entropy must be one of shannon, threshold, norm or energy");
     return 0.0F;
 }
 }  // namespace
@@ -90,14 +91,11 @@ WaveletPacketTransform::WaveletPacketTransform(
 {
     auto const size = wave->size();
 
-    if (j > 100) {
-        throw std::invalid_argument("Decomposition Iterations Cannot Exceed 100");
-    }
+    if (j > 100) { throw InvalidArgument("Decomposition Iterations Cannot Exceed 100"); }
 
     auto const maxIter = maxIterations(siglength, size);
     if (j > maxIter) {
-        throw std::invalid_argument(
-            "Signal Can only be iterated maxIter times using this wavelet"
+        throw InvalidArgument("Signal Can only be iterated maxIter times using this wavelet"
         );
     }
     auto temp   = 1;
@@ -389,7 +387,7 @@ auto dwpt(WaveletPacketTransform& wt, float const* inp) -> void
             np      = n2;
         }
     } else {
-        throw std::invalid_argument("Signal extension can be either per or sym");
+        throw InvalidArgument("Signal extension can be either per or sym");
     }
 
     jj       = wt.J;
@@ -480,7 +478,7 @@ auto dwpt(WaveletPacketTransform& wt, float const* inp) -> void
 auto getDWPTNodelength(WaveletPacketTransform& wt, int x) -> int
 {
     if (x <= 0 || x > wt.J) {
-        throw std::invalid_argument("X co-ordinate must be >= 1 and <= wt.J");
+        throw InvalidArgument("X co-ordinate must be >= 1 and <= wt.J");
     }
 
     return wt.length[wt.J - x + 1];
@@ -765,7 +763,7 @@ auto idwpt(WaveletPacketTransform& wt, float* dwtop) -> void
 
             // free(X_lp);
         } else {
-            throw std::invalid_argument("Signal extension can be either per or sym");
+            throw InvalidArgument("Signal extension can be either per or sym");
         }
 
         for (auto i = 0; i < wt.signalLength(); ++i) { dwtop[i] = x[i]; }
@@ -779,7 +777,7 @@ auto setDWPTExtension(WaveletPacketTransform& wt, char const* extension) -> void
     } else if (extension == StringView{"per"}) {
         wt.ext = "per";
     } else {
-        throw std::invalid_argument("Signal extension can be either per or sym");
+        throw InvalidArgument("Signal extension can be either per or sym");
     }
 }
 
@@ -796,7 +794,7 @@ auto setDWPTEntropy(WaveletPacketTransform& wt, char const* entropy, float epara
     } else if ((strcmp(entropy, "logenergy") == 0) || (strcmp(entropy, "log energy") == 0) || (strcmp(entropy, "energy") == 0)) {
         wt.entropy = "logenergy";
     } else {
-        throw std::invalid_argument(
+        throw InvalidArgument(
             "Entropy should be one of shannon, threshold, norm or logenergy"
         );
     }
@@ -811,22 +809,22 @@ auto summary(WaveletPacketTransform const& wt) -> void
     int it2 = 0;
     j       = wt.J;
     summary(wt.wave());
-    fmt::printf("\n");
-    fmt::printf("Signal Extension : %s \n", wt.ext.c_str());
-    fmt::printf("\n");
-    fmt::printf("Entropy : %s \n", wt.entropy.c_str());
-    fmt::printf("\n");
-    fmt::printf("Number of Decomposition Levels %d \n", wt.J);
-    fmt::printf("\n");
-    fmt::printf("Number of Active Nodes %d \n", wt.nodes);
-    fmt::printf("\n");
-    fmt::printf("Length of Input Signal %d \n", wt.signalLength());
-    fmt::printf("\n");
-    fmt::printf("Length of WT Output Vector %d \n", wt.outlength);
-    fmt::printf("\n");
-    fmt::printf("Wavelet Coefficients are contained in vector : %s \n", "output");
-    fmt::printf("\n");
-    fmt::printf("Coefficients Access \n");
+    print("\n");
+    print("Signal Extension : {0} \n", wt.ext.c_str());
+    print("\n");
+    print("Entropy : {0} \n", wt.entropy.c_str());
+    print("\n");
+    print("Number of Decomposition Levels {0} \n", wt.J);
+    print("\n");
+    print("Number of Active Nodes {0} \n", wt.nodes);
+    print("\n");
+    print("Length of Input Signal {0} \n", wt.signalLength());
+    print("\n");
+    print("Length of WT Output Vector {0} \n", wt.outlength);
+    print("\n");
+    print("Wavelet Coefficients are contained in vector : {0} \n", "output");
+    print("\n");
+    print("Coefficients Access \n");
     it1 = 1;
     it2 = 0;
     for (auto i = 0; i < j; ++i) { it1 += ipow2(i + 1); }
@@ -835,8 +833,8 @@ auto summary(WaveletPacketTransform const& wt) -> void
         it1 -= p2;
         for (k = 0; k < p2; ++k) {
             if (wt.basisvector[it1 + k] == 1) {
-                fmt::printf(
-                    "Node %d %d Access : output[%d] Length : %d \n",
+                print(
+                    "Node {} {} Access : output[{}] Length : {} \n",
                     i,
                     k,
                     it2,
@@ -847,6 +845,6 @@ auto summary(WaveletPacketTransform const& wt) -> void
         }
     }
 
-    fmt::printf("\n");
+    print("\n");
 }
 }  // namespace mc::dsp

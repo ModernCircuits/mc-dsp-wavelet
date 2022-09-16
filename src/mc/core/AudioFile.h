@@ -331,13 +331,13 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     template<class T>
     void AudioFile<T>::printSummary() const
     {
-        fmt::print("|======================================|\n");
-        fmt::print("Num Channels: {}\n", getNumChannels());
-        fmt::print("Num Samples Per Channel: {0}\n", getNumSamplesPerChannel());
-        fmt::print("Sample Rate: {0}\n", sampleRate_);
-        fmt::print("Bit Depth: {0}\n", bitDepth_);
-        fmt::print("Length in Seconds: {0}\n", getLengthInSeconds());
-        fmt::print("|======================================|\n");
+        print("|======================================|\n");
+        print("Num Channels: {}\n", getNumChannels());
+        print("Num Samples Per Channel: {0}\n", getNumSamplesPerChannel());
+        print("Sample Rate: {0}\n", sampleRate_);
+        print("Bit Depth: {0}\n", bitDepth_);
+        print("Length in Seconds: {0}\n", getLengthInSeconds());
+        print("|======================================|\n");
     }
 
     template<class T>
@@ -1244,7 +1244,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     template<class T>
     void AudioFile<T>::reportError(String const& errorMessage)
     {
-        if (logErrorsToConsole_) { fmt::print("{0}\n", errorMessage); }
+        if (logErrorsToConsole_) { print("{0}\n", errorMessage); }
     }
 }
 

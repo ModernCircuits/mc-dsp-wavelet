@@ -56,8 +56,8 @@ auto visushrink(
     auto maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0F)) / std::log(2.0F));
 
     if (cmp_greater(j, maxIter)) {
-        fmt::printf(
-            "\n Error - The Signal Can only be iterated %d times using this Wavelet. "
+        print(
+            "\n Error - The Signal Can only be iterated {0} times using this Wavelet. "
             "Exiting\n",
             maxIter
         );
@@ -74,7 +74,7 @@ auto visushrink(
     } else if (method == StringView{"swt"}) {
         swt(wt, signal);
     } else {
-        fmt::printf("Acceptable WT methods are - dwt,swt and modwt\n");
+        print("Acceptable WT methods are - dwt,swt and modwt\n");
         std::exit(-1);
     }
 
@@ -107,7 +107,7 @@ auto visushrink(
             iter += dlen;
         }
     } else {
-        fmt::printf("Acceptable Noise estimation level values are - first and all \n");
+        print("Acceptable Noise estimation level values are - first and all \n");
         std::exit(-1);
     }
 
@@ -178,8 +178,8 @@ auto sureshrink(
     maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0F)) / std::log(2.0F));
     // Depends on J
     if (cmp_greater(j, maxIter)) {
-        fmt::printf(
-            "\n Error - The Signal Can only be iterated %d times using this Wavelet. "
+        print(
+            "\n Error - The Signal Can only be iterated {0} times using this Wavelet. "
             "Exiting\n",
             maxIter
         );
@@ -515,7 +515,7 @@ auto setDenoiseParameters(DenoiseSet& obj, char const* thresh, char const* level
     } else if (thresh == StringView{"hard"}) {
         obj.thresh = "hard";
     } else {
-        fmt::printf("Thresholding Method - soft or hard");
+        print("Thresholding Method - soft or hard");
         std::exit(-1);
     }
 
@@ -526,7 +526,7 @@ auto setDenoiseParameters(DenoiseSet& obj, char const* thresh, char const* level
     } else if (level == StringView{"all"}) {
         obj.level = "all";
     } else {
-        fmt::printf("Noise Estimation at level - first or all");
+        print("Noise Estimation at level - first or all");
         std::exit(-1);
     }
 }

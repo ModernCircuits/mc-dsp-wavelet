@@ -19,12 +19,12 @@ WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t 
     auto const maxIter = maxIterations(signalLength, size);
 
     if (j > 100) {
-        fmt::print("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
+        print("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
         exit(-1);
     }
     if (j > maxIter) {
 
-        fmt::print(
+        print(
             "\n Error - The Signal Can only be iterated {0} times using this wavelet. "
             "Exiting\n",
             maxIter

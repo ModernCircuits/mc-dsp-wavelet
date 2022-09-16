@@ -8,6 +8,7 @@
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstring.hpp>
 #include <mc/core/format.hpp>
+#include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
@@ -149,10 +150,8 @@ WaveletTransform2D::WaveletTransform2D(
     auto const maxIter = std::min(maxRows, maxCols);
 
     if (j > maxIter) {
-        throw std::invalid_argument{fmt::format(
-            "signal can only be iterated {0} times using this wavelet",
-            maxIter
-        )};
+        throw InvalidArgument{
+            format("signal can only be iterated {0} times using this wavelet", maxIter)};
     }
 
     std::size_t sumacc{0};
@@ -161,7 +160,7 @@ WaveletTransform2D::WaveletTransform2D(
     } else if (j > 1U) {
         sumacc = j * 3U + 1U;
     } else {
-        throw std::invalid_argument{fmt::format("j = {0}, should be >= 1", j)};
+        throw InvalidArgument{format("j = {0}, should be >= 1", j)};
     }
 
     this->params    = makeUnique<int[]>(2U * j + sumacc);
@@ -172,7 +171,7 @@ WaveletTransform2D::WaveletTransform2D(
         this->ext = "per";
     } else if ((method == StringView{"swt"}) || (method == StringView{"SWT"})) {
         if ((testSWTlength(rows, j) == 0) || (testSWTlength(cols, j) == 0)) {
-            fmt::print("\n For SWT data rows and columns must be a multiple of 2^J. \n");
+            print("\n For SWT data rows and columns must be a multiple of 2^J. \n");
             exit(-1);
         }
 
@@ -182,8 +181,8 @@ WaveletTransform2D::WaveletTransform2D(
             if (strstr(wave.name().c_str(), "db") == nullptr) {
                 if (strstr(wave.name().c_str(), "sym") == nullptr) {
                     if (strstr(wave.name().c_str(), "coif") == nullptr) {
-                        fmt::print("\n MODWT is only implemented for orthogonal wavelet "
-                                   "families - db, sym and coif \n");
+                        print("\n MODWT is only implemented for orthogonal wavelet "
+                              "families - db, sym and coif \n");
                         exit(-1);
                     }
                 }
@@ -213,14 +212,14 @@ auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void
         } else if (extension == StringView{"per"}) {
             wt.ext = "per";
         } else {
-            fmt::printf("Signal extension can be either per or sym");
+            print("Signal extension can be either per or sym");
             exit(-1);
         }
     } else if ((wt.method() == StringView{"swt"}) || (wt.method() == "modwt")) {
         if (extension == StringView{"per"}) {
             wt.ext = "per";
         } else {
-            fmt::printf("Signal extension can only be per");
+            print("Signal extension can only be per");
             exit(-1);
         }
     }
@@ -1162,9 +1161,9 @@ auto getWT2Coeffs(
     // Error Check
 
     if (level > j || level < 1) {
-        fmt::printf(
-            "Error : The data is decomposed into %d levels so the acceptable values of "
-            "level are between 1 and %d",
+        print(
+            "Error : The data is decomposed into {} levels so the acceptable values of "
+            "level are between 1 and {}",
             j,
             j
         );
@@ -1172,7 +1171,7 @@ auto getWT2Coeffs(
     }
 
     if ((strcmp(type, "A") == 0) && level != j) {
-        fmt::printf("Approximation Coefficients are only available for level %d", j);
+        print("Approximation Coefficients are only available for level {}", j);
         exit(-1);
     }
 

@@ -65,11 +65,8 @@ auto main() -> int
     // modwt works only with modwtshrink method
     setDenoiseWTMethod(obj, method);  // Default is dwt. the other options are swt and modwt
     setDenoiseWTExtension(obj, ext);  // Default is sym. the other option is per
-    setDenoiseParameters(
-        obj,
-        thresh,
-        level
-    );  // Default for thresh is soft. Other option is hard
+    setDenoiseParameters(obj, thresh, level);
+    // Default for thresh is soft. Other option is hard
     // Default for level is all. The other option is first
 
     denoise(obj, inp.get(), oup.get());

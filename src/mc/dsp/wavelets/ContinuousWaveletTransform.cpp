@@ -74,7 +74,7 @@ auto factorial(int n) -> float
     };
 
     if (n > 40 - 6 || n < 0) {
-        fmt::print("This program is only valid for 0 <= N <= 40-6 \n");
+        print("This program is only valid for 0 <= N <= 40-6 \n");
         return -1.0F;
     }
 
@@ -152,7 +152,7 @@ auto nsfftBk(
     auto const m = divideby(n, 2);
 
     if (m == 0) {
-        fmt::printf("The Non-Standard FFT Length must be a power of 2");
+        print("The Non-Standard FFT Length must be a power of 2");
         exit(1);
     }
 
@@ -498,7 +498,7 @@ auto cwavelet(
     pi = 4.0F * atan(1.0F);
 
     if (npad < n) {
-        fmt::printf("npad must be >= N \n");
+        print("npad must be >= N \n");
         exit(-1);
     }
 
@@ -774,7 +774,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(
         djTmp     = 0.4875F;
         motherTmp = 0;
         if (param < 0.0F) {
-            fmt::printf("\n Morlet Wavelet Parameter should be >= 0 \n");
+            print("\n Morlet Wavelet Parameter should be >= 0 \n");
             exit(-1);
         }
         if (param == 0) { param = 6.0F; }
@@ -784,7 +784,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(
         djTmp     = 0.4875F;
         motherTmp = 1;
         if (param < 0 || param > 20) {
-            fmt::printf("\n Paul Wavelet Parameter should be > 0 and <= 20 \n");
+            print("\n Paul Wavelet Parameter should be > 0 and <= 20 \n");
             exit(-1);
         }
         if (param == 0) { param = 4.0F; }
@@ -794,7 +794,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(
         djTmp     = 0.4875F;
         motherTmp = 2;
         if (param < 0 || odd == 1) {
-            fmt::printf("\n DOG Wavelet Parameter should be > 0 and even \n");
+            print("\n DOG Wavelet Parameter should be > 0 and even \n");
             exit(-1);
         }
         if (param == 0) { param = 2.0F; }
@@ -846,7 +846,7 @@ auto ContinuousWaveletTransform::scales(
         for (auto i = 0; i < J; ++i) { scale[i] = newS0 + (float)i * newDj; }
         sflag = 1;
     } else {
-        fmt::printf("\n Type accepts only two values : pow and lin\n");
+        print("\n Type accepts only two values : pow and lin\n");
         exit(-1);
     }
     s0 = newS0;
@@ -927,7 +927,7 @@ auto icwt(ContinuousWaveletTransform& wt, float* cwtop) -> void
             cwtop
         );
     } else {
-        fmt::printf("Inverse CWT is only available for power of 2.0F scales \n");
+        print("Inverse CWT is only available for power of 2.0F scales \n");
         exit(-1);
     }
     for (auto i = 0; i < n; ++i) { cwtop[i] += wt.smean; }
@@ -951,18 +951,18 @@ auto summary(ContinuousWaveletTransform const& wt) -> void
     fmt::printf("\nThe ith real value can be accessed using wt.output()[i].real() and "
                 "imaginary value by "
                 "wt.output()[i].imag() \n");
-    fmt::printf("\n");
+    print("\n");
 }
 
 auto meyer(int n, float lb, float ub, float* phi, float* psi, float* tgrid) -> void
 {
     auto const m = divideby(n, 2);
     if (m == 0) {
-        fmt::printf("Size of Wavelet must be a power of 2");
+        print("Size of Wavelet must be a power of 2");
         exit(1);
     }
     if (lb >= ub) {
-        fmt::printf("upper bound must be greater than lower bound");
+        print("upper bound must be greater than lower bound");
         exit(1);
     }
 

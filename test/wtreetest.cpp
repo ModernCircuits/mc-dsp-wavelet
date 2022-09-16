@@ -28,14 +28,13 @@ auto main() -> int
     auto const x   = 3;
     auto const y   = 5;
     auto const len = wt.nodeLength(x);
-    fmt::printf("\n %d", len);
-    fmt::printf("\n");
+    print("\n {}\n", len);
     auto oup = makeUnique<float[]>(len);
 
-    fmt::printf("Node [%d %d] Coefficients : \n", x, y);
+    print("Node [{} {}] Coefficients : \n", x, y);
     wt.coeffs(x, y, oup.get(), len);
     for (std::size_t i = 0; i < len; ++i) { fmt::printf("%g ", oup[i]); }
-    fmt::printf("\n");
+    print("\n");
 
     return EXIT_SUCCESS;
 }

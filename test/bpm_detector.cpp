@@ -177,7 +177,7 @@ static auto mode(mc::Span<float const> arr) -> float
 auto main(int argc, char** argv) -> int
 {
     if (argc != 2) {
-        fmt::print("no file path provided");
+        mc::print("no file path provided");
         return EXIT_FAILURE;
     }
 
@@ -202,7 +202,7 @@ auto main(int argc, char** argv) -> int
     auto bpms     = Vector<float>{};
     for (auto windowNdx{0U}; windowNdx < maxWindowIndex; ++windowNdx) {
         if (sampsNdx + windowSize >= mc::size(channel)) {
-            fmt::print("ERROR");
+            mc::print("ERROR");
             continue;
         }
 

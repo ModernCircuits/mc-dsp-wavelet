@@ -13,6 +13,7 @@
 #include <mc/core/iterator.hpp>
 #include <mc/core/memory.hpp>
 #include <mc/core/numbers.hpp>
+#include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
@@ -50,7 +51,7 @@ auto waveletFilterLength(char const* name) -> int
         for (auto i = 2; i < len + 1; i++) { newStr[i - 2] = name[i]; }
 
         n = atoi(newStr.get());
-        if (n > 38) { throw std::invalid_argument("wavelet filter not in database"); }
+        if (n > 38) { throw InvalidArgument("wavelet filter not in database"); }
 
         return n * 2;
     }
@@ -89,7 +90,7 @@ auto waveletFilterLength(char const* name) -> int
         for (auto i = 4; i < len + 1; i++) { newStr[i - 4] = name[i]; }
 
         n = atoi(newStr.get());
-        if (n > 17) { throw std::invalid_argument("wavelet filter not in database"); }
+        if (n > 17) { throw InvalidArgument("wavelet filter not in database"); }
 
         return n * 6;
     }
@@ -98,15 +99,13 @@ auto waveletFilterLength(char const* name) -> int
         for (auto i = 3; i < len + 1; i++) { newStr[i - 3] = name[i]; }
 
         n = atoi(newStr.get());
-        if (n > 20 || n < 2) {
-            throw std::invalid_argument("wavelet filter not in database");
-        }
+        if (n > 20 || n < 2) { throw InvalidArgument("wavelet filter not in database"); }
 
         return n * 2;
     }
     if (strcmp(name, "meyer") == 0) { return 102; }
 
-    throw std::invalid_argument("wavelet filter not in database");
+    throw InvalidArgument("wavelet filter not in database");
 }
 
 auto fillDauberchies(char const* name, float* lp1, float* hp1, float* lp2, float* hp2)
@@ -675,7 +674,7 @@ auto waveletFilterCoefficients(
         return n;
     }
 
-    fmt::printf("\n Filter Not in Database \n");
+    print("\n Filter Not in Database \n");
     return -1;
 }
 
@@ -710,26 +709,26 @@ auto Wavelet::hpr() const noexcept -> Span<float>
 auto summary(Wavelet const& obj) -> void
 {
     auto const n = obj.size();
-    fmt::printf("\n");
-    fmt::printf("Wavelet Name: %s \n", obj.name().c_str());
-    fmt::printf("\n");
-    fmt::printf("Wavelet Filters \n");
-    fmt::printf("lpd: [");
+    print("\n");
+    print("Wavelet Name: {0} \n", obj.name().c_str());
+    print("\n");
+    print("Wavelet Filters \n");
+    print("lpd: [");
     for (std::size_t i = 0; i < n - 1; ++i) { fmt::printf("%g,", obj.lpd()[i]); }
     fmt::printf("%g", obj.lpd()[n - 1]);
-    fmt::printf("] \n");
-    fmt::printf("hpd: [");
+    print("] \n");
+    print("hpd: [");
     for (std::size_t i = 0; i < n - 1; ++i) { fmt::printf("%g,", obj.hpd()[i]); }
     fmt::printf("%g", obj.hpd()[n - 1]);
-    fmt::printf("] \n");
-    fmt::printf("lpr: [");
+    print("] \n");
+    print("lpr: [");
     for (std::size_t i = 0; i < n - 1; ++i) { fmt::printf("%g,", obj.lpr()[i]); }
     fmt::printf("%g", obj.lpr()[n - 1]);
-    fmt::printf("] \n");
-    fmt::printf("hpr: [");
+    print("] \n");
+    print("hpr: [");
     for (std::size_t i = 0; i < n - 1; ++i) { fmt::printf("%g,", obj.hpr()[i]); }
     fmt::printf("%g", obj.hpr()[n - 1]);
-    fmt::printf("] \n");
+    print("] \n");
 }
 
 }  // namespace mc::dsp
