@@ -7,8 +7,6 @@
 #include <mc/core/memory.hpp>
 #include <mc/testing/test.hpp>
 
-#include <fmt/printf.h>
-
 using namespace mc;
 
 auto main() -> int
@@ -36,7 +34,7 @@ auto main() -> int
     summary(wt);
 
     // If Reconstruction succeeded then the output should be a small value.
-    fmt::printf("\n MAX %g \n", absmax(diff.get(), wt.signalLength()));
+    print("\n MAX {} \n", absmax(diff.get(), wt.signalLength()));
 
     return 0;
 }

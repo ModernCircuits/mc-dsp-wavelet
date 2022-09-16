@@ -8,8 +8,6 @@
 #include <mc/core/utility.hpp>
 #include <mc/testing/test.hpp>
 
-#include <fmt/printf.h>
-
 using namespace mc;
 
 auto main() -> int
@@ -29,9 +27,7 @@ auto main() -> int
     // Use wt_summary to find out how to extract appx and detail coefficients
     modwt(wt, inp.data());  // Perform MODWT
 
-    for (auto i = 0; mc::cmp_less(i, wt.outlength); ++i) {
-        fmt::printf("%g ", wt.output()[i]);
-    }
+    for (auto i = 0; mc::cmp_less(i, wt.outlength); ++i) { print("{} ", wt.output()[i]); }
 
     imodwt(wt, out.get());  // Perform ISWT (if needed)
 
@@ -39,7 +35,7 @@ auto main() -> int
     for (auto i = 0; mc::cmp_less(i, wt.signalLength()); ++i) { diff[i] = out[i] - inp[i]; }
 
     // If Reconstruction succeeded then the output should be a small value.
-    fmt::printf("\n MAX %g \n", absmax(diff.get(), wt.signalLength()));
+    print("\n MAX {} \n", absmax(diff.get(), wt.signalLength()));
 
     summary(wt);  // Prints the full summary.
 

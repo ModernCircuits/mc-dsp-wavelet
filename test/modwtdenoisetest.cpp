@@ -7,8 +7,6 @@
 #include <mc/core/memory.hpp>
 #include <mc/testing/test.hpp>
 
-#include <fmt/printf.h>
-
 using namespace mc;
 
 // modwtshrink can also be called from the denoise object.
@@ -29,13 +27,13 @@ auto main() -> int
 
     dsp::modwtshrink(sig.data(), n, j, wname, cmethod, ext, thresh, out.get());
 
-    fmt::printf("Signal - Noisy Signal Stats \n");
-    fmt::printf("RMSE %g\n", rmsError(sig.data(), inp.data(), n));
-    fmt::printf("Corr Coeff %g\n", corrcoef((int)n, sig.data(), inp.data()));
+    mc::print("Signal - Noisy Signal Stats \n");
+    mc::print("RMSE {}\n", rmsError(sig.data(), inp.data(), n));
+    mc::print("Corr Coeff {}\n", corrcoef((int)n, sig.data(), inp.data()));
 
-    fmt::printf("Signal - DeNoised Signal Stats \n");
-    fmt::printf("RMSE %g\n", rmsError(sig.data(), out.get(), n));
-    fmt::printf("Corr Coeff %g\n", corrcoef((int)n, sig.data(), out.get()));
+    mc::print("Signal - DeNoised Signal Stats \n");
+    mc::print("RMSE {}\n", rmsError(sig.data(), out.get(), n));
+    mc::print("Corr Coeff {}\n", corrcoef((int)n, sig.data(), out.get()));
 
     return 0;
 }

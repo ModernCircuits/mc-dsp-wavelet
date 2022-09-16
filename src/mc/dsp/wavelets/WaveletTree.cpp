@@ -9,8 +9,6 @@
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
-#include <fmt/printf.h>
-
 namespace mc::dsp {
 
 WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t j)
@@ -256,7 +254,7 @@ auto wtree(WaveletTree& wt, float const* inp) -> void
             np      = n2;
         }
     } else {
-        fmt::printf("Signal extension can be either per or sym");
+        print("Signal extension can be either per or sym");
         exit(-1);
     }
 
@@ -284,7 +282,7 @@ auto wtree(WaveletTree& wt, float const* inp) -> void
 auto WaveletTree::nodeLength(std::size_t x) -> std::size_t
 {
     if (x <= 0 || x > J) {
-        fmt::printf("X co-ordinate must be >= 1 and <= %d", J);
+        print("X co-ordinate must be >= 1 and <= {}", J);
         exit(-1);
     }
 
@@ -299,7 +297,7 @@ auto WaveletTree::coeffs(std::size_t x, std::size_t y, float* coeffs, std::size_
     int t2           = 0;
 
     if (x <= 0 || x > J) {
-        fmt::printf("X co-ordinate must be >= 1 and <= %d", J);
+        print("X co-ordinate must be >= 1 and <= {}", J);
         exit(-1);
     }
     ymax = 1;
@@ -308,7 +306,7 @@ auto WaveletTree::coeffs(std::size_t x, std::size_t y, float* coeffs, std::size_
     ymax -= 1;
 
     if (y > ymax) {
-        fmt::printf("Y co-ordinate must be >= 0 and <= %d", ymax);
+        print("Y co-ordinate must be >= 0 and <= {}", ymax);
         exit(-1);
     }
 
@@ -338,32 +336,28 @@ auto WaveletTree::extension() const noexcept -> String const& { return ext_; }
 
 auto summary(WaveletTree const& wt) -> void
 {
-    int k  = 0;
-    int p2 = 0;
-    int j  = 0;
-    int t  = 0;
-    j      = wt.J;
+    auto const j = wt.J;
     summary(*wt.wave);
-    fmt::printf("\n");
-    fmt::printf("Wavelet Transform : %s \n", wt.method.c_str());
-    fmt::printf("\n");
-    fmt::printf("Signal Extension : %s \n", wt.extension().c_str());
-    fmt::printf("\n");
-    fmt::printf("Number of Decomposition Levels %d \n", wt.J);
-    fmt::printf("\n");
-    fmt::printf("Length of Input Signal %d \n", wt.siglength);
-    fmt::printf("\n");
-    fmt::printf("Length of WT Output Vector %d \n", wt.outlength);
-    fmt::printf("\n");
-    fmt::printf("Wavelet Coefficients are contained in vector : %s \n", "output");
-    fmt::printf("\n");
-    fmt::printf("Coefficients Access \n");
-    t  = 0;
-    p2 = 2;
+    print("\n");
+    print("Wavelet Transform : {} \n", wt.method.c_str());
+    print("\n");
+    print("Signal Extension : {} \n", wt.extension().c_str());
+    print("\n");
+    print("Number of Decomposition Levels {} \n", j);
+    print("\n");
+    print("Length of Input Signal {} \n", wt.siglength);
+    print("\n");
+    print("Length of WT Output Vector {} \n", wt.outlength);
+    print("\n");
+    print("Wavelet Coefficients are contained in vector : {} \n", "output");
+    print("\n");
+    print("Coefficients Access \n");
+    auto t  = 0;
+    auto p2 = 2;
     for (auto i = 0; i < j; ++i) {
-        for (k = 0; k < p2; ++k) {
-            fmt::printf(
-                "Node %d %d Access : output[%d] Length : %d \n",
+        for (auto k = 0; k < p2; ++k) {
+            print(
+                "Node {} {} Access : output[{}] Length : {} \n",
                 i + 1,
                 k,
                 wt.nodeLength_[t],
@@ -373,6 +367,6 @@ auto summary(WaveletTree const& wt) -> void
         }
         p2 *= 2;
     }
-    fmt::printf("\n");
+    print("\n");
 }
 }  // namespace mc::dsp

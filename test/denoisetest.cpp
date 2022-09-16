@@ -7,8 +7,6 @@
 #include <mc/core/memory.hpp>
 #include <mc/testing/test.hpp>
 
-#include <fmt/printf.h>
-
 using namespace mc;
 
 auto main() -> int
@@ -22,7 +20,7 @@ auto main() -> int
     auto* ifp = std::fopen("test_data/raw/pieceregular1024.txt", "r");
     auto i    = 0;
     if (ifp == nullptr) {
-        fmt::printf("Cannot Open File");
+        print("Cannot Open File");
         std::exit(EXIT_FAILURE);
     }
 
@@ -45,7 +43,7 @@ auto main() -> int
     ifp = std::fopen("test_data/raw/PieceRegular10.txt", "r");
     i   = 0;
     if (ifp == nullptr) {
-        fmt::printf("Cannot Open File");
+        print("Cannot Open File");
         std::exit(EXIT_FAILURE);
     }
 
@@ -78,13 +76,13 @@ auto main() -> int
     // modwtshrink(sig.get(),N,J,wname,cmethod,ext,thresh,oup.get()); See modwtdenoisetest.c
     // ofp = std::fopen("test_data/raw/denoiseds.txt", "w");
 
-    fmt::printf("Signal - Noisy Signal Stats \n");
-    fmt::printf("RMSE %g\n", rmsError(sig.get(), inp.get(), n));
-    fmt::printf("Corr Coeff %g\n", corrcoef(n, sig.get(), inp.get()));
+    print("Signal - Noisy Signal Stats \n");
+    print("RMSE {}\n", rmsError(sig.get(), inp.get(), n));
+    print("Corr Coeff {}\n", corrcoef(n, sig.get(), inp.get()));
 
-    fmt::printf("Signal - DeNoised Signal Stats \n");
-    fmt::printf("RMSE %g\n", rmsError(sig.get(), oup.get(), n));
-    fmt::printf("Corr Coeff %g\n", corrcoef(n, sig.get(), oup.get()));
+    print("Signal - DeNoised Signal Stats \n");
+    print("RMSE {}\n", rmsError(sig.get(), oup.get(), n));
+    print("Corr Coeff {}\n", corrcoef(n, sig.get(), oup.get()));
 
     return 0;
 }

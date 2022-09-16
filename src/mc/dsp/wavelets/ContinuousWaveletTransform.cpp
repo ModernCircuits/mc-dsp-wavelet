@@ -12,8 +12,6 @@
 #include <mc/core/memory.hpp>
 #include <mc/core/string_view.hpp>
 
-#include <fmt/printf.h>
-
 namespace {
 constexpr auto pi2 = static_cast<float>(6.28318530717958647692528676655900577);
 }  // namespace
@@ -935,22 +933,22 @@ auto icwt(ContinuousWaveletTransform& wt, float* cwtop) -> void
 
 auto summary(ContinuousWaveletTransform const& wt) -> void
 {
-    fmt::printf("\nWavelet : %s Parameter %lf \n", wt.wave().c_str(), wt.m);
-    fmt::printf("\nLength of Input Signal : %d \n", wt.signalLength);
-    fmt::printf("\nSampling Rate : %g \n", wt.dt);
-    fmt::printf("\nTotal Number of Scales : %d \n", wt.J);
-    fmt::printf("\nSmallest Scale (s0) : %lf \n", wt.s0);
-    fmt::printf("\nSeparation Between Scales (dj) %lf \n", wt.dj);
-    fmt::printf("\nScale Type %s \n", wt.type.c_str());
-    fmt::printf(
-        "\nComplex CWT Output Vector is of size %d  const& %d stored in Row Major format "
+    print("\nWavelet : {} Parameter {} \n", wt.wave().c_str(), wt.m);
+    print("\nLength of Input Signal : {} \n", wt.signalLength);
+    print("\nSampling Rate : {} \n", wt.dt);
+    print("\nTotal Number of Scales : {} \n", wt.J);
+    print("\nSmallest Scale (s0) : {} \n", wt.s0);
+    print("\nSeparation Between Scales (dj) {} \n", wt.dj);
+    print("\nScale Type {} \n", wt.type.c_str());
+    print(
+        "\nComplex CWT Output Vector is of size {}  const& {} stored in Row Major format "
         "\n",
         wt.J,
         wt.signalLength
     );
-    fmt::printf("\nThe ith real value can be accessed using wt.output()[i].real() and "
-                "imaginary value by "
-                "wt.output()[i].imag() \n");
+    print("\nThe ith real value can be accessed using wt.output()[i].real() and "
+          "imaginary value by "
+          "wt.output()[i].imag() \n");
     print("\n");
 }
 
@@ -1036,7 +1034,7 @@ auto gauss(int n, int p, float lb, float ub, float* psi, float* t) -> void
     int i       = 0;
 
     if (lb >= ub) {
-        fmt::printf("upper bound must be greater than lower bound");
+        print("upper bound must be greater than lower bound");
         exit(1);
     }
 
@@ -1055,7 +1053,7 @@ auto gauss(int n, int p, float lb, float ub, float* psi, float* t) -> void
 
     num /= den;
 
-    // fmt::printf("\n%g\n",num);
+    // print("\n{}\n",num);
 
     if (p == 1) {
         for (i = 0; i < n; ++i) { psi[i] = -t[i] * exp(-t[i] * t[i] / 2.0F) * num; }
@@ -1115,8 +1113,7 @@ auto gauss(int n, int p, float lb, float ub, float* psi, float* t) -> void
                    * exp(-t2 / 2.0F) * num;
         }
     } else {
-        fmt::printf(
-            "\n The Gaussian Derivative Wavelet is only available for Derivatives 1 to 10"
+        print("\n The Gaussian Derivative Wavelet is only available for Derivatives 1 to 10"
         );
         exit(1);
     }
@@ -1133,7 +1130,7 @@ auto morlet(int n, float lb, float ub, float* psi, float* t) -> void
     float delta = NAN;
 
     if (lb >= ub) {
-        fmt::printf("upper bound must be greater than lower bound");
+        print("upper bound must be greater than lower bound");
         exit(1);
     }
 

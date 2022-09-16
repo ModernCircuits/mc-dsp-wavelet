@@ -11,8 +11,6 @@
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
-#include <fmt/printf.h>
-
 namespace mc::dsp {
 
 DenoiseSet::DenoiseSet(int length, int j, char const* name)
@@ -194,7 +192,7 @@ auto sureshrink(
     } else if (method == StringView{"swt"}) {
         swt(wt, signal);
     } else {
-        fmt::printf("Acceptable WT methods are - dwt and swt\n");
+        print("Acceptable WT methods are - dwt and swt\n");
         std::exit(-1);
     }
 
@@ -228,7 +226,7 @@ auto sureshrink(
             iter += dlen;
         }
     } else {
-        fmt::printf("Acceptable Noise estimation level values are - first and all \n");
+        print("Acceptable Noise estimation level values are - first and all \n");
         std::exit(-1);
     }
 
@@ -326,8 +324,8 @@ auto modwtshrink(
     auto maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0F)) / std::log(2.0F));
 
     if (cmp_greater(j, maxIter)) {
-        fmt::printf(
-            "\n Error - The Signal Can only be iterated %d times using this Wavelet. "
+        print(
+            "\n Error - The Signal Can only be iterated {} times using this Wavelet. "
             "Exiting\n",
             maxIter
         );
@@ -340,7 +338,7 @@ auto modwtshrink(
         wt.convMethod(ConvolutionMethod::fft);
         wt.extension(SignalExtension::symmetric);
     } else if ((ext == StringView{"sym"}) && (cmethod == StringView{"direct"})) {
-        fmt::printf("Symmetric Extension is not available for direct method");
+        print("Symmetric Extension is not available for direct method");
         std::exit(-1);
     } else if ((ext == StringView{"per"}) && (cmethod == StringView{"direct"})) {
         wt.convMethod(ConvolutionMethod::direct);
@@ -349,7 +347,7 @@ auto modwtshrink(
         wt.convMethod(ConvolutionMethod::fft);
         wt.extension(SignalExtension::periodic);
     } else {
-        fmt::printf("Signal extension can be either per or sym");
+        print("Signal extension can be either per or sym");
         std::exit(-1);
     }
 
@@ -411,9 +409,9 @@ auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void
 {
     if (obj.dmethod == "sureshrink") {
         if (obj.wmethod == StringView{"MODWT"}) {
-            fmt::printf("sureshrink method only works with swt and dwt. Please use "
-                        "setDenoiseWTMethod to set the "
-                        "correct method\n");
+            print("sureshrink method only works with swt and dwt. Please use "
+                  "setDenoiseWTMethod to set the "
+                  "correct method\n");
             std::exit(-1);
         }
         sureshrink(
@@ -429,9 +427,9 @@ auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void
         );
     } else if (obj.dmethod == "visushrink") {
         if (obj.wmethod == StringView{"MODWT"}) {
-            fmt::printf("visushrink method only works with swt and dwt. Please use "
-                        "setDenoiseWTMethod to set the "
-                        "correct method\n");
+            print("visushrink method only works with swt and dwt. Please use "
+                  "setDenoiseWTMethod to set the "
+                  "correct method\n");
             std::exit(-1);
         }
         visushrink(
@@ -447,8 +445,8 @@ auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void
         );
     } else if (obj.dmethod == "modwtshrink") {
         if (obj.wmethod != StringView{"MODWT"}) {
-            fmt::printf("modwtshrink method only works with modwt. Please use "
-                        "setDenoiseWTMethod to set the correct method\n");
+            print("modwtshrink method only works with modwt. Please use "
+                  "setDenoiseWTMethod to set the correct method\n");
             std::exit(-1);
         }
         modwtshrink(
@@ -462,7 +460,7 @@ auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void
             denoised
         );
     } else {
-        fmt::printf("Acceptable Denoising methods are - sureshrink and visushrink\n");
+        print("Acceptable Denoising methods are - sureshrink and visushrink\n");
         std::exit(-1);
     }
 }
@@ -476,8 +474,7 @@ auto setDenoiseMethod(DenoiseSet& obj, char const* dmethod) -> void
     } else if (strcmp(dmethod, "modwtshrink") == 0) {
         obj.dmethod = "modwtshrink";
     } else {
-        fmt::printf(
-            "Acceptable Denoising methods are - sureshrink, visushrink and modwtshrink\n"
+        print("Acceptable Denoising methods are - sureshrink, visushrink and modwtshrink\n"
         );
         std::exit(-1);
     }
@@ -488,7 +485,7 @@ auto setDenoiseWTMethod(DenoiseSet& obj, char const* wmethod) -> void
     obj.wmethod = wmethod;
     if (!((wmethod == StringView{"dwt"}) || (wmethod == StringView{"swt"})
           || (wmethod == StringView{"MODWT"}))) {
-        fmt::printf("Wavelet decomposition method can be one of dwt, modwt or swt.\n");
+        print("Wavelet decomposition method can be one of dwt, modwt or swt.\n");
         std::exit(-1);
     }
 }
@@ -500,7 +497,7 @@ auto setDenoiseWTExtension(DenoiseSet& obj, char const* extension) -> void
     } else if (strcmp(extension, "per") == 0) {
         obj.ext = "per";
     } else {
-        fmt::printf("Signal extension can be either per or sym");
+        print("Signal extension can be either per or sym");
         std::exit(-1);
     }
 }

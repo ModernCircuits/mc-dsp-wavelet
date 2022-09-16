@@ -6,8 +6,6 @@
 #include <mc/core/format.hpp>
 #include <mc/testing/test.hpp>
 
-#include <fmt/printf.h>
-
 using namespace mc;
 
 auto main() -> int
@@ -46,7 +44,7 @@ auto main() -> int
     for (std::size_t i = 0; i < rows * cols; ++i) { diff[i] = oup[i] - inp[i]; }
 
     summary(wt);
-    fmt::printf("Abs Max %g \n", absmax(diff.get(), rows * cols));
+    print("Abs Max {} \n", absmax(diff.get(), rows * cols));
 
     return EXIT_SUCCESS;
 }

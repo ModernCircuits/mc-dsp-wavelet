@@ -46,11 +46,7 @@ TEST_CASE("dsp/wavelet: dbCoefTests", "[dsp][wavelet]")
 TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
 {
     auto epsilon = 1e-6;
-    float t1     = NAN;
-    float t2     = NAN;
-    float t3     = NAN;
-    float t4     = NAN;
-    float t5     = NAN;
+
     Vector<String> waveletNames;
     waveletNames.resize(17);
     for (std::size_t i = 0; i < waveletNames.size(); i++) {
@@ -58,18 +54,18 @@ TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
     }
 
     for (auto const& name : waveletNames) {
-        auto obj = dsp::Wavelet{name.c_str()};
-        t1       = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
-        t2       = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        t3       = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        t4       = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
+        auto obj      = dsp::Wavelet{name.c_str()};
+        auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
+        auto const t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
+        auto const t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
+        auto const t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
         REQUIRE(std::abs(t1) <= epsilon);
         REQUIRE(std::abs(t2) <= epsilon);
         REQUIRE(std::abs(t3) <= epsilon);
         REQUIRE(std::abs(t4) <= epsilon);
         for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
-            t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
+            auto const t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             REQUIRE(std::abs(t5) <= epsilon);
         }
     }
@@ -78,22 +74,17 @@ TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
 TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
 {
     auto epsilon = 1e-6;
-    float t1     = NAN;
-    float t2     = NAN;
-    float t3     = NAN;
-    float t4     = NAN;
-    float t5     = NAN;
     Vector<String> waveletNames;
     for (std::size_t i = 1; i < 20; i++) {
         waveletNames.push_back(String("sym") + std::to_string(i + 1));
     }
 
     for (auto const& name : waveletNames) {
-        auto obj = dsp::Wavelet{name.c_str()};
-        t1       = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
-        t2       = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        t3       = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
-        t4       = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
+        auto obj      = dsp::Wavelet{name.c_str()};
+        auto const t1 = sum1(obj.lpr().data(), obj.lpr().size()) - mc::sqrt(2.0F);
+        auto const t2 = sum2(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
+        auto const t3 = sum3(obj.lpr().data(), obj.lpr().size()) - 1.0F / mc::sqrt(2.0F);
+        auto const t4 = sum4(obj.lpr().data(), obj.lpr().size()) - 1.0F;
 
         REQUIRE(std::abs(t1) <= epsilon);
         REQUIRE(std::abs(t2) <= epsilon);
@@ -101,7 +92,7 @@ TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
         REQUIRE(std::abs(t4) <= epsilon);
 
         for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
-            t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
+            auto const t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             REQUIRE(std::abs(t5) <= epsilon);
         }
     }

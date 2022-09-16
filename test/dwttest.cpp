@@ -8,8 +8,6 @@
 #include <mc/core/utility.hpp>
 #include <mc/testing/test.hpp>
 
-#include <fmt/printf.h>
-
 using namespace mc;
 
 auto main() -> int
@@ -26,9 +24,7 @@ auto main() -> int
     // Use wt_summary to find out how to extract appx and detail coefficients
     dwt(wt, input.data());
 
-    for (auto i = 0; mc::cmp_less(i, wt.outlength); ++i) {
-        fmt::printf("%g ", wt.output()[i]);
-    }
+    for (auto i = 0; mc::cmp_less(i, wt.outlength); ++i) { print("{} ", wt.output()[i]); }
 
     auto out = makeUnique<float[]>(n);
     idwt(wt, out.get());
@@ -39,7 +35,7 @@ auto main() -> int
     }
 
     // If Reconstruction succeeded then the output should be a small value.
-    fmt::printf("\n MAX %g \n", absmax(diff.get(), wt.signalLength()));
+    print("\n MAX {} \n", absmax(diff.get(), wt.signalLength()));
 
     // Prints the full summary.
     summary(wt);

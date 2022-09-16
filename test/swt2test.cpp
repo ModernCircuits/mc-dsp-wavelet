@@ -7,8 +7,6 @@
 #include <mc/core/memory.hpp>
 #include <mc/testing/test.hpp>
 
-#include <fmt/printf.h>
-
 using namespace mc;
 
 auto main() -> int
@@ -46,7 +44,7 @@ auto main() -> int
     for (std::size_t i = 0; i < n; ++i) { diff[i] = oup[i] - inp[i]; }
 
     summary(wt);
-    fmt::printf("Abs Max %g \n", absmax(diff.get(), n));
+    print("Abs Max {} \n", absmax(diff.get(), n));
 
     return 0;
 }

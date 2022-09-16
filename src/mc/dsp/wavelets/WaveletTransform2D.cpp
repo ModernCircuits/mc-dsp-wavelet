@@ -12,8 +12,6 @@
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
-#include <fmt/printf.h>
-
 namespace mc::dsp {
 
 namespace {
@@ -941,7 +939,6 @@ auto modwt(WaveletTransform2D& wt, float const* inp) -> UniquePtr<float[]>
     int cdim          = 0;
     int clen          = 0;
     float const* orig = nullptr;
-    float s           = NAN;
 
     j            = wt.J;
     m            = 1;
@@ -963,7 +960,7 @@ auto modwt(WaveletTransform2D& wt, float const* inp) -> UniquePtr<float[]>
     n              = wt.outlength;
     auto wavecoeff = makeZeros<float>(wt.outlength);
     auto filt      = makeUnique<float[]>(2 * lp);
-    s              = sqrt(2.0F);
+    auto s         = sqrt(2.0F);
     for (auto i = 0; i < lp; ++i) {
         filt[i]      = wt.wave().lpd()[i] / s;
         filt[lp + i] = wt.wave().hpd()[i] / s;
@@ -1068,7 +1065,6 @@ auto imodwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void
     int aHL     = 0;
     int aHH     = 0;
     float* orig = nullptr;
-    float s     = NAN;
 
     rows = wt.rows();
     cols = wt.cols();
@@ -1079,7 +1075,7 @@ auto imodwt(WaveletTransform2D& wt, float* wavecoeff, float* oup) -> void
     lf = (wt.wave().lpr().size() + wt.wave().hpr().size()) / 2;
 
     auto filt = makeZeros<float>(2 * lf);
-    s         = sqrt(2.0F);
+    auto s    = sqrt(2.0F);
     for (auto i = 0; i < lf; ++i) {
         filt[i]      = wt.wave().lpd()[i] / s;
         filt[lf + i] = wt.wave().hpd()[i] / s;
@@ -1188,7 +1184,7 @@ auto getWT2Coeffs(
         t    = 3;
         iter = t;
     } else {
-        fmt::printf("Only four types of coefficients are accessible A, H, V and D \n");
+        print("Only four types of coefficients are accessible A, H, V and D \n");
         exit(-1);
     }
 
@@ -1203,12 +1199,12 @@ auto getWT2Coeffs(
 
 auto dispWT2Coeffs(float* a, int row, int col) -> void
 {
-    fmt::printf("\n MATRIX Order : %d X %d \n \n", row, col);
+    print("\n MATRIX Order : {} X {} \n \n", row, col);
 
     for (auto i = 0; i < row; i++) {
-        fmt::printf("R%d: ", i);
-        for (auto j = 0; j < col; j++) { fmt::printf("%g ", a[i * col + j]); }
-        fmt::printf(":R%d \n", i);
+        print("R{}: ", i);
+        for (auto j = 0; j < col; j++) { print("%g ", a[i * col + j]); }
+        print(":R{} \n", i);
     }
 }
 
@@ -1221,41 +1217,38 @@ auto summary(WaveletTransform2D const& wt) -> void
     int vsize = 0;
     j         = wt.J;
     summary(wt.wave());
-    fmt::printf("\n");
-    fmt::printf("Wavelet Transform : %s \n", wt.method().c_str());
-    fmt::printf("\n");
-    fmt::printf("Signal Extension : %s \n", wt.ext.c_str());
-    fmt::printf("\n");
-    fmt::printf("Number of Decomposition Levels %d \n", wt.J);
-    fmt::printf("\n");
-    fmt::printf("Input Signal Rows %d \n", wt.rows());
-    fmt::printf("\n");
-    fmt::printf("Input Signal Cols %d \n", wt.cols());
-    fmt::printf("\n");
-    fmt::printf("Length of Wavelet Coefficients Vector %d \n", wt.outlength);
-    fmt::printf("\n");
+    print("\n");
+    print("Wavelet Transform : {} \n", wt.method().c_str());
+    print("\n");
+    print("Signal Extension : {} \n", wt.ext.c_str());
+    print("\n");
+    print("Number of Decomposition Levels {} \n", wt.J);
+    print("\n");
+    print("Input Signal Rows {} \n", wt.rows());
+    print("\n");
+    print("Input Signal Cols {} \n", wt.cols());
+    print("\n");
+    print("Length of Wavelet Coefficients Vector {} \n", wt.outlength);
+    print("\n");
     t = 0;
     for (auto i = j; i > 0; --i) {
         rows  = wt.dimensions[2 * (j - i)];
         cols  = wt.dimensions[2 * (j - i) + 1];
         vsize = rows * cols;
-        fmt::printf(
-            "Level %d Decomposition Rows :%d Columns:%d Vector Size (Rows*Cols):%d \n",
+        print(
+            "Level {} Decomposition Rows :{} Columns:{} Vector Size (Rows*Cols):{} \n",
             i,
             rows,
             cols,
             vsize
         );
-        fmt::printf("Access Row values stored at wt.dimensions[%d]\n", 2 * (j - i));
-        fmt::printf(
-            "Access Column values stored at wt.dimensions[%d]\n\n",
-            2 * (j - i) + 1
-        );
+        print("Access Row values stored at wt.dimensions[{}]\n", 2 * (j - i));
+        print("Access Column values stored at wt.dimensions[{}]\n\n", 2 * (j - i) + 1);
 
         if (i == j) {
-            fmt::printf(
-                "Approximation Coefficients access at wt.coeffaccess[%d]=%d, Vector "
-                "size:%d \n",
+            print(
+                "Approximation Coefficients access at wt.coeffaccess[{}]={}, Vector "
+                "size:{} \n",
                 t,
                 wt.coeffaccess[t],
                 vsize
@@ -1263,22 +1256,22 @@ auto summary(WaveletTransform2D const& wt) -> void
         }
 
         t += 1;
-        fmt::printf(
-            "Horizontal Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n",
+        print(
+            "Horizontal Coefficients access at wt.coeffaccess[{}]={}, Vector size:{} \n",
             t,
             wt.coeffaccess[t],
             vsize
         );
         t += 1;
-        fmt::printf(
-            "Vertical Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n",
+        print(
+            "Vertical Coefficients access at wt.coeffaccess[{}]={}, Vector size:{} \n",
             t,
             wt.coeffaccess[t],
             vsize
         );
         t += 1;
-        fmt::printf(
-            "Diagonal Coefficients access at wt.coeffaccess[%d]=%d, Vector size:%d \n\n",
+        print(
+            "Diagonal Coefficients access at wt.coeffaccess[{}]={}, Vector size:{} \n\n",
             t,
             wt.coeffaccess[t],
             vsize

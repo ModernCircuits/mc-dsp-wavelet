@@ -17,8 +17,6 @@
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
-#include <fmt/printf.h>
-
 namespace mc::dsp {
 
 namespace {
@@ -714,20 +712,20 @@ auto summary(Wavelet const& obj) -> void
     print("\n");
     print("Wavelet Filters \n");
     print("lpd: [");
-    for (std::size_t i = 0; i < n - 1; ++i) { fmt::printf("%g,", obj.lpd()[i]); }
-    fmt::printf("%g", obj.lpd()[n - 1]);
+    for (std::size_t i = 0; i < n - 1; ++i) { print("{},", obj.lpd()[i]); }
+    print("{}", obj.lpd()[n - 1]);
     print("] \n");
     print("hpd: [");
-    for (std::size_t i = 0; i < n - 1; ++i) { fmt::printf("%g,", obj.hpd()[i]); }
-    fmt::printf("%g", obj.hpd()[n - 1]);
+    for (std::size_t i = 0; i < n - 1; ++i) { print("{},", obj.hpd()[i]); }
+    print("{}", obj.hpd()[n - 1]);
     print("] \n");
     print("lpr: [");
-    for (std::size_t i = 0; i < n - 1; ++i) { fmt::printf("%g,", obj.lpr()[i]); }
-    fmt::printf("%g", obj.lpr()[n - 1]);
+    for (std::size_t i = 0; i < n - 1; ++i) { print("{},", obj.lpr()[i]); }
+    print("{}", obj.lpr()[n - 1]);
     print("] \n");
     print("hpr: [");
-    for (std::size_t i = 0; i < n - 1; ++i) { fmt::printf("%g,", obj.hpr()[i]); }
-    fmt::printf("%g", obj.hpr()[n - 1]);
+    for (std::size_t i = 0; i < n - 1; ++i) { print("{},", obj.hpr()[i]); }
+    print("{}", obj.hpr()[n - 1]);
     print("] \n");
 }
 

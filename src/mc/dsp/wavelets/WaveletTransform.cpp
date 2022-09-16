@@ -14,8 +14,6 @@
 #include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 
-#include <fmt/printf.h>
-
 namespace mc::dsp {
 
 namespace {
@@ -984,9 +982,6 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
     int iter   = 0;
     int m      = 0;
     int lenacc = 0;
-    float s    = NAN;
-    float tmp1 = NAN;
-    float tmp2 = NAN;
 
     auto tempLen = wt.signalLength();
     auto lenAvg  = static_cast<std::size_t>(wt.wave().lpd().size());
@@ -1001,7 +996,7 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
     wt.length[0] = wt.length[j] = n;
     wt.outlength = wt.length[j + 1] = (j + 1) * n;
 
-    s = sqrt(2.0F);
+    auto const s = sqrt(2.0F);
     for (iter = 1; iter < j; ++iter) { wt.length[iter] = n; }
 
     auto fftFd = makeUnique<FFT<float, KissFFT>>(n, FFTDirection::forward);
@@ -1066,8 +1061,8 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
         for (std::size_t i = 0; i < n; ++i) { index[i] = (m * i) % n; }
 
         for (std::size_t i = 0; i < n; ++i) {
-            tmp1 = cA[i].real();
-            tmp2 = cA[i].imag();
+            auto const tmp1 = cA[i].real();
+            auto const tmp2 = cA[i].imag();
             cA[i].real(lowPass[index[i]].real() * tmp1 - lowPass[index[i]].imag() * tmp2);
             cA[i].imag(lowPass[index[i]].real() * tmp2 + lowPass[index[i]].imag() * tmp1);
 

@@ -13,8 +13,6 @@
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
-#include <fmt/printf.h>
-
 namespace mc::dsp {
 
 namespace {
@@ -241,8 +239,6 @@ auto dwpt(WaveletPacketTransform& wt, float const* inp) -> void
     int n2    = 0;
     int np    = 0;
     int llb   = 0;
-    float v1  = NAN;
-    float v2  = NAN;
     int lenCA = 0;
     int t     = 0;
 
@@ -413,8 +409,8 @@ auto dwpt(WaveletPacketTransform& wt, float const* inp) -> void
 
     for (auto j = jj - 1; j >= 0; --j) {
         for (k = ipow2(j) - 1; k < ipow2(j + 1) - 1; ++k) {
-            v1 = wt.costvalues[k];
-            v2 = wt.costvalues[2 * k + 1] + wt.costvalues[2 * k + 2];
+            auto const v1 = wt.costvalues[k];
+            auto const v2 = wt.costvalues[2 * k + 1] + wt.costvalues[2 * k + 2];
             if (v1 <= v2) {
                 wt.basisvector[k] = 1;
             } else {
