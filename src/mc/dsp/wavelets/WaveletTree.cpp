@@ -354,7 +354,7 @@ auto summary(WaveletTree const& wt) -> void
     print("Coefficients Access \n");
     auto t  = 0;
     auto p2 = 2;
-    for (auto i = 0; i < j; ++i) {
+    for (auto i = 0; cmp_less(i, j); ++i) {
         for (auto k = 0; k < p2; ++k) {
             print(
                 "Node {} {} Access : output[{}] Length : {} \n",

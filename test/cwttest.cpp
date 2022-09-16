@@ -18,7 +18,7 @@ auto main() -> int
     auto const n        = 504;
     auto const param    = 6.0F;
     auto const subscale = 4;
-    auto const dt       = 0.25;
+    auto const dt       = 0.25F;
     auto const s0       = dt;
     auto const dj       = 1.0F / (float)subscale;
     auto const j        = 11 * subscale;  // Total Number of scales
