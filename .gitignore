@@ -4,6 +4,7 @@ Testing/
 .vscode/
 /build
 /cmake-build-*
+/venv
 
 #Compiled
 *.a

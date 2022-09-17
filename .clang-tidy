@@ -57,8 +57,10 @@ CheckOptions:
     value: camelBack
   - key: readability-identifier-naming.ClassConstantCase
     value: camelBack
-  - key: readability-identifier-naming.PrivateMemberSuffix
+  - key: readability-identifier-naming.PrivateMemberPrefix
     value: _
+  - key: readability-identifier-naming.PrivateMemberSuffix
+    value:
   - key: readability-identifier-naming.EnumCase
     value: CamelCase
   - key: readability-identifier-naming.FunctionCase
