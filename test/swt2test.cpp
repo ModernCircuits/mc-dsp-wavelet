@@ -1,3 +1,4 @@
+#include <mc/dsp/algorithm.hpp>
 #include <mc/dsp/wavelet.hpp>
 
 #include <mc/core/cmath.hpp>
@@ -44,7 +45,7 @@ auto main() -> int
     for (std::size_t i = 0; i < n; ++i) { diff[i] = oup[i] - inp[i]; }
 
     print("{0}\n", summary(wt));
-    print("Abs Max {} \n", absmax(diff.get(), n));
+    print("Abs Max {} \n", dsp::absmax(diff.get(), n));
 
     return 0;
 }

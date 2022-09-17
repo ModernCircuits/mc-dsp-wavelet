@@ -1,3 +1,4 @@
+#include <mc/dsp/algorithm.hpp>
 #include <mc/dsp/wavelet.hpp>
 
 #include <mc/core/memory.hpp>
@@ -35,7 +36,7 @@ static constexpr auto const epsilon = 6e-7F;
         auto wavecoeffs = dwt(wt, data(inp));                                              \
         idwt(wt, wavecoeffs.get(), out.get());                                             \
         REQUIRE_THAT(                                                                      \
-            rmsError(out.get(), data(inp), n),                                             \
+            dsp::rmsError(out.get(), data(inp), n),                                        \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }
@@ -131,7 +132,7 @@ DWT_IDWT_ROUNDTRIP("sym20")  // NOLINT
         auto wavecoeffs = modwt(wt, data(inp));                                            \
         imodwt(wt, wavecoeffs.get(), out.get());                                           \
         REQUIRE_THAT(                                                                      \
-            rmsError(out.get(), data(inp), n),                                             \
+            dsp::rmsError(out.get(), data(inp), n),                                        \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }
@@ -227,7 +228,7 @@ MODWT_IMODWT_ROUNDTRIP("sym20")  // NOLINT
         auto wavecoeffs = swt2(wt, data(inp));                                             \
         iswt2(wt, wavecoeffs.get(), out.get());                                            \
         REQUIRE_THAT(                                                                      \
-            rmsError(out.get(), data(inp), n),                                             \
+            dsp::rmsError(out.get(), data(inp), n),                                        \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }

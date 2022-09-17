@@ -26,6 +26,16 @@ target_sources(mc-dsp-wavelet
     PRIVATE
         "mc/core/AudioFile.h"
 
+        "mc/dsp/algorithm/abs_max.hpp"
+        "mc/dsp/algorithm/abs_max.cpp"
+        "mc/dsp/algorithm/corrcoef.hpp"
+        "mc/dsp/algorithm/corrcoef.cpp"
+        "mc/dsp/algorithm/relative_error.hpp"
+        "mc/dsp/algorithm/relative_error.cpp"
+        "mc/dsp/algorithm/resample.hpp"
+        "mc/dsp/algorithm/rms_error.hpp"
+        "mc/dsp/algorithm/rms_error.cpp"
+        "mc/dsp/algorithm/signal_extension.hpp"
         "mc/dsp/algorithm/signal_extension.cpp"
 
         "mc/dsp/convolution.hpp"

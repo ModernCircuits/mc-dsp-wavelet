@@ -1,3 +1,4 @@
+#include <mc/dsp/algorithm.hpp>
 #include <mc/dsp/wavelet.hpp>
 
 #include <mc/core/memory.hpp>
@@ -29,7 +30,7 @@ static constexpr auto const epsilon = 6e-6F;
         dwt(wt, data(inp));                                                                \
         idwt(wt, out.get());                                                               \
         REQUIRE_THAT(                                                                      \
-            rmsError(out.get(), data(inp), wt.signalLength()),                             \
+            dsp::rmsError(out.get(), data(inp), wt.signalLength()),                        \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }
@@ -124,7 +125,7 @@ DWT_IDWT_ROUNDTRIP("sym20")   // NOLINT
         swt(wt, data(inp));                                                                \
         iswt(wt, out.get());                                                               \
         REQUIRE_THAT(                                                                      \
-            rmsError(out.get(), data(inp), wt.signalLength()),                             \
+            dsp::rmsError(out.get(), data(inp), wt.signalLength()),                        \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }
@@ -222,7 +223,7 @@ SWT_ISWT_ROUNDTRIP("sym20")   // NOLINT
         modwt(wt, data(inp));                                                              \
         imodwt(wt, out.get());                                                             \
         REQUIRE_THAT(                                                                      \
-            rmsError(out.get(), data(inp), wt.signalLength()),                             \
+            dsp::rmsError(out.get(), data(inp), wt.signalLength()),                        \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }

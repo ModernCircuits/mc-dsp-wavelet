@@ -39,10 +39,6 @@ auto approxEqual(Span<T const> lhs, Span<T const> rhs, int epsilonFactor = 4) ->
     return approxEqual(begin(lhs), end(lhs), begin(rhs), end(rhs), epsilonFactor);
 }
 
-auto absmax(float const* array, std::size_t n) -> float;
-auto rmsError(float const* data, float const* rec, std::size_t n) -> float;
-auto relError(float const* data, float const* rec, std::size_t n) -> float;
-
 auto generateRnd() -> float;
 
 template<typename T>
@@ -75,7 +71,5 @@ template<typename T>
 }
 
 auto generateRandomTestData(std::size_t n) -> Vector<float>;
-
-auto corrcoef(int n, float const* x, float const* y) -> float;
 
 }  // namespace mc

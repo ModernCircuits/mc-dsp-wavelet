@@ -1,3 +1,4 @@
+#include <mc/dsp/algorithm.hpp>
 #include <mc/dsp/wavelet.hpp>
 
 #include <mc/core/cmath.hpp>
@@ -34,7 +35,7 @@ auto main() -> int
     print("{0}\n", summary(wt));
 
     // If Reconstruction succeeded then the output should be a small value.
-    print("\n MAX {} \n", absmax(diff.get(), wt.signalLength()));
+    print("\n MAX {} \n", dsp::absmax(diff.get(), wt.signalLength()));
 
     return 0;
 }

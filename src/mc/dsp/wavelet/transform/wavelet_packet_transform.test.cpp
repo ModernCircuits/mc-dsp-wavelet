@@ -1,3 +1,4 @@
+#include <mc/dsp/algorithm.hpp>
 #include <mc/dsp/wavelet.hpp>
 
 #include <mc/core/iterator.hpp>
@@ -32,7 +33,7 @@ static constexpr auto epsilon = 1e-5F;
         dwpt(wt, data(inp));                                                               \
         idwpt(wt, out.get());                                                              \
         REQUIRE_THAT(                                                                      \
-            rmsError(out.get(), data(inp), wt.signalLength()),                             \
+            dsp::rmsError(out.get(), data(inp), wt.signalLength()),                        \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }
