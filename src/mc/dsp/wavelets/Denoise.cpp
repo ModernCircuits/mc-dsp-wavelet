@@ -112,7 +112,7 @@ auto visushrink(
     for (auto it = 0; cmp_less(it, j); ++it) {
         sigma = lnoise[it];
         dlen  = wt.length[it + 1];
-        td    = sqrt(2.0F * std::log(dwtLen)) * sigma;
+        td    = sqrt(2.0F * std::log((float)dwtLen)) * sigma;
 
         if (thresh == StringView{"hard"}) {
             for (std::size_t i = 0; i < dlen; ++i) {
@@ -152,11 +152,8 @@ auto sureshrink(
     float* denoised
 ) -> void
 {
-    int dwtLen = 0;
     int minIdx = 0;
 
-    int maxIter = 0;
-    int iter    = 0;
     float sigma = NAN;
     float norm  = NAN;
     float td    = NAN;
@@ -170,7 +167,7 @@ auto sureshrink(
     auto wave          = Wavelet{wname};
     auto const filtLen = wave.size();
 
-    maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0F)) / std::log(2.0F));
+    auto maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0F)) / std::log(2.0F));
     // Depends on J
     if (cmp_greater(j, maxIter)) {
         print(
@@ -204,7 +201,7 @@ auto sureshrink(
     auto dsum   = makeUnique<float[]>(dlen);
     auto lnoise = makeUnique<float[]>(j);
 
-    iter = wt.length[0];
+    auto iter = wt.length[0];
 
     if (level == StringView{"first"}) {
         for (std::size_t i = 1; i < j; ++i) { iter += wt.length[i]; }
@@ -231,8 +228,8 @@ auto sureshrink(
     }
 
     for (auto it = 0; cmp_less(it, j); ++it) {
-        dwtLen = wt.length[it + 1];
-        sigma  = lnoise[it];
+        auto const dwtLen = wt.length[it + 1];
+        sigma             = lnoise[it];
 
         if (sigma < 0.00000001F) {
             td = 0;
@@ -315,8 +312,6 @@ auto modwtshrink(
     float sigma = NAN;
     float td    = NAN;
     float tmp   = NAN;
-    float m     = NAN;
-    float llen  = NAN;
 
     auto wave    = Wavelet{wname};
     auto filtLen = wave.size();
@@ -372,8 +367,8 @@ auto modwtshrink(
         iter += dlen;
     }
 
-    m    = pow(2.0F, j);
-    llen = std::log((float)wt.modwtsiglength);
+    auto m          = pow(2.0F, (float)j);
+    auto const llen = std::log((float)wt.modwtsiglength);
     // Thresholding
 
     iter = wt.length[0];

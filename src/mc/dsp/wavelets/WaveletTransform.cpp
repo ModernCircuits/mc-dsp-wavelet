@@ -122,7 +122,7 @@ WaveletTransform::WaveletTransform(
         this->outlength = siglength + 2 * levels_ * (size + 1);
         ext_            = SignalExtension::symmetric;
     } else if ((method == StringView{"swt"}) || (method == StringView{"SWT"})) {
-        if (testSWTlength(siglength, levels_) == 0) {
+        if (testSWTlength(static_cast<int>(siglength), static_cast<int>(levels_)) == 0) {
             throw InvalidArgument("For SWT the signal length must be a multiple of 2^levels"
             );
         }
