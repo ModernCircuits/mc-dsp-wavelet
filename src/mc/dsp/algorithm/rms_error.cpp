@@ -1,14 +1,20 @@
 #pragma once
 
 #include <mc/core/cmath.hpp>
+#include <mc/core/numeric.hpp>
+#include <mc/core/span.hpp>
 
 namespace mc::dsp {
 
 auto rmsError(float const* data, float const* rec, std::size_t n) -> float
 {
-    float sum = 0;
-    for (std::size_t i = 0; i < n; ++i) { sum += (data[i] - rec[i]) * (data[i] - rec[i]); }
-    return sqrt(sum / ((float)n - 1));
+    auto diffSquared = [](auto x, auto y) {
+        auto const diff = x - y;
+        return diff * diff;
+    };
+
+    auto sum = std::transform_reduce(data, data + n, rec, 0.0F, std::plus<>{}, diffSquared);
+    return sqrt(sum / static_cast<float>(n - 1U));
 }
 
 }  // namespace mc::dsp

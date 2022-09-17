@@ -6,36 +6,29 @@ namespace mc::dsp {
 
 auto corrcoef(int n, float const* x, float const* y) -> float
 {
-    float cc   = NAN;
-    float xm   = NAN;
-    float ym   = NAN;
-    float tx   = NAN;
-    float ty   = NAN;
-    float num  = NAN;
-    float den1 = NAN;
-    float den2 = NAN;
-    int i      = 0;
-    xm = ym = 0.0F;
-    for (i = 0; i < n; ++i) {
+    auto xm = 0.0F;
+    auto ym = 0.0F;
+    for (auto i = 0; i < n; ++i) {
         xm += x[i];
         ym += y[i];
     }
 
-    xm  = xm / n;
-    ym  = ym / n;
-    num = den1 = den2 = 0.0F;
+    xm = xm / n;
+    ym = ym / n;
 
-    for (i = 0; i < n; ++i) {
-        tx = x[i] - xm;
-        ty = y[i] - ym;
+    auto num  = 0.0F;
+    auto den1 = 0.0F;
+    auto den2 = 0.0F;
+
+    for (auto i = 0; i < n; ++i) {
+        auto tx = x[i] - xm;
+        auto ty = y[i] - ym;
         num += (tx * ty);
         den1 += (tx * tx);
         den2 += (ty * ty);
     }
 
-    cc = num / sqrt(den1 * den2);
-
-    return cc;
+    return num / sqrt(den1 * den2);
 }
 
 }  // namespace mc::dsp
