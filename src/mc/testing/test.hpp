@@ -56,7 +56,7 @@ template<typename T>
 [[nodiscard]] auto readFileToVector(char const* filePath) -> Vector<T>
 {
     auto in = std::ifstream{filePath};
-    if (!in) { raisef<InvalidArgument>("cannot open file: %s\n", filePath); }
+    if (!in) { raisef<InvalidArgument>("cannot open file: {:s}", filePath); }
 
     auto result = Vector<T>{};
     result.reserve(8096 * 4);

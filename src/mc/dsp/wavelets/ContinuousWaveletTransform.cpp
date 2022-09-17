@@ -10,6 +10,7 @@
 #include <mc/core/cstring.hpp>
 #include <mc/core/format.hpp>
 #include <mc/core/memory.hpp>
+#include <mc/core/raise.hpp>
 #include <mc/core/string_view.hpp>
 
 namespace {
@@ -149,10 +150,7 @@ auto nsfftBk(
 
     auto const m = divideby(n, 2);
 
-    if (m == 0) {
-        print("The Non-Standard FFT Length must be a power of 2");
-        exit(1);
-    }
+    if (m == 0) { raise<InvalidArgument>("non-standard FFT length must be a power of 2"); }
 
     auto temp1 = makeUnique<float[]>(l);
     auto temp2 = makeUnique<float[]>(l);
@@ -496,8 +494,7 @@ auto cwavelet(
     pi = 4.0F * atan(1.0F);
 
     if (npad < n) {
-        print("npad must be >= N \n");
-        exit(-1);
+        raisef<InvalidArgument>("npad must be >= N. npad = {}, N = {}", npad, n);
     }
 
     auto obj  = makeUnique<FFT<float, KissFFT>>(npad, FFTDirection::forward);
@@ -772,8 +769,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(
         djTmp     = 0.4875F;
         motherTmp = 0;
         if (param < 0.0F) {
-            print("\n Morlet Wavelet Parameter should be >= 0 \n");
-            exit(-1);
+            raise<InvalidArgument>("Morlet Wavelet Parameter should be >= 0");
         }
         if (param == 0) { param = 6.0F; }
         _wave = "morlet";
@@ -782,8 +778,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(
         djTmp     = 0.4875F;
         motherTmp = 1;
         if (param < 0 || param > 20) {
-            print("\n Paul Wavelet Parameter should be > 0 and <= 20 \n");
-            exit(-1);
+            raise<InvalidArgument>("Paul Wavelet Parameter should be > 0 and <= 20");
         }
         if (param == 0) { param = 4.0F; }
         _wave = "paul";
@@ -792,8 +787,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(
         djTmp     = 0.4875F;
         motherTmp = 2;
         if (param < 0 || odd == 1) {
-            print("\n DOG Wavelet Parameter should be > 0 and even \n");
-            exit(-1);
+            raise<InvalidArgument>("DOG Wavelet Parameter should be > 0 and even");
         }
         if (param == 0) { param = 2.0F; }
         _wave = "dog";
@@ -844,8 +838,7 @@ auto ContinuousWaveletTransform::scales(
         for (auto i = 0; i < J; ++i) { scale[i] = newS0 + (float)i * newDj; }
         sflag = 1;
     } else {
-        print("\n Type accepts only two values : pow and lin\n");
-        exit(-1);
+        raise<InvalidArgument>("Type accepts only two values : pow and lin");
     }
     s0 = newS0;
     dj = newDj;
@@ -925,8 +918,7 @@ auto icwt(ContinuousWaveletTransform& wt, float* cwtop) -> void
             cwtop
         );
     } else {
-        print("Inverse CWT is only available for power of 2.0F scales \n");
-        exit(-1);
+        raise<InvalidArgument>("Inverse CWT is only available for power of 2.0F scales \n");
     }
     for (auto i = 0; i < n; ++i) { cwtop[i] += wt.smean; }
 }
@@ -955,13 +947,9 @@ auto summary(ContinuousWaveletTransform const& wt) -> void
 auto meyer(int n, float lb, float ub, float* phi, float* psi, float* tgrid) -> void
 {
     auto const m = divideby(n, 2);
-    if (m == 0) {
-        print("Size of Wavelet must be a power of 2");
-        exit(1);
-    }
+    if (m == 0) { raise<InvalidArgument>("Size of Wavelet must be a power of 2"); }
     if (lb >= ub) {
-        print("upper bound must be greater than lower bound");
-        exit(1);
+        raise<InvalidArgument>("upper bound must be greater than lower bound");
     }
 
     auto obj  = makeUnique<FFT<float, KissFFT>>(n, FFTDirection::backward);
@@ -1034,8 +1022,7 @@ auto gauss(int n, int p, float lb, float ub, float* psi, float* t) -> void
     int i       = 0;
 
     if (lb >= ub) {
-        print("upper bound must be greater than lower bound");
-        exit(1);
+        raise<InvalidArgument>("upper bound must be greater than lower bound");
     }
 
     t[0]     = lb;
@@ -1113,9 +1100,9 @@ auto gauss(int n, int p, float lb, float ub, float* psi, float* t) -> void
                    * exp(-t2 / 2.0F) * num;
         }
     } else {
-        print("\n The Gaussian Derivative Wavelet is only available for Derivatives 1 to 10"
+        raise<InvalidArgument>(
+            "\n The Gaussian Derivative Wavelet is only available for Derivatives 1 to 10"
         );
-        exit(1);
     }
 }
 
@@ -1130,8 +1117,7 @@ auto morlet(int n, float lb, float ub, float* psi, float* t) -> void
     float delta = NAN;
 
     if (lb >= ub) {
-        print("upper bound must be greater than lower bound");
-        exit(1);
+        raise<InvalidArgument>("upper bound must be greater than lower bound");
     }
 
     t[0]     = lb;

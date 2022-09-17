@@ -223,7 +223,7 @@ auto WaveletTransform::detail(std::size_t level) const -> Span<float>
     */
 
     if (level > static_cast<std::size_t>(levels()) || level < 1U) {
-        raise<InvalidArgument>("The decomposition only has 1,..,%d levels");
+        raisef<InvalidArgument>("The decomposition only has 1,..,{:d} levels", levels());
     }
 
     auto iter = length[0];

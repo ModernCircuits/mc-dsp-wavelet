@@ -21,7 +21,7 @@ auto main() -> int
     auto i    = 0;
     if (ifp == nullptr) {
         print("Cannot Open File");
-        std::exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     float temp[2400];
@@ -44,7 +44,7 @@ auto main() -> int
     i   = 0;
     if (ifp == nullptr) {
         print("Cannot Open File");
-        std::exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     while (std::feof(ifp) == 0) {

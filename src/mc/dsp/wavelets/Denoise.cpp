@@ -219,8 +219,9 @@ auto sureshrink(
             iter += dlen;
         }
     } else {
-        print("Acceptable Noise estimation level values are - first and all \n");
-        std::exit(-1);
+        raise<InvalidArgument>(
+            "Acceptable Noise estimation level values are - first and all"
+        );
     }
 
     for (auto it = 0; cmp_less(it, j); ++it) {
@@ -315,12 +316,10 @@ auto modwtshrink(
     auto maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0F)) / std::log(2.0F));
 
     if (cmp_greater(j, maxIter)) {
-        print(
-            "\n Error - The Signal Can only be iterated {} times using this Wavelet. "
-            "Exiting\n",
+        raisef<InvalidArgument>(
+            "the Signal Can only be iterated {} times using this Wavelet. ",
             maxIter
         );
-        std::exit(-1);
     }
 
     auto wt = WaveletTransform(wave, "modwt", n, j);
@@ -398,10 +397,11 @@ auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void
 {
     if (obj.dmethod == "sureshrink") {
         if (obj.wmethod == StringView{"MODWT"}) {
-            print("sureshrink method only works with swt and dwt. Please use "
-                  "setDenoiseWTMethod to set the "
-                  "correct method\n");
-            std::exit(-1);
+            raise<InvalidArgument>(
+                "sureshrink method only works with swt and dwt. Please use "
+                "setDenoiseWTMethod to set the "
+                "correct method\n"
+            );
         }
         sureshrink(
             signal,
@@ -416,10 +416,11 @@ auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void
         );
     } else if (obj.dmethod == "visushrink") {
         if (obj.wmethod == StringView{"MODWT"}) {
-            print("visushrink method only works with swt and dwt. Please use "
-                  "setDenoiseWTMethod to set the "
-                  "correct method\n");
-            std::exit(-1);
+            raise<InvalidArgument>(
+                "visushrink method only works with swt and dwt. Please use "
+                "setDenoiseWTMethod to set the "
+                "correct method\n"
+            );
         }
         visushrink(
             signal,
@@ -434,9 +435,8 @@ auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void
         );
     } else if (obj.dmethod == "modwtshrink") {
         if (obj.wmethod != StringView{"MODWT"}) {
-            print("modwtshrink method only works with modwt. Please use "
-                  "setDenoiseWTMethod to set the correct method\n");
-            std::exit(-1);
+            raise<InvalidArgument>("modwtshrink method only works with modwt. Please use "
+                                   "setDenoiseWTMethod to set the correct method\n");
         }
         modwtshrink(
             signal,
@@ -449,8 +449,9 @@ auto denoise(DenoiseSet& obj, float* signal, float* denoised) -> void
             denoised
         );
     } else {
-        print("Acceptable Denoising methods are - sureshrink and visushrink\n");
-        std::exit(-1);
+        raise<InvalidArgument>(
+            "Acceptable Denoising methods are - sureshrink and visushrink\n"
+        );
     }
 }
 
@@ -463,9 +464,9 @@ auto setDenoiseMethod(DenoiseSet& obj, char const* dmethod) -> void
     } else if (strcmp(dmethod, "modwtshrink") == 0) {
         obj.dmethod = "modwtshrink";
     } else {
-        print("Acceptable Denoising methods are - sureshrink, visushrink and modwtshrink\n"
+        raise<InvalidArgument>(
+            "Acceptable Denoising methods are - sureshrink, visushrink and modwtshrink\n"
         );
-        std::exit(-1);
     }
 }
 
@@ -474,8 +475,9 @@ auto setDenoiseWTMethod(DenoiseSet& obj, char const* wmethod) -> void
     obj.wmethod = wmethod;
     if (!((wmethod == StringView{"dwt"}) || (wmethod == StringView{"swt"})
           || (wmethod == StringView{"MODWT"}))) {
-        print("Wavelet decomposition method can be one of dwt, modwt or swt.\n");
-        std::exit(-1);
+        raise<InvalidArgument>(
+            "Wavelet decomposition method can be one of dwt, modwt or swt.\n"
+        );
     }
 }
 
@@ -499,8 +501,7 @@ auto setDenoiseParameters(DenoiseSet& obj, char const* thresh, char const* level
     } else if (thresh == StringView{"hard"}) {
         obj.thresh = "hard";
     } else {
-        print("Thresholding Method - soft or hard");
-        std::exit(-1);
+        raise<InvalidArgument>("Thresholding Method - soft or hard");
     }
 
     // Set Noise estimation at the first level or at all levels
@@ -510,8 +511,7 @@ auto setDenoiseParameters(DenoiseSet& obj, char const* thresh, char const* level
     } else if (level == StringView{"all"}) {
         obj.level = "all";
     } else {
-        print("Noise Estimation at level - first or all");
-        std::exit(-1);
+        raise<InvalidArgument>("Noise Estimation at level - first or all");
     }
 }
 

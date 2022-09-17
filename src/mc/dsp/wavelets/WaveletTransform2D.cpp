@@ -172,8 +172,9 @@ WaveletTransform2D::WaveletTransform2D(
         this->ext = "per";
     } else if ((method == StringView{"swt"}) || (method == StringView{"SWT"})) {
         if ((testSWTlength(rows, j) == 0) || (testSWTlength(cols, j) == 0)) {
-            print("\n For SWT data rows and columns must be a multiple of 2^J. \n");
-            exit(-1);
+            raise<InvalidArgument>(
+                "\n For SWT data rows and columns must be a multiple of 2^J. \n"
+            );
         }
 
         this->ext = "per";
@@ -182,9 +183,10 @@ WaveletTransform2D::WaveletTransform2D(
             if (strstr(wave.name().c_str(), "db") == nullptr) {
                 if (strstr(wave.name().c_str(), "sym") == nullptr) {
                     if (strstr(wave.name().c_str(), "coif") == nullptr) {
-                        print("\n MODWT is only implemented for orthogonal wavelet "
-                              "families - db, sym and coif \n");
-                        exit(-1);
+                        raise<InvalidArgument>(
+                            "\n MODWT is only implemented for orthogonal wavelet "
+                            "families - db, sym and coif \n"
+                        );
                     }
                 }
             }
@@ -219,8 +221,7 @@ auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void
         if (extension == StringView{"per"}) {
             wt.ext = "per";
         } else {
-            print("Signal extension can only be per");
-            exit(-1);
+            raise<InvalidArgument>("Signal extension can only be per");
         }
     }
 }
@@ -1159,18 +1160,19 @@ auto getWT2Coeffs(
     // Error Check
 
     if (level > j || level < 1) {
-        print(
+        raisef<InvalidArgument>(
             "Error : The data is decomposed into {} levels so the acceptable values of "
             "level are between 1 and {}",
             j,
             j
         );
-        exit(-1);
     }
 
     if ((strcmp(type, "A") == 0) && level != j) {
-        print("Approximation Coefficients are only available for level {}", j);
-        exit(-1);
+        raisef<InvalidArgument>(
+            "Approximation Coefficients are only available for level {}",
+            j
+        );
     }
 
     if (strcmp(type, "A") == 0) {
@@ -1186,8 +1188,9 @@ auto getWT2Coeffs(
         t    = 3;
         iter = t;
     } else {
-        print("Only four types of coefficients are accessible A, H, V and D \n");
-        exit(-1);
+        raise<InvalidArgument>(
+            "Only four types of coefficients are accessible A, H, V and D \n"
+        );
     }
 
     iter += (j - level) * 3;
@@ -1205,7 +1208,7 @@ auto dispWT2Coeffs(float* a, int row, int col) -> void
 
     for (auto i = 0; i < row; i++) {
         print("R{}: ", i);
-        for (auto j = 0; j < col; j++) { print("%g ", a[i * col + j]); }
+        for (auto j = 0; j < col; j++) { print("{} ", a[i * col + j]); }
         print(":R{} \n", i);
     }
 }
@@ -1220,18 +1223,12 @@ auto summary(WaveletTransform2D const& wt) -> void
     j         = wt.J;
     summary(wt.wave());
     print("\n");
-    print("Wavelet Transform : {} \n", wt.method().c_str());
-    print("\n");
-    print("Signal Extension : {} \n", wt.ext.c_str());
-    print("\n");
-    print("Number of Decomposition Levels {} \n", wt.J);
-    print("\n");
-    print("Input Signal Rows {} \n", wt.rows());
-    print("\n");
-    print("Input Signal Cols {} \n", wt.cols());
-    print("\n");
-    print("Length of Wavelet Coefficients Vector {} \n", wt.outlength);
-    print("\n");
+    print("Wavelet Transform : {} \n\n", wt.method().c_str());
+    print("Signal Extension : {} \n\n", wt.ext.c_str());
+    print("Number of Decomposition Levels {} \n\n", wt.J);
+    print("Input Signal Rows {} \n\n", wt.rows());
+    print("Input Signal Cols {} \n\n", wt.cols());
+    print("Length of Wavelet Coefficients Vector {} \n\n", wt.outlength);
     t = 0;
     for (auto i = j; i > 0; --i) {
         rows  = wt.dimensions[2 * (j - i)];

@@ -709,22 +709,18 @@ auto summary(Wavelet const& obj) -> void
 {
     auto const n = obj.size();
     print("\n");
-    print("Wavelet Name: {0} \n", obj.name().c_str());
-    print("\n");
+    print("Wavelet Name: {0} \n\n", obj.name().c_str());
     print("Wavelet Filters \n");
     print("lpd: [");
     for (std::size_t i = 0; i < n - 1; ++i) { print("{},", obj.lpd()[i]); }
     print("{}", obj.lpd()[n - 1]);
-    print("] \n");
-    print("hpd: [");
+    print("] \nhpd: [");
     for (std::size_t i = 0; i < n - 1; ++i) { print("{},", obj.hpd()[i]); }
     print("{}", obj.hpd()[n - 1]);
-    print("] \n");
-    print("lpr: [");
+    print("] \nlpr: [");
     for (std::size_t i = 0; i < n - 1; ++i) { print("{},", obj.lpr()[i]); }
     print("{}", obj.lpr()[n - 1]);
-    print("] \n");
-    print("hpr: [");
+    print("] \nhpr: [");
     for (std::size_t i = 0; i < n - 1; ++i) { print("{},", obj.hpr()[i]); }
     print("{}", obj.hpr()[n - 1]);
     print("] \n");
