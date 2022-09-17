@@ -1,4 +1,4 @@
-#include <mc/dsp/wavelets.hpp>
+#include <mc/dsp/wavelet.hpp>
 
 #include <mc/core/memory.hpp>
 #include <mc/testing/test.hpp>

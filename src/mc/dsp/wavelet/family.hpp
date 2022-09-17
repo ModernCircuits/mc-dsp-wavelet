@@ -1,9 +1,9 @@
 #pragma once
 
-#include <mc/dsp/wavelets/filters/coif.hpp>
-#include <mc/dsp/wavelets/filters/daubechies.hpp>
-#include <mc/dsp/wavelets/filters/sym.hpp>
-#include <mc/dsp/wavelets/wavelet_coefficients.hpp>
+#include <mc/dsp/wavelet/filters/coif.hpp>
+#include <mc/dsp/wavelet/filters/daubechies.hpp>
+#include <mc/dsp/wavelet/filters/sym.hpp>
+#include <mc/dsp/wavelet/wavelet_coefficients.hpp>
 
 namespace mc::dsp {
 template<typename T>

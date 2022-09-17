@@ -1,4 +1,4 @@
-#include <mc/dsp/wavelets.hpp>
+#include <mc/dsp/wavelet.hpp>
 
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>

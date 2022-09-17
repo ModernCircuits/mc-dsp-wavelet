@@ -1,6 +1,6 @@
 #include "wavelet_tree.hpp"
 
-#include <mc/dsp/wavelets/transform/common.hpp>
+#include <mc/dsp/wavelet/transform/common.hpp>
 
 #include <mc/core/cassert.hpp>
 #include <mc/core/cmath.hpp>

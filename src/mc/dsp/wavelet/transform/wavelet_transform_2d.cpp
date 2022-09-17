@@ -2,7 +2,7 @@
 
 #include <mc/dsp/convolution/FFTConvolver.hpp>
 #include <mc/dsp/fft/FFT.hpp>
-#include <mc/dsp/wavelets/transform/common.hpp>
+#include <mc/dsp/wavelet/transform/common.hpp>
 
 #include <mc/core/cassert.hpp>
 #include <mc/core/cmath.hpp>

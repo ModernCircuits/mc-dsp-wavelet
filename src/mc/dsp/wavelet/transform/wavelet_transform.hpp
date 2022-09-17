@@ -5,7 +5,7 @@
 #include <mc/dsp/algorithm/signal_extension.hpp>
 #include <mc/dsp/convolution/ConvolutionMethod.hpp>
 #include <mc/dsp/convolution/FFTConvolver.hpp>
-#include <mc/dsp/wavelets/Wavelet.hpp>
+#include <mc/dsp/wavelet/Wavelet.hpp>
 
 #include <mc/core/memory.hpp>
 #include <mc/core/span.hpp>

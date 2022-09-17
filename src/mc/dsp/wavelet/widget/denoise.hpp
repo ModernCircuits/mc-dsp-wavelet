@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mc/dsp/wavelets.hpp>
+#include <mc/dsp/wavelet.hpp>
 
 #include <mc/core/cfloat.hpp>
 #include <mc/core/cmath.hpp>
