@@ -53,7 +53,7 @@ private:
 auto cwt(ContinuousWaveletTransform& wt, float const* inp) -> void;
 auto icwt(ContinuousWaveletTransform& wt, float* cwtop) -> void;
 
-auto summary(ContinuousWaveletTransform const& wt) -> void;
+[[nodiscard]] auto summary(ContinuousWaveletTransform const& wt) -> String;
 
 auto meyer(int n, float lb, float ub, float* phi, float* psi, float* tgrid) -> void;
 auto gauss(int n, int p, float lb, float ub, float* psi, float* t) -> void;

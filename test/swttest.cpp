@@ -42,8 +42,7 @@ auto main() -> int
 
     // If Reconstruction succeeded then the output should be a small value.
     print("\n MAX {} \n", absmax(diff.get(), wt.signalLength()));
-
-    summary(wt);  // Prints the full summary.
+    print("{0}\n", summary(wt));
 
     return EXIT_SUCCESS;
 }

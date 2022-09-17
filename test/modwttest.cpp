@@ -13,7 +13,7 @@ using namespace mc;
 auto main() -> int
 {
     auto wave = dsp::Wavelet{"db4"};
-    summary(wave);
+    print("{0}\n", summary(wave));
 
     auto n = 177;
     auto j = 2;
@@ -37,7 +37,7 @@ auto main() -> int
     // If Reconstruction succeeded then the output should be a small value.
     print("\n MAX {} \n", absmax(diff.get(), wt.signalLength()));
 
-    summary(wt);  // Prints the full summary.
+    print("{0}\n", summary(wt));
 
     return 0;
 }

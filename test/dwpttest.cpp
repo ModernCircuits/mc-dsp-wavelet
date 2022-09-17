@@ -31,7 +31,7 @@ auto main() -> int
 
     for (std::size_t i = 0; i < n; ++i) { diff[i] = (inp[i] - oup[i]) / inp[i]; }
 
-    summary(wt);
+    print("{0}\n", summary(wt));
 
     // If Reconstruction succeeded then the output should be a small value.
     print("\n MAX {} \n", absmax(diff.get(), wt.signalLength()));

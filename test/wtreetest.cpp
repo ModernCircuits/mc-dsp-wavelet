@@ -22,7 +22,7 @@ auto main() -> int
     wt.extension("sym");
 
     wtree(wt, inp.get());
-    summary(wt);
+    print("{0}\n", summary(wt));
     auto const x   = 3;
     auto const y   = 5;
     auto const len = wt.nodeLength(x);

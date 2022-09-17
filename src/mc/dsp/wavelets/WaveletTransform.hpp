@@ -68,6 +68,6 @@ auto iswt(WaveletTransform& wt, float* swtop) -> void;
 auto modwt(WaveletTransform& wt, float const* inp) -> void;
 auto imodwt(WaveletTransform& wt, float* oup) -> void;
 
-auto summary(WaveletTransform const& wt) -> void;
+[[nodiscard]] auto summary(WaveletTransform const& wt) -> String;
 
 }  // namespace mc::dsp

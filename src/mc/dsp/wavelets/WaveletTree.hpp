@@ -42,5 +42,5 @@ private:
 };
 
 auto wtree(WaveletTree& wt, float const* inp) -> void;
-auto summary(WaveletTree const& wt) -> void;
+[[nodiscard]] auto summary(WaveletTree const& wt) -> String;
 }  // namespace mc::dsp

@@ -50,6 +50,6 @@ auto setDWPTExtension(WaveletPacketTransform& wt, char const* extension) -> void
 auto setDWPTEntropy(WaveletPacketTransform& wt, char const* entropy, float eparam) -> void;
 auto getDWPTNodelength(WaveletPacketTransform& wt, int x) -> int;
 
-auto summary(WaveletPacketTransform const& wt) -> void;
+[[nodiscard]] auto summary(WaveletPacketTransform const& wt) -> String;
 
 }  // namespace mc::dsp

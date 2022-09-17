@@ -28,7 +28,7 @@ private:
     UniquePtr<float[]> _params;
 };
 
-auto summary(Wavelet const& obj) -> void;
+[[nodiscard]] auto summary(Wavelet const& obj) -> String;
 
 }  // namespace mc::dsp
 

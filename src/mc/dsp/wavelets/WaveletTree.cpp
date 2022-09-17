@@ -322,23 +322,37 @@ auto WaveletTree::extension(char const* newExtension) noexcept -> void
 
 auto WaveletTree::extension() const noexcept -> String const& { return _ext; }
 
-auto summary(WaveletTree const& wt) -> void
+auto summary(WaveletTree const& wt) -> String
 {
+
     auto const j = wt.J;
-    summary(*wt.wave);
-    print("\n");
-    print("Wavelet Transform : {} \n\n", wt.method.c_str());
-    print("Signal Extension : {} \n\n", wt.extension().c_str());
-    print("Number of Decomposition Levels {} \n\n", j);
-    print("Length of Input Signal {} \n\n", wt.siglength);
-    print("Length of WT Output Vector {} \n\n", wt.outlength);
-    print("Wavelet Coefficients are contained in vector : {} \n\n", "output");
-    print("Coefficients Access \n");
+    auto s       = summary(*wt.wave);
+    fmt::format_to(std::back_inserter(s), "\n");
+    fmt::format_to(std::back_inserter(s), "Wavelet Transform : {} \n\n", wt.method.c_str());
+    fmt::format_to(
+        std::back_inserter(s),
+        "Signal Extension : {} \n\n",
+        wt.extension().c_str()
+    );
+    fmt::format_to(std::back_inserter(s), "Number of Decomposition Levels {} \n\n", j);
+    fmt::format_to(std::back_inserter(s), "Length of Input Signal {} \n\n", wt.siglength);
+    fmt::format_to(
+        std::back_inserter(s),
+        "Length of WT Output Vector {} \n\n",
+        wt.outlength
+    );
+    fmt::format_to(
+        std::back_inserter(s),
+        "Wavelet Coefficients are contained in vector : {} \n\n",
+        "output"
+    );
+    fmt::format_to(std::back_inserter(s), "Coefficients Access \n");
     auto t  = 0;
     auto p2 = 2;
     for (auto i = 0; cmp_less(i, j); ++i) {
         for (auto k = 0; k < p2; ++k) {
-            print(
+            fmt::format_to(
+                std::back_inserter(s),
                 "Node {} {} Access : output[{}] Length : {} \n",
                 i + 1,
                 k,
@@ -349,6 +363,8 @@ auto summary(WaveletTree const& wt) -> void
         }
         p2 *= 2;
     }
-    print("\n");
+    fmt::format_to(std::back_inserter(s), "\n");
+
+    return s;
 }
 }  // namespace mc::dsp

@@ -44,7 +44,7 @@ auto main() -> int
         );
     }
 
-    summary(wt);
+    print("{0}\n", summary(wt));
 
     print("\n abs mean {} \n", mn / n);
 

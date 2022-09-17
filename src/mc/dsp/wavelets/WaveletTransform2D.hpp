@@ -63,5 +63,5 @@ auto getWT2Coeffs(
 auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void;
 auto dispWT2Coeffs(float* a, int row, int col) -> void;
 
-auto summary(WaveletTransform2D const& wt) -> void;
+[[nodiscard]] auto summary(WaveletTransform2D const& wt) -> String;
 }  // namespace mc::dsp

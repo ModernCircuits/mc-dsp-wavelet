@@ -798,24 +798,36 @@ auto setDWPTEntropy(WaveletPacketTransform& wt, char const* entropy, float epara
     }
 }
 
-auto summary(WaveletPacketTransform const& wt) -> void
+auto summary(WaveletPacketTransform const& wt) -> String
 {
     int k   = 0;
     int p2  = 0;
-    int j   = 0;
     int it1 = 0;
     int it2 = 0;
-    j       = wt.J;
-    summary(wt.wave());
-    print("\n");
-    print("Signal Extension : {0} \n\n", wt.ext.c_str());
-    print("Entropy : {0} \n\n", wt.entropy.c_str());
-    print("Number of Decomposition Levels {0} \n\n", wt.J);
-    print("Number of Active Nodes {0} \n\n", wt.nodes);
-    print("Length of Input Signal {0} \n\n", wt.signalLength());
-    print("Length of WT Output Vector {0} \n\n", wt.outlength);
-    print("Wavelet Coefficients are contained in vector : {0} \n\n", "output");
-    print("Coefficients Access \n");
+    auto j  = wt.J;
+
+    auto s = summary(wt.wave());
+    fmt::format_to(std::back_inserter(s), "\n");
+    fmt::format_to(std::back_inserter(s), "Signal Extension : {0} \n\n", wt.ext.c_str());
+    fmt::format_to(std::back_inserter(s), "Entropy : {0} \n\n", wt.entropy.c_str());
+    fmt::format_to(std::back_inserter(s), "Number of Decomposition Levels {0} \n\n", wt.J);
+    fmt::format_to(std::back_inserter(s), "Number of Active Nodes {0} \n\n", wt.nodes);
+    fmt::format_to(
+        std::back_inserter(s),
+        "Length of Input Signal {0} \n\n",
+        wt.signalLength()
+    );
+    fmt::format_to(
+        std::back_inserter(s),
+        "Length of WT Output Vector {0} \n\n",
+        wt.outlength
+    );
+    fmt::format_to(
+        std::back_inserter(s),
+        "Wavelet Coefficients are contained in vector : {0} \n\n",
+        "output"
+    );
+    fmt::format_to(std::back_inserter(s), "Coefficients Access \n");
     it1 = 1;
     it2 = 0;
     for (auto i = 0; i < j; ++i) { it1 += ipow2(i + 1); }
@@ -824,7 +836,8 @@ auto summary(WaveletPacketTransform const& wt) -> void
         it1 -= p2;
         for (k = 0; k < p2; ++k) {
             if (wt.basisvector[it1 + k] == 1) {
-                print(
+                fmt::format_to(
+                    std::back_inserter(s),
                     "Node {} {} Access : output[{}] Length : {} \n",
                     i,
                     k,
@@ -836,6 +849,7 @@ auto summary(WaveletPacketTransform const& wt) -> void
         }
     }
 
-    print("\n");
+    fmt::format_to(std::back_inserter(s), "\n");
+    return s;
 }
 }  // namespace mc::dsp

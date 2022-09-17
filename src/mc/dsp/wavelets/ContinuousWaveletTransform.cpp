@@ -923,25 +923,40 @@ auto icwt(ContinuousWaveletTransform& wt, float* cwtop) -> void
     for (auto i = 0; i < n; ++i) { cwtop[i] += wt.smean; }
 }
 
-auto summary(ContinuousWaveletTransform const& wt) -> void
+auto summary(ContinuousWaveletTransform const& wt) -> String
 {
-    print("\nWavelet : {} Parameter {} \n", wt.wave().c_str(), wt.m);
-    print("\nLength of Input Signal : {} \n", wt.signalLength);
-    print("\nSampling Rate : {} \n", wt.dt);
-    print("\nTotal Number of Scales : {} \n", wt.J);
-    print("\nSmallest Scale (s0) : {} \n", wt.s0);
-    print("\nSeparation Between Scales (dj) {} \n", wt.dj);
-    print("\nScale Type {} \n", wt.type.c_str());
-    print(
+    auto s = String{};
+    fmt::format_to(
+        std::back_inserter(s),
+        "\nWavelet : {} Parameter {} \n",
+        wt.wave().c_str(),
+        wt.m
+    );
+    fmt::format_to(
+        std::back_inserter(s),
+        "\nLength of Input Signal : {} \n",
+        wt.signalLength
+    );
+    fmt::format_to(std::back_inserter(s), "\nSampling Rate : {} \n", wt.dt);
+    fmt::format_to(std::back_inserter(s), "\nTotal Number of Scales : {} \n", wt.J);
+    fmt::format_to(std::back_inserter(s), "\nSmallest Scale (s0) : {} \n", wt.s0);
+    fmt::format_to(std::back_inserter(s), "\nSeparation Between Scales (dj) {} \n", wt.dj);
+    fmt::format_to(std::back_inserter(s), "\nScale Type {} \n", wt.type.c_str());
+    fmt::format_to(
+        std::back_inserter(s),
         "\nComplex CWT Output Vector is of size {}  const& {} stored in Row Major format "
         "\n",
         wt.J,
         wt.signalLength
     );
-    print("\nThe ith real value can be accessed using wt.output()[i].real() and "
-          "imaginary value by "
-          "wt.output()[i].imag() \n");
-    print("\n");
+    fmt::format_to(
+        std::back_inserter(s),
+        "\nThe ith real value can be accessed using wt.output()[i].real() and "
+        "imaginary value by "
+        "wt.output()[i].imag() \n"
+    );
+    fmt::format_to(std::back_inserter(s), "\n");
+    return s;
 }
 
 auto meyer(int n, float lb, float ub, float* phi, float* psi, float* tgrid) -> void

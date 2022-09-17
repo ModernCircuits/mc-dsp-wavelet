@@ -1272,27 +1272,61 @@ auto imodwt(WaveletTransform& wt, float* oup) -> void
     imodwtFft(wt, oup);
 }
 
-auto summary(WaveletTransform const& wt) -> void
+auto summary(WaveletTransform const& wt) -> String
 {
     auto j = wt.levels();
-    summary(wt.wave());
-    print("\n");
-    print("Wavelet Transform : {} \n", wt.method().c_str());
-    print("Signal Extension : {} \n", toString(wt.extension()).c_str());
-    print("Convolutional Method : {} \n", toString(wt.convMethod()).c_str());
-    print("Number of Decomposition Levels {} \n", wt.levels());
-    print("Length of Input Signal {} \n", wt.signalLength());
-    print("Length of WT Output Vector {} \n", wt.outlength);
-    print("Wavelet Coefficients are contained in vector : {} \n", "output");
-    print("Approximation Coefficients \n");
-    print("Level {} Access : output[{}] Length : {} \n", j, 0, wt.length[0]);
-    print("Detail Coefficients \n");
+    auto s = summary(wt.wave());
+    fmt::format_to(std::back_inserter(s), "\n");
+    fmt::format_to(std::back_inserter(s), "Wavelet Transform : {} \n", wt.method().c_str());
+    fmt::format_to(
+        std::back_inserter(s),
+        "Signal Extension : {} \n",
+        toString(wt.extension()).c_str()
+    );
+    fmt::format_to(
+        std::back_inserter(s),
+        "Convolutional Method : {} \n",
+        toString(wt.convMethod()).c_str()
+    );
+    fmt::format_to(
+        std::back_inserter(s),
+        "Number of Decomposition Levels {} \n",
+        wt.levels()
+    );
+    fmt::format_to(
+        std::back_inserter(s),
+        "Length of Input Signal {} \n",
+        wt.signalLength()
+    );
+    fmt::format_to(std::back_inserter(s), "Length of WT Output Vector {} \n", wt.outlength);
+    fmt::format_to(
+        std::back_inserter(s),
+        "Wavelet Coefficients are contained in vector : {} \n",
+        "output"
+    );
+    fmt::format_to(std::back_inserter(s), "Approximation Coefficients \n");
+    fmt::format_to(
+        std::back_inserter(s),
+        "Level {} Access : output[{}] Length : {} \n",
+        j,
+        0,
+        wt.length[0]
+    );
+    fmt::format_to(std::back_inserter(s), "Detail Coefficients \n");
     auto t = wt.length[0];
     for (auto i = 0; i < j; ++i) {
-        print("Level {} Access : output[{}] Length : {} \n", j - i, t, wt.length[i + 1]);
+        fmt::format_to(
+            std::back_inserter(s),
+            "Level {} Access : output[{}] Length : {} \n",
+            j - i,
+            t,
+            wt.length[i + 1]
+        );
         t += wt.length[i + 1];
     }
-    print("\n");
+    fmt::format_to(std::back_inserter(s), "\n");
+
+    return s;
 }
 
 }  // namespace mc::dsp

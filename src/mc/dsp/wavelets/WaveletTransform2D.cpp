@@ -1213,7 +1213,7 @@ auto dispWT2Coeffs(float* a, int row, int col) -> void
     }
 }
 
-auto summary(WaveletTransform2D const& wt) -> void
+auto summary(WaveletTransform2D const& wt) -> String
 {
     int j     = 0;
     int t     = 0;
@@ -1221,31 +1221,49 @@ auto summary(WaveletTransform2D const& wt) -> void
     int cols  = 0;
     int vsize = 0;
     j         = wt.J;
-    summary(wt.wave());
-    print("\n");
-    print("Wavelet Transform : {} \n\n", wt.method().c_str());
-    print("Signal Extension : {} \n\n", wt.ext.c_str());
-    print("Number of Decomposition Levels {} \n\n", wt.J);
-    print("Input Signal Rows {} \n\n", wt.rows());
-    print("Input Signal Cols {} \n\n", wt.cols());
-    print("Length of Wavelet Coefficients Vector {} \n\n", wt.outlength);
+    auto s    = summary(wt.wave());
+    fmt::format_to(std::back_inserter(s), "\n");
+    fmt::format_to(
+        std::back_inserter(s),
+        "Wavelet Transform : {} \n\n",
+        wt.method().c_str()
+    );
+    fmt::format_to(std::back_inserter(s), "Signal Extension : {} \n\n", wt.ext.c_str());
+    fmt::format_to(std::back_inserter(s), "Number of Decomposition Levels {} \n\n", wt.J);
+    fmt::format_to(std::back_inserter(s), "Input Signal Rows {} \n\n", wt.rows());
+    fmt::format_to(std::back_inserter(s), "Input Signal Cols {} \n\n", wt.cols());
+    fmt::format_to(
+        std::back_inserter(s),
+        "Length of Wavelet Coefficients Vector {} \n\n",
+        wt.outlength
+    );
     t = 0;
     for (auto i = j; i > 0; --i) {
         rows  = wt.dimensions[2 * (j - i)];
         cols  = wt.dimensions[2 * (j - i) + 1];
         vsize = rows * cols;
-        print(
+        fmt::format_to(
+            std::back_inserter(s),
             "Level {} Decomposition Rows :{} Columns:{} Vector Size (Rows*Cols):{} \n",
             i,
             rows,
             cols,
             vsize
         );
-        print("Access Row values stored at wt.dimensions[{}]\n", 2 * (j - i));
-        print("Access Column values stored at wt.dimensions[{}]\n\n", 2 * (j - i) + 1);
+        fmt::format_to(
+            std::back_inserter(s),
+            "Access Row values stored at wt.dimensions[{}]\n",
+            2 * (j - i)
+        );
+        fmt::format_to(
+            std::back_inserter(s),
+            "Access Column values stored at wt.dimensions[{}]\n\n",
+            2 * (j - i) + 1
+        );
 
         if (i == j) {
-            print(
+            fmt::format_to(
+                std::back_inserter(s),
                 "Approximation Coefficients access at wt.coeffaccess[{}]={}, Vector "
                 "size:{} \n",
                 t,
@@ -1255,26 +1273,31 @@ auto summary(WaveletTransform2D const& wt) -> void
         }
 
         t += 1;
-        print(
+        fmt::format_to(
+            std::back_inserter(s),
             "Horizontal Coefficients access at wt.coeffaccess[{}]={}, Vector size:{} \n",
             t,
             wt.coeffaccess[t],
             vsize
         );
         t += 1;
-        print(
+        fmt::format_to(
+            std::back_inserter(s),
             "Vertical Coefficients access at wt.coeffaccess[{}]={}, Vector size:{} \n",
             t,
             wt.coeffaccess[t],
             vsize
         );
         t += 1;
-        print(
+        fmt::format_to(
+            std::back_inserter(s),
             "Diagonal Coefficients access at wt.coeffaccess[{}]={}, Vector size:{} \n\n",
             t,
             wt.coeffaccess[t],
             vsize
         );
     }
+
+    return s;
 }
 }  // namespace mc::dsp

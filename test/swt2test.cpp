@@ -43,7 +43,7 @@ auto main() -> int
 
     for (std::size_t i = 0; i < n; ++i) { diff[i] = oup[i] - inp[i]; }
 
-    summary(wt);
+    print("{0}\n", summary(wt));
     print("Abs Max {} \n", absmax(diff.get(), n));
 
     return 0;
