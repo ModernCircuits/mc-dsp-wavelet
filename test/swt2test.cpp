@@ -11,7 +11,7 @@ using namespace mc;
 
 auto main() -> int
 {
-    auto obj = dsp::Wavelet{"bior3.1"};
+    auto obj = dsp::Wavelet{"db4"};
 
     auto const rows = std::size_t{64};
     auto const cols = std::size_t{48};

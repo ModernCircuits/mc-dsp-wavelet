@@ -63,7 +63,6 @@ target_sources(mc-dsp-wavelet
 
         "mc/dsp/wavelets/filters/coif.hpp"
         "mc/dsp/wavelets/filters/daubechies.hpp"
-        "mc/dsp/wavelets/filters/h.hpp"
         "mc/dsp/wavelets/filters/meyer.hpp"
         "mc/dsp/wavelets/filters/sym.hpp"
 
