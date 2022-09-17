@@ -19,8 +19,10 @@
 
 namespace mc::dsp {
 
+namespace {
+
 template<typename T>
-static auto qmfEven(T const* in, int n, T* out)
+auto qmfEven(T const* in, int n, T* out)
 {
     for (auto count = 0; count < n; ++count) {
         auto evenIndex = count % 2 == 0;
@@ -29,20 +31,20 @@ static auto qmfEven(T const* in, int n, T* out)
 }
 
 template<typename T>
-static auto qmfWrev(T const* in, int n, T* out)
+auto qmfWrev(T const* in, int n, T* out)
 {
     auto tmp = makeUnique<T[]>(n);
     qmfEven(in, n, tmp.get());
     std::reverse_copy(tmp.get(), tmp.get() + n, out);
 }
 
-static auto waveletFilterLength(StringView name) -> int
+auto waveletFilterLength(char const* name) -> int
 {
-    auto const len = static_cast<int>(name.size());
+    auto const len = static_cast<int>(std::strlen(name));
     auto n         = 0;
 
     if (name == StringView{"haar"} || name == StringView{"db1"}) { return 2; }
-    if (len > 2 && name.find("db") != StringView::npos) {
+    if (len > 2 && strstr(name, "db") != nullptr) {
         auto newStr = makeUnique<char[]>((len - 2 + 1));
         for (auto i = 2; i < len + 1; i++) { newStr[i - 2] = name[i]; }
 
@@ -81,7 +83,7 @@ static auto waveletFilterLength(StringView name) -> int
     if (name == StringView{"rbior4.4"}) { return 10; }
     if (name == StringView{"rbior5.5"}) { return 12; }
     if (name == StringView{"rbior6.8"}) { return 18; }
-    if (len > 4 && name.find("coif") != StringView::npos) {
+    if (len > 4 && strstr(name, "coif") != nullptr) {
         auto newStr = makeUnique<char[]>((len - 4 + 1));
         for (auto i = 4; i < len + 1; i++) { newStr[i - 4] = name[i]; }
 
@@ -90,7 +92,7 @@ static auto waveletFilterLength(StringView name) -> int
 
         return n * 6;
     }
-    if (len > 3 && name.find("sym") != StringView::npos) {
+    if (len > 3 && strstr(name, "sym") != nullptr) {
         auto newStr = makeUnique<char[]>((len - 3 + 1));
         for (auto i = 3; i < len + 1; i++) { newStr[i - 3] = name[i]; }
 
@@ -99,12 +101,12 @@ static auto waveletFilterLength(StringView name) -> int
 
         return n * 2;
     }
-    if (name == "meyer") { return 102; }
+    if (strcmp(name, "meyer") == 0) { return 102; }
 
     throw InvalidArgument("wavelet filter not in database");
 }
 
-static auto fillDauberchies(StringView name, float* lp1, float* hp1, float* lp2, float* hp2)
+auto fillDauberchies(char const* name, float* lp1, float* hp1, float* lp2, float* hp2)
 {
     using namespace std::string_view_literals;
 
@@ -176,9 +178,13 @@ static auto fillDauberchies(StringView name, float* lp1, float* hp1, float* lp2,
     return n;
 }
 
-static auto
-waveletFilterCoefficients(StringView name, float* lp1, float* hp1, float* lp2, float* hp2)
-    -> int
+auto waveletFilterCoefficients(
+    char const* name,
+    float* lp1,
+    float* hp1,
+    float* lp2,
+    float* hp2
+) -> int
 {
     auto const n        = waveletFilterLength(name);
     auto const nameView = StringView{name};
@@ -670,12 +676,14 @@ waveletFilterCoefficients(StringView name, float* lp1, float* hp1, float* lp2, f
     return -1;
 }
 
-Wavelet::Wavelet(StringView filter)
-    : name_{filter}
-    , size_{static_cast<std::size_t>(waveletFilterLength(filter))}
+}  // namespace
+
+Wavelet::Wavelet(char const* name)
+    : name_{name}
+    , size_{static_cast<std::size_t>(waveletFilterLength(name))}
     , params_{makeUnique<float[]>(4 * size_)}
 {
-    waveletFilterCoefficients(filter, data(lpd()), data(hpd()), data(lpr()), data(hpr()));
+    waveletFilterCoefficients(name, data(lpd()), data(hpd()), data(lpr()), data(hpr()));
 }
 
 auto Wavelet::size() const noexcept -> std::size_t { return size_; }
