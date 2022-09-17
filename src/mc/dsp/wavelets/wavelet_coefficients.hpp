@@ -10,7 +10,7 @@ template<typename T>
 struct WaveletCoefficients
 {
     StringView name;
-    Span<T> coefficients;
+    Span<T const> coefficients;
     std::size_t length;
 };
 
