@@ -5,6 +5,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 using namespace mc;
 
@@ -33,7 +34,10 @@ static constexpr auto const epsilon = 6e-7F;
         );                                                                                 \
         auto wavecoeffs = dwt(wt, data(inp));                                              \
         idwt(wt, wavecoeffs.get(), out.get());                                             \
-        REQUIRE(rmsError(out.get(), data(inp), n) <= epsilon);                             \
+        REQUIRE_THAT(                                                                      \
+            rmsError(out.get(), data(inp), n),                                             \
+            Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
+        );                                                                                 \
     }
 
 DWT_IDWT_ROUNDTRIP("db1")     // NOLINT
@@ -126,7 +130,10 @@ DWT_IDWT_ROUNDTRIP("sym20")  // NOLINT
         setDWT2Extension(wt, "per");                                                       \
         auto wavecoeffs = modwt(wt, data(inp));                                            \
         imodwt(wt, wavecoeffs.get(), out.get());                                           \
-        REQUIRE(rmsError(out.get(), data(inp), n) <= epsilon);                             \
+        REQUIRE_THAT(                                                                      \
+            rmsError(out.get(), data(inp), n),                                             \
+            Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
+        );                                                                                 \
     }
 
 MODWT_IMODWT_ROUNDTRIP("db1")     // NOLINT
@@ -219,7 +226,10 @@ MODWT_IMODWT_ROUNDTRIP("sym20")  // NOLINT
         setDWT2Extension(wt, "per");                                                       \
         auto wavecoeffs = swt2(wt, data(inp));                                             \
         iswt2(wt, wavecoeffs.get(), out.get());                                            \
-        REQUIRE(rmsError(out.get(), data(inp), n) <= epsilon);                             \
+        REQUIRE_THAT(                                                                      \
+            rmsError(out.get(), data(inp), n),                                             \
+            Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
+        );                                                                                 \
     }
 
 SWT2_ISWT2_ROUNDTRIP("db1")     // NOLINT

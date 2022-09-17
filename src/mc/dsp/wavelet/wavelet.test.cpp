@@ -52,10 +52,11 @@ static auto sum5(float const* array, std::size_t n, std::size_t m) -> float
     return sum;
 }
 
+static constexpr auto epsilon = 1e-6F;
+
 TEST_CASE("dsp/wavelet: dbCoefTests", "[dsp][wavelet]")
 {
-    constexpr auto epsilon = 1e-6;
-    auto waveletNames      = Vector<String>(38);
+    auto waveletNames = Vector<String>(38);
     std::generate(begin(waveletNames), end(waveletNames), [i = 1]() mutable {
         return String("db") + std::to_string(i);
         ++i;
@@ -82,7 +83,6 @@ TEST_CASE("dsp/wavelet: dbCoefTests", "[dsp][wavelet]")
 
 TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
 {
-    auto epsilon = 1e-6;
 
     Vector<String> waveletNames;
     waveletNames.resize(17);
@@ -110,7 +110,6 @@ TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
 
 TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
 {
-    auto epsilon = 1e-6;
     Vector<String> waveletNames;
     for (std::size_t i = 1; i < 20; i++) {
         waveletNames.push_back(String("sym") + std::to_string(i + 1));

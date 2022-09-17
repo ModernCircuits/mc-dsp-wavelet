@@ -5,29 +5,33 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 using namespace mc;
+
+static constexpr auto const epsilon = 6e-6F;
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define DWT_IDWT_ROUNDTRIP(waveletName)                                                    \
     TEST_CASE("dsp/wavelet: WaveletTransform(dwt/idwt) - " waveletName, "[dsp][wavelet]")  \
     {                                                                                      \
-        static constexpr auto const epsilon = 6e-7F;                                       \
-        auto convolutionMethod                                                             \
-            = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);       \
-        auto extension                                                                     \
-            = GENERATE(dsp::SignalExtension::periodic, dsp::SignalExtension::symmetric);   \
+        using namespace mc::dsp;                                                           \
+        auto method    = GENERATE(ConvolutionMethod::fft, ConvolutionMethod::direct);      \
+        auto extension = GENERATE(SignalExtension::periodic, SignalExtension::symmetric);  \
         auto levels    = GENERATE(as<std::size_t>{}, 1, 2, 3);                             \
         auto const n   = 11'025;                                                           \
         auto const inp = generateRandomTestData(n);                                        \
         auto out       = makeZeros<float>(n);                                              \
-        auto wavelet   = dsp::Wavelet{waveletName};                                        \
-        auto wt        = dsp::WaveletTransform(wavelet, "dwt", n, levels);                 \
+        auto wavelet   = Wavelet{waveletName};                                             \
+        auto wt        = WaveletTransform(wavelet, "dwt", n, levels);                      \
         wt.extension(extension);                                                           \
-        wt.convMethod(convolutionMethod);                                                  \
+        wt.convMethod(method);                                                             \
         dwt(wt, data(inp));                                                                \
         idwt(wt, out.get());                                                               \
-        REQUIRE(rmsError(out.get(), data(inp), wt.signalLength()) <= epsilon);             \
+        REQUIRE_THAT(                                                                      \
+            rmsError(out.get(), data(inp), wt.signalLength()),                             \
+            Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
+        );                                                                                 \
     }
 
 DWT_IDWT_ROUNDTRIP("db1")     // NOLINT
@@ -106,7 +110,6 @@ DWT_IDWT_ROUNDTRIP("sym20")   // NOLINT
 #define SWT_ISWT_ROUNDTRIP(waveletName)                                                    \
     TEST_CASE("dsp/wavelet: WaveletTransform(swt/iswt) - " waveletName, "[dsp][wavelet]")  \
     {                                                                                      \
-        static constexpr auto const epsilon = 6e-6F;                                       \
         auto convolutionMethod                                                             \
             = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);       \
         auto extension = GENERATE(dsp::SignalExtension::periodic);                         \
@@ -120,7 +123,10 @@ DWT_IDWT_ROUNDTRIP("sym20")   // NOLINT
         wt.convMethod(convolutionMethod);                                                  \
         swt(wt, data(inp));                                                                \
         iswt(wt, out.get());                                                               \
-        REQUIRE(rmsError(out.get(), data(inp), wt.signalLength()) <= epsilon);             \
+        REQUIRE_THAT(                                                                      \
+            rmsError(out.get(), data(inp), wt.signalLength()),                             \
+            Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
+        );                                                                                 \
     }
 
 SWT_ISWT_ROUNDTRIP("db1")     // NOLINT
@@ -202,7 +208,6 @@ SWT_ISWT_ROUNDTRIP("sym20")   // NOLINT
         "[dsp][wavelet]"                                                                   \
     )                                                                                      \
     {                                                                                      \
-        static constexpr auto const epsilon = 6e-7F;                                       \
         auto convolutionMethod                                                             \
             = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);       \
         auto extension = GENERATE(dsp::SignalExtension::periodic);                         \
@@ -216,7 +221,10 @@ SWT_ISWT_ROUNDTRIP("sym20")   // NOLINT
         wt.convMethod(convolutionMethod);                                                  \
         modwt(wt, data(inp));                                                              \
         imodwt(wt, out.get());                                                             \
-        REQUIRE(rmsError(out.get(), data(inp), wt.signalLength()) <= epsilon);             \
+        REQUIRE_THAT(                                                                      \
+            rmsError(out.get(), data(inp), wt.signalLength()),                             \
+            Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
+        );                                                                                 \
     }
 
 MODWT_IMODWT_ROUNDTRIP("db1")     // NOLINT

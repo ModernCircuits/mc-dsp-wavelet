@@ -6,8 +6,11 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 using namespace mc;
+
+static constexpr auto epsilon = 1e-5F;
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define DWT_IDWT_ROUNDTRIP(waveletName)                                                    \
@@ -16,20 +19,22 @@ using namespace mc;
         "[dsp][wavelet]"                                                                   \
     )                                                                                      \
     {                                                                                      \
-        static constexpr auto epsilon = 1e-5F;                                             \
-        auto extension                = GENERATE("sym", "per");                            \
-        auto entropy                  = GENERATE("shannon", "logenergy");                  \
-        auto levels                   = GENERATE(as<std::size_t>{}, 1, 2);                 \
-        auto n                        = 8096;                                              \
-        auto inp                      = generateRandomTestData(n);                         \
-        auto out                      = makeUnique<float[]>(n);                            \
-        auto obj                      = dsp::Wavelet{waveletName};                         \
-        auto wt                       = dsp::WaveletPacketTransform(&obj, n, levels);      \
+        auto extension = GENERATE("sym", "per");                                           \
+        auto entropy   = GENERATE("shannon", "logenergy");                                 \
+        auto levels    = GENERATE(as<std::size_t>{}, 1, 2);                                \
+        auto n         = 8096;                                                             \
+        auto inp       = generateRandomTestData(n);                                        \
+        auto out       = makeUnique<float[]>(n);                                           \
+        auto obj       = dsp::Wavelet{waveletName};                                        \
+        auto wt        = dsp::WaveletPacketTransform(&obj, n, levels);                     \
         dsp::setDWPTExtension(wt, extension);                                              \
         dsp::setDWPTEntropy(wt, entropy, 0);                                               \
         dwpt(wt, data(inp));                                                               \
         idwpt(wt, out.get());                                                              \
-        REQUIRE(rmsError(out.get(), data(inp), wt.signalLength()) <= epsilon);             \
+        REQUIRE_THAT(                                                                      \
+            rmsError(out.get(), data(inp), wt.signalLength()),                             \
+            Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
+        );                                                                                 \
     }
 
 DWT_IDWT_ROUNDTRIP("db1")     // NOLINT
