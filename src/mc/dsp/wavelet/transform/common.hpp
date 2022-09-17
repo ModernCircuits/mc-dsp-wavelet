@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mc/core/cstddef.hpp>
+#include <mc/core/memory.hpp>
 
 namespace mc::dsp {
 
@@ -86,3 +87,13 @@ auto testSWTlength(int n, int j) -> int;
 auto maxIterations(std::size_t sigLen, std::size_t filtLen) -> std::size_t;
 
 }  // namespace mc::dsp
+
+namespace mc {
+template<typename T>
+auto makeZeros(std::size_t length) -> UniquePtr<T[]>
+{
+    auto ptr = makeUnique<T[]>(length);
+    for (std::size_t i{0}; i < length; ++i) { ptr[i] = T{}; }
+    return ptr;
+}
+}  // namespace mc

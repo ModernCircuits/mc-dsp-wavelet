@@ -2,7 +2,6 @@
 
 #include <mc/core/config.hpp>
 
-#include <mc/core/memory.hpp>
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 #include <mc/core/string_view.hpp>
@@ -30,13 +29,3 @@ private:
 [[nodiscard]] auto summary(Wavelet const& wavelet) -> String;
 
 }  // namespace mc::dsp
-
-namespace mc {
-template<typename T>
-auto makeZeros(std::size_t length) -> UniquePtr<T[]>
-{
-    auto ptr = makeUnique<T[]>(length);
-    for (std::size_t i{0}; i < length; ++i) { ptr[i] = T{}; }
-    return ptr;
-}
-}  // namespace mc
