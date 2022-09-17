@@ -3,7 +3,6 @@
 #include <mc/dsp/convolution/FFTConvolver.hpp>
 #include <mc/dsp/wavelets/filters/coif.hpp>
 #include <mc/dsp/wavelets/filters/daubechies.hpp>
-#include <mc/dsp/wavelets/filters/meyer.hpp>
 #include <mc/dsp/wavelets/filters/sym.hpp>
 
 #include <mc/core/cmath.hpp>
@@ -72,7 +71,6 @@ auto waveletFilterLength(char const* name) -> int
 
         return n * 2;
     }
-    if (strcmp(name, "meyer") == 0) { return 102; }
 
     raise<InvalidArgument>("wavelet filter not in database");
 }
@@ -139,7 +137,6 @@ auto fillDauberchies(char const* name, float* lp1, float* hp1, float* lp2, float
     if (name == "sym18"sv) { coeffs = std::data(sym18<float>); }
     if (name == "sym19"sv) { coeffs = std::data(sym19<float>); }
     if (name == "sym20"sv) { coeffs = std::data(sym20<float>); }
-    if (name == "meyer"sv) { coeffs = std::data(meyer<float>); }
 
     auto const n = waveletFilterLength(name);
     std::reverse_copy(coeffs, coeffs + n, lp1);
@@ -166,9 +163,6 @@ auto waveletFilterCoefficients(
         return fillDauberchies(name, lp1, hp1, lp2, hp2);
     }
     if (nameView.find("sym") != StringView::npos) {
-        return fillDauberchies(name, lp1, hp1, lp2, hp2);
-    }
-    if (nameView.find("meyer") != StringView::npos) {
         return fillDauberchies(name, lp1, hp1, lp2, hp2);
     }
 

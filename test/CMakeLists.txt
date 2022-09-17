@@ -5,10 +5,6 @@ function(mc_dsp_wavelet_add_test _target)
     target_compile_definitions(${_target} PRIVATE _CRT_SECURE_NO_WARNINGS)
 endfunction()
 
-find_package(Catch2 REQUIRED)
-include(Catch)
-
-mc_dsp_wavelet_add_test(cwttest)
 mc_dsp_wavelet_add_test(dwpttest)
 mc_dsp_wavelet_add_test(wtreetest)
 mc_dsp_wavelet_add_test(dwt2test)

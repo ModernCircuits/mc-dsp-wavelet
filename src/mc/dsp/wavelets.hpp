@@ -3,7 +3,6 @@
 #include <mc/dsp/convolution/ConvolutionMethod.hpp>
 #include <mc/dsp/convolution/FFTConvolver.hpp>
 #include <mc/dsp/fft/FFT.hpp>
-#include <mc/dsp/wavelets/ContinuousWaveletTransform.hpp>
 #include <mc/dsp/wavelets/family.hpp>
 #include <mc/dsp/wavelets/SignalExtension.hpp>
 #include <mc/dsp/wavelets/Wavelet.hpp>

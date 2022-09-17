@@ -45,8 +45,6 @@ target_sources(mc-dsp-wavelet
         "mc/dsp/wavelets.hpp"
         "mc/dsp/wavelets/common.cpp"
         "mc/dsp/wavelets/common.hpp"
-        "mc/dsp/wavelets/ContinuousWaveletTransform.cpp"
-        "mc/dsp/wavelets/ContinuousWaveletTransform.hpp"
         "mc/dsp/wavelets/Denoise.hpp"
         "mc/dsp/wavelets/Denoise.cpp"
         "mc/dsp/wavelets/SignalExtension.hpp"
@@ -63,7 +61,6 @@ target_sources(mc-dsp-wavelet
 
         "mc/dsp/wavelets/filters/coif.hpp"
         "mc/dsp/wavelets/filters/daubechies.hpp"
-        "mc/dsp/wavelets/filters/meyer.hpp"
         "mc/dsp/wavelets/filters/sym.hpp"
 
         "mc/dsp/widget/TempoDetect.cpp"
