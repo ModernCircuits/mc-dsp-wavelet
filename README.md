@@ -10,6 +10,8 @@
 
 ## Resources
 
-|                             Link                             |                                License                                 |
-| :----------------------------------------------------------: | :--------------------------------------------------------------------: |
-| [github.com/rafat/wavelib](https://github.com/rafat/wavelib) | [BSD 3-Clause](https://github.com/rafat/wavelib/blob/master/COPYRIGHT) |
+|                                  Link                                  |                                License                                 |
+| :--------------------------------------------------------------------: | :--------------------------------------------------------------------: |
+|      [github.com/rafat/wavelib](https://github.com/rafat/wavelib)      | [BSD 3-Clause](https://github.com/rafat/wavelib/blob/master/COPYRIGHT) |
+|     [github.com/graetz23/JWave](https://github.com/graetz23/JWave)     |    [MIT](https://github.com/graetz23/JWave/blob/master/LICENSE.md)     |
+| [github.com/graetz23/sharpWave](https://github.com/graetz23/sharpWave) |    [MIT](https://github.com/graetz23/sharpWave/blob/master/LICENSE)    |
