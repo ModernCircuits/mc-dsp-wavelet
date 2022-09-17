@@ -5,11 +5,12 @@
 #include <mc/core/memory.hpp>
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
+#include <mc/core/string_view.hpp>
 
 namespace mc::dsp {
 struct Wavelet
 {
-    explicit Wavelet(char const* wname);
+    explicit Wavelet(StringView filter);
 
     [[nodiscard]] auto size() const noexcept -> std::size_t;
     [[nodiscard]] auto name() const noexcept -> String const&;

@@ -326,10 +326,10 @@ auto WaveletTree::coeffs(std::size_t x, std::size_t y, float* coeffs, std::size_
     for (std::size_t i = 0; i < n; ++i) { coeffs[i] = output[t2 + i]; }
 }
 
-auto WaveletTree::extension(char const* newExtension) noexcept -> void
+auto WaveletTree::extension(StringView newExtension) noexcept -> void
 {
     MC_ASSERT((newExtension == StringView{"sym"}) || (newExtension == StringView{"per"}));
-    ext_ = newExtension;
+    ext_ = String{newExtension};
 }
 
 auto WaveletTree::extension() const noexcept -> String const& { return ext_; }

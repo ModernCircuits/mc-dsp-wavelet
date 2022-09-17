@@ -136,7 +136,7 @@ auto imodwtPerStride(
 
 WaveletTransform2D::WaveletTransform2D(
     Wavelet& wave,
-    char const* method,
+    StringView method,
     std::size_t rows,
     std::size_t cols,
     std::size_t j
@@ -202,19 +202,19 @@ WaveletTransform2D::WaveletTransform2D(
     for (std::size_t i = 0; i < (2 * j + sumacc); ++i) { this->params[i] = 0; }
 }
 
-auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void
+auto setDWT2Extension(WaveletTransform2D& wt, StringView extension) -> void
 {
-    if (wt.method() == StringView{"dwt"}) {
-        if (extension == StringView{"sym"}) {
+    if (wt.method() == "dwt") {
+        if (extension == "sym") {
             wt.ext = "sym";
-        } else if (extension == StringView{"per"}) {
+        } else if (extension == "per") {
             wt.ext = "per";
         } else {
             print("Signal extension can be either per or sym");
             exit(-1);
         }
-    } else if ((wt.method() == StringView{"swt"}) || (wt.method() == "modwt")) {
-        if (extension == StringView{"per"}) {
+    } else if ((wt.method() == "swt") || (wt.method() == "modwt")) {
+        if (extension == "per") {
             wt.ext = "per";
         } else {
             print("Signal extension can only be per");

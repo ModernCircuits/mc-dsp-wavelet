@@ -7,6 +7,7 @@
 
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
+#include <mc/core/string_view.hpp>
 
 namespace mc::dsp {
 
@@ -14,7 +15,7 @@ struct WaveletTransform2D
 {
     WaveletTransform2D(
         Wavelet& wave,
-        char const* method,
+        StringView method,
         std::size_t rows,
         std::size_t cols,
         std::size_t j
@@ -60,7 +61,7 @@ auto getWT2Coeffs(
     int* rows,
     int* cols
 ) -> float*;
-auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void;
+auto setDWT2Extension(WaveletTransform2D& wt, StringView extension) -> void;
 auto dispWT2Coeffs(float* a, int row, int col) -> void;
 
 auto summary(WaveletTransform2D const& wt) -> void;

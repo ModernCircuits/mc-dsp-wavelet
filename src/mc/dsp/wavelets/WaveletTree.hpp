@@ -13,7 +13,7 @@ struct WaveletTree
 {
     WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t j);
 
-    auto extension(char const* newExtension) noexcept -> void;
+    auto extension(StringView newExtension) noexcept -> void;
     [[nodiscard]] auto extension() const noexcept -> String const&;
 
     auto nodeLength(std::size_t x) -> std::size_t;
