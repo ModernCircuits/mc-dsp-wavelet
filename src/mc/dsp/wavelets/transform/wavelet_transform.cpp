@@ -1,10 +1,10 @@
-#include "WaveletTransform.hpp"
+#include "wavelet_transform.hpp"
 
 #include <mc/dsp/algorithm/resample.hpp>
 #include <mc/dsp/convolution/convolute.hpp>
 #include <mc/dsp/convolution/FFTConvolver.hpp>
 #include <mc/dsp/fft/FFT.hpp>
-#include <mc/dsp/wavelets/common.hpp>
+#include <mc/dsp/wavelets/transform/common.hpp>
 
 #include <mc/core/cassert.hpp>
 #include <mc/core/cmath.hpp>

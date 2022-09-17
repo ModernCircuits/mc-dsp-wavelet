@@ -43,22 +43,24 @@ target_sources(mc-dsp-wavelet
         "mc/dsp/fft/WindowFunction.cpp"
 
         "mc/dsp/wavelets.hpp"
-        "mc/dsp/wavelets/common.cpp"
-        "mc/dsp/wavelets/common.hpp"
         "mc/dsp/wavelets/Wavelet.cpp"
         "mc/dsp/wavelets/Wavelet.hpp"
-        "mc/dsp/wavelets/WaveletPacketTransform.cpp"
-        "mc/dsp/wavelets/WaveletPacketTransform.hpp"
-        "mc/dsp/wavelets/WaveletTransform2D.cpp"
-        "mc/dsp/wavelets/WaveletTransform2D.hpp"
-        "mc/dsp/wavelets/WaveletTransform.cpp"
-        "mc/dsp/wavelets/WaveletTransform.hpp"
-        "mc/dsp/wavelets/WaveletTree.cpp"
-        "mc/dsp/wavelets/WaveletTree.hpp"
 
         "mc/dsp/wavelets/filters/coif.hpp"
         "mc/dsp/wavelets/filters/daubechies.hpp"
         "mc/dsp/wavelets/filters/sym.hpp"
+
+        "mc/dsp/wavelets/transform/common.cpp"
+        "mc/dsp/wavelets/transform/common.hpp"
+        "mc/dsp/wavelets/transform/wavelet_packet_transform.cpp"
+        "mc/dsp/wavelets/transform/wavelet_packet_transform.hpp"
+        "mc/dsp/wavelets/transform/wavelet_transform_2d.cpp"
+        "mc/dsp/wavelets/transform/wavelet_transform_2d.hpp"
+        "mc/dsp/wavelets/transform/wavelet_transform.cpp"
+        "mc/dsp/wavelets/transform/wavelet_transform.hpp"
+        "mc/dsp/wavelets/transform/wavelet_tree.cpp"
+        "mc/dsp/wavelets/transform/wavelet_tree.hpp"
+
 
         "mc/dsp//wavelets/widget/denoise.hpp"
         "mc/dsp//wavelets/widget/denoise.cpp"
@@ -83,10 +85,10 @@ target_sources(mc-dsp-wavelet_tests
         "mc/dsp/fft/FFT.test.cpp"
         "mc/dsp/fft/Window.test.cpp"
 
-        "mc/dsp/wavelets/Wavelet.test.cpp"
-        "mc/dsp/wavelets/WaveletPacketTransform.test.cpp"
-        "mc/dsp/wavelets/WaveletTransform.test.cpp"
-        "mc/dsp/wavelets/WaveletTransform2D.test.cpp"
+        "mc/dsp/wavelets/wavelet.test.cpp"
+        "mc/dsp/wavelets/transform/wavelet_packet_transform.test.cpp"
+        "mc/dsp/wavelets/transform/wavelet_transform.test.cpp"
+        "mc/dsp/wavelets/transform/wavelet_transform_2d.test.cpp"
 
         "mc/dsp/wavelets/widget/tempo_detect.test.cpp"
 )

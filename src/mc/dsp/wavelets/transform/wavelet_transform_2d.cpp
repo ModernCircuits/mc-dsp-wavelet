@@ -1,8 +1,8 @@
-#include "WaveletTransform2D.hpp"
+#include "wavelet_transform_2d.hpp"
 
 #include <mc/dsp/convolution/FFTConvolver.hpp>
 #include <mc/dsp/fft/FFT.hpp>
-#include <mc/dsp/wavelets/common.hpp>
+#include <mc/dsp/wavelets/transform/common.hpp>
 
 #include <mc/core/cassert.hpp>
 #include <mc/core/cmath.hpp>
