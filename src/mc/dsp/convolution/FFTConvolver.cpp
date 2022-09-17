@@ -1,6 +1,6 @@
 #include "FFTConvolver.hpp"
 
-#include <mc/core/config.hpp>
+#include <mc/dsp/algorithm/spectral_convolution.hpp>
 
 #include <mc/core/algorithm.hpp>
 #include <mc/core/bit.hpp>
@@ -42,9 +42,7 @@ auto FFTConvolver::convolute(float const* signal, float const* patch, float* out
     _forwardFFT->performRealToComplex(_signalScratch.data(), _signalScratchOut.data());
     _forwardFFT->performRealToComplex(_patchScratch.data(), _patchScratchOut.data());
 
-    for (auto i = std::size_t{0}; i < _totalSize; i++) {
-        _tmp[i] = _signalScratchOut[i] * _patchScratchOut[i];
-    }
+    spectralConvolution(_signalScratchOut, _patchScratchOut, _tmp);
 
     _backwardFFT->performComplexToReal(_tmp.data(), _tmpOut.data());
 

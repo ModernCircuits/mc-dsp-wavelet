@@ -37,6 +37,10 @@ target_sources(mc-dsp-wavelet
         "mc/dsp/algorithm/rms_error.cpp"
         "mc/dsp/algorithm/signal_extension.hpp"
         "mc/dsp/algorithm/signal_extension.cpp"
+        "mc/dsp/algorithm/spectral_convolution.hpp"
+        "mc/dsp/algorithm/spectral_convolution.cpp"
+        "mc/dsp/algorithm/spectral_correlation.hpp"
+        "mc/dsp/algorithm/spectral_correlation.cpp"
 
         "mc/dsp/convolution.hpp"
         "mc/dsp/convolution/FFTConvolver.cpp"

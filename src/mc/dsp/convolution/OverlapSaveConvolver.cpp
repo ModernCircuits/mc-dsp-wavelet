@@ -1,5 +1,8 @@
 #include "OverlapSaveConvolver.hpp"
 
+#include <mc/dsp/algorithm/spectral_convolution.hpp>
+#include <mc/dsp/algorithm/spectral_correlation.hpp>
+
 #include <mc/core/algorithm.hpp>
 #include <mc/core/bit.hpp>
 #include <mc/core/cassert.hpp>
@@ -33,40 +36,13 @@ FloatSignal::FloatSignal(float* data, size_t size, size_t padBef, size_t padAft)
 FloatSignal::~FloatSignal() { fftwf_free(data_); }
 
 ComplexSignal::ComplexSignal(std::size_t size)
-    : data_{reinterpret_cast<Complex<float>*>(fftwf_alloc_complex(size))}
-    // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+    : data_{reinterpret_cast<Complex<float>*>(fftwf_alloc_complex(size))}  // NOLINT
     , size_{size}
 {
     std::fill(data_, data_ + size_, Complex<float>{});
 }
 
 ComplexSignal::~ComplexSignal() { fftwf_free(data_); }
-
-auto spectralConvolution(
-    ComplexSignal const& a,
-    ComplexSignal const& b,
-    ComplexSignal& result
-) -> void
-{
-    MC_ASSERT((a.size() == result.size()) && (b.size() == result.size()));
-    for (std::size_t i = 0; i < a.size(); ++i) {
-        // a+ib * c+id = ac+iad+ibc-bd = ac-bd + i(ad+bc)
-        result[i] = a[i] * b[i];
-    }
-}
-
-auto spectralCorrelation(
-    ComplexSignal const& a,
-    ComplexSignal const& b,
-    ComplexSignal& result
-) -> void
-{
-    MC_ASSERT((a.size() == result.size()) && (b.size() == result.size()));
-    for (std::size_t i{0}; i < a.size(); ++i) {
-        // a * conj(b) = a+ib * c-id = ac-iad+ibc+bd = ac+bd + i(bc-ad)
-        result[i] = a[i] * std::conj(b[i]);
-    }
-}
 
 FftForwardPlan::FftForwardPlan(FloatSignal& fs, ComplexSignal& cs)
     : FftPlan(fftwf_plan_dft_r2c_1d(
@@ -90,11 +66,7 @@ FftBackwardPlan::FftBackwardPlan(ComplexSignal& cs, FloatSignal& fs)
     MC_ASSERT(cs.size() == (fs.size() / 2U + 1U));
 }
 
-OverlapSaveConvolver::OverlapSaveConvolver(
-    FloatSignal& signal,
-    FloatSignal& patch,
-    String const& /*wisdomPath*/
-)
+OverlapSaveConvolver::OverlapSaveConvolver(FloatSignal& signal, FloatSignal& patch)
     : _signalSize{signal.size()}
     , _patchSize{patch.size()}
     , _resultSize{_signalSize + _patchSize - 1}

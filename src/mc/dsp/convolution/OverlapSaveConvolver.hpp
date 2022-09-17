@@ -9,6 +9,7 @@
 #include <mc/core/cstring.hpp>
 #include <mc/core/iterator.hpp>
 #include <mc/core/memory.hpp>
+#include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 #include <mc/core/vector.hpp>
 
@@ -51,6 +52,10 @@ struct FloatSignal
 
     [[nodiscard]] auto operator[](std::size_t idx) const -> float& { return data_[idx]; }
 
+    operator Span<float>() { return {this->data(), this->size()}; }
+
+    operator Span<float const>() const { return {this->data(), this->size()}; }
+
 protected:
     float* data_;
     std::size_t size_;
@@ -92,29 +97,14 @@ struct ComplexSignal
         return data_[idx];
     }
 
+    operator Span<Complex<float>>() { return {this->data(), this->size()}; }
+
+    operator Span<Complex<float> const>() const { return {this->data(), this->size()}; }
+
 protected:
     Complex<float>* data_;
     std::size_t size_;
 };
-
-/// This free function takes three complex signals a,b,c of the same size and computes the
-/// complex element-wise multiplication:   a+ib * c+id = ac+iad+ibc-bd = ac-bd + i(ad+bc)
-/// The computation loop isn't sent to OMP because this function itself is already expected
-/// to be called by multiple threads, and it would actually slow down the process. It
-/// throuws an exception if
-auto spectralConvolution(
-    ComplexSignal const& a,
-    ComplexSignal const& b,
-    ComplexSignal& result
-) -> void;
-
-/// This function behaves identically to SpectralConvolution, but computes c=a*conj(b)
-/// instead of c=a*b:         a * conj(b) = a+ib * c-id = ac-iad+ibc+bd = ac+bd + i(bc-ad)
-auto spectralCorrelation(
-    ComplexSignal const& a,
-    ComplexSignal const& b,
-    ComplexSignal& result
-) -> void;
 
 /// This class is a simple wrapper for the memory management of the fftw plans, plus a
 /// parameterless execute() method which is also a wrapper for FFTW's execute.
@@ -182,11 +172,7 @@ struct OverlapSaveConvolver
     /// The wisdomPath may be empty, or a path to a valid wisdom file.
     /// Note that len(signal) can never be smaller than len(patch), or an exception is
     /// thrown.
-    OverlapSaveConvolver(
-        FloatSignal& signal,
-        FloatSignal& patch,
-        String const& wisdomPath = ""
-    );
+    OverlapSaveConvolver(FloatSignal& signal, FloatSignal& patch);
 
     auto convolute() -> void;
     auto crossCorrelate() -> void;
