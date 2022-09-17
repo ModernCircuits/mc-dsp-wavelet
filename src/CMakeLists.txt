@@ -45,9 +45,6 @@ target_sources(mc-dsp-wavelet
         "mc/dsp/wavelets.hpp"
         "mc/dsp/wavelets/common.cpp"
         "mc/dsp/wavelets/common.hpp"
-        "mc/dsp/wavelets/Denoise.hpp"
-        "mc/dsp/wavelets/Denoise.cpp"
-        "mc/dsp/wavelets/SignalExtension.hpp"
         "mc/dsp/wavelets/Wavelet.cpp"
         "mc/dsp/wavelets/Wavelet.hpp"
         "mc/dsp/wavelets/WaveletPacketTransform.cpp"
@@ -63,8 +60,10 @@ target_sources(mc-dsp-wavelet
         "mc/dsp/wavelets/filters/daubechies.hpp"
         "mc/dsp/wavelets/filters/sym.hpp"
 
-        "mc/dsp/widget/TempoDetect.cpp"
-        "mc/dsp/widget/TempoDetect.hpp"
+        "mc/dsp//wavelets/widget/denoise.hpp"
+        "mc/dsp//wavelets/widget/denoise.cpp"
+        "mc/dsp//wavelets/widget/tempo_detect.cpp"
+        "mc/dsp//wavelets/widget/tempo_detect.hpp"
 
         "mc/testing/test.cpp"
         "mc/testing/test.hpp"
@@ -89,5 +88,5 @@ target_sources(mc-dsp-wavelet_tests
         "mc/dsp/wavelets/WaveletTransform.test.cpp"
         "mc/dsp/wavelets/WaveletTransform2D.test.cpp"
 
-        "mc/dsp/widget/TempoDetect.test.cpp"
+        "mc/dsp/wavelets/widget/tempo_detect.test.cpp"
 )

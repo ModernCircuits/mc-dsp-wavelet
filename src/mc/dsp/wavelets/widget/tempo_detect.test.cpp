@@ -1,6 +1,6 @@
 #include <mc/core/config.hpp>
 
-#include <mc/dsp/widget/TempoDetect.hpp>
+#include <mc/dsp/wavelets/widget/tempo_detect.hpp>
 
 #include <mc/core/algorithm.hpp>
 #include <mc/core/AudioFile.h>

@@ -1,6 +1,4 @@
-#include "TempoDetect.hpp"
-
-#include <mc/core/config.hpp>
+#include "tempo_detect.hpp"
 
 #include <mc/dsp/convolution.hpp>
 

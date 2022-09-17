@@ -1,4 +1,4 @@
-#include <mc/dsp/wavelets/Denoise.hpp>
+#include <mc/dsp/wavelets/widget/denoise.hpp>
 
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
