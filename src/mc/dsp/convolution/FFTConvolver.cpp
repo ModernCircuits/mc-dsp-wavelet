@@ -3,34 +3,16 @@
 #include <mc/core/config.hpp>
 
 #include <mc/core/algorithm.hpp>
+#include <mc/core/bit.hpp>
 #include <mc/core/cmath.hpp>
 #include <mc/core/memory.hpp>
 
 namespace mc::dsp {
 
-namespace {
-[[nodiscard]] auto factorf(std::size_t m) -> std::size_t
-{
-    auto n = m;
-    while (n % 7 == 0) { n = n / 7; }
-    while (n % 3 == 0) { n = n / 3; }
-    while (n % 5 == 0) { n = n / 5; }
-    while (n % 2 == 0) { n = n / 2; }
-    return n;
-}
-
-[[nodiscard]] auto findnexte(std::size_t m) -> std::size_t
-{
-    auto n = m;
-    while (factorf(n) != 1 || n % 2 != 0) { ++n; }
-    return n;
-}
-}  // namespace
-
 FFTConvolver::FFTConvolver(std::size_t signalSize, std::size_t patchSize)
     : _signalSize{signalSize}
     , _patchSize{patchSize}
-    , _totalSize{findnexte(signalSize + _patchSize - 1U)}
+    , _totalSize{bit_ceil(signalSize + _patchSize - 1U)}
     , _forwardFFT{makeUnique<RFFT>(_totalSize, FFTDirection::forward)}
     , _backwardFFT{makeUnique<RFFT>(_totalSize, FFTDirection::backward)}
 {}
