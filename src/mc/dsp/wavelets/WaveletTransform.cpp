@@ -1,5 +1,6 @@
 #include "WaveletTransform.hpp"
 
+#include <mc/dsp/algorithm/resample.hpp>
 #include <mc/dsp/convolution/convolute.hpp>
 #include <mc/dsp/convolution/FFTConvolver.hpp>
 #include <mc/dsp/fft/FFT.hpp>
@@ -16,76 +17,6 @@
 #include <mc/core/string_view.hpp>
 
 namespace mc::dsp {
-
-namespace {
-
-auto upSample(
-    float const* const x,
-    std::size_t const lenx,
-    std::size_t const m,
-    float* const y
-) -> void
-{
-    if (m == 0) { std::copy(x, x + static_cast<std::size_t>(lenx), y); }
-
-    auto j       = std::size_t{1};
-    auto k       = std::size_t{0};
-    auto const n = m * (lenx - 1U) + 1U;
-    for (std::size_t i = 0; i < n; ++i) {
-        j--;
-        y[i] = 0.0F;
-        if (j == 0) {
-            y[i] = x[k];
-            k++;
-            j = m;
-        }
-    }
-}
-
-// Returns even numbered output. Last value is set to zero
-template<typename SrcIt, typename DestIt>
-auto upSampleEven(SrcIt srcF, SrcIt srcL, DestIt destF, std::size_t m) -> void
-{
-    using T = typename std::iterator_traits<SrcIt>::value_type;
-    if (m == 0) { std::copy(srcF, srcL, destF); }
-
-    auto it   = destF;
-    auto last = destF + (m * static_cast<std::size_t>(std::distance(srcF, srcL)));
-    auto j    = std::size_t{1};
-    for (; it != last; ++it) {
-        j--;
-        *it = T(0);
-        if (j == 0) {
-            *it = *srcF;
-            ++srcF;
-            j = m;
-        }
-    }
-}
-
-auto isign(int n) -> int { return n >= 0 ? 1 : (-1); }
-
-auto circshift(float* array, int n, int l) -> void
-{
-    if (std::abs(l) > n) { l = isign(l) * (std::abs(l) % n); }
-    if (l < 0) { l = (n + l) % n; }
-
-    auto temp = makeZeros<float>(l);
-    std::copy(array, array + static_cast<std::size_t>(l), temp.get());
-
-    for (auto i = 0; i < n - l; ++i) { array[i] = array[i + l]; }
-    for (auto i = 0; i < l; ++i) { array[n - l + i] = temp[i]; }
-}
-
-auto downsamp(float const* x, std::size_t lenx, std::size_t m, float* y) -> void
-{
-    if (m == 0) { std::copy(x, x + static_cast<std::size_t>(lenx), y); }
-
-    auto const n = (lenx - 1U) / m + 1U;
-    for (std::size_t i = 0; i < n; ++i) { y[i] = x[i * m]; }
-}
-
-}  // namespace
 
 WaveletTransform::WaveletTransform(
     Wavelet& w,
@@ -316,7 +247,7 @@ static auto dwt1(WaveletTransform& wt, float* sig, int lenSig, float* cA, float*
             wt.wave().lpd().size(),
             cAUndec.get()
         );
-        downsamp(cAUndec.get() + lenAvg, static_cast<std::size_t>(lenSig), 2U, cA);
+        downSample<float>(cAUndec.get() + lenAvg, static_cast<std::size_t>(lenSig), 2U, cA);
         wconv(
             wt,
             signal.get(),
@@ -325,7 +256,7 @@ static auto dwt1(WaveletTransform& wt, float* sig, int lenSig, float* cA, float*
             wt.wave().hpd().size(),
             cAUndec.get()
         );
-        downsamp(cAUndec.get() + lenAvg, static_cast<std::size_t>(lenSig), 2U, cD);
+        downSample<float>(cAUndec.get() + lenAvg, static_cast<std::size_t>(lenSig), 2U, cD);
     } else if (wt.extension() == SignalExtension::symmetric) {
         auto lf      = wt.wave().lpd().size();  // lpd and hpd have the same length
         auto signal  = makeUnique<float[]>(lenSig + 2 * (lf - 1));
@@ -348,7 +279,12 @@ static auto dwt1(WaveletTransform& wt, float* sig, int lenSig, float* cA, float*
             wt.wave().lpd().size(),
             cAUndec.get()
         );
-        downsamp(cAUndec.get() + lf, static_cast<std::size_t>(lenSig + lf - 2), 2, cA);
+        downSample<float>(
+            cAUndec.get() + lf,
+            static_cast<std::size_t>(lenSig + lf - 2),
+            2,
+            cA
+        );
         wconv(
             wt,
             signal.get(),
@@ -357,7 +293,12 @@ static auto dwt1(WaveletTransform& wt, float* sig, int lenSig, float* cA, float*
             wt.wave().hpd().size(),
             cAUndec.get()
         );
-        downsamp(cAUndec.get() + lf, static_cast<std::size_t>(lenSig + lf - 2), 2, cD);
+        downSample<float>(
+            cAUndec.get() + lf,
+            static_cast<std::size_t>(lenSig + lf - 2),
+            2,
+            cD
+        );
     } else {
         raise<InvalidArgument>("Signal extension can be either per or sym");
     }
@@ -629,7 +570,7 @@ auto idwt(WaveletTransform& wt, float* dwtop) -> void
 
         for (auto i = 0; i < j; ++i) {
             detLen = wt.length[i + 1];
-            upSample(out.get(), detLen, u, cAUp.get());
+            upSample<float>(out.get(), detLen, u, cAUp.get());
             n2 = 2 * wt.length[i + 1] - 1;
 
             if (wt.wave().lpr().size() == wt.wave().hpr().size()
@@ -641,7 +582,7 @@ auto idwt(WaveletTransform& wt, float* dwtop) -> void
             }
 
             wconv(wt, cAUp.get(), n2, wt.wave().lpr().data(), lf, xLp.get());
-            upSample(wt.output().data() + iter, detLen, u, cAUp.get());
+            upSample<float>(wt.output().data() + iter, detLen, u, cAUp.get());
             wconv(wt, cAUp.get(), n2, wt.wave().hpr().data(), lf, xHp.get());
 
             for (k = lf - 2; k < n2 + 1; ++k) { out[k - lf + 2] = xLp[k] + xHp[k]; }
@@ -900,7 +841,9 @@ auto iswt(WaveletTransform& wt, float* swtop) -> void
                 oup01[i - lf + 1] = oup00L[i] + oup00H[i];
             }
 
-            circshift(oup01.get(), 2 * len0, -1);
+            // Rotate right by 1
+            auto view = Span<float>{oup01.get(), static_cast<size_t>(2 * len0)};
+            std::rotate(view.rbegin(), view.rbegin() + 1, view.rend());
 
             auto index2 = 0;
 
