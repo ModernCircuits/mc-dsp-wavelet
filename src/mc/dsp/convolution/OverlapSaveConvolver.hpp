@@ -122,14 +122,14 @@ auto spectralCorrelation(
 /// instance, if working with real, 1D signals, only 1D complex<->real plans are needed.
 struct FftPlan
 {
-    explicit FftPlan(fftwf_plan p) : plan_(p) {}
+    explicit FftPlan(fftwf_plan p) : _plan(p) {}
 
-    ~FftPlan() { fftwf_destroy_plan(plan_); }
+    ~FftPlan() { fftwf_destroy_plan(_plan); }
 
-    auto execute() { fftwf_execute(plan_); }
+    auto execute() { fftwf_execute(_plan); }
 
 private:
-    fftwf_plan plan_;
+    fftwf_plan _plan;
 };
 
 // This forward plan (1D, R->C) is adequate to process 1D floats (real).
@@ -222,31 +222,31 @@ private:
     auto execute(bool crossCorrelate) -> void;
 
     // grab input lengths
-    std::size_t signalSize_;
-    std::size_t patchSize_;
-    std::size_t resultSize_;
+    std::size_t _signalSize;
+    std::size_t _patchSize;
+    std::size_t _resultSize;
 
     // make padded copies of the inputs and get chunk measurements
-    FloatSignal paddedPatch_;
-    std::size_t resultChunksize_;
-    std::size_t resultChunksizeComplex_;
-    std::size_t result_stride_;
-    ComplexSignal paddedPatchComplex_;
+    FloatSignal _paddedPatch;
+    std::size_t _resultChunksize;
+    std::size_t _resultChunksizeComplex;
+    std::size_t _result_stride;
+    ComplexSignal _paddedPatchComplex;
 
     // padded copy of the signal
-    FloatSignal paddedSignal_;
+    FloatSignal _paddedSignal;
 
     // the deconstructed signal
-    Vector<UniquePtr<FloatSignal>> inputChunks_;
-    Vector<UniquePtr<ComplexSignal>> inputChunksComplex_;
+    Vector<UniquePtr<FloatSignal>> _inputChunks;
+    Vector<UniquePtr<ComplexSignal>> _inputChunksComplex;
 
     // the corresponding chunks holding convs/xcorrs
-    Vector<UniquePtr<FloatSignal>> resultChunks_;
-    Vector<UniquePtr<ComplexSignal>> resultChunksComplex_;
+    Vector<UniquePtr<FloatSignal>> _resultChunks;
+    Vector<UniquePtr<ComplexSignal>> _resultChunksComplex;
 
     // the corresponding plans (plus the plan of the patch)
-    Vector<UniquePtr<FftForwardPlan>> forwardPlans_;
-    Vector<UniquePtr<FftBackwardPlan>> backwardPlans_;
+    Vector<UniquePtr<FftForwardPlan>> _forwardPlans;
+    Vector<UniquePtr<FftBackwardPlan>> _backwardPlans;
 
     // Basic state management to prevent getters from being called prematurely.
     // Also to adapt the extractResult getter, since Conv and Xcorr padding behaves
@@ -258,7 +258,7 @@ private:
         Xcorr
     };
 
-    State state_{State::Uninitialized};  // Uninitialized after instantiation, Conv/Xcorr
+    State _state{State::Uninitialized};  // Uninitialized after instantiation, Conv/Xcorr
                                          // after respective op.
 };
 }  // namespace mc::dsp

@@ -776,7 +776,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(
             exit(-1);
         }
         if (param == 0) { param = 6.0F; }
-        wave_ = "morlet";
+        _wave = "morlet";
     } else if (wave == StringView{"paul"}) {
         s0Tmp     = 2 * dtIn;
         djTmp     = 0.4875F;
@@ -786,7 +786,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(
             exit(-1);
         }
         if (param == 0) { param = 4.0F; }
-        wave_ = "paul";
+        _wave = "paul";
     } else if ((wave == StringView{"dgauss"}) || (wave == StringView{"dog"})) {
         s0Tmp     = 2 * dtIn;
         djTmp     = 0.4875F;
@@ -796,7 +796,7 @@ ContinuousWaveletTransform::ContinuousWaveletTransform(
             exit(-1);
         }
         if (param == 0) { param = 2.0F; }
-        wave_ = "dog";
+        _wave = "dog";
     }
 
     pow  = 2;

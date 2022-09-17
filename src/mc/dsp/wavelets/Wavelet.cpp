@@ -679,29 +679,29 @@ auto waveletFilterCoefficients(
 }  // namespace
 
 Wavelet::Wavelet(char const* name)
-    : name_{name}
-    , size_{static_cast<std::size_t>(waveletFilterLength(name))}
-    , params_{makeUnique<float[]>(4 * size_)}
+    : _name{name}
+    , _size{static_cast<std::size_t>(waveletFilterLength(name))}
+    , _params{makeUnique<float[]>(4 * _size)}
 {
     waveletFilterCoefficients(name, data(lpd()), data(hpd()), data(lpr()), data(hpr()));
 }
 
-auto Wavelet::size() const noexcept -> std::size_t { return size_; }
+auto Wavelet::size() const noexcept -> std::size_t { return _size; }
 
-auto Wavelet::name() const noexcept -> String const& { return name_; }
+auto Wavelet::name() const noexcept -> String const& { return _name; }
 
-auto Wavelet::lpd() const noexcept -> Span<float> { return {&params_[0], size()}; }
+auto Wavelet::lpd() const noexcept -> Span<float> { return {&_params[0], size()}; }
 
-auto Wavelet::hpd() const noexcept -> Span<float> { return {&params_[size()], size()}; }
+auto Wavelet::hpd() const noexcept -> Span<float> { return {&_params[size()], size()}; }
 
 auto Wavelet::lpr() const noexcept -> Span<float>
 {
-    return {&params_[size() * 2U], size()};
+    return {&_params[size() * 2U], size()};
 }
 
 auto Wavelet::hpr() const noexcept -> Span<float>
 {
-    return {&params_[size() * 3U], size()};
+    return {&_params[size() * 3U], size()};
 }
 
 auto summary(Wavelet const& obj) -> void

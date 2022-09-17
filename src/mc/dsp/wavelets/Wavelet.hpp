@@ -20,12 +20,12 @@ struct Wavelet
     [[nodiscard]] auto hpr() const noexcept -> Span<float>;
 
 private:
-    String name_;
+    String _name;
 
     // When all filters are of the same length.
     // [Matlab uses zero-padding to make all filters of the same length]
-    std::size_t size_;
-    UniquePtr<float[]> params_;
+    std::size_t _size;
+    UniquePtr<float[]> _params;
 };
 
 auto summary(Wavelet const& obj) -> void;

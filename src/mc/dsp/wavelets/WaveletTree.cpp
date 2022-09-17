@@ -43,7 +43,7 @@ WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t 
 
     this->params = makeUnique<float[]>(signalLength * (j + 1) + elength + nodess + j + 1);
     this->outlength = signalLength * (j + 1) + elength;
-    this->ext_      = "sym";
+    this->_ext      = "sym";
 
     this->siglength = signalLength;
     this->J         = j;
@@ -329,10 +329,10 @@ auto WaveletTree::coeffs(std::size_t x, std::size_t y, float* coeffs, std::size_
 auto WaveletTree::extension(char const* newExtension) noexcept -> void
 {
     MC_ASSERT((newExtension == StringView{"sym"}) || (newExtension == StringView{"per"}));
-    ext_ = newExtension;
+    _ext = newExtension;
 }
 
-auto WaveletTree::extension() const noexcept -> String const& { return ext_; }
+auto WaveletTree::extension() const noexcept -> String const& { return _ext; }
 
 auto summary(WaveletTree const& wt) -> void
 {

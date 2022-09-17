@@ -14,9 +14,9 @@ struct WaveletPacketTransform
 {
     WaveletPacketTransform(Wavelet* wave, std::size_t siglength, std::size_t j);
 
-    [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *wave_; }
+    [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *_wave; }
 
-    [[nodiscard]] auto signalLength() const noexcept -> int { return signalLength_; }
+    [[nodiscard]] auto signalLength() const noexcept -> int { return _signalLength; }
 
     FFTConvolver* cobj{};
     int outlength{};  // Length of the output DWT vector
@@ -39,8 +39,8 @@ struct WaveletPacketTransform
     UniquePtr<float[]> params;
 
 private:
-    Wavelet* wave_{nullptr};
-    int signalLength_{};  // Length of the original signal.
+    Wavelet* _wave{nullptr};
+    int _signalLength{};  // Length of the original signal.
 };
 
 auto dwpt(WaveletPacketTransform& wt, float const* inp) -> void;

@@ -215,10 +215,10 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
         void reportError(String const& errorMessage);
 
-        AudioFileFormat audioFileFormat_;
-        uint32_t sampleRate_{};
-        int bitDepth_{};
-        bool logErrorsToConsole_{true};
+        AudioFileFormat _audioFileFormat;
+        uint32_t _sampleRate{};
+        int _bitDepth{};
+        bool _logErrorsToConsole{true};
     };
 
     // Pre-defined 10-byte representations of common sample rates
@@ -270,11 +270,11 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
             "ERROR: This version of AudioFile only supports floating point sample formats"
         );
 
-        bitDepth_   = 16;
-        sampleRate_ = 44100;
+        _bitDepth   = 16;
+        _sampleRate = 44100;
         samples.resize(1);
         samples[0].resize(0);
-        audioFileFormat_ = AudioFileFormat::NotLoaded;
+        _audioFileFormat = AudioFileFormat::NotLoaded;
     }
 
     template<class T>
@@ -286,7 +286,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     template<class T>
     auto AudioFile<T>::getSampleRate() const->uint32_t
     {
-        return sampleRate_;
+        return _sampleRate;
     }
 
     template<class T>
@@ -310,7 +310,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     template<class T>
     auto AudioFile<T>::getBitDepth() const->int
     {
-        return bitDepth_;
+        return _bitDepth;
     }
 
     template<class T>
@@ -323,7 +323,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     template<class T>
     auto AudioFile<T>::getLengthInSeconds() const->float
     {
-        return (float)getNumSamplesPerChannel() / (float)sampleRate_;
+        return (float)getNumSamplesPerChannel() / (float)_sampleRate;
     }
 
     template<class T>
@@ -332,8 +332,8 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
         print("|======================================|\n");
         print("Num Channels: {}\n", getNumChannels());
         print("Num Samples Per Channel: {0}\n", getNumSamplesPerChannel());
-        print("Sample Rate: {0}\n", sampleRate_);
-        print("Bit Depth: {0}\n", bitDepth_);
+        print("Sample Rate: {0}\n", _sampleRate);
+        print("Bit Depth: {0}\n", _bitDepth);
         print("Length in Seconds: {0}\n", getLengthInSeconds());
         print("|======================================|\n");
     }
@@ -407,19 +407,19 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     template<class T>
     void AudioFile<T>::setBitDepth(int numBitsPerSample)
     {
-        bitDepth_ = numBitsPerSample;
+        _bitDepth = numBitsPerSample;
     }
 
     template<class T>
     void AudioFile<T>::setSampleRate(uint32_t newSampleRate)
     {
-        sampleRate_ = newSampleRate;
+        _sampleRate = newSampleRate;
     }
 
     template<class T>
     void AudioFile<T>::shouldLogErrorsToConsole(bool logErrors)
     {
-        logErrorsToConsole_ = logErrors;
+        _logErrorsToConsole = logErrors;
     }
 
     template<class T>
@@ -455,10 +455,10 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
         }
 
         // get audio file format
-        audioFileFormat_ = determineAudioFileFormat(fileData);
+        _audioFileFormat = determineAudioFileFormat(fileData);
 
-        if (audioFileFormat_ == AudioFileFormat::Wave) { return decodeWaveFile(fileData); }
-        if (audioFileFormat_ == AudioFileFormat::Aiff) { return decodeAiffFile(fileData); }
+        if (_audioFileFormat == AudioFileFormat::Wave) { return decodeWaveFile(fileData); }
+        if (_audioFileFormat == AudioFileFormat::Aiff) { return decodeAiffFile(fileData); }
         reportError("Audio File Type: Error");
         return false;
     }
@@ -493,12 +493,12 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
         // int32_t formatChunkSize = fourBytesToInt (fileData, f + 4);
         uint16_t audioFormat       = twoBytesToInt(fileData, f + 8);
         uint16_t numChannels       = twoBytesToInt(fileData, f + 10);
-        sampleRate_                = (uint32_t)fourBytesToInt(fileData, f + 12);
+        _sampleRate                = (uint32_t)fourBytesToInt(fileData, f + 12);
         uint32_t numBytesPerSecond = fourBytesToInt(fileData, f + 16);
         uint16_t numBytesPerBlock  = twoBytesToInt(fileData, f + 20);
-        bitDepth_                  = (int)twoBytesToInt(fileData, f + 22);
+        _bitDepth                  = (int)twoBytesToInt(fileData, f + 22);
 
-        uint16_t numBytesPerSample = static_cast<uint16_t>(bitDepth_) / 8;
+        uint16_t numBytesPerSample = static_cast<uint16_t>(_bitDepth) / 8;
 
         // check that the audio format is PCM or Float or extensible
         if (audioFormat != WavAudioFormat::PCM && audioFormat != WavAudioFormat::IEEEFloat
@@ -519,14 +519,14 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
         // check header data is consistent
         if (numBytesPerSecond
-                != static_cast<uint32_t>((numChannels * sampleRate_ * bitDepth_) / 8)
+                != static_cast<uint32_t>((numChannels * _sampleRate * _bitDepth) / 8)
             || numBytesPerBlock != (numChannels * numBytesPerSample)) {
             reportError("ERROR: the header data in this WAV file seems to be inconsistent");
             return false;
         }
 
         // check bit depth is either 8, 16, 24 or 32 bit
-        if (bitDepth_ != 8 && bitDepth_ != 16 && bitDepth_ != 24 && bitDepth_ != 32) {
+        if (_bitDepth != 8 && _bitDepth != 16 && _bitDepth != 24 && _bitDepth != 32) {
             reportError("ERROR: this file has a bit depth that is not 8, 16, 24 or 32 bits"
             );
             return false;
@@ -538,7 +538,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
         String dataChunkID(fileData.begin() + d, fileData.begin() + d + 4);
         int32_t dataChunkSize = fourBytesToInt(fileData, d + 4);
 
-        int numSamples        = dataChunkSize / (numChannels * bitDepth_ / 8);
+        int numSamples        = dataChunkSize / (numChannels * _bitDepth / 8);
         int samplesStartIndex = indexOfDataChunk + 8;
 
         clearAudioBuffer();
@@ -549,7 +549,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
                 int sampleIndex = samplesStartIndex + (numBytesPerBlock * i)
                                 + channel * numBytesPerSample;
 
-                if ((sampleIndex + (bitDepth_ / 8) - 1) >= fileData.size()) {
+                if ((sampleIndex + (_bitDepth / 8) - 1) >= fileData.size()) {
                     reportError(
                         "ERROR: read file error as the metadata indicates more samples "
                         "than there are in the file data"
@@ -557,14 +557,14 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
                     return false;
                 }
 
-                if (bitDepth_ == 8) {
+                if (_bitDepth == 8) {
                     T sample = singleByteToSample(fileData[sampleIndex]);
                     samples[channel].push_back(sample);
-                } else if (bitDepth_ == 16) {
+                } else if (_bitDepth == 16) {
                     int16_t sampleAsInt = twoBytesToInt(fileData, sampleIndex);
                     T sample            = sixteenBitIntToSample(sampleAsInt);
                     samples[channel].push_back(sample);
-                } else if (bitDepth_ == 24) {
+                } else if (_bitDepth == 24) {
                     int32_t sampleAsInt = 0;
                     sampleAsInt         = (fileData[sampleIndex + 2] << 16)
                                 | (fileData[sampleIndex + 1] << 8) | fileData[sampleIndex];
@@ -579,7 +579,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
                     T sample = (T)sampleAsInt / (T)8388608.;
                     samples[channel].push_back(sample);
-                } else if (bitDepth_ == 32) {
+                } else if (_bitDepth == 32) {
                     int32_t sampleAsInt = fourBytesToInt(fileData, sampleIndex);
                     T sample;
 
@@ -645,11 +645,11 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
         int16_t numChannels = twoBytesToInt(fileData, p + 8, Endianness::BigEndian);
         int32_t numSamplesPerChannel
             = fourBytesToInt(fileData, p + 10, Endianness::BigEndian);
-        bitDepth_   = (int)twoBytesToInt(fileData, p + 14, Endianness::BigEndian);
-        sampleRate_ = getAiffSampleRate(fileData, p + 16);
+        _bitDepth   = (int)twoBytesToInt(fileData, p + 14, Endianness::BigEndian);
+        _sampleRate = getAiffSampleRate(fileData, p + 16);
 
         // check the sample rate was properly decoded
-        if (sampleRate_ == 0) {
+        if (_sampleRate == 0) {
             reportError("ERROR: this AIFF file has an unsupported sample rate");
             return false;
         }
@@ -664,7 +664,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
         }
 
         // check bit depth is either 8, 16, 24 or 32-bit
-        if (bitDepth_ != 8 && bitDepth_ != 16 && bitDepth_ != 24 && bitDepth_ != 32) {
+        if (_bitDepth != 8 && _bitDepth != 16 && _bitDepth != 24 && _bitDepth != 32) {
             reportError("ERROR: this file has a bit depth that is not 8, 16, 24 or 32 bits"
             );
             return false;
@@ -678,7 +678,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
         int32_t offset             = fourBytesToInt(fileData, s + 8, Endianness::BigEndian);
         // int32_t blockSize = fourBytesToInt (fileData, s + 12, Endianness::BigEndian);
 
-        int numBytesPerSample        = bitDepth_ / 8;
+        int numBytesPerSample        = _bitDepth / 8;
         int numBytesPerFrame         = numBytesPerSample * numChannels;
         int totalNumAudioSampleBytes = numSamplesPerChannel * numBytesPerFrame;
         int samplesStartIndex        = s + 16 + (int)offset;
@@ -699,7 +699,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
                 int sampleIndex = samplesStartIndex + (numBytesPerFrame * i)
                                 + channel * numBytesPerSample;
 
-                if ((sampleIndex + (bitDepth_ / 8) - 1) >= fileData.size()) {
+                if ((sampleIndex + (_bitDepth / 8) - 1) >= fileData.size()) {
                     reportError(
                         "ERROR: read file error as the metadata indicates more samples "
                         "than there are in the file data"
@@ -707,16 +707,16 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
                     return false;
                 }
 
-                if (bitDepth_ == 8) {
+                if (_bitDepth == 8) {
                     auto sampleAsSigned8Bit = (int8_t)fileData[sampleIndex];
                     T sample                = (T)sampleAsSigned8Bit / (T)128.;
                     samples[channel].push_back(sample);
-                } else if (bitDepth_ == 16) {
+                } else if (_bitDepth == 16) {
                     int16_t sampleAsInt
                         = twoBytesToInt(fileData, sampleIndex, Endianness::BigEndian);
                     T sample = sixteenBitIntToSample(sampleAsInt);
                     samples[channel].push_back(sample);
-                } else if (bitDepth_ == 24) {
+                } else if (_bitDepth == 24) {
                     int32_t sampleAsInt = 0;
                     sampleAsInt         = (fileData[sampleIndex] << 16)
                                 | (fileData[sampleIndex + 1] << 8)
@@ -732,7 +732,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
                     T sample = (T)sampleAsInt / (T)8388608.;
                     samples[channel].push_back(sample);
-                } else if (bitDepth_ == 32) {
+                } else if (_bitDepth == 32) {
                     int32_t sampleAsInt
                         = fourBytesToInt(fileData, sampleIndex, Endianness::BigEndian);
                     T sample;
@@ -822,9 +822,9 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
         Vector<uint8_t> fileData;
 
         int32_t dataChunkSize
-            = getNumSamplesPerChannel() * (getNumChannels() * bitDepth_ / 8);
+            = getNumSamplesPerChannel() * (getNumChannels() * _bitDepth / 8);
         int16_t audioFormat
-            = bitDepth_ == 32 ? WavAudioFormat::IEEEFloat : WavAudioFormat::PCM;
+            = _bitDepth == 32 ? WavAudioFormat::IEEEFloat : WavAudioFormat::PCM;
         int32_t formatChunkSize = audioFormat == WavAudioFormat::PCM ? 16 : 18;
         auto iXMLChunkSize      = static_cast<int32_t>(iXMLChunk.size());
 
@@ -848,16 +848,16 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
         addInt32ToFileData(fileData, formatChunkSize);  // format chunk size (16 for PCM)
         addInt16ToFileData(fileData, audioFormat);      // audio format
         addInt16ToFileData(fileData, (int16_t)getNumChannels());  // num channels
-        addInt32ToFileData(fileData, (int32_t)sampleRate_);       // sample rate
+        addInt32ToFileData(fileData, (int32_t)_sampleRate);       // sample rate
 
         auto numBytesPerSecond
-            = (int32_t)((getNumChannels() * sampleRate_ * bitDepth_) / 8);
+            = (int32_t)((getNumChannels() * _sampleRate * _bitDepth) / 8);
         addInt32ToFileData(fileData, numBytesPerSecond);
 
-        int16_t numBytesPerBlock = getNumChannels() * (bitDepth_ / 8);
+        int16_t numBytesPerBlock = getNumChannels() * (_bitDepth / 8);
         addInt16ToFileData(fileData, numBytesPerBlock);
 
-        addInt16ToFileData(fileData, (int16_t)bitDepth_);
+        addInt16ToFileData(fileData, (int16_t)_bitDepth);
 
         if (audioFormat == WavAudioFormat::IEEEFloat) {
             addInt16ToFileData(fileData, 0);  // extension size
@@ -870,13 +870,13 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
         for (int i = 0; i < getNumSamplesPerChannel(); i++) {
             for (int channel = 0; channel < getNumChannels(); channel++) {
-                if (bitDepth_ == 8) {
+                if (_bitDepth == 8) {
                     uint8_t byte = sampleToSingleByte(samples[channel][i]);
                     fileData.push_back(byte);
-                } else if (bitDepth_ == 16) {
+                } else if (_bitDepth == 16) {
                     int16_t sampleAsInt = sampleToSixteenBitInt(samples[channel][i]);
                     addInt16ToFileData(fileData, sampleAsInt);
-                } else if (bitDepth_ == 24) {
+                } else if (_bitDepth == 24) {
                     auto sampleAsIntAgain = (int32_t)(samples[channel][i] * (T)8388608.);
 
                     uint8_t bytes[3];
@@ -887,7 +887,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
                     fileData.push_back(bytes[0]);
                     fileData.push_back(bytes[1]);
                     fileData.push_back(bytes[2]);
-                } else if (bitDepth_ == 32) {
+                } else if (_bitDepth == 32) {
                     int32_t sampleAsInt = 0;
 
                     if (audioFormat == WavAudioFormat::IEEEFloat) {
@@ -917,7 +917,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
         // check that the various sizes we put in the metadata are correct
         if (fileSizeInBytes != static_cast<int32_t>(fileData.size() - 8)
             || dataChunkSize
-                   != (getNumSamplesPerChannel() * getNumChannels() * (bitDepth_ / 8))) {
+                   != (getNumSamplesPerChannel() * getNumChannels() * (_bitDepth / 8))) {
             reportError("ERROR: couldn't save file to " + filePath);
             return false;
         }
@@ -931,7 +931,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     {
         Vector<uint8_t> fileData;
 
-        int32_t numBytesPerSample        = bitDepth_ / 8;
+        int32_t numBytesPerSample        = _bitDepth / 8;
         int32_t numBytesPerFrame         = numBytesPerSample * getNumChannels();
         int32_t totalNumAudioSampleBytes = getNumSamplesPerChannel() * numBytesPerFrame;
         int32_t soundDataChunkSize       = totalNumAudioSampleBytes + 8;
@@ -965,8 +965,8 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
             getNumSamplesPerChannel(),
             Endianness::BigEndian
         );  // num samples per channel
-        addInt16ToFileData(fileData, bitDepth_, Endianness::BigEndian);  // bit depth
-        addSampleRateToAiffData(fileData, sampleRate_);
+        addInt16ToFileData(fileData, _bitDepth, Endianness::BigEndian);  // bit depth
+        addSampleRateToAiffData(fileData, _sampleRate);
 
         // -----------------------------------------------------------
         // SSND CHUNK
@@ -977,13 +977,13 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
 
         for (int i = 0; i < getNumSamplesPerChannel(); i++) {
             for (int channel = 0; channel < getNumChannels(); channel++) {
-                if (bitDepth_ == 8) {
+                if (_bitDepth == 8) {
                     uint8_t byte = sampleToSingleByte(samples[channel][i]);
                     fileData.push_back(byte);
-                } else if (bitDepth_ == 16) {
+                } else if (_bitDepth == 16) {
                     int16_t sampleAsInt = sampleToSixteenBitInt(samples[channel][i]);
                     addInt16ToFileData(fileData, sampleAsInt, Endianness::BigEndian);
-                } else if (bitDepth_ == 24) {
+                } else if (_bitDepth == 24) {
                     auto sampleAsIntAgain = (int32_t)(samples[channel][i] * (T)8388608.);
 
                     uint8_t bytes[3];
@@ -994,7 +994,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
                     fileData.push_back(bytes[0]);
                     fileData.push_back(bytes[1]);
                     fileData.push_back(bytes[2]);
-                } else if (bitDepth_ == 32) {
+                } else if (_bitDepth == 32) {
                     // write samples as signed integers (no implementation yet for floating
                     // point, but looking at WAV implementation should help)
                     auto sampleAsInt = (int32_t
@@ -1234,7 +1234,7 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
     template<class T>
     void AudioFile<T>::reportError(String const& errorMessage)
     {
-        if (logErrorsToConsole_) { print("{0}\n", errorMessage); }
+        if (_logErrorsToConsole) { print("{0}\n", errorMessage); }
     }
 }
 

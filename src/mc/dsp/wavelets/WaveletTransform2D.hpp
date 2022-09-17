@@ -20,13 +20,13 @@ struct WaveletTransform2D
         std::size_t j
     );
 
-    [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *wave_; }
+    [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *_wave; }
 
-    [[nodiscard]] auto method() const noexcept -> String const& { return method_; }
+    [[nodiscard]] auto method() const noexcept -> String const& { return _method; }
 
-    [[nodiscard]] auto rows() const noexcept -> int { return rows_; }
+    [[nodiscard]] auto rows() const noexcept -> int { return _rows; }
 
-    [[nodiscard]] auto cols() const noexcept -> int { return cols_; }
+    [[nodiscard]] auto cols() const noexcept -> int { return _cols; }
 
     int outlength{};  // Length of the output DWT vector
     int J{};          // Number of decomposition Levels
@@ -40,10 +40,10 @@ struct WaveletTransform2D
     UniquePtr<int[]> params;
 
 private:
-    Wavelet* wave_{nullptr};
-    int rows_{0};  // Matrix Number of rows
-    int cols_{0};  // Matrix Number of columns
-    String method_;
+    Wavelet* _wave{nullptr};
+    int _rows{0};  // Matrix Number of rows
+    int _cols{0};  // Matrix Number of columns
+    String _method;
 };
 
 auto dwt(WaveletTransform2D& wt, float const* inp) -> UniquePtr<float[]>;

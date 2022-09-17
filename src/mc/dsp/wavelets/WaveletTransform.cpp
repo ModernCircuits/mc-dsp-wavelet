@@ -92,44 +92,44 @@ WaveletTransform::WaveletTransform(
     std::size_t siglength,
     std::size_t j
 )
-    : wave_{&w}
-    , levels_{j}
-    , signalLength_{siglength}
-    , method_{method}
+    : _wave{&w}
+    , _levels{j}
+    , _signalLength{siglength}
+    , _method{method}
     , convolver{nullptr}
     , modwtsiglength{siglength}
-    , lenlength{levels_ + 2}
+    , lenlength{_levels + 2}
     , MaxIter{maxIterations(siglength, w.size())}
 
 {
     auto const size = w.size();
 
-    if (levels_ > 100) {
+    if (_levels > 100) {
         throw InvalidArgument("decomposition Iterations Cannot Exceed 100.");
     }
 
-    if (levels_ > MaxIter) {
+    if (_levels > MaxIter) {
         throw InvalidArgument("signal Can only be iterated maxIter times using this wavelet"
         );
     }
 
     if (method == nullptr) {
-        this->params    = makeUnique<float[]>(siglength + 2 * levels_ * (size + 1));
-        this->outlength = siglength + 2 * levels_ * (size + 1);
-        ext_            = SignalExtension::symmetric;
+        this->params    = makeUnique<float[]>(siglength + 2 * _levels * (size + 1));
+        this->outlength = siglength + 2 * _levels * (size + 1);
+        _ext            = SignalExtension::symmetric;
     } else if ((method == StringView{"dwt"}) || (method == StringView{"DWT"})) {
-        this->params    = makeUnique<float[]>(siglength + 2 * levels_ * (size + 1));
-        this->outlength = siglength + 2 * levels_ * (size + 1);
-        ext_            = SignalExtension::symmetric;
+        this->params    = makeUnique<float[]>(siglength + 2 * _levels * (size + 1));
+        this->outlength = siglength + 2 * _levels * (size + 1);
+        _ext            = SignalExtension::symmetric;
     } else if ((method == StringView{"swt"}) || (method == StringView{"SWT"})) {
-        if (testSWTlength(static_cast<int>(siglength), static_cast<int>(levels_)) == 0) {
+        if (testSWTlength(static_cast<int>(siglength), static_cast<int>(_levels)) == 0) {
             throw InvalidArgument("For SWT the signal length must be a multiple of 2^levels"
             );
         }
 
-        this->params    = makeUnique<float[]>(siglength * (levels_ + 1));
-        this->outlength = siglength * (levels_ + 1);
-        ext_            = SignalExtension::periodic;
+        this->params    = makeUnique<float[]>(siglength * (_levels + 1));
+        this->outlength = siglength * (_levels + 1);
+        _ext            = SignalExtension::periodic;
     } else if ((method == StringView{"MODWT"}) || (method == StringView{"modwt"})) {
 
         if (strstr(w.name().c_str(), "haar") == nullptr) {
@@ -145,12 +145,12 @@ WaveletTransform::WaveletTransform(
             }
         }
 
-        this->params    = makeUnique<float[]>(siglength * 2 * (levels_ + 1));
-        this->outlength = siglength * (levels_ + 1);
-        ext_            = SignalExtension::periodic;
+        this->params    = makeUnique<float[]>(siglength * 2 * (_levels + 1));
+        this->outlength = siglength * (_levels + 1);
+        _ext            = SignalExtension::periodic;
     }
 
-    this->output_ = &this->params[0];
+    this->_output = &this->params[0];
     if ((method == StringView{"dwt"}) || (method == StringView{"DWT"})) {
         for (std::size_t i = 0; i < siglength + 2 * levels() * (size + 1); ++i) {
             this->params[i] = 0.0F;
@@ -166,32 +166,32 @@ WaveletTransform::WaveletTransform(
     }
 }
 
-auto WaveletTransform::wave() const noexcept -> Wavelet const& { return *wave_; }
+auto WaveletTransform::wave() const noexcept -> Wavelet const& { return *_wave; }
 
-auto WaveletTransform::levels() const noexcept -> int { return static_cast<int>(levels_); }
+auto WaveletTransform::levels() const noexcept -> int { return static_cast<int>(_levels); }
 
 auto WaveletTransform::signalLength() const noexcept -> std::size_t
 {
-    return signalLength_;
+    return _signalLength;
 }
 
-auto WaveletTransform::method() const noexcept -> String const& { return method_; }
+auto WaveletTransform::method() const noexcept -> String const& { return _method; }
 
-auto WaveletTransform::extension() const noexcept -> SignalExtension { return ext_; }
+auto WaveletTransform::extension() const noexcept -> SignalExtension { return _ext; }
 
-auto WaveletTransform::convMethod() const noexcept -> ConvolutionMethod { return cmethod_; }
+auto WaveletTransform::convMethod() const noexcept -> ConvolutionMethod { return _cmethod; }
 
-auto WaveletTransform::convMethod(ConvolutionMethod method) -> void { cmethod_ = method; }
+auto WaveletTransform::convMethod(ConvolutionMethod method) -> void { _cmethod = method; }
 
 auto WaveletTransform::extension(SignalExtension ext) -> void
 {
     MC_ASSERT((ext == SignalExtension::periodic) || (ext == SignalExtension::symmetric));
-    ext_ = ext;
+    _ext = ext;
 }
 
 auto WaveletTransform::output() const -> Span<float>
 {
-    return Span<float>{output_, static_cast<std::size_t>(outlength)};
+    return Span<float>{_output, static_cast<std::size_t>(outlength)};
 }
 
 auto WaveletTransform::approx() const -> Span<float>
@@ -203,7 +203,7 @@ auto WaveletTransform::approx() const -> Span<float>
     Length of A(J) , N = wt->length[0]
     */
 
-    return {output_, static_cast<size_t>(length[0])};
+    return {_output, static_cast<size_t>(length[0])};
 }
 
 auto WaveletTransform::detail(std::size_t level) const -> Span<float>
@@ -226,7 +226,7 @@ auto WaveletTransform::detail(std::size_t level) const -> Span<float>
     auto iter = length[0];
     for (auto i = 1U; i < levels() - level; ++i) { iter += length[i]; }
 
-    return {&output_[iter], static_cast<size_t>(length[level])};
+    return {&_output[iter], static_cast<size_t>(length[level])};
 }
 
 static auto wconv(

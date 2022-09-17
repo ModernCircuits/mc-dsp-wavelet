@@ -38,14 +38,14 @@ struct WaveletTransform
     [[nodiscard]] auto detail(std::size_t level) const -> Span<float>;
 
 private:
-    Wavelet* wave_;
-    std::size_t levels_;
-    std::size_t signalLength_;
-    String method_;
-    SignalExtension ext_;
-    ConvolutionMethod cmethod_{ConvolutionMethod::direct};
+    Wavelet* _wave;
+    std::size_t _levels;
+    std::size_t _signalLength;
+    String _method;
+    SignalExtension _ext;
+    ConvolutionMethod _cmethod{ConvolutionMethod::direct};
 
-    float* output_;
+    float* _output;
 
 public:
     UniquePtr<FFTConvolver> convolver;

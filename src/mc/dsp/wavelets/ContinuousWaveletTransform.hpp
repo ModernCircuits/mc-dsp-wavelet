@@ -19,7 +19,7 @@ struct ContinuousWaveletTransform
         int j
     );
 
-    [[nodiscard]] auto wave() const noexcept -> String const& { return wave_; }
+    [[nodiscard]] auto wave() const noexcept -> String const& { return _wave; }
 
     auto scales(float s0, float dj, char const* type, int power) -> void;
 
@@ -47,7 +47,7 @@ struct ContinuousWaveletTransform
 
 private:
     // Wavelet - morl/morlet,paul,dog/dgauss
-    String wave_;
+    String _wave;
 };
 
 auto cwt(ContinuousWaveletTransform& wt, float const* inp) -> void;

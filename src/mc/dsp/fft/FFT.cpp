@@ -13,19 +13,19 @@ namespace mc::dsp {
 
 RFFT::RFFT(int n, FFTDirection direction)
 {
-    data_ = makeUnique<Complex<float>[]>(n / 2);
-    cobj_ = makeUnique<FFT<float, KissFFT>>(n / 2, direction);
+    _data = makeUnique<Complex<float>[]>(n / 2);
+    _cobj = makeUnique<FFT<float, KissFFT>>(n / 2, direction);
 
     for (auto k = 0; k < n / 2; ++k) {
         auto const theta = pi2 * k / n;
-        data_[k].real(cos(theta));
-        data_[k].imag(sin(theta));
+        _data[k].real(cos(theta));
+        _data[k].imag(sin(theta));
     }
 }
 
 auto RFFT::performRealToComplex(float const* inp, Complex<float>* oup) -> void
 {
-    auto const n2 = cobj_->size();
+    auto const n2 = _cobj->size();
     auto cinp     = makeUnique<Complex<float>[]>(n2);
     auto coup     = makeUnique<Complex<float>[]>(n2);
 
@@ -34,7 +34,7 @@ auto RFFT::performRealToComplex(float const* inp, Complex<float>* oup) -> void
         cinp[i].imag(inp[2 * i + 1]);
     }
 
-    cobj_->perform(cinp.get(), coup.get());
+    _cobj->perform(cinp.get(), coup.get());
 
     oup[0].real(coup[0].real() + coup[0].imag());
     oup[0].imag(0.0F);
@@ -43,13 +43,13 @@ auto RFFT::performRealToComplex(float const* inp, Complex<float>* oup) -> void
         auto const temp1 = coup[i].imag() + coup[n2 - i].imag();
         auto const temp2 = coup[n2 - i].real() - coup[i].real();
         oup[i].real(
-            (coup[i].real() + coup[n2 - i].real() + (temp1 * data_[i].real())
-             + (temp2 * data_[i].imag()))
+            (coup[i].real() + coup[n2 - i].real() + (temp1 * _data[i].real())
+             + (temp2 * _data[i].imag()))
             / 2.0F
         );
         oup[i].imag(
-            (coup[i].imag() - coup[n2 - i].imag() + (temp2 * data_[i].real())
-             - (temp1 * data_[i].imag()))
+            (coup[i].imag() - coup[n2 - i].imag() + (temp2 * _data[i].real())
+             - (temp1 * _data[i].imag()))
             / 2.0F
         );
     }
@@ -66,7 +66,7 @@ auto RFFT::performRealToComplex(float const* inp, Complex<float>* oup) -> void
 
 auto RFFT::performComplexToReal(Complex<float> const* inp, float* oup) -> void
 {
-    auto const n = static_cast<std::size_t>(cobj_->size());
+    auto const n = static_cast<std::size_t>(_cobj->size());
     auto cinp    = makeUnique<Complex<float>[]>(n);
     auto coup    = makeUnique<Complex<float>[]>(n);
 
@@ -74,16 +74,16 @@ auto RFFT::performComplexToReal(Complex<float> const* inp, float* oup) -> void
         auto const temp1 = -inp[i].imag() - inp[n - i].imag();
         auto const temp2 = -inp[n - i].real() + inp[i].real();
         cinp[i].real(
-            inp[i].real() + inp[n - i].real() + (temp1 * data_[i].real())
-            - (temp2 * data_[i].imag())
+            inp[i].real() + inp[n - i].real() + (temp1 * _data[i].real())
+            - (temp2 * _data[i].imag())
         );
         cinp[i].imag(
-            inp[i].imag() - inp[n - i].imag() + (temp2 * data_[i].real())
-            + (temp1 * data_[i].imag())
+            inp[i].imag() - inp[n - i].imag() + (temp2 * _data[i].real())
+            + (temp1 * _data[i].imag())
         );
     }
 
-    cobj_->perform(cinp.get(), coup.get());
+    _cobj->perform(cinp.get(), coup.get());
 
     for (auto i = std::size_t{0}; i < n; ++i) {
         oup[2 * i]     = coup[i].real();

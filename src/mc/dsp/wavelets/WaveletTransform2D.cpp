@@ -189,12 +189,12 @@ WaveletTransform2D::WaveletTransform2D(
         this->ext = "per";
     }
 
-    this->wave_             = &wave;
-    this->rows_             = rows;
-    this->cols_             = cols;
+    this->_wave             = &wave;
+    this->_rows             = rows;
+    this->_cols             = cols;
     this->J                 = j;
     this->MaxIter           = maxIter;
-    this->method_           = method;
+    this->_method           = method;
     this->coeffaccesslength = sumacc;
 
     this->dimensions  = &this->params[0];

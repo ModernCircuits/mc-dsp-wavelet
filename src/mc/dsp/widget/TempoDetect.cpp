@@ -29,17 +29,17 @@ auto peakDetect(Span<float> data) -> std::size_t
 }
 
 TempoDetect::TempoDetect(std::size_t n, std::size_t levels)
-    : wave_{"db4"}
-    , wt_{wave_, "dwt", n, levels}
+    : _wave{"db4"}
+    , _wt{_wave, "dwt", n, levels}
 {
-    wt_.extension(dsp::SignalExtension::symmetric);
-    wt_.convMethod(dsp::ConvolutionMethod::direct);
+    _wt.extension(dsp::SignalExtension::symmetric);
+    _wt.convMethod(dsp::ConvolutionMethod::direct);
 }
 
 auto TempoDetect::operator()(Span<float> input, float sampleRate) -> float
 {
 
-    auto const levels        = wt_.levels();
+    auto const levels        = _wt.levels();
     auto const maxDecimation = std::pow(2.0F, static_cast<float>(levels - 1));
     auto const minNdx        = std::floor(60.0F / 220.0F * (sampleRate / maxDecimation));
     auto const maxNdx        = std::floor(60.0F / 40.0F * (sampleRate / maxDecimation));
@@ -49,19 +49,19 @@ auto TempoDetect::operator()(Span<float> input, float sampleRate) -> float
 
     auto cDMinlen = 0.0F;
     auto cDSum    = Vector<float>{};
-    dwt(wt_, input.data());
+    dwt(_wt, input.data());
     for (auto loop{0}; loop < levels; ++loop) {
         if (loop == 0) {
             // dwt(wt_, input.data());
-            cA       = wt_.approx();
-            cD       = wt_.detail(loop + 1);
+            cA       = _wt.approx();
+            cD       = _wt.detail(loop + 1);
             cDMinlen = static_cast<float>(mc::size(cD)) / maxDecimation + 1.0F;
             cDSum.resize(static_cast<std::size_t>(std::floor(cDMinlen)));
             ranges::fill(cDSum, 0.0F);
         } else {
             // dwt(wt_, cA.data());
-            cA = wt_.approx();
-            cD = wt_.detail(loop + 1);
+            cA = _wt.approx();
+            cD = _wt.detail(loop + 1);
         }
 
         // 2) Filter
@@ -110,8 +110,8 @@ auto TempoDetect::operator()(Span<float> input, float sampleRate) -> float
     // correl = np.correlate(cD_sum, cD_sum, "full")
     // cD_sum.clear();
     std::copy(
-        std::begin(wt_.output()),
-        std::begin(wt_.output()) + wt_.outlength,
+        std::begin(_wt.output()),
+        std::begin(_wt.output()) + _wt.outlength,
         std::back_inserter(cDSum)
     );
     // std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [](auto v) { return

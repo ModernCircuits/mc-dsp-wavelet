@@ -11,8 +11,8 @@ struct TempoDetect
     [[nodiscard]] auto operator()(Span<float> input, float sampleRate) -> float;
 
 private:
-    dsp::Wavelet wave_;
-    dsp::WaveletTransform wt_;
+    dsp::Wavelet _wave;
+    dsp::WaveletTransform _wt;
 };
 
 }  // namespace mc::dsp

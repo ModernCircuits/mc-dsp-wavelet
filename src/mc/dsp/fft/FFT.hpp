@@ -28,40 +28,40 @@ struct FFT
     auto perform(Complex<T> const* inp, Complex<T>* output) -> void;
 
 private:
-    int size_;
-    FFTDirection direction_;
-    backend_type engine_;
+    int _size;
+    FFTDirection _direction;
+    backend_type _engine;
 };
 
 template<typename T, typename BackendTag>
 FFT<T, BackendTag>::FFT(int n, FFTDirection direction)
-    : size_{n}
-    , direction_{direction}
-    , engine_{FFTBackend<T, BackendTag>::construct(static_cast<std::size_t>(n), direction)}
+    : _size{n}
+    , _direction{direction}
+    , _engine{FFTBackend<T, BackendTag>::construct(static_cast<std::size_t>(n), direction)}
 {}
 
 template<typename T, typename BackendTag>
 FFT<T, BackendTag>::~FFT()
 {
-    FFTBackend<T, BackendTag>::destroy(engine_);
+    FFTBackend<T, BackendTag>::destroy(_engine);
 }
 
 template<typename T, typename BackendTag>
 auto FFT<T, BackendTag>::direction() const noexcept -> FFTDirection
 {
-    return direction_;
+    return _direction;
 }
 
 template<typename T, typename BackendTag>
 auto FFT<T, BackendTag>::size() const noexcept -> int
 {
-    return size_;
+    return _size;
 }
 
 template<typename T, typename BackendTag>
 auto FFT<T, BackendTag>::perform(Complex<T> const* input, Complex<T>* output) -> void
 {
-    FFTBackend<T, BackendTag>::perform(engine_, input, output, direction_);
+    FFTBackend<T, BackendTag>::perform(_engine, input, output, _direction);
 }
 
 struct RFFT
@@ -72,8 +72,8 @@ struct RFFT
     auto performComplexToReal(Complex<float> const* inp, float* oup) -> void;
 
 private:
-    UniquePtr<FFT<float, KissFFT>> cobj_;
-    UniquePtr<Complex<float>[]> data_;
+    UniquePtr<FFT<float, KissFFT>> _cobj;
+    UniquePtr<Complex<float>[]> _data;
 };
 
 }  // namespace mc::dsp

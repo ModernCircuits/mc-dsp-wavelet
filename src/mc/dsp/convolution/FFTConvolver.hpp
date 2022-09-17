@@ -13,24 +13,24 @@ struct FFTConvolver
     auto convolute(float const* signal, float const* patch, float* output) const -> void;
 
 private:
-    std::size_t signalSize_;
-    std::size_t patchSize_;
-    std::size_t totalSize_;
+    std::size_t _signalSize;
+    std::size_t _patchSize;
+    std::size_t _totalSize;
 
-    UniquePtr<RFFT> forwardFFT_;
-    UniquePtr<RFFT> backwardFFT_;
+    UniquePtr<RFFT> _forwardFFT;
+    UniquePtr<RFFT> _backwardFFT;
 
-    UniquePtr<float[]> signalScratch_{makeUnique<float[]>(totalSize_)};
-    UniquePtr<Complex<float>[]> signalScratchOut_ {
-        makeUnique<Complex<float>[]>(totalSize_)
+    UniquePtr<float[]> _signalScratch{makeUnique<float[]>(_totalSize)};
+    UniquePtr<Complex<float>[]> _signalScratchOut {
+        makeUnique<Complex<float>[]>(_totalSize)
         };
 
-    UniquePtr<float[]> patchScratch_{makeUnique<float[]>(totalSize_)};
-    UniquePtr<Complex<float>[]> patchScratchOut_ {
-        makeUnique<Complex<float>[]>(totalSize_)
+    UniquePtr<float[]> _patchScratch{makeUnique<float[]>(_totalSize)};
+    UniquePtr<Complex<float>[]> _patchScratchOut {
+        makeUnique<Complex<float>[]>(_totalSize)
         };
 
-    UniquePtr<Complex<float>[]> tmp_ { makeUnique<Complex<float>[]>(totalSize_) };
-    UniquePtr<float[]> tmpOut_{makeUnique<float[]>(totalSize_)};
+    UniquePtr<Complex<float>[]> _tmp { makeUnique<Complex<float>[]>(_totalSize) };
+    UniquePtr<float[]> _tmpOut{makeUnique<float[]>(_totalSize)};
 };
 }  // namespace mc::dsp

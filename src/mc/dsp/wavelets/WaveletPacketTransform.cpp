@@ -122,8 +122,8 @@ WaveletPacketTransform::WaveletPacketTransform(
     this->entropy   = "shannon";
     this->eparam    = 0.0F;
 
-    this->wave_         = wave;
-    this->signalLength_ = siglength;
+    this->_wave         = wave;
+    this->_signalLength = siglength;
     this->J             = j;
     this->MaxIter       = maxIter;
 

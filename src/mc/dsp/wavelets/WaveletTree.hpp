@@ -38,7 +38,7 @@ struct WaveletTree
     unsigned* nodeLength_{nullptr};
 
 private:
-    String ext_;
+    String _ext;
 };
 
 auto wtree(WaveletTree& wt, float const* inp) -> void;

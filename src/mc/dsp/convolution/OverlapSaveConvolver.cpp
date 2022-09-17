@@ -95,41 +95,41 @@ OverlapSaveConvolver::OverlapSaveConvolver(
     FloatSignal& patch,
     String const& /*wisdomPath*/
 )
-    : signalSize_{signal.size()}
-    , patchSize_{patch.size()}
-    , resultSize_{signalSize_ + patchSize_ - 1}
-    , paddedPatch_{patch.data(), patchSize_, 0, 2 * pow2Ceil(patchSize_) - patchSize_}
-    , resultChunksize_{paddedPatch_.size()}
-    , resultChunksizeComplex_{resultChunksize_ / 2 + 1}
-    , result_stride_{resultChunksize_ - patchSize_ + 1}
-    , paddedPatchComplex_{resultChunksizeComplex_}
-    , paddedSignal_{
+    : _signalSize{signal.size()}
+    , _patchSize{patch.size()}
+    , _resultSize{_signalSize + _patchSize - 1}
+    , _paddedPatch{patch.data(), _patchSize, 0, 2 * pow2Ceil(_patchSize) - _patchSize}
+    , _resultChunksize{_paddedPatch.size()}
+    , _resultChunksizeComplex{_resultChunksize / 2 + 1}
+    , _result_stride{_resultChunksize - _patchSize + 1}
+    , _paddedPatchComplex{_resultChunksizeComplex}
+    , _paddedSignal{
           signal.data(),
-          signalSize_,
-          patchSize_ - 1,
-          resultChunksize_ - (resultSize_ % result_stride_)}
+          _signalSize,
+          _patchSize - 1,
+          _resultChunksize - (_resultSize % _result_stride)}
 {
-    MC_ASSERT(patchSize_ <= signalSize_);
+    MC_ASSERT(_patchSize <= _signalSize);
 
     // chunk the signal into strides of same size as padded patch
     // and make complex counterparts too, as well as the corresponding xcorr signals
-    for (std::size_t i = 0; i <= paddedSignal_.size() - resultChunksize_;
-         i += result_stride_) {
-        inputChunks_.push_back(makeUnique<FloatSignal>(&paddedSignal_[i], resultChunksize_)
+    for (std::size_t i = 0; i <= _paddedSignal.size() - _resultChunksize;
+         i += _result_stride) {
+        _inputChunks.push_back(makeUnique<FloatSignal>(&_paddedSignal[i], _resultChunksize)
         );
-        inputChunksComplex_.push_back(makeUnique<ComplexSignal>(resultChunksizeComplex_));
-        resultChunks_.push_back(makeUnique<FloatSignal>(resultChunksize_));
-        resultChunksComplex_.push_back(makeUnique<ComplexSignal>(resultChunksizeComplex_));
+        _inputChunksComplex.push_back(makeUnique<ComplexSignal>(_resultChunksizeComplex));
+        _resultChunks.push_back(makeUnique<FloatSignal>(_resultChunksize));
+        _resultChunksComplex.push_back(makeUnique<ComplexSignal>(_resultChunksizeComplex));
     }
     // make one forward plan per signal chunk, and one for the patch
     // Also backward plans for the xcorr chunks
-    forwardPlans_.emplace_back(new FftForwardPlan(paddedPatch_, paddedPatchComplex_));
-    for (std::size_t i = 0; i < inputChunks_.size(); i++) {
-        forwardPlans_.emplace_back(
-            new FftForwardPlan(*inputChunks_.at(i), *inputChunksComplex_.at(i))
+    _forwardPlans.emplace_back(new FftForwardPlan(_paddedPatch, _paddedPatchComplex));
+    for (std::size_t i = 0; i < _inputChunks.size(); i++) {
+        _forwardPlans.emplace_back(
+            new FftForwardPlan(*_inputChunks.at(i), *_inputChunksComplex.at(i))
         );
-        backwardPlans_.emplace_back(
-            new FftBackwardPlan(*resultChunksComplex_.at(i), *resultChunks_.at(i))
+        _backwardPlans.emplace_back(
+            new FftBackwardPlan(*_resultChunksComplex.at(i), *_resultChunks.at(i))
         );
     }
 }
@@ -137,13 +137,13 @@ OverlapSaveConvolver::OverlapSaveConvolver(
 auto OverlapSaveConvolver::convolute() -> void
 {
     execute(false);
-    state_ = State::Conv;
+    _state = State::Conv;
 }
 
 auto OverlapSaveConvolver::crossCorrelate() -> void
 {
     execute(true);
-    state_ = State::Xcorr;
+    _state = State::Xcorr;
 }
 
 // This method implements step 6 of the overlap-save algorithm. In convolution, the first
@@ -170,23 +170,23 @@ auto OverlapSaveConvolver::crossCorrelate() -> void
 // needed.
 auto OverlapSaveConvolver::extractResult() -> FloatSignal
 {
-    MC_ASSERT(state_ != State::Uninitialized);
+    MC_ASSERT(_state != State::Uninitialized);
 
-    auto result     = FloatSignal(resultSize_);
+    auto result     = FloatSignal(_resultSize);
     auto* resultArr = result.data();
 
-    auto const numChunks = resultChunks_.size();
+    auto const numChunks = _resultChunks.size();
     auto const offset
-        = state_ == State::Conv ? resultChunksize_ - result_stride_ : std::size_t{0};
+        = _state == State::Conv ? _resultChunksize - _result_stride : std::size_t{0};
     for (auto i = std::size_t{0}; i < numChunks; i++) {
-        auto* xcArr           = resultChunks_.at(i)->data();
-        auto const chunkBegin = i * result_stride_;
+        auto* xcArr           = _resultChunks.at(i)->data();
+        auto const chunkBegin = i * _result_stride;
 
         // if the last chunk goes above resultSize_
         // reduce copy size. else copy_size=result_stride_
-        auto copySize = result_stride_;
-        copySize -= (chunkBegin + result_stride_ > resultSize_)
-                      ? chunkBegin + result_stride_ - resultSize_
+        auto copySize = _result_stride;
+        copySize -= (chunkBegin + _result_stride > _resultSize)
+                      ? chunkBegin + _result_stride - _resultSize
                       : 0;
 
         auto const* first = xcArr + offset;
@@ -201,22 +201,22 @@ auto OverlapSaveConvolver::extractResult() -> FloatSignal
 // Note the parallelization with OpenMP, which increases performance in supporting CPUs.
 auto OverlapSaveConvolver::execute(bool const crossCorrelate) -> void
 {
-    for (auto& forwardPlan : forwardPlans_) { forwardPlan->execute(); }
+    for (auto& forwardPlan : _forwardPlans) { forwardPlan->execute(); }
 
     auto operation = (crossCorrelate) ? spectralCorrelation : spectralConvolution;
-    for (std::size_t i = 0; i < resultChunks_.size(); i++) {
+    for (std::size_t i = 0; i < _resultChunks.size(); i++) {
         operation(
-            *inputChunksComplex_.at(i),
-            this->paddedPatchComplex_,
-            *resultChunksComplex_.at(i)
+            *_inputChunksComplex.at(i),
+            this->_paddedPatchComplex,
+            *_resultChunksComplex.at(i)
         );
     }
 
-    for (std::size_t i = 0; i < resultChunks_.size(); i++) {
-        backwardPlans_.at(i)->execute();
-        auto& chunk = *resultChunks_.at(i);
+    for (std::size_t i = 0; i < _resultChunks.size(); i++) {
+        _backwardPlans.at(i)->execute();
+        auto& chunk = *_resultChunks.at(i);
         ranges::transform(chunk, begin(chunk), [this](auto arg) {
-            return arg / resultChunksize_;
+            return arg / _resultChunksize;
         });
     }
 }

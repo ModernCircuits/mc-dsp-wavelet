@@ -28,47 +28,47 @@ namespace {
 }  // namespace
 
 FFTConvolver::FFTConvolver(std::size_t signalSize, std::size_t patchSize)
-    : signalSize_{signalSize}
-    , patchSize_{patchSize}
-    , totalSize_{findnexte(signalSize + patchSize_ - 1U)}
-    , forwardFFT_{makeUnique<RFFT>(totalSize_, FFTDirection::forward)}
-    , backwardFFT_{makeUnique<RFFT>(totalSize_, FFTDirection::backward)}
+    : _signalSize{signalSize}
+    , _patchSize{patchSize}
+    , _totalSize{findnexte(signalSize + _patchSize - 1U)}
+    , _forwardFFT{makeUnique<RFFT>(_totalSize, FFTDirection::forward)}
+    , _backwardFFT{makeUnique<RFFT>(_totalSize, FFTDirection::backward)}
 {}
 
 auto FFTConvolver::convolute(float const* signal, float const* patch, float* output) const
     -> void
 {
-    std::fill(signalScratch_.get(), std::next(signalScratch_.get(), totalSize_), 0.0F);
-    std::fill(patchScratch_.get(), std::next(patchScratch_.get(), totalSize_), 0.0F);
-    std::fill(tmp_.get(), std::next(tmp_.get(), totalSize_), 0.0F);
+    std::fill(_signalScratch.get(), std::next(_signalScratch.get(), _totalSize), 0.0F);
+    std::fill(_patchScratch.get(), std::next(_patchScratch.get(), _totalSize), 0.0F);
+    std::fill(_tmp.get(), std::next(_tmp.get(), _totalSize), 0.0F);
     std::fill(
-        signalScratchOut_.get(),
-        std::next(signalScratchOut_.get(), totalSize_),
+        _signalScratchOut.get(),
+        std::next(_signalScratchOut.get(), _totalSize),
         Complex<float>{}
     );
     std::fill(
-        patchScratchOut_.get(),
-        std::next(patchScratchOut_.get(), totalSize_),
+        _patchScratchOut.get(),
+        std::next(_patchScratchOut.get(), _totalSize),
         Complex<float>{}
     );
-    std::fill(tmpOut_.get(), std::next(tmpOut_.get(), totalSize_), 0.0F);
+    std::fill(_tmpOut.get(), std::next(_tmpOut.get(), _totalSize), 0.0F);
 
-    for (auto i = std::size_t{0}; i < totalSize_; i++) {
-        if (i < signalSize_) { signalScratch_[i] = signal[i]; }
-        if (i < patchSize_) { patchScratch_[i] = patch[i]; }
+    for (auto i = std::size_t{0}; i < _totalSize; i++) {
+        if (i < _signalSize) { _signalScratch[i] = signal[i]; }
+        if (i < _patchSize) { _patchScratch[i] = patch[i]; }
     }
 
-    forwardFFT_->performRealToComplex(signalScratch_.get(), signalScratchOut_.get());
-    forwardFFT_->performRealToComplex(patchScratch_.get(), patchScratchOut_.get());
+    _forwardFFT->performRealToComplex(_signalScratch.get(), _signalScratchOut.get());
+    _forwardFFT->performRealToComplex(_patchScratch.get(), _patchScratchOut.get());
 
-    for (auto i = std::size_t{0}; i < totalSize_; i++) {
-        tmp_[i] = signalScratchOut_[i] * patchScratchOut_[i];
+    for (auto i = std::size_t{0}; i < _totalSize; i++) {
+        _tmp[i] = _signalScratchOut[i] * _patchScratchOut[i];
     }
 
-    backwardFFT_->performComplexToReal(tmp_.get(), tmpOut_.get());
+    _backwardFFT->performComplexToReal(_tmp.get(), _tmpOut.get());
 
-    auto const ls = signalSize_ + patchSize_ - 1U;
-    for (auto i = std::size_t{0}; i < ls; i++) { output[i] = tmpOut_[i] / totalSize_; }
+    auto const ls = _signalSize + _patchSize - 1U;
+    for (auto i = std::size_t{0}; i < ls; i++) { output[i] = _tmpOut[i] / _totalSize; }
 }
 
 }  // namespace mc::dsp
