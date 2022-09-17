@@ -233,7 +233,7 @@ auto sureshrink(
         } else {
             tv   = mc::sqrt(2.0F * mc::log((float)dwtLen));
             norm = 0.0F;
-            for (auto i = 0; i < dwtLen; ++i) {
+            for (std::size_t i = 0; i < dwtLen; ++i) {
                 norm += (wt.output()[len + i] * wt.output()[len + i] / (sigma * sigma));
             }
             te = (norm - (float)dwtLen) / (float)dwtLen;
@@ -245,18 +245,18 @@ auto sureshrink(
             } else {
                 xSum = 0.0F;
 
-                for (auto i = 0; i < dwtLen; ++i) {
+                for (std::size_t i = 0; i < dwtLen; ++i) {
                     dout[i] = std::abs(wt.output()[len + i] / sigma);
                 }
 
                 std::sort(dout.get(), dout.get() + dwtLen, std::less<float>{});
-                for (auto i = 0; i < dwtLen; ++i) {
+                for (std::size_t i = 0; i < dwtLen; ++i) {
                     dout[i] = (dout[i] * dout[i]);
                     xSum += dout[i];
                     dsum[i] = xSum;
                 }
 
-                for (auto i = 0; i < dwtLen; ++i) {
+                for (std::size_t i = 0; i < dwtLen; ++i) {
                     risk[i] = ((float)dwtLen - 2 * ((float)i + 1) + dsum[i]
                                + dout[i] * ((float)dwtLen - 1 - (float)i))
                             / (float)dwtLen;
@@ -270,11 +270,11 @@ auto sureshrink(
         td = td * sigma;
 
         if (thresh == StringView{"hard"}) {
-            for (auto i = 0; i < dwtLen; ++i) {
+            for (std::size_t i = 0; i < dwtLen; ++i) {
                 if (std::abs(wt.output()[len + i]) < td) { wt.output()[len + i] = 0; }
             }
         } else if (thresh == StringView{"soft"}) {
-            for (auto i = 0; i < dwtLen; ++i) {
+            for (std::size_t i = 0; i < dwtLen; ++i) {
                 if (std::abs(wt.output()[len + i]) < td) {
                     wt.output()[len + i] = 0;
                 } else {
