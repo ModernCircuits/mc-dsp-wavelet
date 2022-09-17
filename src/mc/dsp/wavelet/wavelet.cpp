@@ -1,4 +1,4 @@
-#include "Wavelet.hpp"
+#include "wavelet.hpp"
 
 #include <mc/dsp/convolution/FFTConvolver.hpp>
 #include <mc/dsp/wavelet/family.hpp>
