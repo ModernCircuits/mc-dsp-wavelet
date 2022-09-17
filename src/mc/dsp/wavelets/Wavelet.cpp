@@ -705,25 +705,15 @@ auto Wavelet::hpr() const noexcept -> Span<float>
     return {&_params[size() * 3U], size()};
 }
 
-auto summary(Wavelet const& obj) -> void
+auto summary(Wavelet const& wavelet) -> void
 {
-    auto const n = obj.size();
-    print("\n");
-    print("Wavelet Name: {0} \n\n", obj.name().c_str());
-    print("Wavelet Filters \n");
-    print("lpd: [");
-    for (std::size_t i = 0; i < n - 1; ++i) { print("{},", obj.lpd()[i]); }
-    print("{}", obj.lpd()[n - 1]);
-    print("] \nhpd: [");
-    for (std::size_t i = 0; i < n - 1; ++i) { print("{},", obj.hpd()[i]); }
-    print("{}", obj.hpd()[n - 1]);
-    print("] \nlpr: [");
-    for (std::size_t i = 0; i < n - 1; ++i) { print("{},", obj.lpr()[i]); }
-    print("{}", obj.lpr()[n - 1]);
-    print("] \nhpr: [");
-    for (std::size_t i = 0; i < n - 1; ++i) { print("{},", obj.hpr()[i]); }
-    print("{}", obj.hpr()[n - 1]);
-    print("] \n");
+    print("Wavelet: {0}\n", wavelet.name());
+    print("  Filters length: {0}\n", wavelet.size());
+
+    print("lpd: [{0}]\n", fmt::join(wavelet.lpd(), ", "));
+    print("hpd: [{0}]\n", fmt::join(wavelet.hpd(), ", "));
+    print("lpr: [{0}]\n", fmt::join(wavelet.lpr(), ", "));
+    print("hpr: [{0}]\n", fmt::join(wavelet.hpr(), ", "));
 }
 
 }  // namespace mc::dsp
