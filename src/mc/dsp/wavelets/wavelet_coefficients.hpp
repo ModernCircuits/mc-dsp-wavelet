@@ -11,7 +11,7 @@ struct WaveletCoefficients
 {
     StringView name;
     Span<T const> coefficients;
-    std::size_t length;
+    std::size_t length{};
 };
 
 }  // namespace mc::dsp
