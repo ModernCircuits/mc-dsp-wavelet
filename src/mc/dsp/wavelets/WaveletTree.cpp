@@ -134,17 +134,13 @@ wtreeSym(WaveletTree& wt, float const* inp, int n, float* cA, int lenCA, float* 
 
 auto wtree(WaveletTree& wt, float const* inp) -> void
 {
-    std::size_t iter = 0;
-    int n            = 0;
-    int lp           = 0;
-    int p2           = 0;
-    int k            = 0;
-    int n2           = 0;
-    int np           = 0;
-    int lenCA        = 0;
-    int t            = 0;
-    int t2           = 0;
-    int it1          = 0;
+    std::size_t p2    = 0;
+    std::size_t n2    = 0;
+    std::size_t lenCA = 0;
+    int np            = 0;
+    int t             = 0;
+    int t2            = 0;
+    int it1           = 0;
 
     auto tempLen     = wt.siglength;
     auto j           = wt.J;
@@ -158,8 +154,8 @@ auto wtree(WaveletTree& wt, float const* inp) -> void
 
     if (wt.zpad == 1) { orig[tempLen - 1] = orig[tempLen - 2]; }
 
-    n  = tempLen;
-    lp = wt.wave->lpd().size();
+    auto n  = tempLen;
+    auto lp = wt.wave->lpd().size();
 
     if (wt.extension() == StringView{"per"}) {
         auto i = j;
@@ -175,11 +171,11 @@ auto wtree(WaveletTree& wt, float const* inp) -> void
 
         n2 = wt.outlength;
         p2 = 1;
-        for (iter = 0; iter < j; ++iter) {
+        for (auto iter = 0ULL; iter < j; ++iter) {
             lenCA = wt.length[j - iter];
             n2 -= 2 * p2 * lenCA;
             n = n2;
-            for (k = 0; k < p2; ++k) {
+            for (std::size_t k = 0; k < p2; ++k) {
                 if (iter == 0) {
                     wtreePer(
                         wt,
@@ -222,11 +218,11 @@ auto wtree(WaveletTree& wt, float const* inp) -> void
         n2 = wt.outlength;
         p2 = 1;
 
-        for (iter = 0; iter < j; ++iter) {
+        for (auto iter = 0ULL; iter < j; ++iter) {
             lenCA = wt.length[j - iter];
             n2 -= 2 * p2 * lenCA;
             n = n2;
-            for (k = 0; k < p2; ++k) {
+            for (std::size_t k = 0; k < p2; ++k) {
                 if (iter == 0) {
                     wtreeSym(
                         wt,
@@ -264,7 +260,7 @@ auto wtree(WaveletTree& wt, float const* inp) -> void
     it1 = 0;
     for (std::size_t i = 0; i < j; ++i) {
         t = t2;
-        for (k = 0; k < p2; ++k) {
+        for (std::size_t k = 0; k < p2; ++k) {
             wt.nodeLength_[it1] = t;
             it1++;
             t += wt.length[j - i];
