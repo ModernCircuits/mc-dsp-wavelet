@@ -26,6 +26,8 @@ target_sources(mc-dsp-wavelet
     PRIVATE
         "mc/core/AudioFile.h"
 
+        "mc/dsp/algorithm/signal_extension.cpp"
+
         "mc/dsp/convolution.hpp"
         "mc/dsp/convolution/FFTConvolver.cpp"
         "mc/dsp/convolution/FFTConvolver.hpp"
