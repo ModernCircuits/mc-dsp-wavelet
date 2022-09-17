@@ -7,6 +7,7 @@
 #include <mc/core/fstream.hpp>
 #include <mc/core/iterator.hpp>
 #include <mc/core/limits.hpp>
+#include <mc/core/raise.hpp>
 #include <mc/core/span.hpp>
 #include <mc/core/sstream.hpp>
 #include <mc/core/stdexcept.hpp>
@@ -55,7 +56,7 @@ template<typename T>
 [[nodiscard]] auto readFileToVector(char const* filePath) -> Vector<T>
 {
     auto in = std::ifstream{filePath};
-    if (!in) { throw InvalidArgument{format("cannot open file: %s\n", filePath)}; }
+    if (!in) { raisef<InvalidArgument>("cannot open file: %s\n", filePath); }
 
     auto result = Vector<T>{};
     result.reserve(8096 * 4);

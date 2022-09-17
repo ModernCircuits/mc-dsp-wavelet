@@ -11,6 +11,7 @@
 #include <mc/core/cstring.hpp>
 #include <mc/core/format.hpp>
 #include <mc/core/iterator.hpp>
+#include <mc/core/raise.hpp>
 #include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 
@@ -105,11 +106,12 @@ WaveletTransform::WaveletTransform(
     auto const size = w.size();
 
     if (_levels > 100) {
-        throw InvalidArgument("decomposition Iterations Cannot Exceed 100.");
+        raise<InvalidArgument>("decomposition Iterations Cannot Exceed 100.");
     }
 
     if (_levels > MaxIter) {
-        throw InvalidArgument("signal Can only be iterated maxIter times using this wavelet"
+        raise<InvalidArgument>(
+            "signal Can only be iterated maxIter times using this wavelet"
         );
     }
 
@@ -123,7 +125,8 @@ WaveletTransform::WaveletTransform(
         _ext            = SignalExtension::symmetric;
     } else if ((method == StringView{"swt"}) || (method == StringView{"SWT"})) {
         if (testSWTlength(static_cast<int>(siglength), static_cast<int>(_levels)) == 0) {
-            throw InvalidArgument("For SWT the signal length must be a multiple of 2^levels"
+            raise<InvalidArgument>(
+                "For SWT the signal length must be a multiple of 2^levels"
             );
         }
 
@@ -136,7 +139,7 @@ WaveletTransform::WaveletTransform(
             if (strstr(w.name().c_str(), "db") == nullptr) {
                 if (strstr(w.name().c_str(), "sym") == nullptr) {
                     if (strstr(w.name().c_str(), "coif") == nullptr) {
-                        throw InvalidArgument(
+                        raise<InvalidArgument>(
                             "MODWT is only implemented for orthogonal wavelet families - "
                             "db, sym and coif"
                         );
@@ -220,7 +223,7 @@ auto WaveletTransform::detail(std::size_t level) const -> Span<float>
     */
 
     if (level > static_cast<std::size_t>(levels()) || level < 1U) {
-        throw InvalidArgument("The decomposition only has 1,..,%d levels");
+        raise<InvalidArgument>("The decomposition only has 1,..,%d levels");
     }
 
     auto iter = length[0];
@@ -302,7 +305,7 @@ static auto dwt1(WaveletTransform& wt, float* sig, int lenSig, float* cA, float*
                 = makeUnique<FFTConvolver>(lenSig + lenAvg, wt.wave().lpd().size());
             wt.cfftset = 1;
         } else if (!(wt.wave().lpd().size() == wt.wave().hpd().size())) {
-            throw InvalidArgument("decomposition filters must have the same length.");
+            raise<InvalidArgument>("decomposition filters must have the same length.");
         }
 
         wconv(
@@ -334,7 +337,7 @@ static auto dwt1(WaveletTransform& wt, float* sig, int lenSig, float* cA, float*
             wt.convolver = makeUnique<FFTConvolver>(lenSig + 2 * (lf - 1), lf);
             wt.cfftset   = 1;
         } else if (!(wt.wave().lpd().size() == wt.wave().hpd().size())) {
-            throw InvalidArgument("decomposition filters must have the same length.");
+            raise<InvalidArgument>("decomposition filters must have the same length.");
         }
 
         wconv(
@@ -356,7 +359,7 @@ static auto dwt1(WaveletTransform& wt, float* sig, int lenSig, float* cA, float*
         );
         downsamp(cAUndec.get() + lf, static_cast<std::size_t>(lenSig + lf - 2), 2, cD);
     } else {
-        throw InvalidArgument("Signal extension can be either per or sym");
+        raise<InvalidArgument>("Signal extension can be either per or sym");
     }
 
     if (wt.wave().lpd().size() == wt.wave().hpd().size()
@@ -443,7 +446,7 @@ auto dwt(WaveletTransform& wt, float const* inp) -> void
             }
         }
     } else {
-        throw InvalidArgument("Signal extension can be either per or sym");
+        raise<InvalidArgument>("Signal extension can be either per or sym");
     }
 }
 
@@ -475,7 +478,7 @@ static auto idwt1(
         wt.convolver = makeUnique<FFTConvolver>(n2, lenAvg);
         wt.cfftset   = 1;
     } else if (!(wt.wave().lpr().size() == wt.wave().hpr().size())) {
-        throw InvalidArgument("Decomposition Filters must have the same length");
+        raise<InvalidArgument>("Decomposition Filters must have the same length");
     }
 
     wconv(wt, temp, n2, wt.wave().lpr().data(), lenAvg, xLp);
@@ -634,7 +637,7 @@ auto idwt(WaveletTransform& wt, float* dwtop) -> void
                 wt.convolver = makeUnique<FFTConvolver>(n2, lf);
                 wt.cfftset   = 1;
             } else if (!(wt.wave().lpr().size() == wt.wave().hpr().size())) {
-                throw InvalidArgument("Decomposition Filters must have the same length");
+                raise<InvalidArgument>("Decomposition Filters must have the same length");
             }
 
             wconv(wt, cAUp.get(), n2, wt.wave().lpr().data(), lf, xLp.get());
@@ -650,7 +653,7 @@ auto idwt(WaveletTransform& wt, float* dwtop) -> void
             }
         }
     } else {
-        throw InvalidArgument("Signal extension can be either per or sym");
+        raise<InvalidArgument>("Signal extension can be either per or sym");
     }
 
     std::copy(out.get(), out.get() + wt.signalLength(), dwtop);
@@ -728,7 +731,7 @@ static auto swtFft(WaveletTransform& wt, float const* inp) -> void
             wt.convolver = makeUnique<FFTConvolver>(n + tempLen + (tempLen % 2), n);
             wt.cfftset   = 1;
         } else if (!(wt.wave().lpd().size() == wt.wave().hpd().size())) {
-            throw InvalidArgument("Decomposition Filters must have the same length");
+            raise<InvalidArgument>("Decomposition Filters must have the same length");
         }
 
         wconv(wt, sig.get(), n + tempLen + (tempLen % 2), lowPass.get(), n, cA.get());
@@ -792,7 +795,7 @@ auto swt(WaveletTransform& wt, float const* inp) -> void
     } else if ((wt.method() == StringView{"swt"}) && (wt.convMethod() == ConvolutionMethod::fft)) {
         swtFft(wt, inp);
     } else {
-        throw InvalidArgument("SWT Only accepts two methods - direct and fft");
+        raise<InvalidArgument>("SWT Only accepts two methods - direct and fft");
     }
 }
 
@@ -861,7 +864,7 @@ auto iswt(WaveletTransform& wt, float* swtop) -> void
                 wt.convolver = makeUnique<FFTConvolver>(n1, lf);
                 wt.cfftset   = 1;
             } else if (!(wt.wave().lpd().size() == wt.wave().hpd().size())) {
-                throw InvalidArgument("Decomposition Filters must have the same length");
+                raise<InvalidArgument>("Decomposition Filters must have the same length");
             }
 
             wconv(wt, cL0.get(), n1, wt.wave().lpr().data(), lf, oup00L.get());
@@ -941,7 +944,7 @@ modwtPer(WaveletTransform& wt, int m, float const* inp, float* cA, int lenCA, fl
 static auto modwtDirect(WaveletTransform& wt, float const* inp) -> void
 {
     if (wt.extension() != SignalExtension::periodic) {
-        throw InvalidArgument("MODWT direct method only uses periodic extension per.");
+        raise<InvalidArgument>("MODWT direct method only uses periodic extension per.");
     }
 
     auto tempLen = wt.signalLength();

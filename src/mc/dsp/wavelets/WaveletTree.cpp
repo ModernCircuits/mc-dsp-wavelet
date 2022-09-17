@@ -6,6 +6,7 @@
 #include <mc/core/cmath.hpp>
 #include <mc/core/format.hpp>
 #include <mc/core/iterator.hpp>
+#include <mc/core/raise.hpp>
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
@@ -18,17 +19,14 @@ WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t 
     auto const maxIter = maxIterations(signalLength, size);
 
     if (j > 100) {
-        print("\n The Decomposition Iterations Cannot Exceed 100. Exiting \n");
-        exit(-1);
+        raise<InvalidArgument>("the decomposition iterations cannot exceed 100.");
     }
-    if (j > maxIter) {
 
-        print(
-            "\n Error - The Signal Can only be iterated {0} times using this wavelet. "
-            "Exiting\n",
+    if (j > maxIter) {
+        raisef<InvalidArgument>(
+            "signal can only be iterated {0} times using this wavelet.",
             maxIter
         );
-        exit(-1);
     }
 
     std::size_t temp    = 1;
@@ -250,8 +248,7 @@ auto wtree(WaveletTree& wt, float const* inp) -> void
             np      = n2;
         }
     } else {
-        print("Signal extension can be either per or sym");
-        exit(-1);
+        raise<InvalidArgument>("Signal extension can be either per or sym");
     }
 
     j   = wt.J;
@@ -278,8 +275,7 @@ auto wtree(WaveletTree& wt, float const* inp) -> void
 auto WaveletTree::nodeLength(std::size_t x) -> std::size_t
 {
     if (x <= 0 || x > J) {
-        print("X co-ordinate must be >= 1 and <= {}", J);
-        exit(-1);
+        raisef<InvalidArgument>("X co-ordinate must be >= 1 and <= {}", J);
     }
 
     return length[J - x + 1];
@@ -293,18 +289,14 @@ auto WaveletTree::coeffs(std::size_t x, std::size_t y, float* coeffs, std::size_
     int t2           = 0;
 
     if (x <= 0 || x > J) {
-        print("X co-ordinate must be >= 1 and <= {}", J);
-        exit(-1);
+        raisef<InvalidArgument>("X co-ordinate must be >= 1 and <= {}", J);
     }
     ymax = 1;
     for (std::size_t i = 0; i < x; ++i) { ymax *= 2; }
 
     ymax -= 1;
 
-    if (y > ymax) {
-        print("Y co-ordinate must be >= 0 and <= {}", ymax);
-        exit(-1);
-    }
+    if (y > ymax) { raisef<InvalidArgument>("Y co-ordinate must be >= 0 and <= {}", ymax); }
 
     if (x == 1) {
         t = 0;

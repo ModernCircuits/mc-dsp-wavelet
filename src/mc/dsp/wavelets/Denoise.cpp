@@ -8,6 +8,7 @@
 #include <mc/core/iterator.hpp>
 #include <mc/core/memory.hpp>
 #include <mc/core/numeric.hpp>
+#include <mc/core/raise.hpp>
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
@@ -52,12 +53,10 @@ auto visushrink(
     auto maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0F)) / std::log(2.0F));
 
     if (cmp_greater(j, maxIter)) {
-        print(
-            "\n Error - The Signal Can only be iterated {0} times using this Wavelet. "
-            "Exiting\n",
+        raisef<InvalidArgument>(
+            "the Signal Can only be iterated {0} times using this Wavelet",
             maxIter
         );
-        std::exit(-1);
     }
 
     auto wt = WaveletTransform{wave, method, n, j};
@@ -70,8 +69,7 @@ auto visushrink(
     } else if (method == StringView{"swt"}) {
         swt(wt, signal);
     } else {
-        print("Acceptable WT methods are - dwt,swt and modwt\n");
-        std::exit(-1);
+        raise<InvalidArgument>("acceptable WT methods are - dwt, swt and modwt");
     }
 
     auto lnoise = makeUnique<float[]>(j);
@@ -103,8 +101,9 @@ auto visushrink(
             iter += dlen;
         }
     } else {
-        print("Acceptable Noise estimation level values are - first and all \n");
-        std::exit(-1);
+        raise<InvalidArgument>(
+            "Acceptable Noise estimation level values are - first and all"
+        );
     }
 
     auto dwtLen = wt.outlength;
@@ -170,12 +169,10 @@ auto sureshrink(
     auto maxIter = (int)(std::log((float)n / ((float)filtLen - 1.0F)) / std::log(2.0F));
     // Depends on J
     if (cmp_greater(j, maxIter)) {
-        print(
-            "\n Error - The Signal Can only be iterated {0} times using this Wavelet. "
-            "Exiting\n",
+        raisef<InvalidArgument>(
+            "The Signal Can only be iterated {0} times using this Wavelet",
             maxIter
         );
-        std::exit(-1);
     }
 
     auto wt = WaveletTransform(wave, method, n, j);
@@ -189,8 +186,7 @@ auto sureshrink(
     } else if (method == StringView{"swt"}) {
         swt(wt, signal);
     } else {
-        print("Acceptable WT methods are - dwt and swt\n");
-        std::exit(-1);
+        raise<InvalidArgument>("Acceptable WT methods are - dwt and swt\n");
     }
 
     auto len  = wt.length[0];
@@ -333,8 +329,7 @@ auto modwtshrink(
         wt.convMethod(ConvolutionMethod::fft);
         wt.extension(SignalExtension::symmetric);
     } else if ((ext == StringView{"sym"}) && (cmethod == StringView{"direct"})) {
-        print("Symmetric Extension is not available for direct method");
-        std::exit(-1);
+        raise<InvalidArgument>("Symmetric Extension is not available for direct method");
     } else if ((ext == StringView{"per"}) && (cmethod == StringView{"direct"})) {
         wt.convMethod(ConvolutionMethod::direct);
         wt.extension(SignalExtension::periodic);
@@ -342,8 +337,7 @@ auto modwtshrink(
         wt.convMethod(ConvolutionMethod::fft);
         wt.extension(SignalExtension::periodic);
     } else {
-        print("Signal extension can be either per or sym");
-        std::exit(-1);
+        raise<InvalidArgument>("Signal extension can be either per or sym");
     }
 
     modwt(wt, signal);
@@ -492,8 +486,7 @@ auto setDenoiseWTExtension(DenoiseSet& obj, char const* extension) -> void
     } else if (strcmp(extension, "per") == 0) {
         obj.ext = "per";
     } else {
-        print("Signal extension can be either per or sym");
-        std::exit(-1);
+        raise<InvalidArgument>("Signal extension can be either per or sym");
     }
 }
 

@@ -8,6 +8,7 @@
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstring.hpp>
 #include <mc/core/format.hpp>
+#include <mc/core/raise.hpp>
 #include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
@@ -148,8 +149,10 @@ WaveletTransform2D::WaveletTransform2D(
     auto const maxIter = std::min(maxRows, maxCols);
 
     if (j > maxIter) {
-        throw InvalidArgument{
-            format("signal can only be iterated {0} times using this wavelet", maxIter)};
+        raisef<InvalidArgument>(
+            "signal can only be iterated {0} times using this wavelet",
+            maxIter
+        );
     }
 
     std::size_t sumacc{0};
@@ -158,7 +161,7 @@ WaveletTransform2D::WaveletTransform2D(
     } else if (j > 1U) {
         sumacc = j * 3U + 1U;
     } else {
-        throw InvalidArgument{format("j = {0}, should be >= 1", j)};
+        raisef<InvalidArgument>("j = {0}, should be >= 1", j);
     }
 
     this->params    = makeUnique<int[]>(2U * j + sumacc);
@@ -210,8 +213,7 @@ auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void
         } else if (extension == StringView{"per"}) {
             wt.ext = "per";
         } else {
-            print("Signal extension can be either per or sym");
-            exit(-1);
+            raise<InvalidArgument>("Signal extension can be either per or sym");
         }
     } else if ((wt.method() == StringView{"swt"}) || (wt.method() == "modwt")) {
         if (extension == StringView{"per"}) {

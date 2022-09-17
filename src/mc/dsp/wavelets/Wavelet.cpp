@@ -13,6 +13,7 @@
 #include <mc/core/iterator.hpp>
 #include <mc/core/memory.hpp>
 #include <mc/core/numbers.hpp>
+#include <mc/core/raise.hpp>
 #include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
@@ -49,7 +50,7 @@ auto waveletFilterLength(char const* name) -> int
         for (auto i = 2; i < len + 1; i++) { newStr[i - 2] = name[i]; }
 
         n = atoi(newStr.get());
-        if (n > 38) { throw InvalidArgument("wavelet filter not in database"); }
+        if (n > 38) { raise<InvalidArgument>("wavelet filter not in database"); }
 
         return n * 2;
     }
@@ -88,7 +89,7 @@ auto waveletFilterLength(char const* name) -> int
         for (auto i = 4; i < len + 1; i++) { newStr[i - 4] = name[i]; }
 
         n = atoi(newStr.get());
-        if (n > 17) { throw InvalidArgument("wavelet filter not in database"); }
+        if (n > 17) { raise<InvalidArgument>("wavelet filter not in database"); }
 
         return n * 6;
     }
@@ -97,13 +98,13 @@ auto waveletFilterLength(char const* name) -> int
         for (auto i = 3; i < len + 1; i++) { newStr[i - 3] = name[i]; }
 
         n = atoi(newStr.get());
-        if (n > 20 || n < 2) { throw InvalidArgument("wavelet filter not in database"); }
+        if (n > 20 || n < 2) { raise<InvalidArgument>("wavelet filter not in database"); }
 
         return n * 2;
     }
     if (strcmp(name, "meyer") == 0) { return 102; }
 
-    throw InvalidArgument("wavelet filter not in database");
+    raise<InvalidArgument>("wavelet filter not in database");
 }
 
 auto fillDauberchies(char const* name, float* lp1, float* hp1, float* lp2, float* hp2)
