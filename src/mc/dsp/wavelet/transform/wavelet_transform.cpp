@@ -173,16 +173,16 @@ static auto wconv(
 ) -> void
 {
     if (wt.convMethod() == ConvolutionMethod::direct) {
-        convolute(sig, n, filt, l, oup);
+        convolute<float>({sig, n}, {filt, l}, oup);
         return;
     }
 
     MC_ASSERT(wt.convMethod() == ConvolutionMethod::fft);
     if (wt.cfftset == 0) {
         wt.convolver = makeUnique<FFTConvolver>(n, l);
-        convolute(*wt.convolver, sig, filt, oup);
+        convolute(*wt.convolver, {sig, n}, {filt, l}, oup);
     } else {
-        convolute(*wt.convolver, sig, filt, oup);
+        convolute(*wt.convolver, {sig, n}, {filt, l}, oup);
     }
 }
 

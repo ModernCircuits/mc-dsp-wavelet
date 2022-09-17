@@ -13,7 +13,8 @@ struct FFTConvolver
 
     FFTConvolver(std::size_t signalSize, std::size_t patchSize);
 
-    auto convolute(float const* signal, float const* patch, float* output) -> void;
+    auto convolute(Span<float const> signal, Span<float const> patch, float* output)
+        -> void;
 
 private:
     std::size_t _signalSize;

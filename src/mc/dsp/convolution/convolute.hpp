@@ -2,13 +2,14 @@
 
 #include <mc/core/algorithm.hpp>
 #include <mc/core/cstddef.hpp>
+#include <mc/core/span.hpp>
 
 namespace mc::dsp {
 template<typename Convolver>
 auto convolute(
     Convolver& c,
-    typename Convolver::value_type const* s,
-    typename Convolver::value_type const* p,
+    Span<typename Convolver::value_type const> s,
+    Span<typename Convolver::value_type const> p,
     typename Convolver::value_type* out
 ) -> decltype(c.convolute(s, p, out))
 {
@@ -16,14 +17,10 @@ auto convolute(
 }
 
 template<typename T>
-auto convolute(
-    T const* signal,
-    std::size_t n,
-    T const* patch,
-    std::size_t l,
-    T* output
-) noexcept -> void
+auto convolute(Span<T const> signal, Span<T const> patch, T* output) noexcept -> void
 {
+    std::size_t n = signal.size();
+    std::size_t l = patch.size();
     auto const mm = n + l - 1;
 
     if (n >= l) {

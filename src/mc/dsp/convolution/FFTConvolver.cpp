@@ -24,7 +24,11 @@ FFTConvolver::FFTConvolver(std::size_t signalSize, std::size_t patchSize)
     _tmpOut.resize(_totalSize);
 }
 
-auto FFTConvolver::convolute(float const* signal, float const* patch, float* output) -> void
+auto FFTConvolver::convolute(
+    Span<float const> signal,
+    Span<float const> patch,
+    float* output
+) -> void
 {
     ranges::fill(_signalScratch, 0.0F);
     ranges::fill(_patchScratch, 0.0F);
