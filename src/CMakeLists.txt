@@ -43,8 +43,8 @@ target_sources(mc-dsp-wavelet
         "mc/dsp/fft/WindowFunction.cpp"
 
         "mc/dsp/wavelet.hpp"
-        "mc/dsp/wavelet/Wavelet.cpp"
-        "mc/dsp/wavelet/Wavelet.hpp"
+        "mc/dsp/wavelet/wavelet.cpp"
+        "mc/dsp/wavelet/wavelet.hpp"
 
         "mc/dsp/wavelet/filters/coif.hpp"
         "mc/dsp/wavelet/filters/daubechies.hpp"
