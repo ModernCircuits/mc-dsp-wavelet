@@ -38,7 +38,7 @@ static auto qmfWrev(Span<T const> in, T* out)
     ranges::reverse(Span<T>{out, in.size()});
 }
 
-static auto filterLength(char const* name) -> std::size_t
+static auto filterLength(StringView name) -> std::size_t
 {
     auto const& filters = allWavelets<float>;
     auto const filter   = ranges::find(filters, name, &WaveletCoefficients<float>::name);
@@ -49,7 +49,7 @@ static auto filterLength(char const* name) -> std::size_t
 }
 
 static auto fillDaubechiesWaveletCoefficients(
-    char const* name,
+    StringView name,
     Span<float> lp1,
     Span<float> hp1,
     Span<float> lp2,
@@ -59,7 +59,7 @@ static auto fillDaubechiesWaveletCoefficients(
     using namespace std::string_view_literals;
 
     if (name == "haar"sv) {
-        return fillDaubechiesWaveletCoefficients("db1", lp1, hp1, lp2, hp2);
+        return fillDaubechiesWaveletCoefficients("db1"sv, lp1, hp1, lp2, hp2);
     }
 
     auto const& filters = allWavelets<float>;
@@ -78,7 +78,7 @@ static auto fillDaubechiesWaveletCoefficients(
 }
 
 static auto fillCoifWaveletCoefficients(
-    char const* name,
+    StringView name,
     Span<float> lp1,
     Span<float> hp1,
     Span<float> lp2,
@@ -103,7 +103,7 @@ static auto fillCoifWaveletCoefficients(
 }
 
 static auto fillWaveletFilterCoefficients(
-    char const* name,
+    StringView name,
     Span<float> lp1,
     Span<float> hp1,
     Span<float> lp2,
@@ -127,28 +127,37 @@ static auto fillWaveletFilterCoefficients(
     return -1;
 }
 
-Wavelet::Wavelet(char const* name)
+Wavelet::Wavelet(StringView name)
     : _name{name}
     , _size{static_cast<std::size_t>(filterLength(name))}
-    , _params{makeUnique<float[]>(4 * _size)}
+    , _params(_size * 4U)
 {
-    fillWaveletFilterCoefficients(name, lpd(), hpd(), lpr(), hpr());
+    // We can't use the member functions to access the coefficients,
+    // because they return a const Span.
+    auto lp1 = Span<float>{&_params[0], size()};
+    auto hp1 = Span<float>{&_params[size() * 1U], size()};
+    auto lp2 = Span<float>{&_params[size() * 2U], size()};
+    auto hp2 = Span<float>{&_params[size() * 3U], size()};
+    fillWaveletFilterCoefficients(name, lp1, hp1, lp2, hp2);
 }
 
 auto Wavelet::size() const noexcept -> std::size_t { return _size; }
 
 auto Wavelet::name() const noexcept -> String const& { return _name; }
 
-auto Wavelet::lpd() const noexcept -> Span<float> { return {&_params[0], size()}; }
+auto Wavelet::lpd() const noexcept -> Span<float const> { return {&_params[0], size()}; }
 
-auto Wavelet::hpd() const noexcept -> Span<float> { return {&_params[size()], size()}; }
+auto Wavelet::hpd() const noexcept -> Span<float const>
+{
+    return {&_params[size()], size()};
+}
 
-auto Wavelet::lpr() const noexcept -> Span<float>
+auto Wavelet::lpr() const noexcept -> Span<float const>
 {
     return {&_params[size() * 2U], size()};
 }
 
-auto Wavelet::hpr() const noexcept -> Span<float>
+auto Wavelet::hpr() const noexcept -> Span<float const>
 {
     return {&_params[size() * 3U], size()};
 }
