@@ -1,5 +1,7 @@
 #include <mc/core/config.hpp>
 
+#include <mc/dsp/algorithm/median.hpp>
+#include <mc/dsp/algorithm/mode.hpp>
 #include <mc/dsp/wavelet/widget/tempo_detect.hpp>
 
 #include <mc/audio/audio_file.hpp>
@@ -12,36 +14,6 @@
 #include <mc/core/utility.hpp>
 
 #include <catch2/catch_test_macros.hpp>
-
-[[maybe_unused]] static auto median(mc::Span<float> data) -> float
-{
-    if (mc::empty(data)) { return 0.0; }
-
-    ranges::sort(data);
-    auto const size = mc::size(data);
-    auto const mid  = size / 2;
-    return size % 2 == 0 ? (data[mid] + data[mid - 1]) / 2 : data[mid];
-}
-
-[[maybe_unused]] static auto mode(mc::Span<float const> arr) -> float
-{
-    auto const n   = arr.size();
-    float count    = 1;
-    float countmax = 0;
-    float current  = arr[0];
-    float moda     = 0;
-    for (std::size_t i = 1; i < n; i++) {
-        if (arr[i] == current) {
-            count++;
-        } else if (count > countmax) {
-            countmax = count;
-            count    = 1;
-            moda     = arr[i - 1];
-        }
-        current = arr[i];
-    }
-    return moda;
-}
 
 TEST_CASE("dsp/wavelet: TempoDetect", "[dsp][wavelet]")
 {
@@ -73,6 +45,7 @@ TEST_CASE("dsp/wavelet: TempoDetect", "[dsp][wavelet]")
     auto outOfRange = [](auto b) { return b < 100.0 || b > 200.0; };
     bpms.erase(ranges::remove_if(bpms, outOfRange), end(bpms));
 
-    REQUIRE(std::round(median(bpms)) == 120.0);
+    ranges::sort(bpms);
+    REQUIRE(std::round(mc::dsp::median<float>(bpms)) == 120.0F);
     // REQUIRE(std::round(mode(bpms)) == 120.0);
 }
