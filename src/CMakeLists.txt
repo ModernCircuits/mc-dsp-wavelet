@@ -24,7 +24,7 @@ target_link_libraries(mc-dsp-wavelet
 
 target_sources(mc-dsp-wavelet
     PRIVATE
-        "mc/core/AudioFile.h"
+        "mc/audio/audio_file.hpp"
 
         "mc/dsp/algorithm/abs_max.hpp"
         "mc/dsp/algorithm/abs_max.cpp"

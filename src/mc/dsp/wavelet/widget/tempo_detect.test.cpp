@@ -2,8 +2,8 @@
 
 #include <mc/dsp/wavelet/widget/tempo_detect.hpp>
 
+#include <mc/audio/audio_file.hpp>
 #include <mc/core/algorithm.hpp>
-#include <mc/core/AudioFile.h>
 #include <mc/core/cmath.hpp>
 #include <mc/core/format.hpp>
 #include <mc/core/iterator.hpp>

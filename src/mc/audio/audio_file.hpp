@@ -717,17 +717,16 @@ _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wconversion\""
                     T sample = sixteenBitIntToSample(sampleAsInt);
                     samples[channel].push_back(sample);
                 } else if (_bitDepth == 24) {
-                    int32_t sampleAsInt = 0;
-                    sampleAsInt         = (fileData[sampleIndex] << 16)
-                                | (fileData[sampleIndex + 1] << 8)
-                                | fileData[sampleIndex + 2];
+                    int32_t sampleAsInt = (fileData[sampleIndex] << 16)
+                                        | (fileData[sampleIndex + 1] << 8)
+                                        | fileData[sampleIndex + 2];
 
-                    if ((sampleAsInt & 0x800000)
-                        != 0) {  // if the 24th bit is set, this is a
-                                 // negative number in 24-bit world
-                        sampleAsInt
-                            = sampleAsInt | ~0xFFFFFF;  // so make sure sign is extended to
-                                                        // the 32 bit float
+                    if ((sampleAsInt & 0x800000) != 0) {
+                        // if the 24th bit is set, this is a
+                        // negative number in 24-bit world
+                        // so make sure sign is extended to
+                        // the 32 bit float
+                        sampleAsInt = sampleAsInt | ~0xFFFFFF;
                     }
 
                     T sample = (T)sampleAsInt / (T)8388608.;
