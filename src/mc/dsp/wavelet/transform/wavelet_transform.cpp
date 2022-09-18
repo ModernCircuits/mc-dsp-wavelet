@@ -1,6 +1,8 @@
 #include "wavelet_transform.hpp"
 
-#include <mc/dsp/algorithm/resample.hpp>
+#include <mc/dsp/algorithm/down_sample.hpp>
+#include <mc/dsp/algorithm/up_sample.hpp>
+#include <mc/dsp/algorithm/up_sample_even.hpp>
 #include <mc/dsp/convolution/convolute.hpp>
 #include <mc/dsp/convolution/FFTConvolver.hpp>
 #include <mc/dsp/fft/FFT.hpp>
