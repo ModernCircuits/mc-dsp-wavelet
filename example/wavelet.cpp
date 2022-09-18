@@ -7,8 +7,8 @@ using namespace mc;
 
 auto main() -> int
 {
-    print("{0}\n", summary(dsp::Wavelet{"db1"}));
-    print("{0}\n", summary(dsp::Wavelet{"db2"}));
-    print("{0}\n", summary(dsp::Wavelet{"db3"}));
+    print("{0}\n", dsp::Wavelet{"db1"});
+    print("{0}\n", dsp::Wavelet{"db2"});
+    print("{0}\n", dsp::Wavelet{"db3"});
     return EXIT_SUCCESS;
 }

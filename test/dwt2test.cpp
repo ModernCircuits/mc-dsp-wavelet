@@ -44,7 +44,7 @@ auto main() -> int
 
     for (std::size_t i = 0; i < rows * cols; ++i) { diff[i] = oup[i] - inp[i]; }
 
-    print("{0}\n", summary(wt));
+    print("{0}\n", wt);
     print("Abs Max {} \n", dsp::absmax(diff.get(), rows * cols));
 
     return EXIT_SUCCESS;

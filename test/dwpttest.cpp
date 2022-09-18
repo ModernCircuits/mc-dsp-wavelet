@@ -32,7 +32,7 @@ auto main() -> int
 
     for (std::size_t i = 0; i < n; ++i) { diff[i] = (inp[i] - oup[i]) / inp[i]; }
 
-    print("{0}\n", summary(wt));
+    print("{0}\n", wt);
 
     // If Reconstruction succeeded then the output should be a small value.
     print("\n MAX {} \n", dsp::absmax(diff.get(), wt.signalLength()));

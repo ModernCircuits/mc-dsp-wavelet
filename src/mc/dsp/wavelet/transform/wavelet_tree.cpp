@@ -4,7 +4,6 @@
 
 #include <mc/core/cassert.hpp>
 #include <mc/core/cmath.hpp>
-#include <mc/core/format.hpp>
 #include <mc/core/iterator.hpp>
 #include <mc/core/raise.hpp>
 #include <mc/core/string_view.hpp>
@@ -322,49 +321,4 @@ auto WaveletTree::extension(char const* newExtension) noexcept -> void
 
 auto WaveletTree::extension() const noexcept -> String const& { return _ext; }
 
-auto summary(WaveletTree const& wt) -> String
-{
-
-    auto const j = wt.J;
-    auto s       = summary(*wt.wave);
-    fmt::format_to(std::back_inserter(s), "\n");
-    fmt::format_to(std::back_inserter(s), "Wavelet Transform : {} \n\n", wt.method.c_str());
-    fmt::format_to(
-        std::back_inserter(s),
-        "Signal Extension : {} \n\n",
-        wt.extension().c_str()
-    );
-    fmt::format_to(std::back_inserter(s), "Number of Decomposition Levels {} \n\n", j);
-    fmt::format_to(std::back_inserter(s), "Length of Input Signal {} \n\n", wt.siglength);
-    fmt::format_to(
-        std::back_inserter(s),
-        "Length of WT Output Vector {} \n\n",
-        wt.outlength
-    );
-    fmt::format_to(
-        std::back_inserter(s),
-        "Wavelet Coefficients are contained in vector : {} \n\n",
-        "output"
-    );
-    fmt::format_to(std::back_inserter(s), "Coefficients Access \n");
-    auto t  = 0;
-    auto p2 = 2;
-    for (auto i = 0; cmp_less(i, j); ++i) {
-        for (auto k = 0; k < p2; ++k) {
-            fmt::format_to(
-                std::back_inserter(s),
-                "Node {} {} Access : output[{}] Length : {} \n",
-                i + 1,
-                k,
-                wt.nodeLength_[t],
-                wt.length[j - i]
-            );
-            t++;
-        }
-        p2 *= 2;
-    }
-    fmt::format_to(std::back_inserter(s), "\n");
-
-    return s;
-}
 }  // namespace mc::dsp

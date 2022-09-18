@@ -158,17 +158,4 @@ auto Wavelet::hpr() const noexcept -> Span<float const>
     return {&_params[size() * 3U], size()};
 }
 
-auto summary(Wavelet const& wavelet) -> String
-{
-    auto s = String{};
-    fmt::format_to(std::back_inserter(s), "Wavelet: {0}\n", wavelet.name());
-    fmt::format_to(std::back_inserter(s), "  Filters length: {0}\n", wavelet.size());
-
-    fmt::format_to(std::back_inserter(s), "lpd: [{0}]\n", fmt::join(wavelet.lpd(), ", "));
-    fmt::format_to(std::back_inserter(s), "hpd: [{0}]\n", fmt::join(wavelet.hpd(), ", "));
-    fmt::format_to(std::back_inserter(s), "lpr: [{0}]\n", fmt::join(wavelet.lpr(), ", "));
-    fmt::format_to(std::back_inserter(s), "hpr: [{0}]\n", fmt::join(wavelet.hpr(), ", "));
-    return s;
-}
-
 }  // namespace mc::dsp

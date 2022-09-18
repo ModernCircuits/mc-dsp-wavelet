@@ -2,6 +2,7 @@
 
 #include <mc/core/config.hpp>
 
+#include <mc/core/format.hpp>
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 #include <mc/core/string_view.hpp>
@@ -26,6 +27,20 @@ private:
     Vector<float> _params;
 };
 
-[[nodiscard]] auto summary(Wavelet const& wavelet) -> String;
-
 }  // namespace mc::dsp
+
+template<>
+struct fmt::formatter<mc::dsp::Wavelet> : formatter<string_view>
+{
+    template<typename FormatContext>
+    auto format(mc::dsp::Wavelet const& wavelet, FormatContext& ctx) const
+    {
+        fmt::format_to(ctx.out(), "Wavelet: {0}\n", wavelet.name());
+        fmt::format_to(ctx.out(), "  Filters length: {0}\n", wavelet.size());
+
+        fmt::format_to(ctx.out(), "lpd: [{0}]\n", fmt::join(wavelet.lpd(), ", "));
+        fmt::format_to(ctx.out(), "hpd: [{0}]\n", fmt::join(wavelet.hpd(), ", "));
+        fmt::format_to(ctx.out(), "lpr: [{0}]\n", fmt::join(wavelet.lpr(), ", "));
+        return fmt::format_to(ctx.out(), "hpr: [{0}]\n", fmt::join(wavelet.hpr(), ", "));
+    }
+};

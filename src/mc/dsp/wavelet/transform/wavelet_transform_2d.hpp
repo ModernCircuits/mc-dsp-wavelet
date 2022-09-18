@@ -5,6 +5,7 @@
 #include <mc/dsp/convolution/FFTConvolver.hpp>
 #include <mc/dsp/wavelet/wavelet.hpp>
 
+#include <mc/core/format.hpp>
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 
@@ -63,5 +64,86 @@ auto getWT2Coeffs(
 auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void;
 auto dispWT2Coeffs(float* a, int row, int col) -> void;
 
-[[nodiscard]] auto summary(WaveletTransform2D const& wt) -> String;
 }  // namespace mc::dsp
+
+template<>
+struct fmt::formatter<mc::dsp::WaveletTransform2D> : formatter<string_view>
+{
+    template<typename FormatContext>
+    auto format(mc::dsp::WaveletTransform2D const& wt, FormatContext& ctx) const
+    {
+        fmt::format_to(ctx.out(), "{}\n", wt.wave());
+        fmt::format_to(ctx.out(), "Wavelet Transform : {} \n\n", wt.method().c_str());
+        fmt::format_to(ctx.out(), "Signal Extension : {} \n\n", wt.ext.c_str());
+        fmt::format_to(ctx.out(), "Number of Decomposition Levels {} \n\n", wt.J);
+        fmt::format_to(ctx.out(), "Input Signal Rows {} \n\n", wt.rows());
+        fmt::format_to(ctx.out(), "Input Signal Cols {} \n\n", wt.cols());
+        fmt::format_to(ctx.out(), "Length of Coefficients Vector {} \n\n", wt.outlength);
+
+        auto j = wt.J;
+        auto t = 0;
+        for (auto i = j; i > 0; --i) {
+            auto rows  = wt.dimensions[2 * (j - i)];
+            auto cols  = wt.dimensions[2 * (j - i) + 1];
+            auto vsize = rows * cols;
+            fmt::format_to(
+                ctx.out(),
+                "Level {} Decomposition Rows :{} Columns:{} Vector Size (Rows*Cols):{} \n",
+                i,
+                rows,
+                cols,
+                vsize
+            );
+            fmt::format_to(
+                ctx.out(),
+                "Access Row values stored at wt.dimensions[{}]\n",
+                2 * (j - i)
+            );
+            fmt::format_to(
+                ctx.out(),
+                "Access Column values stored at wt.dimensions[{}]\n\n",
+                2 * (j - i) + 1
+            );
+
+            if (i == j) {
+                fmt::format_to(
+                    ctx.out(),
+                    "Approximation Coefficients access at wt.coeffaccess[{}]={}, Vector "
+                    "size:{} \n",
+                    t,
+                    wt.coeffaccess[t],
+                    vsize
+                );
+            }
+
+            t += 1;
+            fmt::format_to(
+                ctx.out(),
+                "Horizontal Coefficients access at wt.coeffaccess[{}]={}, Vector size:{} "
+                "\n",
+                t,
+                wt.coeffaccess[t],
+                vsize
+            );
+            t += 1;
+            fmt::format_to(
+                ctx.out(),
+                "Vertical Coefficients access at wt.coeffaccess[{}]={}, Vector size:{} \n",
+                t,
+                wt.coeffaccess[t],
+                vsize
+            );
+            t += 1;
+            fmt::format_to(
+                ctx.out(),
+                "Diagonal Coefficients access at wt.coeffaccess[{}]={}, Vector size:{} "
+                "\n\n",
+                t,
+                wt.coeffaccess[t],
+                vsize
+            );
+        }
+
+        return fmt::format_to(ctx.out(), "\n");
+    }
+};
