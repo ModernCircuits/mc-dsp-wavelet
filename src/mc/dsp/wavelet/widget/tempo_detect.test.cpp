@@ -21,8 +21,7 @@ TEST_CASE("dsp/wavelet: TempoDetect", "[dsp][wavelet]")
     audioFile.load("./test_data/wav/Drums.wav");
 
     auto const fs = static_cast<float>(audioFile.getSampleRate());
-    auto channel
-        = mc::Span<float>(audioFile.samples[0].data(), audioFile.samples[0].size());
+    auto channel  = mc::Span<float>(audioFile.samples[0]);
 
     auto const windowSize     = static_cast<std::size_t>(std::floor(3.0 * fs));
     auto const maxWindowIndex = mc::size(channel) / windowSize;
