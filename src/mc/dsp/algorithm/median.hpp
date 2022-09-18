@@ -13,7 +13,7 @@ template<typename T>
 {
     if (data.empty()) { return T{}; }
 
-    MC_ASSERT(ranges::is_sorted(v));
+    MC_ASSERT(ranges::is_sorted(data));
 
     auto const size = data.size();
     auto const mid  = size / 2U;
