@@ -32,16 +32,16 @@ void BM_FFTW(benchmark::State& state)
 {
     auto size  = static_cast<size_t>(state.range(0));
     auto in    = Vector<float>(size);
-    auto out   = Vector<fftwf_complex>(size);
+    auto out   = Vector<Complex<float>>(size);
     auto flags = FFTW_UNALIGNED | FFTW_ESTIMATE;
 
-    auto fft = fftwf_plan_dft_r2c_1d((int)size, data(in), data(out), flags);
+    auto fft = fftwf_plan_dft_r2c_1d((int)size, data(in), (fftwf_complex*)data(out), flags);
 
     in  = generateRandomTestData(size);
-    out = Vector<fftwf_complex>(size);
+    out = Vector<Complex<float>>(size);
 
     while (state.KeepRunning()) {
-        fftwf_execute_dft_r2c(fft, data(in), data(out));
+        fftwf_execute_dft_r2c(fft, data(in), (fftwf_complex*)data(out));
         benchmark::DoNotOptimize(out.front());
         benchmark::DoNotOptimize(out.back());
     }
