@@ -4,11 +4,22 @@
 [![macOS](https://github.com/ModernCircuits/mc_dsp_wavelet/actions/workflows/test_macos.yml/badge.svg)](https://github.com/ModernCircuits/mc_dsp_wavelet/actions/workflows/test_macos.yml)
 [![Windows](https://github.com/ModernCircuits/mc_dsp_wavelet/actions/workflows/test_windows.yml/badge.svg)](https://github.com/ModernCircuits/mc_dsp_wavelet/actions/workflows/test_windows.yml)
 [![Linux](https://github.com/ModernCircuits/mc_dsp_wavelet/actions/workflows/test_linux.yml/badge.svg)](https://github.com/ModernCircuits/mc_dsp_wavelet/actions/workflows/test_linux.yml)
-
 [![Coverage](https://github.com/ModernCircuits/mc-dsp-wavelet/actions/workflows/coverage.yml/badge.svg)](https://github.com/ModernCircuits/mc-dsp-wavelet/actions/workflows/coverage.yml)
 [![codecov](https://codecov.io/gh/ModernCircuits/mc-dsp-wavelet/branch/main/graph/badge.svg?token=W0HVYWTSKV)](https://codecov.io/gh/ModernCircuits/mc-dsp-wavelet)
 
 ## Resources
+
+### FFT
+
+- [Lifting a butterfly – A component-based FFT](https://downloads.hindawi.com/journals/sp/2003/918501.pdf)
+- [SIMPLE FAST FOURIER TRANSFORM ALGORITHMS IN C](http://www.guitarscience.net/papers/fftalg.pdf)
+- [Algorithms of Scientific Computing: Fast Fourier Transform (FFT) v1](https://www5.in.tum.de/lehre/vorlesungen/asc/ss13/fft.pdf)
+- [Algorithms of Scientific Computing: Fast Fourier Transform (FFT) v2](https://www5.in.tum.de/lehre/vorlesungen/asc/ss16/fft.pdf)
+- [Algorithms of Scientific Computing: FFT on Real Data](https://www5.in.tum.de/lehre/vorlesungen/asc/ss18/rdft.pdf)
+- [The Quarter-Wave DFT and the (Quarter-Wave) Discrete Cosine Transform (QW-DCT)](https://nanopdf.com/download/algorithms-of-scientific-computing-the-quarter_pdf)
+- [FPGA FFT](https://web.mit.edu/6.111/www/f2017/handouts/FFTtutorial121102.pdf)
+
+### Wavelet
 
 |                                  Link                                  |                                License                                 |
 | :--------------------------------------------------------------------: | :--------------------------------------------------------------------: |
