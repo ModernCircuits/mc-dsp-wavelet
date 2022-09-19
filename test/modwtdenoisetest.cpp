@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: BSL-1.0
+
 #include <mc/dsp/algorithm.hpp>
 #include <mc/dsp/wavelet/widget/denoise.hpp>
 

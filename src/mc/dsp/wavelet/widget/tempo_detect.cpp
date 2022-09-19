@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: BSL-1.0
+
 #include "tempo_detect.hpp"
 
 #include <mc/dsp/algorithm.hpp>

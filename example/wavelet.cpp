@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: BSL-1.0
+
 #include <mc/dsp/wavelet.hpp>
 
 #include <mc/core/cstdlib.hpp>

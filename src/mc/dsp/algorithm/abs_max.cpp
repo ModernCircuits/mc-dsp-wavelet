@@ -1,4 +1,3 @@
-#pragma once
 
 #include <mc/core/algorithm.hpp>
 #include <mc/core/cassert.hpp>

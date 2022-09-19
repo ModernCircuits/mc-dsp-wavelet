@@ -1,4 +1,4 @@
-#pragma once
+#include "rms_error.hpp"
 
 #include <mc/core/cmath.hpp>
 #include <mc/core/numeric.hpp>

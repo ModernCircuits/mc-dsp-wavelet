@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: BSL-1.0
+
 #include "wavelet_transform_2d.hpp"
 
 #include <mc/dsp/convolution/FFTConvolver.hpp>

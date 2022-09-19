@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: BSL-1.0
+
 #include <mc/dsp/fft.hpp>
 
 #include <mc/core/format.hpp>

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: BSL-1.0
+
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/random.hpp>

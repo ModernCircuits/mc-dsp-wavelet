@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: BSL-1.0
+
 #include <mc/core/config.hpp>
 
 #include <mc/dsp/algorithm/median.hpp>

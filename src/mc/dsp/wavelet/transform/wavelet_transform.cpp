@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: BSL-1.0
+
 #include "wavelet_transform.hpp"
 
 #include <mc/dsp/algorithm/down_sample.hpp>

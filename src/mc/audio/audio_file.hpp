@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 /** @file AudioFile.h
  *  @author Adam Stark
  *  @copyright Copyright (C) 2017  Adam Stark
