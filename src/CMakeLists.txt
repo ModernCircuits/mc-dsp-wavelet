@@ -105,7 +105,7 @@ target_sources(mc-fft_tests
         "mc/dsp/convolution/convolute.test.cpp"
         "mc/dsp/convolution/OverlapSaveConvolver.test.cpp"
 
-        "mc/dsp/fft/FFT.test.cpp"
+        "mc/dsp/fft/rfft.test.cpp"
         "mc/dsp/fft/Window.test.cpp"
 )
 

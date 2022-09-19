@@ -24,7 +24,7 @@ RFFT::RFFT(int n, FFTDirection direction)
     }
 }
 
-auto RFFT::performRealToComplex(float const* inp, Complex<float>* oup) -> void
+auto RFFT::rfft(float const* inp, Complex<float>* oup) -> void
 {
     auto const n2 = _cobj->size();
     auto cinp     = makeUnique<Complex<float>[]>(n2);
@@ -65,7 +65,7 @@ auto RFFT::performRealToComplex(float const* inp, Complex<float>* oup) -> void
     }
 }
 
-auto RFFT::performComplexToReal(Complex<float> const* inp, float* oup) -> void
+auto RFFT::irfft(Complex<float> const* inp, float* oup) -> void
 {
     auto const n = static_cast<std::size_t>(_cobj->size());
     auto cinp    = makeUnique<Complex<float>[]>(n);

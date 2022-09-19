@@ -19,9 +19,9 @@ static auto BM_RFFT(benchmark::State& state) -> void
     auto out         = Vector<Complex<float>>(size);
     auto const input = generateRandomTestData(size);
 
-    auto fft = mc::dsp::RFFT{(int)size, mc::dsp::FFTDirection::forward};
+    auto engine = mc::dsp::RFFT{(int)size, mc::dsp::FFTDirection::forward};
     while (state.KeepRunning()) {
-        fft.performRealToComplex(data(input), data(out));
+        rfft(engine, data(input), data(out));
         benchmark::DoNotOptimize(out.front());
         benchmark::DoNotOptimize(out.back());
     }
@@ -35,11 +35,11 @@ static auto BM_PFFFT(benchmark::State& state) -> void
     auto out         = Vector<Complex<float>>(size);
     auto const input = generateRandomTestData(size);
 
-    auto fft = pffft_new_setup(static_cast<int>(size), PFFFT_REAL);
+    auto engine = pffft_new_setup(static_cast<int>(size), PFFFT_REAL);
 
     while (state.KeepRunning()) {
         pffft_transform_ordered(
-            fft,
+            engine,
             data(input),
             (float*)data(out),
             nullptr,
@@ -54,23 +54,24 @@ BENCHMARK(BM_PFFFT)->Arg(128)->Arg(256)->Arg(512)->Arg(8192 * 4);
 
 static auto BM_FFTW(benchmark::State& state) -> void
 {
-    auto size  = static_cast<size_t>(state.range(0));
-    auto in    = Vector<float>(size);
-    auto out   = Vector<Complex<float>>(size);
-    auto flags = FFTW_UNALIGNED | FFTW_ESTIMATE;
+    auto size    = static_cast<size_t>(state.range(0));
+    auto in      = Vector<float>(size);
+    auto out     = Vector<Complex<float>>(size);
+    auto* output = (fftwf_complex*)data(out);
+    auto flags   = FFTW_UNALIGNED | FFTW_ESTIMATE;
 
-    auto fft = fftwf_plan_dft_r2c_1d((int)size, data(in), (fftwf_complex*)data(out), flags);
+    auto engine = fftwf_plan_dft_r2c_1d((int)size, data(in), output, flags);
 
     in  = generateRandomTestData(size);
     out = Vector<Complex<float>>(size);
 
     while (state.KeepRunning()) {
-        fftwf_execute_dft_r2c(fft, data(in), (fftwf_complex*)data(out));
+        fftwf_execute_dft_r2c(engine, data(in), output);
         benchmark::DoNotOptimize(out.front());
         benchmark::DoNotOptimize(out.back());
     }
 
-    fftwf_destroy_plan(fft);
+    fftwf_destroy_plan(engine);
 }
 
 BENCHMARK(BM_FFTW)->Arg(128)->Arg(256)->Arg(512)->Arg(8192 * 4);

@@ -27,7 +27,7 @@ auto readFFTRealToComplexTestData(char const* path) -> FFTRealToComplexTestCase
     return result;
 }
 
-TEST_CASE("dsp/fft: realToComplex", "[dsp][fft]")
+TEST_CASE("dsp/fft: rfft", "[dsp][fft]")
 {
 
     auto const testFiles = Vector<char const*>{
@@ -46,9 +46,10 @@ TEST_CASE("dsp/fft: realToComplex", "[dsp][fft]")
 
         auto fft = dsp::RFFT{
             static_cast<int>(testCase.input.size()),
-            dsp::FFTDirection::forward};
+            dsp::FFTDirection::forward,
+        };
         auto output = Vector<Complex<float>>(testCase.expected.size());
-        fft.performRealToComplex(data(testCase.input), data(output));
+        rfft(fft, data(testCase.input), data(output));
         REQUIRE(ranges::equal(output, testCase.expected, closeEnough));
     }
 }

@@ -45,12 +45,12 @@ auto FFTConvolver::convolute(
         if (i < _patchSize) { _patchScratch[i] = patch[i]; }
     }
 
-    _forwardFFT->performRealToComplex(_signalScratch.data(), _signalScratchOut.data());
-    _forwardFFT->performRealToComplex(_patchScratch.data(), _patchScratchOut.data());
+    rfft(*_forwardFFT, _signalScratch.data(), _signalScratchOut.data());
+    rfft(*_forwardFFT, _patchScratch.data(), _patchScratchOut.data());
 
     spectralConvolution(_signalScratchOut, _patchScratchOut, _tmp);
 
-    _backwardFFT->performComplexToReal(_tmp.data(), _tmpOut.data());
+    irfft(*_backwardFFT, _tmp.data(), _tmpOut.data());
 
     auto const ls = _signalSize + _patchSize - 1U;
     for (auto i = std::size_t{0}; i < ls; i++) { output[i] = _tmpOut[i] / _totalSize; }
