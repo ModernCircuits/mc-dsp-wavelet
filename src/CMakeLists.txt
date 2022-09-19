@@ -97,17 +97,24 @@ target_sources(mc-dsp-wavelet
 find_package(Catch2 REQUIRED)
 include(Catch)
 
-add_executable(mc-dsp-wavelet_tests)
-catch_discover_tests(mc-dsp-wavelet_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-target_link_libraries(mc-dsp-wavelet_tests PRIVATE mc-dsp-wavelet Catch2::Catch2)
-target_sources(mc-dsp-wavelet_tests
+add_executable(mc-fft_tests)
+catch_discover_tests(mc-fft_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+target_link_libraries(mc-fft_tests PRIVATE mc-dsp-wavelet Catch2::Catch2)
+target_sources(mc-fft_tests
     PRIVATE
         "mc/dsp/convolution/convolute.test.cpp"
         "mc/dsp/convolution/OverlapSaveConvolver.test.cpp"
 
         "mc/dsp/fft/FFT.test.cpp"
         "mc/dsp/fft/Window.test.cpp"
+)
 
+
+add_executable(mc-dsp-wavelet_tests)
+catch_discover_tests(mc-dsp-wavelet_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+target_link_libraries(mc-dsp-wavelet_tests PRIVATE mc-dsp-wavelet Catch2::Catch2)
+target_sources(mc-dsp-wavelet_tests
+    PRIVATE
         "mc/dsp/wavelet/wavelet.test.cpp"
         "mc/dsp/wavelet/transform/wavelet_packet_transform.test.cpp"
         "mc/dsp/wavelet/transform/wavelet_transform.test.cpp"
