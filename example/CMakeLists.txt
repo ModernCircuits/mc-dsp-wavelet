@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: BSL-1.0
+
 function(mc_dsp_wavelet_add_example _target)
     add_executable(${_target} "${_target}.cpp")
     add_test(NAME ${_target} COMMAND ${_target} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: BSL-1.0
+
 if(CONAN_EXPORTED)
     # standard conan installation, deps will be defined in conanfile.py
     # and not necessary to call conan again, conan is already running
