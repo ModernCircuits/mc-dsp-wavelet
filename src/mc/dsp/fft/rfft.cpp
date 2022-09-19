@@ -12,10 +12,10 @@ constexpr auto pi2 = static_cast<float>(6.28318530717958647692528676655900577);
 
 namespace mc::dsp {
 
-RFFT::RFFT(int n, FFTDirection direction)
+RFFT::RFFT(int n)
 {
     _data = makeUnique<Complex<float>[]>(n / 2);
-    _cobj = makeUnique<FFT<float, KissFFT>>(n / 2, direction);
+    _cobj = makeUnique<FFT<float, KissFFT>>(n / 2);
 
     for (auto k = 0; k < n / 2; ++k) {
         auto const theta = pi2 * k / n;
@@ -35,7 +35,7 @@ auto RFFT::rfft(float const* inp, Complex<float>* oup) -> void
         cinp[i].imag(inp[2 * i + 1]);
     }
 
-    _cobj->perform(cinp.get(), coup.get());
+    fft(*_cobj, cinp.get(), coup.get());
 
     oup[0].real(coup[0].real() + coup[0].imag());
     oup[0].imag(0.0F);
@@ -84,7 +84,7 @@ auto RFFT::irfft(Complex<float> const* inp, float* oup) -> void
         );
     }
 
-    _cobj->perform(cinp.get(), coup.get());
+    ifft(*_cobj, cinp.get(), coup.get());
 
     for (auto i = std::size_t{0}; i < n; ++i) {
         oup[2 * i]     = coup[i].real();

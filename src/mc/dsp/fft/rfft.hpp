@@ -13,7 +13,7 @@ namespace mc::dsp {
 
 struct RFFT
 {
-    RFFT(int n, FFTDirection direction);
+    RFFT(int n);
 
     auto rfft(float const* inp, Complex<float>* oup) -> void;
     auto irfft(Complex<float> const* inp, float* oup) -> void;

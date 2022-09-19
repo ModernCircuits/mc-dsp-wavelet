@@ -19,7 +19,7 @@ static auto BM_RFFT(benchmark::State& state) -> void
     auto out         = Vector<Complex<float>>(size);
     auto const input = generateRandomTestData(size);
 
-    auto engine = mc::dsp::RFFT{(int)size, mc::dsp::FFTDirection::forward};
+    auto engine = mc::dsp::RFFT{(int)size};
     while (state.KeepRunning()) {
         rfft(engine, data(input), data(out));
         benchmark::DoNotOptimize(out.front());
