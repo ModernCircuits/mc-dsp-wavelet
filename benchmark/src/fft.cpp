@@ -7,18 +7,19 @@
 #include <mc/testing/test.hpp>
 
 #include <fftw3.h>
+#include <pffft.h>
 
 #include <benchmark/benchmark.h>
 
 using namespace mc;
 
-void BM_RFFT(benchmark::State& state)
+static auto BM_RFFT(benchmark::State& state) -> void
 {
     auto size        = static_cast<size_t>(state.range(0));
-    auto fft         = mc::dsp::RFFT{(int)size, mc::dsp::FFTDirection::forward};
+    auto out         = Vector<Complex<float>>(size);
     auto const input = generateRandomTestData(size);
 
-    auto out = Vector<Complex<float>>(size);
+    auto fft = mc::dsp::RFFT{(int)size, mc::dsp::FFTDirection::forward};
     while (state.KeepRunning()) {
         fft.performRealToComplex(data(input), data(out));
         benchmark::DoNotOptimize(out.front());
@@ -26,9 +27,32 @@ void BM_RFFT(benchmark::State& state)
     }
 }
 
-BENCHMARK(BM_RFFT)->Arg(128)->Arg(256)->Arg(512)->Arg(1024)->Arg(2048)->Arg(4096);
+BENCHMARK(BM_RFFT)->Arg(128)->Arg(256)->Arg(512)->Arg(8192 * 4);
 
-void BM_FFTW(benchmark::State& state)
+static auto BM_PFFFT(benchmark::State& state) -> void
+{
+    auto size        = static_cast<size_t>(state.range(0));
+    auto out         = Vector<Complex<float>>(size);
+    auto const input = generateRandomTestData(size);
+
+    auto fft = pffft_new_setup(static_cast<int>(size), PFFFT_REAL);
+
+    while (state.KeepRunning()) {
+        pffft_transform_ordered(
+            fft,
+            data(input),
+            (float*)data(out),
+            nullptr,
+            PFFFT_FORWARD
+        );
+        benchmark::DoNotOptimize(out.front());
+        benchmark::DoNotOptimize(out.back());
+    }
+}
+
+BENCHMARK(BM_PFFFT)->Arg(128)->Arg(256)->Arg(512)->Arg(8192 * 4);
+
+static auto BM_FFTW(benchmark::State& state) -> void
 {
     auto size  = static_cast<size_t>(state.range(0));
     auto in    = Vector<float>(size);
@@ -49,6 +73,6 @@ void BM_FFTW(benchmark::State& state)
     fftwf_destroy_plan(fft);
 }
 
-BENCHMARK(BM_FFTW)->Arg(128)->Arg(256)->Arg(512)->Arg(1024)->Arg(2048)->Arg(4096);
+BENCHMARK(BM_FFTW)->Arg(128)->Arg(256)->Arg(512)->Arg(8192 * 4);
 
 BENCHMARK_MAIN();
