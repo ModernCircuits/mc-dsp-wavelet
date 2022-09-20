@@ -43,7 +43,7 @@ TEST_CASE("dsp/fft: rfft", "[dsp][fft]")
 
     for (auto const* testFile : testFiles) {
         auto testCase = readFFTRealToComplexTestData(testFile);
-        auto fft      = dsp::RFFT{static_cast<int>(testCase.input.size())};
+        auto fft      = dsp::RFFT<float>{dsp::PFFFT_Real{testCase.input.size()}};
         auto output   = Vector<Complex<float>>(testCase.expected.size());
 
         rfft(fft, data(testCase.input), data(output));

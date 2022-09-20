@@ -23,8 +23,7 @@ private:
     std::size_t _patchSize;
     std::size_t _totalSize;
 
-    UniquePtr<RFFT> _forwardFFT;
-    UniquePtr<RFFT> _backwardFFT;
+    RFFT<float> _fft;
 
     Vector<float> _signalScratch{};
     Vector<Complex<float>> _signalScratchOut{};
