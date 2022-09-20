@@ -928,12 +928,12 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
     auto fftFd = makeFFT(n);
     auto fftBd = makeFFT(n);
 
-    auto sig      = makeUnique<Complex<float>[]>(n);
-    auto cA       = makeUnique<Complex<float>[]>(n);
-    auto cD       = makeUnique<Complex<float>[]>(n);
-    auto lowPass  = makeUnique<Complex<float>[]>(n);
-    auto highPass = makeUnique<Complex<float>[]>(n);
-    auto index    = makeUnique<int[]>(n);
+    auto sig      = Vector<Complex<float>>(n);
+    auto cA       = Vector<Complex<float>>(n);
+    auto cD       = Vector<Complex<float>>(n);
+    auto lowPass  = Vector<Complex<float>>(n);
+    auto highPass = Vector<Complex<float>>(n);
+    auto index    = Vector<int>(n);
 
     // N-point FFT of low pass and high pass filters
 
@@ -948,7 +948,7 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
         sig[i].imag(0.0F);
     }
 
-    fft(fftFd, sig.get(), lowPass.get());
+    fft(fftFd, sig, lowPass);
 
     // High Pass Filter
 
@@ -961,7 +961,7 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
         sig[i].imag(0.0F);
     }
 
-    fft(fftFd, sig.get(), highPass.get());
+    fft(fftFd, sig, highPass);
 
     // symmetric extension
     for (std::size_t i = 0; i < tempLen; ++i) {
@@ -975,7 +975,7 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
 
     // FFT of data
 
-    fft(fftFd, sig.get(), cA.get());
+    fft(fftFd, sig, cA);
 
     lenacc = wt.outlength;
 
@@ -996,7 +996,7 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
             cD[i].imag(highPass[index[i]].real() * tmp2 + highPass[index[i]].imag() * tmp1);
         }
 
-        ifft(fftBd, cD.get(), sig.get());
+        ifft(fftBd, cD, sig);
 
         for (std::size_t i = 0; i < n; ++i) {
             wt.params[lenacc + i] = sig[i].real() / static_cast<float>(n);
@@ -1005,7 +1005,7 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
         m *= 2;
     }
 
-    ifft(fftBd, cA.get(), sig.get());
+    ifft(fftBd, cA, sig);
 
     for (std::size_t i = 0; i < n; ++i) {
         wt.params[i] = sig[i].real() / static_cast<float>(n);
@@ -1037,11 +1037,11 @@ auto imodwtFft(WaveletTransform& wt, float* oup) -> void
     auto fftFd = makeFFT(n);
     auto fftBd = makeFFT(n);
 
-    auto sig      = makeUnique<Complex<float>[]>(n);
-    auto cA       = makeUnique<Complex<float>[]>(n);
-    auto cD       = makeUnique<Complex<float>[]>(n);
-    auto lowPass  = makeUnique<Complex<float>[]>(n);
-    auto highPass = makeUnique<Complex<float>[]>(n);
+    auto sig      = Vector<Complex<float>>(n);
+    auto cA       = Vector<Complex<float>>(n);
+    auto cD       = Vector<Complex<float>>(n);
+    auto lowPass  = Vector<Complex<float>>(n);
+    auto highPass = Vector<Complex<float>>(n);
     auto index    = makeUnique<std::size_t[]>(n);
 
     // N-point FFT of low pass and high pass filters
@@ -1057,7 +1057,7 @@ auto imodwtFft(WaveletTransform& wt, float* oup) -> void
         sig[i].imag(0.0F);
     }
 
-    fft(fftFd, sig.get(), lowPass.get());
+    fft(fftFd, sig, lowPass);
 
     // High Pass Filter
 
@@ -1070,12 +1070,12 @@ auto imodwtFft(WaveletTransform& wt, float* oup) -> void
         sig[i].imag(0.0F);
     }
 
-    fft(fftFd, sig.get(), highPass.get());
+    fft(fftFd, sig, highPass);
 
     // Complex conjugate of the two filters
 
-    conjComplex(lowPass.get(), static_cast<int>(n));
-    conjComplex(highPass.get(), static_cast<int>(n));
+    conjComplex(lowPass.data(), static_cast<int>(n));
+    conjComplex(highPass.data(), static_cast<int>(n));
 
     auto m      = (int)std::pow(2.0F, (float)j - 1.0F);
     auto lenacc = n;
@@ -1087,12 +1087,12 @@ auto imodwtFft(WaveletTransform& wt, float* oup) -> void
     }
 
     for (std::size_t iter = 0; iter < j; ++iter) {
-        fft(fftFd, sig.get(), cA.get());
+        fft(fftFd, sig, cA);
         for (std::size_t i = 0; i < n; ++i) {
             sig[i].real(wt.output()[lenacc + i]);
             sig[i].imag(0.0F);
         }
-        fft(fftFd, sig.get(), cD.get());
+        fft(fftFd, sig, cD);
 
         for (std::size_t i = 0; i < n; ++i) { index[i] = (m * i) % n; }
 
@@ -1111,7 +1111,7 @@ auto imodwtFft(WaveletTransform& wt, float* oup) -> void
             );
         }
 
-        ifft(fftBd, cA.get(), sig.get());
+        ifft(fftBd, cA, sig);
 
         for (std::size_t i = 0; i < n; ++i) {
             sig[i].real(sig[i].real() / static_cast<float>(n));
@@ -1121,7 +1121,7 @@ auto imodwtFft(WaveletTransform& wt, float* oup) -> void
         lenacc += n;
     }
 
-    std::transform(sig.get(), sig.get() + wt.signalLength(), oup, [](auto c) {
+    std::transform(sig.data(), sig.data() + wt.signalLength(), oup, [](auto c) {
         return c.real();
     });
 }

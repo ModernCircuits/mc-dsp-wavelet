@@ -46,7 +46,7 @@ TEST_CASE("dsp/fft: rfft", "[dsp][fft]")
         auto fft      = dsp::makeRFFT(testCase.input.size());
         auto output   = Vector<Complex<float>>(testCase.expected.size());
 
-        rfft(fft, data(testCase.input), data(output));
+        rfft(fft, testCase.input, output);
         REQUIRE(ranges::equal(output, testCase.expected, closeEnough));
     }
 }

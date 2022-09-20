@@ -15,7 +15,7 @@ auto main() -> int
     auto in     = Array<float, 4>{0.0F, 1.0F, 0.3F, 0.0F};
     auto out    = Array<Complex<float>, 4>{};
 
-    rfft(engine, in.data(), out.data());
+    rfft(engine, in, out);
 
     for (auto c : out) { std::cout << c.real() << ' '; }
     std::cout << '\n';
@@ -23,7 +23,7 @@ auto main() -> int
     for (auto c : out) { std::cout << c.imag() << ' '; }
     std::cout << '\n';
 
-    irfft(engine, out.data(), in.data());
+    irfft(engine, out, in);
     for (auto c : in) { std::cout << c << ' '; }
     std::cout << '\n';
 

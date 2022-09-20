@@ -4,6 +4,7 @@
 
 #include <mc/core/complex.hpp>
 #include <mc/core/memory.hpp>
+#include <mc/core/span.hpp>
 #include <mc/core/vector.hpp>
 
 #include <pffft.h>
@@ -21,8 +22,8 @@ struct PFFFT_Complex_Float
 {
     explicit PFFFT_Complex_Float(std::size_t size);
 
-    auto fft(Complex<float> const* in, Complex<float>* out) -> void;
-    auto ifft(Complex<float> const* in, Complex<float>* out) -> void;
+    auto fft(Span<Complex<float> const> in, Span<Complex<float>> out) -> void;
+    auto ifft(Span<Complex<float> const> in, Span<Complex<float>> out) -> void;
 
 private:
     PFFFT_Handle _setup;
@@ -32,8 +33,8 @@ struct PFFFT_Real_Float
 {
     explicit PFFFT_Real_Float(size_t n);
 
-    auto rfft(float const* inp, Complex<float>* oup) -> void;
-    auto irfft(Complex<float> const* inp, float* oup) -> void;
+    auto rfft(Span<float const> inp, Span<Complex<float>> oup) -> void;
+    auto irfft(Span<Complex<float> const> inp, Span<float> oup) -> void;
 
 private:
     int _n;

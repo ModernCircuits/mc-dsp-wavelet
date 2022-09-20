@@ -12,15 +12,17 @@
 
 namespace mc::dsp {
 
-template<typename Engine, typename T>
-inline auto fft(Engine& engine, Complex<T> const* input, Complex<T>* output)
+template<typename Engine>
+inline auto
+fft(Engine& engine, Span<Complex<float> const> input, Span<Complex<float>> output)
     -> decltype(engine.fft(input, output))
 {
     return engine.fft(input, output);
 }
 
-template<typename Engine, typename T>
-inline auto ifft(Engine& engine, Complex<T> const* input, Complex<T>* output)
+template<typename Engine>
+inline auto
+ifft(Engine& engine, Span<Complex<float> const> input, Span<Complex<float>> output)
     -> decltype(engine.ifft(input, output))
 {
     return engine.ifft(input, output);
@@ -39,12 +41,12 @@ struct FFT
     FFT(FFT&& other)                    = default;
     auto operator=(FFT&& other) -> FFT& = default;
 
-    auto fft(Complex<FloatT> const* input, Complex<FloatT>* output)
+    auto fft(Span<Complex<FloatT> const> input, Span<Complex<FloatT>> output)
     {
         _concept->do_fft(input, output);
     }
 
-    auto ifft(Complex<FloatT> const* input, Complex<FloatT>* output)
+    auto ifft(Span<Complex<FloatT> const> input, Span<Complex<FloatT>> output)
     {
         _concept->do_ifft(input, output);
     }
@@ -53,8 +55,12 @@ private:
     struct ConceptType
     {
         virtual ~ConceptType() = default;
-        virtual auto do_fft(Complex<FloatT> const* in, Complex<FloatT>* out) -> void  = 0;
-        virtual auto do_ifft(Complex<FloatT> const* in, Complex<FloatT>* out) -> void = 0;
+        virtual auto do_fft(Span<Complex<FloatT> const> in, Span<Complex<FloatT>> out)
+            -> void
+            = 0;
+        virtual auto do_ifft(Span<Complex<FloatT> const> in, Span<Complex<FloatT>> out)
+            -> void
+            = 0;
     };
 
     template<typename T>
@@ -64,12 +70,14 @@ private:
 
         ~ModelType() override = default;
 
-        auto do_fft(Complex<FloatT> const* input, Complex<FloatT>* output) -> void override
+        auto do_fft(Span<Complex<FloatT> const> input, Span<Complex<FloatT>> output)
+            -> void override
         {
             ::mc::dsp::fft(model, input, output);
         }
 
-        auto do_ifft(Complex<FloatT> const* input, Complex<FloatT>* output) -> void override
+        auto do_ifft(Span<Complex<FloatT> const> input, Span<Complex<FloatT>> output)
+            -> void override
         {
             ::mc::dsp::ifft(model, input, output);
         }

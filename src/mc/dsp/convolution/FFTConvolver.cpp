@@ -44,12 +44,12 @@ auto FFTConvolver::convolute(
         if (i < _patchSize) { _patchScratch[i] = patch[i]; }
     }
 
-    rfft(_fft, _signalScratch.data(), _signalScratchOut.data());
-    rfft(_fft, _patchScratch.data(), _patchScratchOut.data());
+    rfft(_fft, _signalScratch, _signalScratchOut);
+    rfft(_fft, _patchScratch, _patchScratchOut);
 
     spectralConvolution(_signalScratchOut, _patchScratchOut, _tmp);
 
-    irfft(_fft, _tmp.data(), _tmpOut.data());
+    irfft(_fft, _tmp, _tmpOut);
 
     auto const ls = _signalSize + _patchSize - 1U;
     for (auto i = std::size_t{0}; i < ls; i++) { output[i] = _tmpOut[i] / _totalSize; }
