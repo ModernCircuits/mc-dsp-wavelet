@@ -5,7 +5,6 @@ project(mc-dsp-wavelet)
 
 find_package(mc-dsp REQUIRED)
 find_package(FFTW3f REQUIRED)
-find_package(kissfft REQUIRED)
 find_package(pffft REQUIRED)
 
 add_library(mc-dsp-wavelet)
@@ -16,7 +15,6 @@ target_link_libraries(mc-dsp-wavelet
         mc-dsp::mc-dsp
 
         FFTW3::fftw3f
-        kissfft::kissfft
         pffft::pffft
 
         mc::CompilerOptions
