@@ -59,9 +59,6 @@ target_sources(mc-dsp-wavelet
         "mc/dsp/fft/FFT.cpp"
         "mc/dsp/fft/rfft.hpp"
         "mc/dsp/fft/rfft.cpp"
-        "mc/dsp/fft/Window.hpp"
-        "mc/dsp/fft/WindowFunction.hpp"
-        "mc/dsp/fft/WindowFunction.cpp"
 
         "mc/dsp/fft/backend/PFFFT.hpp"
         "mc/dsp/fft/backend/PFFFT.cpp"
@@ -107,7 +104,6 @@ target_sources(mc-fft_tests
         "mc/dsp/convolution/OverlapSaveConvolver.test.cpp"
 
         "mc/dsp/fft/rfft.test.cpp"
-        "mc/dsp/fft/Window.test.cpp"
 )
 
 
