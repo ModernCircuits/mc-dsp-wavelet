@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BSL-1.0
 
-#include "RFFT.hpp"
+#include "rfft.hpp"
 
 namespace mc::dsp {
 auto makeRFFT(std::size_t size) -> RFFT<float>
