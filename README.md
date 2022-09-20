@@ -19,6 +19,12 @@
 - [The Quarter-Wave DFT and the (Quarter-Wave) Discrete Cosine Transform (QW-DCT)](https://nanopdf.com/download/algorithms-of-scientific-computing-the-quarter_pdf)
 - [FPGA FFT](https://web.mit.edu/6.111/www/f2017/handouts/FFTtutorial121102.pdf)
 
+### Convolution
+
+- [Overlap-Save and Overlap-Add](https://www.comm.utoronto.ca/~dkundur/course_info/real-time-DSP/notes/8_Kundur_Overlap_Save_Add.pdf)
+- [Fast Convolution: FFT-based, Overlap-Add, Overlap-Save, Partitioned](https://www.youtube.com/watch?v=fYggIQTaVx4)
+- [Partitioned convolution algorithms for real-time auralization](https://publications.rwth-aachen.de/record/466561/files/466561.pdf)
+
 ### Wavelet
 
 |                                  Link                                  |                                License                                 |
