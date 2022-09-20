@@ -63,6 +63,9 @@ target_sources(mc-dsp-wavelet
         "mc/dsp/fft/WindowFunction.hpp"
         "mc/dsp/fft/WindowFunction.cpp"
 
+        "mc/dsp/fft/backend/PFFFT.hpp"
+        "mc/dsp/fft/backend/PFFFT.cpp"
+
         "mc/dsp/wavelet.hpp"
         "mc/dsp/wavelet/wavelet.cpp"
         "mc/dsp/wavelet/wavelet.hpp"

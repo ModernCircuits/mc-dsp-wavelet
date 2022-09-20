@@ -15,7 +15,7 @@ FFTConvolver::FFTConvolver(std::size_t signalSize, std::size_t patchSize)
     : _signalSize{signalSize}
     , _patchSize{patchSize}
     , _totalSize{bit_ceil(signalSize + _patchSize - 1U)}
-    , _fft{PFFFT_Real{_totalSize}}
+    , _fft{makeRFFT(_totalSize)}
 {
     _signalScratch.resize(_totalSize);
     _signalScratchOut.resize(_totalSize);

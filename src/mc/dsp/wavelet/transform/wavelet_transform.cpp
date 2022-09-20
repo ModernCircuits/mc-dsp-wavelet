@@ -925,8 +925,8 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
     auto const s = sqrt(2.0F);
     for (iter = 1; iter < j; ++iter) { wt.length[iter] = n; }
 
-    auto fftFd = FFT<float>(PFFFT{static_cast<int>(n)});
-    auto fftBd = FFT<float>(PFFFT{static_cast<int>(n)});
+    auto fftFd = makeFFT(n);
+    auto fftBd = makeFFT(n);
 
     auto sig      = makeUnique<Complex<float>[]>(n);
     auto cA       = makeUnique<Complex<float>[]>(n);
@@ -1034,8 +1034,8 @@ auto imodwtFft(WaveletTransform& wt, float* oup) -> void
     auto j      = static_cast<std::size_t>(wt.levels());
 
     auto s     = sqrt(2.0F);
-    auto fftFd = FFT<float>(PFFFT{static_cast<int>(n)});
-    auto fftBd = FFT<float>(PFFFT{static_cast<int>(n)});
+    auto fftFd = makeFFT(n);
+    auto fftBd = makeFFT(n);
 
     auto sig      = makeUnique<Complex<float>[]>(n);
     auto cA       = makeUnique<Complex<float>[]>(n);
