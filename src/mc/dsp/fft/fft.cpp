@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BSL-1.0
 
-#include "FFT.hpp"
+#include "fft.hpp"
 
 namespace mc::dsp {
 auto makeFFT(std::size_t size) -> FFT<float>

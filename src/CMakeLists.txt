@@ -55,13 +55,13 @@ target_sources(mc-dsp-wavelet
         "mc/dsp/convolution/OverlapSaveConvolver.hpp"
 
         "mc/dsp/fft.hpp"
-        "mc/dsp/fft/FFT.hpp"
-        "mc/dsp/fft/FFT.cpp"
+        "mc/dsp/fft/fft.hpp"
+        "mc/dsp/fft/fft.cpp"
         "mc/dsp/fft/rfft.hpp"
         "mc/dsp/fft/rfft.cpp"
 
-        "mc/dsp/fft/backend/PFFFT.hpp"
-        "mc/dsp/fft/backend/PFFFT.cpp"
+        "mc/dsp/fft/backend/pffft.hpp"
+        "mc/dsp/fft/backend/pffft.cpp"
 
         "mc/dsp/wavelet.hpp"
         "mc/dsp/wavelet/wavelet.cpp"

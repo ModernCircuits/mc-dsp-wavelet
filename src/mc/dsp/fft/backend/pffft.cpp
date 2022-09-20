@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BSL-1.0
 
-#include "PFFFT.hpp"
+#include "pffft.hpp"
 
 #include <mc/core/algorithm.hpp>
 #include <mc/core/cassert.hpp>

@@ -2,5 +2,5 @@
 
 #pragma once
 
-#include <mc/dsp/fft/FFT.hpp>
+#include <mc/dsp/fft/fft.hpp>
 #include <mc/dsp/fft/rfft.hpp>

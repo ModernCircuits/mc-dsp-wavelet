@@ -7,7 +7,7 @@
 #include <mc/dsp/algorithm/up_sample_even.hpp>
 #include <mc/dsp/convolution/convolute.hpp>
 #include <mc/dsp/convolution/FFTConvolver.hpp>
-#include <mc/dsp/fft/FFT.hpp>
+#include <mc/dsp/fft.hpp>
 #include <mc/dsp/wavelet/transform/common.hpp>
 
 #include <mc/core/cassert.hpp>
