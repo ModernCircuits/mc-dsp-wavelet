@@ -1,7 +1,7 @@
 import numpy as np
 
 
-data = [0, 1, 0.3, 0, 0.9, 0.4, -0.1]
+data = [0.0, 1.0, 0.3, 0.0]
 print(data)
 y = np.fft.fft(data)
 print(y)

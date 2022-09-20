@@ -6,89 +6,34 @@
 #include <mc/core/cmath.hpp>
 #include <mc/core/format.hpp>
 
-namespace {
-constexpr auto pi2 = static_cast<float>(6.28318530717958647692528676655900577);
-}  // namespace
-
 namespace mc::dsp {
 
-RFFT::RFFT(int n)
-{
-    _data = makeUnique<Complex<float>[]>(n / 2);
-    _cobj = makeUnique<FFT<float, KissFFT>>(n / 2);
+RFFT::RFFT(int n) : _n{n}, _fft{pffft_new_setup(n, PFFFT_REAL)} { _tmp.resize(n); }
 
-    for (auto k = 0; k < n / 2; ++k) {
-        auto const theta = pi2 * k / n;
-        _data[k].real(cos(theta));
-        _data[k].imag(sin(theta));
-    }
+RFFT::~RFFT()
+{
+    if (_fft != nullptr) { pffft_destroy_setup(_fft); }
 }
 
 auto RFFT::rfft(float const* inp, Complex<float>* oup) -> void
 {
-    auto const n2 = _cobj->size();
-    auto cinp     = makeUnique<Complex<float>[]>(n2);
-    auto coup     = makeUnique<Complex<float>[]>(n2);
+    pffft_transform_ordered(_fft, inp, (float*)oup, nullptr, PFFFT_FORWARD);
 
-    for (auto i = 0; i < n2; ++i) {
-        cinp[i].real(inp[2 * i]);
-        cinp[i].imag(inp[2 * i + 1]);
-    }
+    // Move compressed DC/Nyquist components to correct location
+    auto const h = _n / 2;
+    oup[h]       = {oup[0].imag(), 0.0};
+    oup[0]       = {oup[0].real(), 0.0};
 
-    fft(*_cobj, cinp.get(), coup.get());
-
-    oup[0].real(coup[0].real() + coup[0].imag());
-    oup[0].imag(0.0F);
-
-    for (auto i = 1; i < n2; ++i) {
-        auto const temp1 = coup[i].imag() + coup[n2 - i].imag();
-        auto const temp2 = coup[n2 - i].real() - coup[i].real();
-        oup[i].real(
-            (coup[i].real() + coup[n2 - i].real() + (temp1 * _data[i].real())
-             + (temp2 * _data[i].imag()))
-            / 2.0F
-        );
-        oup[i].imag(
-            (coup[i].imag() - coup[n2 - i].imag() + (temp2 * _data[i].real())
-             - (temp1 * _data[i].imag()))
-            / 2.0F
-        );
-    }
-
-    auto const n = n2 * 2;
-    oup[n2].real(coup[0].real() - coup[0].imag());
-    oup[n2].imag(0.0F);
-
-    for (auto i = 1; i < n2; ++i) {
-        oup[n - i].real(oup[i].real());
-        oup[n - i].imag(-oup[i].imag());
-    }
+    // Fill upper half with conjugate
+    for (auto i = h + 1; i < _n; ++i) { oup[i] = std::conj(oup[_n - i]); }
 }
 
 auto RFFT::irfft(Complex<float> const* inp, float* oup) -> void
 {
-    auto const n = static_cast<std::size_t>(_cobj->size());
-    auto cinp    = makeUnique<Complex<float>[]>(n);
-    auto coup    = makeUnique<Complex<float>[]>(n);
+    // Move DC/Nyquist components to compressed location
+    ranges::copy(inp, inp + _n, ranges::begin(_tmp));
+    _tmp[0] = {_tmp[0].real(), _tmp[_n / 2].real()};
 
-    for (auto i = std::size_t{0}; i < n; ++i) {
-        auto const temp1 = -inp[i].imag() - inp[n - i].imag();
-        auto const temp2 = -inp[n - i].real() + inp[i].real();
-        cinp[i].real(
-            inp[i].real() + inp[n - i].real() + (temp1 * _data[i].real())
-            - (temp2 * _data[i].imag())
-        );
-        cinp[i].imag(
-            inp[i].imag() - inp[n - i].imag() + (temp2 * _data[i].real())
-            + (temp1 * _data[i].imag())
-        );
-    }
-
-    ifft(*_cobj, cinp.get(), coup.get());
-
-    for (auto i = std::size_t{0}; i < n; ++i) {
-        oup[2 * i]     = coup[i].real();
-        oup[2 * i + 1] = coup[i].imag();
-    }
+    pffft_transform_ordered(_fft, (float const*)_tmp.data(), oup, nullptr, PFFFT_BACKWARD);
 }
 }  // namespace mc::dsp
