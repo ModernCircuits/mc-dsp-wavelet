@@ -15,26 +15,6 @@
 
 namespace mc::dsp {
 
-template<typename T, typename Engine>
-struct FFT
-{
-    using value_type   = T;
-    using backend_type = typename FFTBackend<T, Engine>::handle_type;
-
-    FFT(int n);
-    ~FFT();
-
-    [[nodiscard]] auto size() const noexcept -> int;
-
-    auto fft(Complex<T> const* inp, Complex<T>* output) -> void;
-    auto ifft(Complex<T> const* inp, Complex<T>* output) -> void;
-
-private:
-    std::size_t _size;
-    backend_type _fft;
-    backend_type _ifft;
-};
-
 template<typename Engine, typename T>
 inline auto fft(Engine& engine, Complex<T> const* input, Complex<T>* output)
     -> decltype(engine.fft(input, output))
@@ -49,36 +29,58 @@ inline auto ifft(Engine& engine, Complex<T> const* input, Complex<T>* output)
     return engine.ifft(input, output);
 }
 
-template<typename T, typename Engine>
-FFT<T, Engine>::FFT(int n)
-    : _size{static_cast<std::size_t>(n)}
-    , _fft{FFTBackend<T, Engine>::construct(_size, FFTDirection::forward)}
-    , _ifft{FFTBackend<T, Engine>::construct(_size, FFTDirection::backward)}
-{}
-
-template<typename T, typename Engine>
-FFT<T, Engine>::~FFT()
+template<typename FloatT>
+struct FFT
 {
-    FFTBackend<T, Engine>::destroy(_fft);
-    FFTBackend<T, Engine>::destroy(_ifft);
-}
+    template<typename T>
+    FFT(T&& model) : _concept{makeUnique<ModelType<T>>(std::forward<T>(model))}
+    {}
 
-template<typename T, typename Engine>
-auto FFT<T, Engine>::size() const noexcept -> int
-{
-    return static_cast<int>(_size);
-}
+    FFT(FFT const& other)                    = delete;
+    auto operator=(FFT const& other) -> FFT& = delete;
 
-template<typename T, typename Engine>
-auto FFT<T, Engine>::fft(Complex<T> const* input, Complex<T>* output) -> void
-{
-    FFTBackend<T, Engine>::perform(_fft, input, output, FFTDirection::forward);
-}
+    FFT(FFT&& other)                    = default;
+    auto operator=(FFT&& other) -> FFT& = default;
 
-template<typename T, typename Engine>
-auto FFT<T, Engine>::ifft(Complex<T> const* input, Complex<T>* output) -> void
-{
-    FFTBackend<T, Engine>::perform(_ifft, input, output, FFTDirection::backward);
-}
+    auto fft(Complex<FloatT> const* input, Complex<FloatT>* output)
+    {
+        _concept->do_fft(input, output);
+    }
+
+    auto ifft(Complex<FloatT> const* input, Complex<FloatT>* output)
+    {
+        _concept->do_ifft(input, output);
+    }
+
+private:
+    struct ConceptType
+    {
+        virtual ~ConceptType() = default;
+        virtual auto do_fft(Complex<FloatT> const* in, Complex<FloatT>* out) -> void  = 0;
+        virtual auto do_ifft(Complex<FloatT> const* in, Complex<FloatT>* out) -> void = 0;
+    };
+
+    template<typename T>
+    struct ModelType final : ConceptType
+    {
+        ModelType(T&& m) : model{std::forward<T>(m)} {}
+
+        ~ModelType() override = default;
+
+        auto do_fft(Complex<FloatT> const* input, Complex<FloatT>* output) -> void override
+        {
+            ::mc::dsp::fft(model, input, output);
+        }
+
+        auto do_ifft(Complex<FloatT> const* input, Complex<FloatT>* output) -> void override
+        {
+            ::mc::dsp::ifft(model, input, output);
+        }
+
+        T model;
+    };
+
+    UniquePtr<ConceptType> _concept{nullptr};
+};
 
 }  // namespace mc::dsp
