@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BSL-1.0
 
-#include "FFTConvolver.hpp"
+#include "fft_convolver.hpp"
 
 #include <mc/dsp/algorithm/spectral_convolution.hpp>
 

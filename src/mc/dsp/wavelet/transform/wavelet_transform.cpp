@@ -5,8 +5,7 @@
 #include <mc/dsp/algorithm/down_sample.hpp>
 #include <mc/dsp/algorithm/up_sample.hpp>
 #include <mc/dsp/algorithm/up_sample_even.hpp>
-#include <mc/dsp/convolution/convolute.hpp>
-#include <mc/dsp/convolution/FFTConvolver.hpp>
+#include <mc/dsp/convolution.hpp>
 #include <mc/dsp/fft.hpp>
 #include <mc/dsp/wavelet/transform/common.hpp>
 

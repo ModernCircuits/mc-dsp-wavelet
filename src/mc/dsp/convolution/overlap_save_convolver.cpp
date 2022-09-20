@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "OverlapSaveConvolver.hpp"
+#include "overlap_save_convolver.hpp"
 
 #include <mc/dsp/algorithm/spectral_convolution.hpp>
 #include <mc/dsp/algorithm/spectral_correlation.hpp>

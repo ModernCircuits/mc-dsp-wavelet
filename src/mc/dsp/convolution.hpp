@@ -3,6 +3,6 @@
 #pragma once
 
 #include <mc/dsp/convolution/convolute.hpp>
-#include <mc/dsp/convolution/ConvolutionMethod.hpp>
-#include <mc/dsp/convolution/FFTConvolver.hpp>
-#include <mc/dsp/convolution/OverlapSaveConvolver.hpp>
+#include <mc/dsp/convolution/convolution_method.hpp>
+#include <mc/dsp/convolution/fft_convolver.hpp>
+#include <mc/dsp/convolution/overlap_save_convolver.hpp>

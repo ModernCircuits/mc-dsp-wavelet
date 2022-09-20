@@ -48,11 +48,11 @@ target_sources(mc-dsp-wavelet
         "mc/dsp/algorithm/up_sample.hpp"
 
         "mc/dsp/convolution.hpp"
-        "mc/dsp/convolution/FFTConvolver.cpp"
-        "mc/dsp/convolution/FFTConvolver.hpp"
-        "mc/dsp/convolution/ConvolutionMethod.hpp"
-        "mc/dsp/convolution/OverlapSaveConvolver.cpp"
-        "mc/dsp/convolution/OverlapSaveConvolver.hpp"
+        "mc/dsp/convolution/convolution_method.hpp"
+        "mc/dsp/convolution/fft_convolver.cpp"
+        "mc/dsp/convolution/fft_convolver.hpp"
+        "mc/dsp/convolution/overlap_save_convolver.cpp"
+        "mc/dsp/convolution/overlap_save_convolver.hpp"
 
         "mc/dsp/fft.hpp"
         "mc/dsp/fft/fft.hpp"
@@ -101,7 +101,7 @@ target_link_libraries(mc-fft_tests PRIVATE mc-dsp-wavelet Catch2::Catch2)
 target_sources(mc-fft_tests
     PRIVATE
         "mc/dsp/convolution/convolute.test.cpp"
-        "mc/dsp/convolution/OverlapSaveConvolver.test.cpp"
+        "mc/dsp/convolution/overlap_save_convolver.test.cpp"
 
         "mc/dsp/fft/rfft.test.cpp"
 )

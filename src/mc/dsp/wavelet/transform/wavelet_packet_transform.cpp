@@ -2,7 +2,7 @@
 
 #include "wavelet_packet_transform.hpp"
 
-#include <mc/dsp/convolution/FFTConvolver.hpp>
+#include <mc/dsp/convolution.hpp>
 #include <mc/dsp/fft.hpp>
 #include <mc/dsp/wavelet/transform/common.hpp>
 
