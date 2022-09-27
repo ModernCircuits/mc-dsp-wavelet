@@ -2,7 +2,7 @@
 
 #include "common.hpp"
 
-#include <mc/fft/fft.hpp>
+#include <mc/fft/transform/fft.hpp>
 
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>

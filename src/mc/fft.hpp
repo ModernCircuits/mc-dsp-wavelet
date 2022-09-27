@@ -2,5 +2,5 @@
 
 #pragma once
 
-#include <mc/fft/fft.hpp>
-#include <mc/fft/rfft.hpp>
+#include <mc/fft/convolution.hpp>
+#include <mc/fft/transform.hpp>

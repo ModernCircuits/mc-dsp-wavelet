@@ -54,14 +54,14 @@ target_sources(mc-wavelet
         "mc/fft/convolution/overlap_save_convolver.cpp"
         "mc/fft/convolution/overlap_save_convolver.hpp"
 
-        "mc/fft.hpp"
-        "mc/fft/fft.hpp"
-        "mc/fft/fft.cpp"
-        "mc/fft/rfft.hpp"
-        "mc/fft/rfft.cpp"
+        "mc/fft/transform.hpp"
+        "mc/fft/transform/fft.hpp"
+        "mc/fft/transform/fft.cpp"
+        "mc/fft/transform/rfft.hpp"
+        "mc/fft/transform/rfft.cpp"
 
-        "mc/fft/backend/pffft.hpp"
-        "mc/fft/backend/pffft.cpp"
+        "mc/fft/transform/backend/pffft.hpp"
+        "mc/fft/transform/backend/pffft.cpp"
 
         "mc/wavelet.hpp"
         "mc/wavelet/wavelet.cpp"
@@ -103,7 +103,7 @@ target_sources(mc-fft_tests
         "mc/fft/convolution/convolute.test.cpp"
         "mc/fft/convolution/overlap_save_convolver.test.cpp"
 
-        "mc/fft/rfft.test.cpp"
+        "mc/fft/transform/rfft.test.cpp"
 )
 
 

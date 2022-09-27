@@ -4,7 +4,7 @@
 
 #include <mc/core/config.hpp>
 
-#include <mc/fft/backend/pffft.hpp>
+#include <mc/fft/transform/backend/pffft.hpp>
 
 #include <mc/core/algorithm.hpp>
 #include <mc/core/complex.hpp>

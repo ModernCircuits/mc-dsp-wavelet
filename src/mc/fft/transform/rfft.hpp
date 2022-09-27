@@ -4,7 +4,7 @@
 
 #include <mc/core/config.hpp>
 
-#include <mc/fft/fft.hpp>
+#include <mc/fft/transform/fft.hpp>
 
 #include <mc/core/complex.hpp>
 #include <mc/core/memory.hpp>
