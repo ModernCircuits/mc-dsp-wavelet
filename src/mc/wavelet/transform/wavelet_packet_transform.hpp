@@ -4,12 +4,14 @@
 
 #include <mc/core/config.hpp>
 
+#include <mc/fft/convolution.hpp>
+
+#include <mc/wavelet/wavelet.hpp>
+
 #include <mc/algorithm/ipow2.hpp>
 #include <mc/core/format.hpp>
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
-#include <mc/fft/convolution.hpp>
-#include <mc/wavelet/wavelet.hpp>
 
 namespace mc {
 

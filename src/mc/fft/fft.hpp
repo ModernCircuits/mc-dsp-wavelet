@@ -4,10 +4,11 @@
 
 #include <mc/core/config.hpp>
 
+#include <mc/fft/backend/pffft.hpp>
+
 #include <mc/core/algorithm.hpp>
 #include <mc/core/complex.hpp>
 #include <mc/core/memory.hpp>
-#include <mc/fft/backend/pffft.hpp>
 
 namespace mc {
 

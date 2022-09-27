@@ -4,10 +4,11 @@
 
 #include <mc/core/config.hpp>
 
+#include <mc/fft/fft.hpp>
+
 #include <mc/core/complex.hpp>
 #include <mc/core/memory.hpp>
 #include <mc/core/span.hpp>
-#include <mc/fft/fft.hpp>
 
 #include <pffft.h>
 

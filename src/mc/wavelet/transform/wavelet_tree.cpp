@@ -2,6 +2,8 @@
 
 #include "wavelet_tree.hpp"
 
+#include <mc/wavelet/transform/common.hpp>
+
 #include <mc/core/cassert.hpp>
 #include <mc/core/cmath.hpp>
 #include <mc/core/exception.hpp>
@@ -9,7 +11,6 @@
 #include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
-#include <mc/wavelet/transform/common.hpp>
 
 namespace mc {
 

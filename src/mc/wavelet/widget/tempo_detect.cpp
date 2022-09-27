@@ -2,12 +2,13 @@
 
 #include "tempo_detect.hpp"
 
+#include <mc/fft/convolution.hpp>
+
 #include <mc/algorithm.hpp>
 #include <mc/core/algorithm.hpp>
 #include <mc/core/cmath.hpp>
 #include <mc/core/numeric.hpp>
 #include <mc/core/utility.hpp>
-#include <mc/fft/convolution.hpp>
 
 namespace mc {
 

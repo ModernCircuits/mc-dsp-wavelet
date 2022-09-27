@@ -2,10 +2,11 @@
 
 #include "common.hpp"
 
+#include <mc/fft/fft.hpp>
+
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/cstring.hpp>
-#include <mc/fft/fft.hpp>
 
 namespace mc {
 

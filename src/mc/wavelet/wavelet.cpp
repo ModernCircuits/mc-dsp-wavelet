@@ -2,6 +2,8 @@
 
 #include "wavelet.hpp"
 
+#include <mc/wavelet/family.hpp>
+
 #include <mc/core/algorithm.hpp>
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstring.hpp>
@@ -14,7 +16,6 @@
 #include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
-#include <mc/wavelet/family.hpp>
 
 namespace mc {
 

@@ -2,10 +2,11 @@
 
 #pragma once
 
-#include <mc/core/memory.hpp>
-#include <mc/core/vector.hpp>
 #include <mc/fft/convolution/convolute.hpp>
 #include <mc/fft/rfft.hpp>
+
+#include <mc/core/memory.hpp>
+#include <mc/core/vector.hpp>
 
 namespace mc {
 struct FFTConvolver

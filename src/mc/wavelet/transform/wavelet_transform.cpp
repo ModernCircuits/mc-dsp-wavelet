@@ -2,6 +2,10 @@
 
 #include "wavelet_transform.hpp"
 
+#include <mc/fft/convolution.hpp>
+
+#include <mc/wavelet/transform/common.hpp>
+
 #include <mc/algorithm/down_sample.hpp>
 #include <mc/algorithm/up_sample.hpp>
 #include <mc/algorithm/up_sample_even.hpp>
@@ -15,8 +19,6 @@
 #include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 #include <mc/fft.hpp>
-#include <mc/fft/convolution.hpp>
-#include <mc/wavelet/transform/common.hpp>
 
 namespace mc {
 
