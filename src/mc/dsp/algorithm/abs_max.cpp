@@ -6,7 +6,7 @@
 
 namespace mc {
 
-auto absmax(float const* array, std::size_t n) -> float
+auto absmax(float const* array, size_t n) -> float
 {
     MC_ASSERT(n != 0UL);
 

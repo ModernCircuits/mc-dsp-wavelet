@@ -6,7 +6,7 @@
 
 namespace mc {
 
-auto rmsError(float const* data, float const* rec, std::size_t n) -> float
+auto rmsError(float const* data, float const* rec, size_t n) -> float
 {
     auto diffSquared = [](auto x, auto y) {
         auto const diff = x - y;

@@ -33,7 +33,7 @@ auto main() -> int
 
     print("Node [{} {}] Coefficients : \n", x, y);
     wt.coeffs(x, y, oup.get(), len);
-    for (std::size_t i = 0; i < len; ++i) { print("{} ", oup[i]); }
+    for (size_t i = 0; i < len; ++i) { print("{} ", oup[i]); }
     print("\n");
 
     return EXIT_SUCCESS;

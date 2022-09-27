@@ -18,10 +18,10 @@ enum struct SignalExtension
 
 [[nodiscard]] auto toString(SignalExtension ext) -> String;
 
-auto periodicExtension(Span<float const> in, std::size_t a, float* out) -> std::size_t;
-auto periodicExtension(Span<double const> in, std::size_t a, double* out) -> std::size_t;
+auto periodicExtension(Span<float const> in, size_t a, float* out) -> size_t;
+auto periodicExtension(Span<double const> in, size_t a, double* out) -> size_t;
 
-auto symmetricExtension(Span<float const> in, std::size_t a, float* out) -> std::size_t;
-auto symmetricExtension(Span<double const> in, std::size_t a, double* out) -> std::size_t;
+auto symmetricExtension(Span<float const> in, size_t a, float* out) -> size_t;
+auto symmetricExtension(Span<double const> in, size_t a, double* out) -> size_t;
 
 }  // namespace mc

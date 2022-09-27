@@ -17,16 +17,11 @@ namespace mc {
 
 struct WaveletTransform
 {
-    WaveletTransform(
-        Wavelet& wave,
-        char const* method,
-        std::size_t siglength,
-        std::size_t j
-    );
+    WaveletTransform(Wavelet& wave, char const* method, size_t siglength, size_t j);
 
     [[nodiscard]] auto wave() const noexcept -> Wavelet const&;
     [[nodiscard]] auto levels() const noexcept -> int;
-    [[nodiscard]] auto signalLength() const noexcept -> std::size_t;
+    [[nodiscard]] auto signalLength() const noexcept -> size_t;
     [[nodiscard]] auto method() const noexcept -> String const&;
 
     auto extension(SignalExtension ext) -> void;
@@ -37,12 +32,12 @@ struct WaveletTransform
 
     [[nodiscard]] auto output() const -> Span<float>;
     [[nodiscard]] auto approx() const -> Span<float>;
-    [[nodiscard]] auto detail(std::size_t level) const -> Span<float>;
+    [[nodiscard]] auto detail(size_t level) const -> Span<float>;
 
 private:
     Wavelet* _wave;
-    std::size_t _levels;
-    std::size_t _signalLength;
+    size_t _levels;
+    size_t _signalLength;
     String _method;
     SignalExtension _ext;
     ConvolutionMethod _cmethod{ConvolutionMethod::direct};
@@ -51,15 +46,15 @@ private:
 
 public:
     UniquePtr<FFTConvolver> convolver;
-    std::size_t modwtsiglength;  // Modified signal length for MODWT
-    std::size_t outlength;       // Length of the output DWT vector
-    std::size_t lenlength;       // Length of the Output Dimension Vector "length"
-    std::size_t MaxIter;         // Maximum Iterations J <= MaxIter
+    size_t modwtsiglength;  // Modified signal length for MODWT
+    size_t outlength;       // Length of the output DWT vector
+    size_t lenlength;       // Length of the Output Dimension Vector "length"
+    size_t MaxIter;         // Maximum Iterations J <= MaxIter
 
-    std::size_t N{};  //
-    std::size_t cfftset{0};
-    std::size_t zpad{};
-    std::size_t length[102]{};
+    size_t N{};  //
+    size_t cfftset{0};
+    size_t zpad{};
+    size_t length[102]{};
     UniquePtr<float[]> params;
 };
 

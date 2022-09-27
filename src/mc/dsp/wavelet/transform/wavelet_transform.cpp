@@ -24,8 +24,8 @@ namespace mc {
 WaveletTransform::WaveletTransform(
     Wavelet& w,
     char const* method,
-    std::size_t siglength,
-    std::size_t j
+    size_t siglength,
+    size_t j
 )
     : _wave{&w}
     , _levels{j}
@@ -89,15 +89,13 @@ WaveletTransform::WaveletTransform(
 
     this->_output = &this->params[0];
     if ((method == StringView{"dwt"}) || (method == StringView{"DWT"})) {
-        for (std::size_t i = 0; i < siglength + 2 * levels() * (size + 1); ++i) {
+        for (size_t i = 0; i < siglength + 2 * levels() * (size + 1); ++i) {
             this->params[i] = 0.0F;
         }
     } else if ((method == StringView{"swt"}) || (method == StringView{"SWT"})) {
-        for (std::size_t i = 0; i < siglength * (levels() + 1); ++i) {
-            this->params[i] = 0.0F;
-        }
+        for (size_t i = 0; i < siglength * (levels() + 1); ++i) { this->params[i] = 0.0F; }
     } else if ((method == StringView{"MODWT"}) || (method == StringView{"modwt"})) {
-        for (std::size_t i = 0; i < siglength * 2 * (levels() + 1); ++i) {
+        for (size_t i = 0; i < siglength * 2 * (levels() + 1); ++i) {
             this->params[i] = 0.0F;
         }
     }
@@ -107,10 +105,7 @@ auto WaveletTransform::wave() const noexcept -> Wavelet const& { return *_wave; 
 
 auto WaveletTransform::levels() const noexcept -> int { return static_cast<int>(_levels); }
 
-auto WaveletTransform::signalLength() const noexcept -> std::size_t
-{
-    return _signalLength;
-}
+auto WaveletTransform::signalLength() const noexcept -> size_t { return _signalLength; }
 
 auto WaveletTransform::method() const noexcept -> String const& { return _method; }
 
@@ -128,7 +123,7 @@ auto WaveletTransform::extension(SignalExtension ext) -> void
 
 auto WaveletTransform::output() const -> Span<float>
 {
-    return Span<float>{_output, static_cast<std::size_t>(outlength)};
+    return Span<float>{_output, static_cast<size_t>(outlength)};
 }
 
 auto WaveletTransform::approx() const -> Span<float>
@@ -143,7 +138,7 @@ auto WaveletTransform::approx() const -> Span<float>
     return {_output, static_cast<size_t>(length[0])};
 }
 
-auto WaveletTransform::detail(std::size_t level) const -> Span<float>
+auto WaveletTransform::detail(size_t level) const -> Span<float>
 {
     /*
     returns Detail coefficents at the jth level where j = J,J-1,...,1
@@ -156,7 +151,7 @@ auto WaveletTransform::detail(std::size_t level) const -> Span<float>
     Level J : Length of D(1), ie N, is stored in wt->length[J]
     */
 
-    if (level > static_cast<std::size_t>(levels()) || level < 1U) {
+    if (level > static_cast<size_t>(levels()) || level < 1U) {
         raisef<InvalidArgument>("The decomposition only has 1,..,{:d} levels", levels());
     }
 
@@ -219,7 +214,7 @@ static auto dwtSym(WaveletTransform& wt, float* inp, int n, float* cA, int lenCA
     );
 }
 
-static auto dwt1(WaveletTransform& wt, float* sig, std::size_t lenSig, float* cA, float* cD)
+static auto dwt1(WaveletTransform& wt, float* sig, size_t lenSig, float* cA, float* cD)
     -> void
 {
     if (wt.extension() == SignalExtension::periodic) {
@@ -238,10 +233,10 @@ static auto dwt1(WaveletTransform& wt, float* sig, std::size_t lenSig, float* cA
         }
 
         wconv(wt, {signal.get(), (lenSig + lenAvg)}, wt.wave().lpd(), cAUndec.get());
-        downSample<float>(cAUndec.get() + lenAvg, static_cast<std::size_t>(lenSig), 2U, cA);
+        downSample<float>(cAUndec.get() + lenAvg, static_cast<size_t>(lenSig), 2U, cA);
 
         wconv(wt, {signal.get(), (lenSig + lenAvg)}, wt.wave().hpd(), cAUndec.get());
-        downSample<float>(cAUndec.get() + lenAvg, static_cast<std::size_t>(lenSig), 2U, cD);
+        downSample<float>(cAUndec.get() + lenAvg, static_cast<size_t>(lenSig), 2U, cD);
 
     } else if (wt.extension() == SignalExtension::symmetric) {
         auto lf      = wt.wave().lpd().size();  // lpd and hpd have the same length
@@ -316,9 +311,9 @@ auto dwt(WaveletTransform& wt, float const* inp) -> void
             }
             tempLen = wt.length[j - iter];
             if (iter == j - 1) {
-                for (std::size_t i = 0; i < lenCA; ++i) { wt.params[i] = orig2[i]; }
+                for (size_t i = 0; i < lenCA; ++i) { wt.params[i] = orig2[i]; }
             } else {
-                for (std::size_t i = 0; i < lenCA; ++i) { orig[i] = orig2[i]; }
+                for (size_t i = 0; i < lenCA; ++i) { orig[i] = orig2[i]; }
             }
         }
     } else if (wt.extension() == SignalExtension::symmetric) {
@@ -345,9 +340,9 @@ auto dwt(WaveletTransform& wt, float const* inp) -> void
             tempLen = wt.length[j - iter];
 
             if (iter == j - 1) {
-                for (std::size_t i = 0; i < lenCA; ++i) { wt.params[i] = orig2[i]; }
+                for (size_t i = 0; i < lenCA; ++i) { wt.params[i] = orig2[i]; }
             } else {
-                for (std::size_t i = 0; i < lenCA; ++i) { orig[i] = orig2[i]; }
+                for (size_t i = 0; i < lenCA; ++i) { orig[i] = orig2[i]; }
             }
         }
     } else {
@@ -374,7 +369,7 @@ static auto idwt1(
 
     upSampleEven(cA, cA + lenCA, cAUp, u);
 
-    periodicExtension({cAUp, static_cast<std::size_t>(2 * lenCA)}, lenAvg / 2, temp);
+    periodicExtension({cAUp, static_cast<size_t>(2 * lenCA)}, lenAvg / 2, temp);
 
     auto n2 = 2 * lenCA + lenAvg;
 
@@ -390,7 +385,7 @@ static auto idwt1(
 
     upSampleEven(cD, cD + lenCD, cAUp, u);
 
-    periodicExtension({cAUp, static_cast<std::size_t>(2 * lenCD)}, lenAvg / 2, temp);
+    periodicExtension({cAUp, static_cast<size_t>(2 * lenCD)}, lenAvg / 2, temp);
 
     n2 = 2 * lenCD + lenAvg;
 
@@ -439,12 +434,12 @@ static auto idwtSym(WaveletTransform& wt, float* cA, int lenCA, float* cD, float
 
 auto idwt(WaveletTransform& wt, float* dwtop) -> void
 {
-    std::size_t lf     = 0;
-    std::size_t n      = 0;
-    std::size_t n2     = 0;
-    std::size_t iter   = 0;
-    std::size_t k      = 0;
-    std::size_t detLen = 0;
+    size_t lf     = 0;
+    size_t n      = 0;
+    size_t n2     = 0;
+    size_t iter   = 0;
+    size_t k      = 0;
+    size_t detLen = 0;
 
     auto j      = wt.levels();
     auto u      = 2;
@@ -464,7 +459,7 @@ auto idwt(WaveletTransform& wt, float* dwtop) -> void
         auto xHp  = makeUnique<float[]>((n + 2 * lf - 1));
         iter      = appLen;
 
-        for (std::size_t i = 0; i < appLen; ++i) { out[i] = wt.output()[i]; }
+        for (size_t i = 0; i < appLen; ++i) { out[i] = wt.output()[i]; }
 
         for (auto i = 0; i < j; ++i) {
             idwt1(
@@ -491,7 +486,7 @@ auto idwt(WaveletTransform& wt, float* dwtop) -> void
         auto xLp = makeUnique<float[]>((n + 2 * lf - 1));
         iter     = appLen;
 
-        for (std::size_t i = 0; i < appLen; ++i) { out[i] = wt.output()[i]; }
+        for (size_t i = 0; i < appLen; ++i) { out[i] = wt.output()[i]; }
 
         for (auto i = 0; i < j; ++i) {
             idwtPer(wt, out.get(), detLen, wt.output().data() + iter, xLp.get());
@@ -511,7 +506,7 @@ auto idwt(WaveletTransform& wt, float* dwtop) -> void
         auto xLp = makeUnique<float[]>((n + 2 * lf - 1));
         iter     = appLen;
 
-        for (std::size_t i = 0; i < appLen; ++i) { out[i] = wt.output()[i]; }
+        for (size_t i = 0; i < appLen; ++i) { out[i] = wt.output()[i]; }
 
         for (auto i = 0; i < j; ++i) {
             idwtSym(wt, out.get(), detLen, wt.output().data() + iter, xLp.get());
@@ -528,7 +523,7 @@ auto idwt(WaveletTransform& wt, float* dwtop) -> void
         auto xLp  = makeUnique<float[]>((n + lf - 1));
         auto xHp  = makeUnique<float[]>((n + lf - 1));
 
-        for (std::size_t i = 0; i < appLen; ++i) { out[i] = wt.output()[i]; }
+        for (size_t i = 0; i < appLen; ++i) { out[i] = wt.output()[i]; }
 
         iter = appLen;
 
@@ -606,10 +601,10 @@ static auto swtFft(WaveletTransform& wt, float const* inp) -> void
 
     m = 1;
 
-    for (std::size_t i = 0; i < tempLen; ++i) { wt.params[i] = inp[i]; }
+    for (size_t i = 0; i < tempLen; ++i) { wt.params[i] = inp[i]; }
 
     auto lenacc = wt.outlength;
-    std::size_t n{0};
+    size_t n{0};
 
     for (auto iter = 0; iter < j; ++iter) {
         lenacc -= tempLen;
@@ -620,7 +615,7 @@ static auto swtFft(WaveletTransform& wt, float const* inp) -> void
             upSampleEven(begin(wt.wave().hpd()), end(wt.wave().hpd()), highPass.get(), m);
         } else {
             n = lenFilt;
-            for (std::size_t i = 0; i < n; ++i) {
+            for (size_t i = 0; i < n; ++i) {
                 lowPass[i]  = wt.wave().lpd()[i];
                 highPass[i] = wt.wave().hpd()[i];
             }
@@ -648,7 +643,7 @@ static auto swtFft(WaveletTransform& wt, float const* inp) -> void
             wt.cfftset = 0;
         }
 
-        for (std::size_t i = 0; i < tempLen; ++i) {
+        for (size_t i = 0; i < tempLen; ++i) {
             wt.params[i]          = cA[n + i];
             wt.params[lenacc + i] = cD[n + i];
         }
@@ -674,7 +669,7 @@ static auto swtDirect(WaveletTransform& wt, float const* inp) -> void
 
     m = 1;
 
-    for (std::size_t i = 0; i < tempLen; ++i) { wt.params[i] = inp[i]; }
+    for (size_t i = 0; i < tempLen; ++i) { wt.params[i] = inp[i]; }
 
     auto lenacc = wt.outlength;
 
@@ -684,7 +679,7 @@ static auto swtDirect(WaveletTransform& wt, float const* inp) -> void
 
         swtPer(wt, m, wt.params.get(), tempLen, cA.get(), tempLen, cD.get());
 
-        for (std::size_t i = 0; i < tempLen; ++i) {
+        for (size_t i = 0; i < tempLen; ++i) {
             wt.params[i]          = cA[i];
             wt.params[lenacc + i] = cD[i];
         }
@@ -706,7 +701,7 @@ auto swt(WaveletTransform& wt, float const* inp) -> void
 auto iswt(WaveletTransform& wt, float* swtop) -> void
 {
     auto n  = wt.signalLength();
-    auto j  = static_cast<std::size_t>(wt.levels());
+    auto j  = static_cast<size_t>(wt.levels());
     auto u  = 2;
     auto lf = wt.wave().lpr().size();
 
@@ -724,24 +719,22 @@ auto iswt(WaveletTransform& wt, float* swtop) -> void
     auto oup00   = makeUnique<float[]>(n);
     auto oup01   = makeUnique<float[]>(n);
 
-    for (std::size_t iter = 0; iter < j; ++iter) {
-        for (std::size_t i = 0; i < n; ++i) { swtop[i] = 0.0F; }
+    for (size_t iter = 0; iter < j; ++iter) {
+        for (size_t i = 0; i < n; ++i) { swtop[i] = 0.0F; }
         if (iter == 0) {
-            for (std::size_t i = 0; i < n; ++i) {
+            for (size_t i = 0; i < n; ++i) {
                 appxSig[i] = wt.output()[i];
                 detSig[i]  = wt.output()[n + i];
             }
         } else {
-            for (std::size_t i = 0; i < n; ++i) {
-                detSig[i] = wt.output()[(iter + 1) * n + i];
-            }
+            for (size_t i = 0; i < n; ++i) { detSig[i] = wt.output()[(iter + 1) * n + i]; }
         }
 
         auto const value = (int)std::pow(2.0F, (float)(j - 1 - iter));
 
         for (auto count = 0; count < value; count++) {
             auto len = 0;
-            for (std::size_t index = count; index < n; index += value) {
+            for (size_t index = count; index < n; index += value) {
                 appx1[len] = appxSig[index];
                 det1[len]  = detSig[index];
                 len++;
@@ -757,14 +750,14 @@ auto iswt(WaveletTransform& wt, float* swtop) -> void
             }
             upSampleEven(appx2.get(), appx2.get() + len0, tempx.get(), u);
             periodicExtension(
-                {tempx.get(), static_cast<std::size_t>(2 * len0)},
+                {tempx.get(), static_cast<size_t>(2 * len0)},
                 lf / 2,
                 cL0.get()
             );
 
             upSampleEven(det2.get(), det2.get() + len0, tempx.get(), u);
             periodicExtension(
-                {tempx.get(), static_cast<std::size_t>(2 * len0)},
+                {tempx.get(), static_cast<size_t>(2 * len0)},
                 lf / 2,
                 cH0.get()
             );
@@ -799,14 +792,14 @@ auto iswt(WaveletTransform& wt, float* swtop) -> void
 
             upSampleEven(appx2.get(), appx2.get() + len0, tempx.get(), u);
             periodicExtension(
-                {tempx.get(), static_cast<std::size_t>(2 * len0)},
+                {tempx.get(), static_cast<size_t>(2 * len0)},
                 lf / 2,
                 cL0.get()
             );
 
             upSampleEven(det2.get(), det2.get() + len0, tempx.get(), u);
             periodicExtension(
-                {tempx.get(), static_cast<std::size_t>(2 * len0)},
+                {tempx.get(), static_cast<size_t>(2 * len0)},
                 lf / 2,
                 cH0.get()
             );
@@ -826,12 +819,12 @@ auto iswt(WaveletTransform& wt, float* swtop) -> void
 
             auto index2 = 0;
 
-            for (auto index = static_cast<std::size_t>(count); index < n; index += value) {
+            for (auto index = static_cast<size_t>(count); index < n; index += value) {
                 swtop[index] = (oup00[index2] + oup01[index2]) / 2.0F;
                 index2++;
             }
         }
-        for (std::size_t i = 0; i < n; ++i) { appxSig[i] = swtop[i]; }
+        for (size_t i = 0; i < n; ++i) { appxSig[i] = swtop[i]; }
     }
 }
 
@@ -843,7 +836,7 @@ modwtPer(WaveletTransform& wt, int m, float const* inp, float* cA, int lenCA, fl
     auto filt         = makeUnique<float[]>(2 * lenAvg);
     auto s            = sqrt(2.0F);
 
-    for (std::size_t i = 0; i < lenAvg; ++i) {
+    for (size_t i = 0; i < lenAvg; ++i) {
         filt[i]          = wt.wave().lpd()[i] / s;
         filt[lenAvg + i] = wt.wave().hpd()[i] / s;
     }
@@ -852,7 +845,7 @@ modwtPer(WaveletTransform& wt, int m, float const* inp, float* cA, int lenCA, fl
         auto t = i;
         cA[i]  = filt[0] * inp[t];
         cD[i]  = filt[lenAvg] * inp[t];
-        for (std::size_t l = 1; l < lenAvg; l++) {
+        for (size_t l = 1; l < lenAvg; l++) {
             t -= m;
             while (t >= lenCA) { t -= lenCA; }
             while (t < 0) { t += lenCA; }
@@ -870,11 +863,11 @@ static auto modwtDirect(WaveletTransform& wt, float const* inp) -> void
     }
 
     auto tempLen = wt.signalLength();
-    auto j       = static_cast<std::size_t>(wt.levels());
+    auto j       = static_cast<size_t>(wt.levels());
     wt.length[0] = wt.length[j] = tempLen;
     wt.outlength = wt.length[j + 1] = (j + 1) * tempLen;
     auto m                          = 1;
-    for (std::size_t iter = 1; iter < j; ++iter) {
+    for (size_t iter = 1; iter < j; ++iter) {
         m               = 2 * m;
         wt.length[iter] = tempLen;
     }
@@ -884,17 +877,17 @@ static auto modwtDirect(WaveletTransform& wt, float const* inp) -> void
 
     m = 1;
 
-    for (std::size_t i = 0; i < tempLen; ++i) { wt.params[i] = inp[i]; }
+    for (size_t i = 0; i < tempLen; ++i) { wt.params[i] = inp[i]; }
 
     auto lenacc = wt.outlength;
 
-    for (std::size_t iter = 0; iter < j; ++iter) {
+    for (size_t iter = 0; iter < j; ++iter) {
         lenacc -= tempLen;
         if (iter > 0) { m = 2 * m; }
 
         modwtPer(wt, m, wt.params.get(), cA.get(), tempLen, cD.get());
 
-        for (std::size_t i = 0; i < tempLen; ++i) {
+        for (size_t i = 0; i < tempLen; ++i) {
             wt.params[i]          = cA[i];
             wt.params[lenacc + i] = cD[i];
         }
@@ -909,8 +902,8 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
     int lenacc = 0;
 
     auto tempLen = wt.signalLength();
-    auto lenAvg  = static_cast<std::size_t>(wt.wave().lpd().size());
-    std::size_t n{0};
+    auto lenAvg  = static_cast<size_t>(wt.wave().lpd().size());
+    size_t n{0};
     if (wt.extension() == SignalExtension::symmetric) {
         n = 2 * tempLen;
     } else if (wt.extension() == SignalExtension::periodic) {
@@ -938,7 +931,7 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
 
     // Low Pass Filter
 
-    for (std::size_t i = 0; i < lenAvg; ++i) {
+    for (size_t i = 0; i < lenAvg; ++i) {
         sig[i].real((float)wt.wave().lpd()[i] / s);
         sig[i].imag(0.0F);
     }
@@ -951,11 +944,11 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
 
     // High Pass Filter
 
-    for (std::size_t i = 0; i < lenAvg; ++i) {
+    for (size_t i = 0; i < lenAvg; ++i) {
         sig[i].real((float)wt.wave().hpd()[i] / s);
         sig[i].imag(0.0F);
     }
-    for (std::size_t i = lenAvg; i < n; ++i) {
+    for (size_t i = lenAvg; i < n; ++i) {
         sig[i].real(0.0F);
         sig[i].imag(0.0F);
     }
@@ -963,11 +956,11 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
     fft(fftFd, sig, highPass);
 
     // symmetric extension
-    for (std::size_t i = 0; i < tempLen; ++i) {
+    for (size_t i = 0; i < tempLen; ++i) {
         sig[i].real((float)inp[i]);
         sig[i].imag(0.0F);
     }
-    for (std::size_t i = tempLen; i < n; ++i) {
+    for (size_t i = tempLen; i < n; ++i) {
         sig[i].real((float)inp[n - i - 1]);
         sig[i].imag(0.0F);
     }
@@ -983,9 +976,9 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
     for (iter = 0; iter < j; ++iter) {
         lenacc -= n;
 
-        for (std::size_t i = 0; i < n; ++i) { index[i] = (m * i) % n; }
+        for (size_t i = 0; i < n; ++i) { index[i] = (m * i) % n; }
 
-        for (std::size_t i = 0; i < n; ++i) {
+        for (size_t i = 0; i < n; ++i) {
             auto const tmp1 = cA[i].real();
             auto const tmp2 = cA[i].imag();
             cA[i].real(lowPass[index[i]].real() * tmp1 - lowPass[index[i]].imag() * tmp2);
@@ -997,7 +990,7 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
 
         ifft(fftBd, cD, sig);
 
-        for (std::size_t i = 0; i < n; ++i) {
+        for (size_t i = 0; i < n; ++i) {
             wt.params[lenacc + i] = sig[i].real() / static_cast<float>(n);
         }
 
@@ -1006,9 +999,7 @@ static auto modwtFft(WaveletTransform& wt, float const* inp) -> void
 
     ifft(fftBd, cA, sig);
 
-    for (std::size_t i = 0; i < n; ++i) {
-        wt.params[i] = sig[i].real() / static_cast<float>(n);
-    }
+    for (size_t i = 0; i < n; ++i) { wt.params[i] = sig[i].real() / static_cast<float>(n); }
 }
 
 auto modwt(WaveletTransform& wt, float const* inp) -> void
@@ -1029,8 +1020,8 @@ static auto conjComplex(Complex<float>* x, int n) -> void
 auto imodwtFft(WaveletTransform& wt, float* oup) -> void
 {
     auto n      = wt.modwtsiglength;
-    auto lenAvg = static_cast<std::size_t>(wt.wave().lpd().size());
-    auto j      = static_cast<std::size_t>(wt.levels());
+    auto lenAvg = static_cast<size_t>(wt.wave().lpd().size());
+    auto j      = static_cast<size_t>(wt.levels());
 
     auto s     = sqrt(2.0F);
     auto fftFd = makeFFT(n);
@@ -1041,17 +1032,17 @@ auto imodwtFft(WaveletTransform& wt, float* oup) -> void
     auto cD       = Vector<Complex<float>>(n);
     auto lowPass  = Vector<Complex<float>>(n);
     auto highPass = Vector<Complex<float>>(n);
-    auto index    = makeUnique<std::size_t[]>(n);
+    auto index    = makeUnique<size_t[]>(n);
 
     // N-point FFT of low pass and high pass filters
 
     // Low Pass Filter
 
-    for (std::size_t i = 0; i < lenAvg; ++i) {
+    for (size_t i = 0; i < lenAvg; ++i) {
         sig[i].real((float)wt.wave().lpd()[i] / s);
         sig[i].imag(0.0F);
     }
-    for (std::size_t i = lenAvg; i < n; ++i) {
+    for (size_t i = lenAvg; i < n; ++i) {
         sig[i].real(0.0F);
         sig[i].imag(0.0F);
     }
@@ -1060,11 +1051,11 @@ auto imodwtFft(WaveletTransform& wt, float* oup) -> void
 
     // High Pass Filter
 
-    for (std::size_t i = 0; i < lenAvg; ++i) {
+    for (size_t i = 0; i < lenAvg; ++i) {
         sig[i].real((float)wt.wave().hpd()[i] / s);
         sig[i].imag(0.0F);
     }
-    for (std::size_t i = lenAvg; i < n; ++i) {
+    for (size_t i = lenAvg; i < n; ++i) {
         sig[i].real(0.0F);
         sig[i].imag(0.0F);
     }
@@ -1080,22 +1071,22 @@ auto imodwtFft(WaveletTransform& wt, float* oup) -> void
     auto lenacc = n;
 
     //
-    for (std::size_t i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         sig[i].real((float)wt.output()[i]);
         sig[i].imag(0.0F);
     }
 
-    for (std::size_t iter = 0; iter < j; ++iter) {
+    for (size_t iter = 0; iter < j; ++iter) {
         fft(fftFd, sig, cA);
-        for (std::size_t i = 0; i < n; ++i) {
+        for (size_t i = 0; i < n; ++i) {
             sig[i].real(wt.output()[lenacc + i]);
             sig[i].imag(0.0F);
         }
         fft(fftFd, sig, cD);
 
-        for (std::size_t i = 0; i < n; ++i) { index[i] = (m * i) % n; }
+        for (size_t i = 0; i < n; ++i) { index[i] = (m * i) % n; }
 
-        for (std::size_t i = 0; i < n; ++i) {
+        for (size_t i = 0; i < n; ++i) {
             auto const tmp1 = cA[i].real();
             auto const tmp2 = cA[i].imag();
             cA[i].real(
@@ -1112,7 +1103,7 @@ auto imodwtFft(WaveletTransform& wt, float* oup) -> void
 
         ifft(fftBd, cA, sig);
 
-        for (std::size_t i = 0; i < n; ++i) {
+        for (size_t i = 0; i < n; ++i) {
             sig[i].real(sig[i].real() / static_cast<float>(n));
             sig[i].imag(sig[i].imag() / static_cast<float>(n));
         }
@@ -1138,7 +1129,7 @@ static auto imodwtPer(
     auto filt         = makeUnique<float[]>(2 * lenAvg);
     auto s            = sqrt(2.0F);
 
-    for (std::size_t i = 0; i < lenAvg; ++i) {
+    for (size_t i = 0; i < lenAvg; ++i) {
         filt[i]          = wt.wave().lpd()[i] / s;
         filt[lenAvg + i] = wt.wave().hpd()[i] / s;
     }
@@ -1146,7 +1137,7 @@ static auto imodwtPer(
     for (auto i = 0; i < lenCA; ++i) {
         auto t = i;
         x[i]   = (filt[0] * cA[t]) + (filt[lenAvg] * cD[t]);
-        for (std::size_t l = 1; l < lenAvg; l++) {
+        for (size_t l = 1; l < lenAvg; l++) {
             t += m;
             while (t >= lenCA) { t -= lenCA; }
             while (t < 0) { t += lenCA; }
@@ -1161,25 +1152,25 @@ static auto imodwtDirect(WaveletTransform& wt, float* dwtop) -> void
     auto n      = wt.signalLength();
     auto lenacc = n;
 
-    auto j = static_cast<std::size_t>(wt.levels());
+    auto j = static_cast<size_t>(wt.levels());
 
     auto x = makeUnique<float[]>(n);
 
-    for (std::size_t i = 0; i < n; ++i) { dwtop[i] = wt.output()[i]; }
+    for (size_t i = 0; i < n; ++i) { dwtop[i] = wt.output()[i]; }
 
     auto m = static_cast<int>(std::pow(2.0F, (float)j - 1.0F));
-    for (std::size_t iter = 0; iter < j; ++iter) {
+    for (size_t iter = 0; iter < j; ++iter) {
         if (iter > 0) { m = m / 2; }
         imodwtPer(wt, m, dwtop, static_cast<int>(n), wt.params.get() + lenacc, x.get());
         /*
-            for (std::size_t j = lf - 1; j < N; ++j) {
+            for (size_t j = lf - 1; j < N; ++j) {
                     dwtop[j - lf + 1] = X[j];
             }
-            for (std::size_t j = 0; j < lf - 1; ++j) {
+            for (size_t j = 0; j < lf - 1; ++j) {
                     dwtop[N - lf + 1 + j] = X[j];
             }
             */
-        for (std::size_t jj = 0; jj < n; ++jj) { dwtop[jj] = x[jj]; }
+        for (size_t jj = 0; jj < n; ++jj) { dwtop[jj] = x[jj]; }
 
         lenacc += n;
     }

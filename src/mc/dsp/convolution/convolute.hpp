@@ -21,17 +21,15 @@ auto convolute(
 template<typename T>
 auto convolute(Span<T const> signal, Span<T const> patch, T* output) noexcept -> void
 {
-    std::size_t n = signal.size();
-    std::size_t l = patch.size();
+    size_t n      = signal.size();
+    size_t l      = patch.size();
     auto const mm = n + l - 1;
 
     if (n >= l) {
-        auto i = std::size_t{0};
-        for (auto k = std::size_t{0}; k < l; k++) {
+        auto i = size_t{0};
+        for (auto k = size_t{0}; k < l; k++) {
             output[k] = 0.0;
-            for (auto m = std::size_t{0}; m <= k; m++) {
-                output[k] += signal[m] * patch[k - m];
-            }
+            for (auto m = size_t{0}; m <= k; m++) { output[k] += signal[m] * patch[k - m]; }
         }
         for (auto k = l; k < mm; k++) {
             output[k] = 0.0;
@@ -43,12 +41,10 @@ auto convolute(Span<T const> signal, Span<T const> patch, T* output) noexcept ->
         return;
     }
 
-    auto i = std::size_t{0};
-    for (auto k = std::size_t{0}; k < n; k++) {
+    auto i = size_t{0};
+    for (auto k = size_t{0}; k < n; k++) {
         output[k] = 0.0;
-        for (auto m = std::size_t{0}; m <= k; m++) {
-            output[k] += patch[m] * signal[k - m];
-        }
+        for (auto m = size_t{0}; m <= k; m++) { output[k] += patch[m] * signal[k - m]; }
     }
     for (auto k = n; k < mm; k++) {
         output[k] = 0.0;

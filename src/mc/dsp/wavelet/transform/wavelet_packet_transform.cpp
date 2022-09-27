@@ -84,11 +84,7 @@ auto costfunc(float* x, int n, char const* entropy, float p) -> float
 }
 }  // namespace
 
-WaveletPacketTransform::WaveletPacketTransform(
-    Wavelet* wave,
-    std::size_t siglength,
-    std::size_t j
-)
+WaveletPacketTransform::WaveletPacketTransform(Wavelet* wave, size_t siglength, size_t j)
 {
     auto const size = wave->size();
 
@@ -102,16 +98,16 @@ WaveletPacketTransform::WaveletPacketTransform(
     }
     auto temp   = 1;
     auto nodess = 0;
-    for (std::size_t i = 0; i < j; ++i) {
+    for (size_t i = 0; i < j; ++i) {
         temp *= 2;
         nodess += temp;
     }
 
-    auto idx            = j;
-    auto p2             = 2;
-    auto n              = siglength;
-    auto lp             = size;
-    std::size_t elength = 0;
+    auto idx       = j;
+    auto p2        = 2;
+    auto n         = siglength;
+    auto lp        = size;
+    size_t elength = 0;
     while (idx > 0) {
         n       = n + lp - 2;
         n       = (int)std::ceil((float)n / 2.0F);
@@ -141,9 +137,7 @@ WaveletPacketTransform::WaveletPacketTransform(
     this->numnodeslevel = (int*)&this->params[elength + 4 * nodes + 4];
     this->coeflength    = (int*)&this->params[elength + 4 * nodes + j + 5];
 
-    for (std::size_t i = 0; i < elength + 4 * nodes + 2 * j + 6; ++i) {
-        this->params[i] = 0.0F;
-    }
+    for (size_t i = 0; i < elength + 4 * nodes + 2 * j + 6; ++i) { this->params[i] = 0.0F; }
 }
 
 static auto
@@ -573,7 +567,7 @@ auto idwpt(WaveletPacketTransform& wt, float* dwtop) -> void
             n1 += llb;
         }
 
-        for (std::size_t i = 0; i < xlen; ++i) { x[i] = 0.0F; }
+        for (size_t i = 0; i < xlen; ++i) { x[i] = 0.0F; }
 
         for (auto i = 0; i < llb; ++i) {
             prep[i]  = (int)wt.basisvector[n1 - llb + i];

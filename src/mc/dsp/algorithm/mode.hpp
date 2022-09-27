@@ -19,7 +19,7 @@ template<typename T>
     float countmax = 0;
     float current  = v[0];
     float moda     = 0;
-    for (std::size_t i = 1; i < n; i++) {
+    for (size_t i = 1; i < n; i++) {
         if (v[i] == current) {
             count++;
         } else if (count > countmax) {

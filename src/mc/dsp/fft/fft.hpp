@@ -82,6 +82,6 @@ private:
     UniquePtr<ConceptType> _concept{nullptr};
 };
 
-[[nodiscard]] auto makeFFT(std::size_t size) -> FFT<float>;
+[[nodiscard]] auto makeFFT(size_t size) -> FFT<float>;
 
 }  // namespace mc

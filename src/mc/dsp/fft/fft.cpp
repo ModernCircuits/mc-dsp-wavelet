@@ -3,8 +3,5 @@
 #include "fft.hpp"
 
 namespace mc {
-auto makeFFT(std::size_t size) -> FFT<float>
-{
-    return FFT<float>{PFFFT_Complex_Float{size}};
-}
+auto makeFFT(size_t size) -> FFT<float> { return FFT<float>{PFFFT_Complex_Float{size}}; }
 }  // namespace mc

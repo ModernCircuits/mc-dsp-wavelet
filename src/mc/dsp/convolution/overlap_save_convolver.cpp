@@ -13,13 +13,13 @@
 
 namespace mc {
 namespace {
-auto pow2Ceil(std::size_t x)
+auto pow2Ceil(size_t x)
 {
-    return static_cast<std::size_t>(std::pow(2, std::ceil(std::log2(x))));
+    return static_cast<size_t>(std::pow(2, std::ceil(std::log2(x))));
 }
 }  // namespace
 
-FloatSignal::FloatSignal(std::size_t size) : data_{fftwf_alloc_real(size)}, size_{size}
+FloatSignal::FloatSignal(size_t size) : data_{fftwf_alloc_real(size)}, size_{size}
 {
     std::fill(data_, data_ + size_, float{});
 }
@@ -37,7 +37,7 @@ FloatSignal::FloatSignal(float* data, size_t size, size_t padBef, size_t padAft)
 
 FloatSignal::~FloatSignal() { fftwf_free(data_); }
 
-ComplexSignal::ComplexSignal(std::size_t size)
+ComplexSignal::ComplexSignal(size_t size)
     : data_{reinterpret_cast<Complex<float>*>(fftwf_alloc_complex(size))}  // NOLINT
     , size_{size}
 {
@@ -87,8 +87,7 @@ OverlapSaveConvolver::OverlapSaveConvolver(FloatSignal& signal, FloatSignal& pat
 
     // chunk the signal into strides of same size as padded patch
     // and make complex counterparts too, as well as the corresponding xcorr signals
-    for (std::size_t i = 0; i <= _paddedSignal.size() - _resultChunksize;
-         i += _result_stride) {
+    for (size_t i = 0; i <= _paddedSignal.size() - _resultChunksize; i += _result_stride) {
         _inputChunks.push_back(makeUnique<FloatSignal>(&_paddedSignal[i], _resultChunksize)
         );
         _inputChunksComplex.push_back(makeUnique<ComplexSignal>(_resultChunksizeComplex));
@@ -98,7 +97,7 @@ OverlapSaveConvolver::OverlapSaveConvolver(FloatSignal& signal, FloatSignal& pat
     // make one forward plan per signal chunk, and one for the patch
     // Also backward plans for the xcorr chunks
     _forwardPlans.emplace_back(new FftForwardPlan(_paddedPatch, _paddedPatchComplex));
-    for (std::size_t i = 0; i < _inputChunks.size(); i++) {
+    for (size_t i = 0; i < _inputChunks.size(); i++) {
         _forwardPlans.emplace_back(
             new FftForwardPlan(*_inputChunks.at(i), *_inputChunksComplex.at(i))
         );
@@ -151,8 +150,8 @@ auto OverlapSaveConvolver::extractResult() -> FloatSignal
 
     auto const numChunks = _resultChunks.size();
     auto const offset
-        = _state == State::Conv ? _resultChunksize - _result_stride : std::size_t{0};
-    for (auto i = std::size_t{0}; i < numChunks; i++) {
+        = _state == State::Conv ? _resultChunksize - _result_stride : size_t{0};
+    for (auto i = size_t{0}; i < numChunks; i++) {
         auto* xcArr           = _resultChunks.at(i)->data();
         auto const chunkBegin = i * _result_stride;
 
@@ -178,7 +177,7 @@ auto OverlapSaveConvolver::execute(bool const crossCorrelate) -> void
     for (auto& forwardPlan : _forwardPlans) { forwardPlan->execute(); }
 
     auto operation = (crossCorrelate) ? spectralCorrelation : spectralConvolution;
-    for (std::size_t i = 0; i < _resultChunks.size(); i++) {
+    for (size_t i = 0; i < _resultChunks.size(); i++) {
         operation(
             *_inputChunksComplex.at(i),
             this->_paddedPatchComplex,
@@ -186,7 +185,7 @@ auto OverlapSaveConvolver::execute(bool const crossCorrelate) -> void
         );
     }
 
-    for (std::size_t i = 0; i < _resultChunks.size(); i++) {
+    for (size_t i = 0; i < _resultChunks.size(); i++) {
         _backwardPlans.at(i)->execute();
         auto& chunk = *_resultChunks.at(i);
         ranges::transform(chunk, begin(chunk), [this](auto arg) {

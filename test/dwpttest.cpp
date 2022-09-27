@@ -15,14 +15,14 @@ using namespace mc;
 auto main() -> int
 {
     auto obj     = Wavelet{"db4"};
-    auto const n = std::size_t{788 + 23};
-    auto const j = std::size_t{4};
+    auto const n = size_t{788 + 23};
+    auto const j = size_t{4};
 
     auto inp  = makeUnique<float[]>(n);
     auto oup  = makeUnique<float[]>(n);
     auto diff = makeUnique<float[]>(n);
 
-    for (std::size_t i = 1; i < n + 1; ++i) { inp[i - 1] = static_cast<float>(i); }
+    for (size_t i = 1; i < n + 1; ++i) { inp[i - 1] = static_cast<float>(i); }
 
     auto wt = WaveletPacketTransform(&obj, n, j);
     setDWPTExtension(wt, "per");
@@ -32,7 +32,7 @@ auto main() -> int
 
     idwpt(wt, oup.get());
 
-    for (std::size_t i = 0; i < n; ++i) { diff[i] = (inp[i] - oup[i]) / inp[i]; }
+    for (size_t i = 0; i < n; ++i) { diff[i] = (inp[i] - oup[i]) / inp[i]; }
 
     print("{0}\n", wt);
 

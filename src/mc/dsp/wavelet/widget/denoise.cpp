@@ -36,8 +36,8 @@ DenoiseSet::DenoiseSet(int length, int j, char const* name)
 
 auto visushrink(
     float* signal,
-    std::size_t n,
-    std::size_t j,
+    size_t n,
+    size_t j,
     char const* wname,
     char const* method,
     char const* ext,
@@ -85,20 +85,16 @@ auto visushrink(
     auto dout = makeUnique<float[]>(dlen);
 
     if (level == StringView{"first"}) {
-        for (std::size_t i = 1; i < j; ++i) { iter += wt.length[i]; }
+        for (size_t i = 1; i < j; ++i) { iter += wt.length[i]; }
 
-        for (std::size_t i = 0; i < dlen; ++i) {
-            dout[i] = std::abs(wt.output()[iter + i]);
-        }
+        for (size_t i = 0; i < dlen; ++i) { dout[i] = std::abs(wt.output()[iter + i]); }
 
         sigma = median({dout.get(), dlen}) / 0.6745F;
         for (auto it = 0; it < j; ++it) { lnoise[it] = sigma; }
     } else if (level == StringView{"all"}) {
         for (auto it = 0; it < j; ++it) {
             dlen = wt.length[it + 1];
-            for (std::size_t i = 0; i < dlen; ++i) {
-                dout[i] = std::abs(wt.output()[iter + i]);
-            }
+            for (size_t i = 0; i < dlen; ++i) { dout[i] = std::abs(wt.output()[iter + i]); }
             sigma      = median({dout.get(), dlen}) / 0.6745F;
             lnoise[it] = sigma;
             iter += dlen;
@@ -117,11 +113,11 @@ auto visushrink(
         td    = sqrt(2.0F * std::log((float)dwtLen)) * sigma;
 
         if (thresh == StringView{"hard"}) {
-            for (std::size_t i = 0; i < dlen; ++i) {
+            for (size_t i = 0; i < dlen; ++i) {
                 if (std::abs(wt.output()[iter + i]) < td) { wt.output()[iter + i] = 0; }
             }
         } else if (thresh == StringView{"soft"}) {
-            for (std::size_t i = 0; i < dlen; ++i) {
+            for (size_t i = 0; i < dlen; ++i) {
                 if (std::abs(wt.output()[iter + i]) < td) {
                     wt.output()[iter + i] = 0;
                 } else {
@@ -144,8 +140,8 @@ auto visushrink(
 
 auto sureshrink(
     float* signal,
-    std::size_t n,
-    std::size_t j,
+    size_t n,
+    size_t j,
     char const* wname,
     char const* method,
     char const* ext,
@@ -203,7 +199,7 @@ auto sureshrink(
     auto iter = wt.length[0];
 
     if (level == StringView{"first"}) {
-        for (std::size_t i = 1; i < j; ++i) { iter += wt.length[i]; }
+        for (size_t i = 1; i < j; ++i) { iter += wt.length[i]; }
 
         for (auto i = 0; cmp_less(i, dlen); ++i) {
             dout[i] = std::abs(wt.output()[iter + i]);
@@ -236,7 +232,7 @@ auto sureshrink(
         } else {
             tv   = mc::sqrt(2.0F * mc::log((float)dwtLen));
             norm = 0.0F;
-            for (std::size_t i = 0; i < dwtLen; ++i) {
+            for (size_t i = 0; i < dwtLen; ++i) {
                 norm += (wt.output()[len + i] * wt.output()[len + i] / (sigma * sigma));
             }
             te = (norm - (float)dwtLen) / (float)dwtLen;
@@ -248,23 +244,23 @@ auto sureshrink(
             } else {
                 xSum = 0.0F;
 
-                for (std::size_t i = 0; i < dwtLen; ++i) {
+                for (size_t i = 0; i < dwtLen; ++i) {
                     dout[i] = std::abs(wt.output()[len + i] / sigma);
                 }
 
                 std::sort(dout.get(), dout.get() + dwtLen, std::less<float>{});
-                for (std::size_t i = 0; i < dwtLen; ++i) {
+                for (size_t i = 0; i < dwtLen; ++i) {
                     dout[i] = (dout[i] * dout[i]);
                     xSum += dout[i];
                     dsum[i] = xSum;
                 }
 
-                for (std::size_t i = 0; i < dwtLen; ++i) {
+                for (size_t i = 0; i < dwtLen; ++i) {
                     risk[i] = ((float)dwtLen - 2 * ((float)i + 1) + dsum[i]
                                + dout[i] * ((float)dwtLen - 1 - (float)i))
                             / (float)dwtLen;
                 }
-                minIdx = minIndex({risk.get(), static_cast<std::size_t>(dwtLen)});
+                minIdx = minIndex({risk.get(), static_cast<size_t>(dwtLen)});
                 thr    = sqrt(dout[minIdx]);
                 td     = thr < tv ? thr : tv;
             }
@@ -273,11 +269,11 @@ auto sureshrink(
         td = td * sigma;
 
         if (thresh == StringView{"hard"}) {
-            for (std::size_t i = 0; i < dwtLen; ++i) {
+            for (size_t i = 0; i < dwtLen; ++i) {
                 if (std::abs(wt.output()[len + i]) < td) { wt.output()[len + i] = 0; }
             }
         } else if (thresh == StringView{"soft"}) {
-            for (std::size_t i = 0; i < dwtLen; ++i) {
+            for (size_t i = 0; i < dwtLen; ++i) {
                 if (std::abs(wt.output()[len + i]) < td) {
                     wt.output()[len + i] = 0;
                 } else {
@@ -300,8 +296,8 @@ auto sureshrink(
 
 auto modwtshrink(
     float* signal,
-    std::size_t n,
-    std::size_t j,
+    size_t n,
+    size_t j,
     char const* wname,
     char const* cmethod,
     char const* ext,
@@ -354,9 +350,7 @@ auto modwtshrink(
 
     for (auto it = 0; cmp_less(it, j); ++it) {
         dlen = wt.length[it + 1];
-        for (std::size_t i = 0; i < dlen; ++i) {
-            dout[i] = std::abs(wt.output()[iter + i]);
-        }
+        for (size_t i = 0; i < dlen; ++i) { dout[i] = std::abs(wt.output()[iter + i]); }
 
         sigma      = sqrt(2.0F) * median({dout.get(), dlen}) / 0.6745F;
         lnoise[it] = sigma;
@@ -374,11 +368,11 @@ auto modwtshrink(
         td    = sqrt(2.0F * llen / m) * sigma;
 
         if (thresh == StringView{"hard"}) {
-            for (std::size_t i = 0; i < dlen; ++i) {
+            for (size_t i = 0; i < dlen; ++i) {
                 if (std::abs(wt.output()[iter + i]) < td) { wt.output()[iter + i] = 0; }
             }
         } else if (thresh == StringView{"soft"}) {
-            for (std::size_t i = 0; i < dlen; ++i) {
+            for (size_t i = 0; i < dlen; ++i) {
                 if (std::abs(wt.output()[iter + i]) < td) {
                     wt.output()[iter + i] = 0;
                 } else {

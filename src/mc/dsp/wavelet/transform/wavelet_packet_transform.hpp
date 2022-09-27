@@ -16,7 +16,7 @@ namespace mc {
 
 struct WaveletPacketTransform
 {
-    WaveletPacketTransform(Wavelet* wave, std::size_t siglength, std::size_t j);
+    WaveletPacketTransform(Wavelet* wave, size_t siglength, size_t j);
 
     [[nodiscard]] auto wave() const noexcept -> Wavelet const& { return *_wave; }
 

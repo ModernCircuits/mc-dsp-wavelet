@@ -329,11 +329,11 @@ auto testSWTlength(int n, int j) -> int
     return ret;
 }
 
-auto maxIterations(std::size_t sigLen, std::size_t filtLen) -> std::size_t
+auto maxIterations(size_t sigLen, size_t filtLen) -> size_t
 {
     auto const temp
         = std::log(static_cast<float>(sigLen) / (static_cast<float>(filtLen) - 1.0F))
         / std::log(2.0F);
-    return static_cast<std::size_t>(temp);
+    return static_cast<size_t>(temp);
 }
 }  // namespace mc

@@ -58,7 +58,7 @@ auto toFloat(TestData<float> const& d) -> TestData<float>
     return result;
 }
 
-auto generateRandomTestData(std::size_t n) -> Vector<float>
+auto generateRandomTestData(size_t n) -> Vector<float>
 {
     Vector<float> data(n);
     auto rd  = std::random_device{};

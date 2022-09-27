@@ -19,21 +19,21 @@ using namespace mc;
 static auto sum1(Span<float const> array) -> float
 {
     auto sum = 0.0F;
-    for (auto i = std::size_t{0}; i < size(array); ++i) { sum += array[i]; }
+    for (auto i = size_t{0}; i < size(array); ++i) { sum += array[i]; }
     return sum;
 }
 
 static auto sum2(Span<float const> array) -> float
 {
     auto sum = 0.0F;
-    for (std::size_t i = 0; i < size(array); i += 2) { sum += array[i]; }
+    for (size_t i = 0; i < size(array); i += 2) { sum += array[i]; }
     return sum;
 }
 
 static auto sum3(Span<float const> array) -> float
 {
     auto sum = 0.0F;
-    for (std::size_t i = 1; i < size(array); i += 2) { sum += array[i]; }
+    for (size_t i = 1; i < size(array); i += 2) { sum += array[i]; }
     return sum;
 }
 
@@ -41,15 +41,15 @@ static auto sum3(Span<float const> array) -> float
 static auto sum4(Span<float const> array) -> float
 {
     auto sum = 0.0F;
-    for (std::size_t i = 0; i < size(array); i += 1) { sum += array[i] * array[i]; }
+    for (size_t i = 0; i < size(array); i += 1) { sum += array[i] * array[i]; }
     return sum;
 }
 
 // np.sum(w[2 * m:(2 * N)] * w[0:2 * N - 2 * m])
-static auto sum5(float const* array, std::size_t n, std::size_t m) -> float
+static auto sum5(float const* array, size_t n, size_t m) -> float
 {
     auto sum = 0.0F;
-    for (std::size_t i = 2 * m; i < n; i += 1) { sum += array[i] * array[i - 2 * m]; }
+    for (size_t i = 2 * m; i < n; i += 1) { sum += array[i] * array[i - 2 * m]; }
     return sum;
 }
 
@@ -75,7 +75,7 @@ TEST_CASE("dsp/wavelet: dbCoefTests", "[dsp][wavelet]")
         REQUIRE(std::abs(t3) <= epsilon);
         REQUIRE(std::abs(t4) <= epsilon);
 
-        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
+        for (size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
             auto t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             REQUIRE(std::abs(t5) <= epsilon);
         }
@@ -87,7 +87,7 @@ TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
 
     Vector<String> waveletNames;
     waveletNames.resize(17);
-    for (std::size_t i = 0; i < waveletNames.size(); i++) {
+    for (size_t i = 0; i < waveletNames.size(); i++) {
         waveletNames[i] = String("coif") + std::to_string(i + 1);
     }
 
@@ -102,7 +102,7 @@ TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
         REQUIRE(std::abs(t2) <= epsilon);
         REQUIRE(std::abs(t3) <= epsilon);
         REQUIRE(std::abs(t4) <= epsilon);
-        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
+        for (size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
             auto const t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             REQUIRE(std::abs(t5) <= epsilon);
         }
@@ -112,7 +112,7 @@ TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
 TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
 {
     Vector<String> waveletNames;
-    for (std::size_t i = 1; i < 20; i++) {
+    for (size_t i = 1; i < 20; i++) {
         waveletNames.push_back(String("sym") + std::to_string(i + 1));
     }
 
@@ -128,7 +128,7 @@ TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
         REQUIRE(std::abs(t3) <= epsilon);
         REQUIRE(std::abs(t4) <= epsilon);
 
-        for (std::size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
+        for (size_t m = 1; m < (obj.lpr().size() / 2) - 1; m++) {
             auto const t5 = sum5(obj.lpr().data(), obj.lpr().size(), m);
             REQUIRE(std::abs(t5) <= epsilon);
         }

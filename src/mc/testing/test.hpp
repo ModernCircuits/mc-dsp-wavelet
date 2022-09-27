@@ -71,6 +71,6 @@ template<typename T>
     return result;
 }
 
-auto generateRandomTestData(std::size_t n) -> Vector<float>;
+auto generateRandomTestData(size_t n) -> Vector<float>;
 
 }  // namespace mc

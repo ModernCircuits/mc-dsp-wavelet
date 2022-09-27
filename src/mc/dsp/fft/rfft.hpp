@@ -98,6 +98,6 @@ private:
     UniquePtr<ConceptType> _concept{nullptr};
 };
 
-[[nodiscard]] auto makeRFFT(std::size_t size) -> RFFT<float>;
+[[nodiscard]] auto makeRFFT(size_t size) -> RFFT<float>;
 
 }  // namespace mc

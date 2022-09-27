@@ -9,7 +9,7 @@
 namespace mc {
 
 template<typename T>
-[[nodiscard]] auto indexOfPeak(Span<T> range) -> std::size_t
+[[nodiscard]] auto indexOfPeak(Span<T> range) -> size_t
 {
     auto [min, max] = ranges::minmax_element(range);
     if (std::abs(*min) >= std::abs(*max)) {

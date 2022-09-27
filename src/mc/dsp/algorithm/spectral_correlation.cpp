@@ -13,7 +13,7 @@ auto spectralCorrelation(
 ) -> void
 {
     MC_ASSERT((a.size() == result.size()) && (b.size() == result.size()));
-    for (std::size_t i{0}; i < a.size(); ++i) { result[i] = a[i] * std::conj(b[i]); }
+    for (size_t i{0}; i < a.size(); ++i) { result[i] = a[i] * std::conj(b[i]); }
 }
 
 }  // namespace mc

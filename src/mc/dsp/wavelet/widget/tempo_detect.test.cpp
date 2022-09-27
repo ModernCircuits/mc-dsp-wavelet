@@ -24,10 +24,10 @@ TEST_CASE("dsp/wavelet: TempoDetect", "[dsp][wavelet]")
     auto const fs = static_cast<float>(audioFile.getSampleRate());
     auto channel  = mc::Span<float>(audioFile.samples[0]);
 
-    auto const windowSize     = static_cast<std::size_t>(std::floor(3.0 * fs));
+    auto const windowSize     = static_cast<size_t>(std::floor(3.0 * fs));
     auto const maxWindowIndex = mc::size(channel) / windowSize;
 
-    auto sampsNdx = std::size_t{0};
+    auto sampsNdx = size_t{0};
     auto bpms     = mc::Vector<float>{};
     for (auto windowNdx{0U}; windowNdx < maxWindowIndex; ++windowNdx) {
         if (sampsNdx + windowSize >= mc::size(channel)) { continue; }

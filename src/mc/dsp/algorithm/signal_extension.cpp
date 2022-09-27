@@ -12,9 +12,8 @@ auto toString(SignalExtension ext) -> String
 }
 
 template<typename T>
-static auto
-periodicExtensionImpl(T const* signal, std::size_t len, std::size_t a, T* output)
-    -> std::size_t
+static auto periodicExtensionImpl(T const* signal, size_t len, size_t a, T* output)
+    -> size_t
 {
     std::copy(signal, signal + len, output + a);
 
@@ -24,7 +23,7 @@ periodicExtensionImpl(T const* signal, std::size_t len, std::size_t a, T* output
         output[a + len] = signal[len - 1];
     }
 
-    for (std::size_t i = 0; i < a; ++i) {
+    for (size_t i = 0; i < a; ++i) {
         auto const temp1     = output[a + i];
         auto const temp2     = output[a + len2 - 1 - i];
         output[a - 1 - i]    = temp2;
@@ -35,14 +34,13 @@ periodicExtensionImpl(T const* signal, std::size_t len, std::size_t a, T* output
 }
 
 template<typename T>
-static auto
-symmetricExtensionImpl(T const* signal, std::size_t len, std::size_t a, T* output)
-    -> std::size_t
+static auto symmetricExtensionImpl(T const* signal, size_t len, size_t a, T* output)
+    -> size_t
 {
     // output is of length len + 2 * a
     std::copy(signal, signal + len, output + a);
     auto const newLength = len;
-    for (std::size_t i = 0; i < a; ++i) {
+    for (size_t i = 0; i < a; ++i) {
         auto const temp1          = output[a + i];
         auto const temp2          = output[a + newLength - 1 - i];
         output[a - 1 - i]         = temp1;
@@ -51,22 +49,22 @@ symmetricExtensionImpl(T const* signal, std::size_t len, std::size_t a, T* outpu
     return newLength;
 }
 
-auto periodicExtension(Span<float const> in, std::size_t a, float* out) -> std::size_t
+auto periodicExtension(Span<float const> in, size_t a, float* out) -> size_t
 {
     return periodicExtensionImpl<float>(in.data(), in.size(), a, out);
 }
 
-auto periodicExtension(Span<double const> in, std::size_t a, double* out) -> std::size_t
+auto periodicExtension(Span<double const> in, size_t a, double* out) -> size_t
 {
     return periodicExtensionImpl<double>(in.data(), in.size(), a, out);
 }
 
-auto symmetricExtension(Span<float const> in, std::size_t a, float* out) -> std::size_t
+auto symmetricExtension(Span<float const> in, size_t a, float* out) -> size_t
 {
     return symmetricExtensionImpl<float>(in.data(), in.size(), a, out);
 }
 
-auto symmetricExtension(Span<double const> in, std::size_t a, double* out) -> std::size_t
+auto symmetricExtension(Span<double const> in, size_t a, double* out) -> size_t
 {
     return symmetricExtensionImpl<double>(in.data(), in.size(), a, out);
 }

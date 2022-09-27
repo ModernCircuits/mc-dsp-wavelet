@@ -23,7 +23,7 @@ template<typename T>
 static auto qmfEven(Span<T const> in, T* out)
 {
     auto const n = in.size();
-    for (std::size_t count = 0; count < n; ++count) {
+    for (size_t count = 0; count < n; ++count) {
         auto evenIndex = count % 2 == 0;
         out[count]     = in[n - count - 1] * (evenIndex ? T{1} : T{-1});
     }
@@ -36,7 +36,7 @@ static auto qmfWrev(Span<T const> in, T* out)
     ranges::reverse(Span<T>{out, in.size()});
 }
 
-static auto filterLength(StringView name) -> std::size_t
+static auto filterLength(StringView name) -> size_t
 {
     auto const& filters = allWavelets<float>;
     auto const filter   = ranges::find(filters, name, &WaveletCoefficients<float>::name);
@@ -106,7 +106,7 @@ static auto fillWaveletFilterCoefficients(
     Span<float> hp1,
     Span<float> lp2,
     Span<float> hp2
-) -> std::size_t
+) -> size_t
 {
     if (StringView{name}.find("haar") != StringView::npos) {
         return fillDaubechiesWaveletCoefficients(name, lp1, hp1, lp2, hp2);
@@ -127,7 +127,7 @@ static auto fillWaveletFilterCoefficients(
 
 Wavelet::Wavelet(StringView name)
     : _name{name}
-    , _size{static_cast<std::size_t>(filterLength(name))}
+    , _size{static_cast<size_t>(filterLength(name))}
     , _params(_size * 4U)
 {
     // We can't use the member functions to access the coefficients,
@@ -139,7 +139,7 @@ Wavelet::Wavelet(StringView name)
     fillWaveletFilterCoefficients(name, lp1, hp1, lp2, hp2);
 }
 
-auto Wavelet::size() const noexcept -> std::size_t { return _size; }
+auto Wavelet::size() const noexcept -> size_t { return _size; }
 
 auto Wavelet::name() const noexcept -> String const& { return _name; }
 

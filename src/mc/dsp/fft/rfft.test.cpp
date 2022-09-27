@@ -20,7 +20,7 @@ auto readFFTRealToComplexTestData(char const* path) -> FFTRealToComplexTestCase
     auto rawData = loadTestData(path);
     auto result  = FFTRealToComplexTestCase{};
     result.input = rawData[0];
-    for (auto i = std::size_t{0}; i < rawData[1].size(); ++i) {
+    for (auto i = size_t{0}; i < rawData[1].size(); ++i) {
         result.expected.emplace_back(rawData[1][i], rawData[2][i]);
     }
     return result;

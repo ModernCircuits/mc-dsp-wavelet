@@ -11,7 +11,7 @@
 
 namespace mc {
 
-FFTConvolver::FFTConvolver(std::size_t signalSize, std::size_t patchSize)
+FFTConvolver::FFTConvolver(size_t signalSize, size_t patchSize)
     : _signalSize{signalSize}
     , _patchSize{patchSize}
     , _totalSize{bit_ceil(signalSize + _patchSize - 1U)}
@@ -39,7 +39,7 @@ auto FFTConvolver::convolute(
     ranges::fill(_patchScratchOut, Complex<float>{});
     ranges::fill(_tmpOut, 0.0F);
 
-    for (auto i = std::size_t{0}; i < _totalSize; i++) {
+    for (auto i = size_t{0}; i < _totalSize; i++) {
         if (i < _signalSize) { _signalScratch[i] = signal[i]; }
         if (i < _patchSize) { _patchScratch[i] = patch[i]; }
     }
@@ -52,7 +52,7 @@ auto FFTConvolver::convolute(
     irfft(_fft, _tmp, _tmpOut);
 
     auto const ls = _signalSize + _patchSize - 1U;
-    for (auto i = std::size_t{0}; i < ls; i++) { output[i] = _tmpOut[i] / _totalSize; }
+    for (auto i = size_t{0}; i < ls; i++) { output[i] = _tmpOut[i] / _totalSize; }
 }
 
 }  // namespace mc

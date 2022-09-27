@@ -13,7 +13,7 @@ struct WaveletCoefficients
 {
     StringView name;
     Span<T const> coefficients;
-    std::size_t length{};
+    size_t length{};
 };
 
 }  // namespace mc

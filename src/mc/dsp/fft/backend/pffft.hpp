@@ -20,7 +20,7 @@ using PFFFT_Handle = UniquePtr<PFFFT_Setup, PFFFT_Deleter>;
 
 struct PFFFT_Complex_Float
 {
-    explicit PFFFT_Complex_Float(std::size_t size);
+    explicit PFFFT_Complex_Float(size_t size);
 
     auto fft(Span<Complex<float> const> in, Span<Complex<float>> out) -> void;
     auto ifft(Span<Complex<float> const> in, Span<Complex<float>> out) -> void;

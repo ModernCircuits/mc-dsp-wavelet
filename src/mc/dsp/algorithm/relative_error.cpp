@@ -4,11 +4,11 @@
 
 namespace mc {
 
-auto relError(float const* data, float const* rec, std::size_t n) -> float
+auto relError(float const* data, float const* rec, size_t n) -> float
 {
     float sum1 = 0;
     float sum2 = 0;
-    for (std::size_t i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         sum1 += (data[i] - rec[i]) * (data[i] - rec[i]);
         sum2 += data[i] * data[i];
     }

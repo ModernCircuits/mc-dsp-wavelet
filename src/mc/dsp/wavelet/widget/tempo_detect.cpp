@@ -12,7 +12,7 @@
 
 namespace mc {
 
-TempoDetect::TempoDetect(std::size_t n, std::size_t levels)
+TempoDetect::TempoDetect(size_t n, size_t levels)
     : _wave{"db4"}
     , _wt{_wave, "dwt", n, levels}
 {
@@ -49,7 +49,7 @@ auto TempoDetect::operator()(Span<float> input, float sampleRate) -> float
 
         // 5) Decimate for reconstruction later.
         // cD = abs(cD[:: (2 ** (levels - loop - 1))])
-        cD = cD.subspan(0, static_cast<std::size_t>(std::pow(2, levels - loop - 1)));
+        cD = cD.subspan(0, static_cast<size_t>(std::pow(2, levels - loop - 1)));
         ranges::transform(cD, begin(cD), [](auto v) { return std::abs(v); });
 
         // 6) Recombine the signal before ACF
@@ -91,7 +91,7 @@ auto TempoDetect::operator()(Span<float> input, float sampleRate) -> float
     x.crossCorrelate();
     auto correl = x.extractResult();
 
-    auto midpoint       = static_cast<std::size_t>(std::floor(correl.size() / 2.0F));
+    auto midpoint       = static_cast<size_t>(std::floor(correl.size() / 2.0F));
     auto correlMidpoint = Span<float>{correl.data(), correl.size()}.subspan(midpoint);
     auto searchRange    = correlMidpoint.subspan((size_t)minNdx, (size_t)(maxNdx - minNdx));
     auto const peakNdx  = indexOfPeak(searchRange);

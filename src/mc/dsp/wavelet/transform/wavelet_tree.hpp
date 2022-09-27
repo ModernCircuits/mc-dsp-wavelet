@@ -14,27 +14,27 @@
 namespace mc {
 struct WaveletTree
 {
-    WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t j);
+    WaveletTree(Wavelet* waveIn, size_t signalLength, size_t j);
 
     auto extension(char const* newExtension) noexcept -> void;
     [[nodiscard]] auto extension() const noexcept -> String const&;
 
-    auto nodeLength(std::size_t x) -> std::size_t;
-    auto coeffs(std::size_t x, std::size_t y, float* coeffs, std::size_t n) const -> void;
+    auto nodeLength(size_t x) -> size_t;
+    auto coeffs(size_t x, size_t y, float* coeffs, size_t n) const -> void;
 
     Wavelet* wave;
     String method;
-    std::size_t siglength;  // Length of the original signal.
-    std::size_t outlength;  // Length of the output DWT vector
-    std::size_t lenlength;  // Length of the Output Dimension Vector "length"
-    std::size_t J;          // Number of decomposition Levels
-    std::size_t MaxIter;    // Maximum Iterations J <= MaxIter
+    size_t siglength;  // Length of the original signal.
+    size_t outlength;  // Length of the output DWT vector
+    size_t lenlength;  // Length of the Output Dimension Vector "length"
+    size_t J;          // Number of decomposition Levels
+    size_t MaxIter;    // Maximum Iterations J <= MaxIter
 
-    std::size_t N{};  //
-    std::size_t nodes;
-    std::size_t cfftset;
-    std::size_t zpad{};
-    std::size_t length[102]{};
+    size_t N{};  //
+    size_t nodes;
+    size_t cfftset;
+    size_t zpad{};
+    size_t length[102]{};
     float* output;
     unsigned* coeflength;
     UniquePtr<float[]> params;
@@ -77,7 +77,7 @@ struct fmt::formatter<mc::WaveletTree> : formatter<string_view>
 
         auto t  = 0;
         auto p2 = 2;
-        for (std::size_t i = 0; i < wt.J; ++i) {
+        for (size_t i = 0; i < wt.J; ++i) {
             for (auto k = 0; k < p2; ++k) {
                 formatNode(i + 1, k, wt.nodeLength_[t], wt.length[wt.J - i]);
                 t++;

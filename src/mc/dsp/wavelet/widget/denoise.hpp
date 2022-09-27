@@ -30,8 +30,8 @@ struct DenoiseSet
 
 auto visushrink(
     float* signal,
-    std::size_t n,
-    std::size_t j,
+    size_t n,
+    size_t j,
     char const* wname,
     char const* method,
     char const* ext,
@@ -42,8 +42,8 @@ auto visushrink(
 
 auto sureshrink(
     float* signal,
-    std::size_t n,
-    std::size_t j,
+    size_t n,
+    size_t j,
     char const* wname,
     char const* method,
     char const* ext,
@@ -54,8 +54,8 @@ auto sureshrink(
 
 auto modwtshrink(
     float* signal,
-    std::size_t n,
-    std::size_t j,
+    size_t n,
+    size_t j,
     char const* wname,
     char const* cmethod,
     char const* ext,

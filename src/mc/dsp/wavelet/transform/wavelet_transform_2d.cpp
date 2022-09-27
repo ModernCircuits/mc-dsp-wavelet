@@ -140,9 +140,9 @@ auto imodwtPerStride(
 WaveletTransform2D::WaveletTransform2D(
     Wavelet& wave,
     char const* method,
-    std::size_t rows,
-    std::size_t cols,
-    std::size_t j
+    size_t rows,
+    size_t cols,
+    size_t j
 )
 {
 
@@ -157,7 +157,7 @@ WaveletTransform2D::WaveletTransform2D(
         );
     }
 
-    std::size_t sumacc{0};
+    size_t sumacc{0};
     if (j == 1U) {
         sumacc = 4U;
     } else if (j > 1U) {
@@ -206,7 +206,7 @@ WaveletTransform2D::WaveletTransform2D(
 
     this->dimensions  = &this->params[0];
     this->coeffaccess = &this->params[2 * j];
-    for (std::size_t i = 0; i < (2 * j + sumacc); ++i) { this->params[i] = 0; }
+    for (size_t i = 0; i < (2 * j + sumacc); ++i) { this->params[i] = 0; }
 }
 
 auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void

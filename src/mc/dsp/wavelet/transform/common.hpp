@@ -86,16 +86,16 @@ auto idwtSymStride(
 
 auto testSWTlength(int n, int j) -> int;
 
-auto maxIterations(std::size_t sigLen, std::size_t filtLen) -> std::size_t;
+auto maxIterations(size_t sigLen, size_t filtLen) -> size_t;
 
 }  // namespace mc
 
 namespace mc {
 template<typename T>
-auto makeZeros(std::size_t length) -> UniquePtr<T[]>
+auto makeZeros(size_t length) -> UniquePtr<T[]>
 {
     auto ptr = makeUnique<T[]>(length);
-    for (std::size_t i{0}; i < length; ++i) { ptr[i] = T{}; }
+    for (size_t i{0}; i < length; ++i) { ptr[i] = T{}; }
     return ptr;
 }
 }  // namespace mc

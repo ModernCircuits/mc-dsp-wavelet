@@ -24,7 +24,7 @@ static constexpr auto epsilon = 1e-5F;
     {                                                                                      \
         auto extension = GENERATE("sym", "per");                                           \
         auto entropy   = GENERATE("shannon", "logenergy");                                 \
-        auto levels    = GENERATE(as<std::size_t>{}, 1, 2);                                \
+        auto levels    = GENERATE(as<size_t>{}, 1, 2);                                     \
         auto n         = 8096;                                                             \
         auto inp       = generateRandomTestData(n);                                        \
         auto out       = makeUnique<float[]>(n);                                           \

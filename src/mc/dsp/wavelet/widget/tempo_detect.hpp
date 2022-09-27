@@ -8,7 +8,7 @@ namespace mc {
 
 struct TempoDetect
 {
-    TempoDetect(std::size_t n, std::size_t levels);
+    TempoDetect(size_t n, size_t levels);
 
     [[nodiscard]] auto operator()(Span<float> input, float sampleRate) -> float;
 

@@ -25,7 +25,7 @@ struct FloatSignal
 {
     /// the basic constructor allocates an aligned, float array, which is zeroed by the
     /// superclass
-    explicit FloatSignal(std::size_t size);
+    explicit FloatSignal(size_t size);
     FloatSignal(float* data, size_t size);
     FloatSignal(float* data, size_t size, size_t padBef, size_t padAft);
     ~FloatSignal();
@@ -44,15 +44,15 @@ struct FloatSignal
 
     [[nodiscard]] auto size() -> size_t& { return size_; }
 
-    [[nodiscard]] auto size() const -> std::size_t const& { return size_; }
+    [[nodiscard]] auto size() const -> size_t const& { return size_; }
 
     [[nodiscard]] auto data() -> float* { return data_; }
 
     [[nodiscard]] auto data() const -> float const* { return data_; }
 
-    [[nodiscard]] auto operator[](std::size_t idx) -> float& { return data_[idx]; }
+    [[nodiscard]] auto operator[](size_t idx) -> float& { return data_[idx]; }
 
-    [[nodiscard]] auto operator[](std::size_t idx) const -> float& { return data_[idx]; }
+    [[nodiscard]] auto operator[](size_t idx) const -> float& { return data_[idx]; }
 
     operator Span<float>() { return {this->data(), this->size()}; }
 
@@ -60,7 +60,7 @@ struct FloatSignal
 
 protected:
     float* data_;
-    std::size_t size_;
+    size_t size_;
 };
 
 /// This class is a Signal that works on aligned complex (float[2]) arrays allocated by
@@ -69,7 +69,7 @@ struct ComplexSignal
 {
     /// the basic constructor allocates an aligned, float[2] array, which is zeroed by the
     /// superclass
-    explicit ComplexSignal(std::size_t size);
+    explicit ComplexSignal(size_t size);
     ~ComplexSignal();
 
     [[nodiscard]] auto begin() -> Complex<float>* { return data_; }
@@ -86,15 +86,15 @@ struct ComplexSignal
 
     [[nodiscard]] auto size() -> size_t& { return size_; }
 
-    [[nodiscard]] auto size() const -> std::size_t const& { return size_; }
+    [[nodiscard]] auto size() const -> size_t const& { return size_; }
 
     [[nodiscard]] auto data() -> Complex<float>* { return data_; }
 
     [[nodiscard]] auto data() const -> Complex<float> const* { return data_; }
 
-    [[nodiscard]] auto operator[](std::size_t idx) -> Complex<float>& { return data_[idx]; }
+    [[nodiscard]] auto operator[](size_t idx) -> Complex<float>& { return data_[idx]; }
 
-    [[nodiscard]] auto operator[](std::size_t idx) const -> Complex<float>&
+    [[nodiscard]] auto operator[](size_t idx) const -> Complex<float>&
     {
         return data_[idx];
     }
@@ -105,7 +105,7 @@ struct ComplexSignal
 
 protected:
     Complex<float>* data_;
-    std::size_t size_;
+    size_t size_;
 };
 
 /// This class is a simple wrapper for the memory management of the fftw plans, plus a
@@ -210,15 +210,15 @@ private:
     auto execute(bool crossCorrelate) -> void;
 
     // grab input lengths
-    std::size_t _signalSize;
-    std::size_t _patchSize;
-    std::size_t _resultSize;
+    size_t _signalSize;
+    size_t _patchSize;
+    size_t _resultSize;
 
     // make padded copies of the inputs and get chunk measurements
     FloatSignal _paddedPatch;
-    std::size_t _resultChunksize;
-    std::size_t _resultChunksizeComplex;
-    std::size_t _result_stride;
+    size_t _resultChunksize;
+    size_t _resultChunksizeComplex;
+    size_t _result_stride;
     ComplexSignal _paddedPatchComplex;
 
     // padded copy of the signal

@@ -6,6 +6,6 @@
 
 namespace mc {
 
-[[nodiscard]] auto relError(float const* data, float const* rec, std::size_t n) -> float;
+[[nodiscard]] auto relError(float const* data, float const* rec, size_t n) -> float;
 
 }  // namespace mc

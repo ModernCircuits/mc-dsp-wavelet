@@ -9,7 +9,7 @@
 
 namespace mc {
 
-PFFFT_Complex_Float::PFFFT_Complex_Float(std::size_t size)
+PFFFT_Complex_Float::PFFFT_Complex_Float(size_t size)
     : _setup{PFFFT_Handle{pffft_new_setup(static_cast<int>(size), PFFFT_COMPLEX)}}
 {}
 

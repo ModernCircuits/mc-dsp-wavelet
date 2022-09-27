@@ -15,7 +15,7 @@ struct Wavelet
 {
     explicit Wavelet(StringView name);
 
-    [[nodiscard]] auto size() const noexcept -> std::size_t;
+    [[nodiscard]] auto size() const noexcept -> size_t;
     [[nodiscard]] auto name() const noexcept -> String const&;
 
     [[nodiscard]] auto lpd() const noexcept -> Span<float const>;
@@ -25,7 +25,7 @@ struct Wavelet
 
 private:
     String _name;
-    std::size_t _size;
+    size_t _size;
     Vector<float> _params;
 };
 

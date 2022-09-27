@@ -6,6 +6,6 @@
 
 namespace mc {
 
-[[nodiscard]] auto absmax(float const* array, std::size_t n) -> float;
+[[nodiscard]] auto absmax(float const* array, size_t n) -> float;
 
 }  // namespace mc
