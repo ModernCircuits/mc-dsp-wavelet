@@ -22,7 +22,6 @@ struct WaveletPacketTransform
 
     [[nodiscard]] auto signalLength() const noexcept -> int { return _signalLength; }
 
-    FFTConvolver* cobj{};
     int outlength{};  // Length of the output DWT vector
     int lenlength{};  // Length of the Output Dimension Vector "length"
     int J{};          // Number of decomposition Levels

@@ -130,7 +130,6 @@ WaveletPacketTransform::WaveletPacketTransform(
     this->J             = j;
     this->MaxIter       = maxIter;
 
-    this->cobj  = nullptr;
     this->nodes = nodess;
 
     this->lenlength     = j + 2;
