@@ -1,16 +1,16 @@
 # SPDX-License-Identifier: BSL-1.0
 
 cmake_minimum_required(VERSION 3.15)
-project(mc-dsp-wavelet)
+project(mc-wavelet)
 
 find_package(mc-dsp REQUIRED)
 find_package(FFTW3f REQUIRED)
 find_package(pffft REQUIRED)
 
-add_library(mc-dsp-wavelet)
-add_library(mc::dsp-wavelet ALIAS mc-dsp-wavelet)
-target_include_directories(mc-dsp-wavelet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(mc-dsp-wavelet
+add_library(mc-wavelet)
+add_library(mc::wavelet ALIAS mc-wavelet)
+target_include_directories(mc-wavelet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(mc-wavelet
     PUBLIC
         mc-dsp::mc-dsp
 
@@ -22,7 +22,7 @@ target_link_libraries(mc-dsp-wavelet
         mc::CodeCoverage
 )
 
-target_sources(mc-dsp-wavelet
+target_sources(mc-wavelet
     PRIVATE
         "mc/audio/audio_file.hpp"
 
@@ -97,7 +97,7 @@ include(Catch)
 
 add_executable(mc-fft_tests)
 catch_discover_tests(mc-fft_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-target_link_libraries(mc-fft_tests PRIVATE mc-dsp-wavelet Catch2::Catch2)
+target_link_libraries(mc-fft_tests PRIVATE mc-wavelet Catch2::Catch2)
 target_sources(mc-fft_tests
     PRIVATE
         "mc/dsp/convolution/convolute.test.cpp"
@@ -107,10 +107,10 @@ target_sources(mc-fft_tests
 )
 
 
-add_executable(mc-dsp-wavelet_tests)
-catch_discover_tests(mc-dsp-wavelet_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-target_link_libraries(mc-dsp-wavelet_tests PRIVATE mc-dsp-wavelet Catch2::Catch2)
-target_sources(mc-dsp-wavelet_tests
+add_executable(mc-wavelet_tests)
+catch_discover_tests(mc-wavelet_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+target_link_libraries(mc-wavelet_tests PRIVATE mc-wavelet Catch2::Catch2)
+target_sources(mc-wavelet_tests
     PRIVATE
         "mc/dsp/wavelet/wavelet.test.cpp"
         "mc/dsp/wavelet/transform/wavelet_packet_transform.test.cpp"

@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: BSL-1.0
 
 cmake_minimum_required(VERSION 3.15)
-project(mc-dsp-wavelet-dev VERSION 0.1.0)
+project(mc-wavelet-dev VERSION 0.1.0)
 
 find_program(CCACHE ccache)
 if(CCACHE)
