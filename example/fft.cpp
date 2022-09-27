@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: BSL-1.0
 
-#include <mc/dsp/fft.hpp>
-
 #include <mc/core/array.hpp>
 #include <mc/core/complex.hpp>
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/iostream.hpp>
+#include <mc/fft.hpp>
 
 using namespace mc;
 

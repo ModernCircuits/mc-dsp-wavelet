@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: BSL-1.0
 
-#include <mc/dsp/algorithm.hpp>
-#include <mc/dsp/wavelet.hpp>
-
+#include <mc/algorithm.hpp>
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/cstring.hpp>
 #include <mc/core/print.hpp>
 #include <mc/testing/test.hpp>
+#include <mc/wavelet.hpp>
 
 using namespace mc;
 

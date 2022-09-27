@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: BSL-1.0
 
-#include <mc/dsp/fft.hpp>
-
 #include <mc/core/complex.hpp>
 #include <mc/core/vector.hpp>
+#include <mc/fft.hpp>
 #include <mc/testing/test.hpp>
 
 #include <fftw3.h>
