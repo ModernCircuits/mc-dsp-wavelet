@@ -2,7 +2,6 @@
 
 #include "wavelet_packet_transform.hpp"
 
-#include <mc/convolution.hpp>
 #include <mc/core/cassert.hpp>
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
@@ -13,6 +12,7 @@
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 #include <mc/fft.hpp>
+#include <mc/fft/convolution.hpp>
 #include <mc/wavelet/transform/common.hpp>
 
 namespace mc {

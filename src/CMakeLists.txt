@@ -47,12 +47,12 @@ target_sources(mc-wavelet
         "mc/algorithm/up_sample_even.hpp"
         "mc/algorithm/up_sample.hpp"
 
-        "mc/convolution.hpp"
-        "mc/convolution/convolution_method.hpp"
-        "mc/convolution/fft_convolver.cpp"
-        "mc/convolution/fft_convolver.hpp"
-        "mc/convolution/overlap_save_convolver.cpp"
-        "mc/convolution/overlap_save_convolver.hpp"
+        "mc/fft/convolution.hpp"
+        "mc/fft/convolution/convolution_method.hpp"
+        "mc/fft/convolution/fft_convolver.cpp"
+        "mc/fft/convolution/fft_convolver.hpp"
+        "mc/fft/convolution/overlap_save_convolver.cpp"
+        "mc/fft/convolution/overlap_save_convolver.hpp"
 
         "mc/fft.hpp"
         "mc/fft/fft.hpp"
@@ -100,8 +100,8 @@ catch_discover_tests(mc-fft_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 target_link_libraries(mc-fft_tests PRIVATE mc-wavelet Catch2::Catch2)
 target_sources(mc-fft_tests
     PRIVATE
-        "mc/convolution/convolute.test.cpp"
-        "mc/convolution/overlap_save_convolver.test.cpp"
+        "mc/fft/convolution/convolute.test.cpp"
+        "mc/fft/convolution/overlap_save_convolver.test.cpp"
 
         "mc/fft/rfft.test.cpp"
 )

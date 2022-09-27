@@ -5,11 +5,11 @@
 #include <mc/core/config.hpp>
 
 #include <mc/algorithm/signal_extension.hpp>
-#include <mc/convolution.hpp>
 #include <mc/core/format.hpp>
 #include <mc/core/memory.hpp>
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
+#include <mc/fft/convolution.hpp>
 #include <mc/wavelet/wavelet.hpp>
 
 namespace mc {
