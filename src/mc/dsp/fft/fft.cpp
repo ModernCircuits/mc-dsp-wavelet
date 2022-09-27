@@ -2,9 +2,9 @@
 
 #include "fft.hpp"
 
-namespace mc::dsp {
+namespace mc {
 auto makeFFT(std::size_t size) -> FFT<float>
 {
     return FFT<float>{PFFFT_Complex_Float{size}};
 }
-}  // namespace mc::dsp
+}  // namespace mc

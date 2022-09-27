@@ -15,7 +15,7 @@
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 DenoiseSet::DenoiseSet(int length, int j, char const* name)
 {
@@ -533,4 +533,4 @@ auto minIndex(Span<float const> signal) -> int
     return static_cast<int>(std::distance(cbegin(signal), minimum));
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

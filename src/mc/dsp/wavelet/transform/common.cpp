@@ -8,7 +8,7 @@
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/cstring.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 auto dwtPerStride(
     float const* inp,
@@ -336,4 +336,4 @@ auto maxIterations(std::size_t sigLen, std::size_t filtLen) -> std::size_t
         / std::log(2.0F);
     return static_cast<std::size_t>(temp);
 }
-}  // namespace mc::dsp
+}  // namespace mc

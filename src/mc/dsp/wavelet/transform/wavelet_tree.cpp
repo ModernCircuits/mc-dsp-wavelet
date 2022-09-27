@@ -12,7 +12,7 @@
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 WaveletTree::WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t j)
     : wave{waveIn}
@@ -324,4 +324,4 @@ auto WaveletTree::extension(char const* newExtension) noexcept -> void
 
 auto WaveletTree::extension() const noexcept -> String const& { return _ext; }
 
-}  // namespace mc::dsp
+}  // namespace mc

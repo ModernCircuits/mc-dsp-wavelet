@@ -17,7 +17,7 @@
 
 #include "fftw3.h"
 
-namespace mc::dsp {
+namespace mc {
 
 /// This class is a Signal that works on aligned float arrays allocated by FFTW.
 /// It also overloads some further operators to do basic arithmetic
@@ -249,4 +249,4 @@ private:
     State _state{State::Uninitialized};  // Uninitialized after instantiation, Conv/Xcorr
                                          // after respective op.
 };
-}  // namespace mc::dsp
+}  // namespace mc

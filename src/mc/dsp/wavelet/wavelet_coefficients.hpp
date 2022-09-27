@@ -6,7 +6,7 @@
 #include <mc/core/span.hpp>
 #include <mc/core/string_view.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 template<typename T>
 struct WaveletCoefficients
@@ -16,4 +16,4 @@ struct WaveletCoefficients
     std::size_t length{};
 };
 
-}  // namespace mc::dsp
+}  // namespace mc

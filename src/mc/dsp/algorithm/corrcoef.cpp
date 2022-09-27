@@ -2,7 +2,7 @@
 
 #include <mc/core/cmath.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 auto corrcoef(int n, float const* x, float const* y) -> float
 {
@@ -31,4 +31,4 @@ auto corrcoef(int n, float const* x, float const* y) -> float
     return num / sqrt(den1 * den2);
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

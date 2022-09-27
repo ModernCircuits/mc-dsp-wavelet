@@ -10,7 +10,7 @@
 #include <mc/core/complex.hpp>
 #include <mc/core/memory.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 template<typename Engine>
 inline auto
@@ -68,12 +68,12 @@ private:
 
         auto do_fft(Span<Complex<T> const> in, Span<Complex<T>> out) -> void override
         {
-            ::mc::dsp::fft(model, in, out);
+            ::mc::fft(model, in, out);
         }
 
         auto do_ifft(Span<Complex<T> const> in, Span<Complex<T>> out) -> void override
         {
-            ::mc::dsp::ifft(model, in, out);
+            ::mc::ifft(model, in, out);
         }
 
         ImplT model;
@@ -84,4 +84,4 @@ private:
 
 [[nodiscard]] auto makeFFT(std::size_t size) -> FFT<float>;
 
-}  // namespace mc::dsp
+}  // namespace mc

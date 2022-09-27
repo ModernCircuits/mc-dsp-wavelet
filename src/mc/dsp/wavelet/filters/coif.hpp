@@ -4,7 +4,7 @@
 
 #include <mc/core/array.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 // All coif coefficents have to be multiplied by std::sqrt(2)
 template<typename T>
@@ -994,4 +994,4 @@ inline constexpr auto coif17 = Array<T, 102>{
     static_cast<T>(-1.055408614665356789775787814731337905514088897800715301399902e-22),
 };
 
-}  // namespace mc::dsp
+}  // namespace mc

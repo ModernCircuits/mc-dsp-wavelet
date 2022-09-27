@@ -11,7 +11,7 @@
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 
-namespace mc::dsp {
+namespace mc {
 struct WaveletTree
 {
     WaveletTree(Wavelet* waveIn, std::size_t signalLength, std::size_t j);
@@ -46,13 +46,13 @@ private:
 
 auto wtree(WaveletTree& wt, float const* inp) -> void;
 
-}  // namespace mc::dsp
+}  // namespace mc
 
 template<>
-struct fmt::formatter<mc::dsp::WaveletTree> : formatter<string_view>
+struct fmt::formatter<mc::WaveletTree> : formatter<string_view>
 {
     template<typename FormatContext>
-    auto format(mc::dsp::WaveletTree const& wt, FormatContext& ctx) const
+    auto format(mc::WaveletTree const& wt, FormatContext& ctx) const
     {
         fmt::format_to(ctx.out(), "\n");
         fmt::format_to(ctx.out(), "{}\n", *wt.wave);

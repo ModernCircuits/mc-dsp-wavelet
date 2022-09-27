@@ -19,8 +19,5 @@ Testing/
 .cproject
 language.settings.xml
 
-#tcl
 *.tcl
-
-#mc_dsp_wavelet-specific
 denoised.txt

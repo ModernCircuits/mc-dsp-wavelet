@@ -4,7 +4,7 @@
 
 #include <mc/core/array.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 template<typename T>
 inline constexpr auto sym2 = Array<T, 4>{
@@ -349,4 +349,4 @@ inline constexpr auto sym20 = Array<T, 40>{
     static_cast<T>(3.0256660627369661e-006),  static_cast<T>(-7.919361411976999e-006),
     static_cast<T>(-1.9015675890554106e-007), static_cast<T>(3.695537474835221e-007),
 };
-}  // namespace mc::dsp
+}  // namespace mc

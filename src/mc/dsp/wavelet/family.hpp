@@ -7,7 +7,7 @@
 #include <mc/dsp/wavelet/filters/sym.hpp>
 #include <mc/dsp/wavelet/wavelet_coefficients.hpp>
 
-namespace mc::dsp {
+namespace mc {
 template<typename T>
 inline constexpr auto daubechiesWavelets = Array<WaveletCoefficients<T>, 38>{
     WaveletCoefficients<T>{ "db1",  daubechies1<T>,  2},
@@ -174,4 +174,4 @@ inline constexpr auto allWavelets = Array<WaveletCoefficients<T>, 38 + 19 + 17>{
     WaveletCoefficients<T>{"coif17",       Span<T const>{coif17<T>}, 102},
 };
 
-}  // namespace mc::dsp
+}  // namespace mc

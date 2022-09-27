@@ -17,7 +17,7 @@
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 template<typename T>
 static auto qmfEven(Span<T const> in, T* out)
@@ -160,4 +160,4 @@ auto Wavelet::hpr() const noexcept -> Span<float const>
     return {&_params[size() * 3U], size()};
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

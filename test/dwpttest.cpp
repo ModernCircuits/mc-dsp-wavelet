@@ -14,7 +14,7 @@ using namespace mc;
 
 auto main() -> int
 {
-    auto obj     = dsp::Wavelet{"db4"};
+    auto obj     = Wavelet{"db4"};
     auto const n = std::size_t{788 + 23};
     auto const j = std::size_t{4};
 
@@ -24,7 +24,7 @@ auto main() -> int
 
     for (std::size_t i = 1; i < n + 1; ++i) { inp[i - 1] = static_cast<float>(i); }
 
-    auto wt = dsp::WaveletPacketTransform(&obj, n, j);
+    auto wt = WaveletPacketTransform(&obj, n, j);
     setDWPTExtension(wt, "per");
     setDWPTEntropy(wt, "logenergy", 0);
 
@@ -37,7 +37,7 @@ auto main() -> int
     print("{0}\n", wt);
 
     // If Reconstruction succeeded then the output should be a small value.
-    print("\n MAX {} \n", dsp::absmax(diff.get(), wt.signalLength()));
+    print("\n MAX {} \n", absmax(diff.get(), wt.signalLength()));
 
     return 0;
 }

@@ -4,7 +4,7 @@
 
 #include <mc/core/cassert.hpp>
 
-namespace mc::dsp {
+namespace mc {
 auto spectralConvolution(
     Span<Complex<float> const> a,
     Span<Complex<float> const> b,
@@ -15,4 +15,4 @@ auto spectralConvolution(
     for (std::size_t i = 0; i < a.size(); ++i) { result[i] = a[i] * b[i]; }
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

@@ -5,7 +5,7 @@
 #include <mc/core/complex.hpp>
 #include <mc/core/span.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 /// This free function takes three complex signals a,b,c of the same size and computes the
 /// complex element-wise multiplication:   a+ib * c+id = ac+iad+ibc-bd = ac-bd + i(ad+bc)
@@ -18,4 +18,4 @@ auto spectralConvolution(
     Span<Complex<float>> result
 ) -> void;
 
-}  // namespace mc::dsp
+}  // namespace mc

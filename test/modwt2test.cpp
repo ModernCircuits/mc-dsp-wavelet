@@ -13,7 +13,7 @@ using namespace mc;
 
 auto main() -> int
 {
-    auto obj = dsp::Wavelet{"db2"};
+    auto obj = Wavelet{"db2"};
 
     auto rows = 51;
     auto cols = 40;
@@ -24,7 +24,7 @@ auto main() -> int
     auto diff = makeZeros<float>(n);
 
     auto j  = 2;
-    auto wt = dsp::WaveletTransform2D(obj, "modwt", rows, cols, j);
+    auto wt = WaveletTransform2D(obj, "modwt", rows, cols, j);
 
     for (auto i = 0; i < rows; ++i) {
         for (auto k = 0; k < cols; ++k) {
@@ -45,7 +45,7 @@ auto main() -> int
     for (auto i = 0; i < n; ++i) { diff[i] = oup[i] - inp[i]; }
 
     print("{0}\n", wt);
-    print("Abs Max {} \n", dsp::absmax(diff.get(), n));
+    print("Abs Max {} \n", absmax(diff.get(), n));
 
     return 0;
 }

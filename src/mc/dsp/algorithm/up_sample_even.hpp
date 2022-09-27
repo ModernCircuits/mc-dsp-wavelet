@@ -6,7 +6,7 @@
 #include <mc/core/cstddef.hpp>
 #include <mc/core/utility.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 // Returns even numbered output. Last value is set to zero
 template<typename SrcIt, typename DestIt>
@@ -29,4 +29,4 @@ auto upSampleEven(SrcIt srcF, SrcIt srcL, DestIt destF, std::size_t m) -> void
     }
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

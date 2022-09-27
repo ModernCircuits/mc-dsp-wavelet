@@ -5,7 +5,7 @@
 #include <mc/core/cstddef.hpp>
 #include <mc/core/memory.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 auto dwtPerStride(
     float const* inp,
@@ -88,7 +88,7 @@ auto testSWTlength(int n, int j) -> int;
 
 auto maxIterations(std::size_t sigLen, std::size_t filtLen) -> std::size_t;
 
-}  // namespace mc::dsp
+}  // namespace mc
 
 namespace mc {
 template<typename T>

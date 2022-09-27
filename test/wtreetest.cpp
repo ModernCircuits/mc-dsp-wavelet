@@ -12,7 +12,7 @@ using namespace mc;
 
 auto main() -> int
 {
-    auto obj     = dsp::Wavelet{"db3"};
+    auto obj     = Wavelet{"db3"};
     auto const n = 147;
     auto inp     = makeUnique<float[]>(n);
     for (auto i = 1; i < n + 1; ++i) {
@@ -20,7 +20,7 @@ auto main() -> int
     }
     auto const j = 3;
 
-    auto wt = dsp::WaveletTree(&obj, n, j);
+    auto wt = WaveletTree(&obj, n, j);
     wt.extension("sym");
 
     wtree(wt, inp.get());

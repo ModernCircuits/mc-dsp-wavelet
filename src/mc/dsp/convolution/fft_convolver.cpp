@@ -9,7 +9,7 @@
 #include <mc/core/cmath.hpp>
 #include <mc/core/memory.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 FFTConvolver::FFTConvolver(std::size_t signalSize, std::size_t patchSize)
     : _signalSize{signalSize}
@@ -55,4 +55,4 @@ auto FFTConvolver::convolute(
     for (auto i = std::size_t{0}; i < ls; i++) { output[i] = _tmpOut[i] / _totalSize; }
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

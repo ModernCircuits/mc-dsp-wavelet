@@ -10,14 +10,14 @@
 #include <mc/core/numeric.hpp>
 #include <mc/core/utility.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 TempoDetect::TempoDetect(std::size_t n, std::size_t levels)
     : _wave{"db4"}
     , _wt{_wave, "dwt", n, levels}
 {
-    _wt.extension(dsp::SignalExtension::symmetric);
-    _wt.convMethod(dsp::ConvolutionMethod::direct);
+    _wt.extension(SignalExtension::symmetric);
+    _wt.convMethod(ConvolutionMethod::direct);
 }
 
 auto TempoDetect::operator()(Span<float> input, float sampleRate) -> float
@@ -86,8 +86,8 @@ auto TempoDetect::operator()(Span<float> input, float sampleRate) -> float
     // std::transform(begin(cD_sumf_), end(cD_sumf_), begin(cD_sumf_), [m](auto v) { return
     // v - m; });
 
-    auto s = dsp::FloatSignal(cDSum.data(), cDSum.size());
-    auto x = dsp::OverlapSaveConvolver(s, s);
+    auto s = FloatSignal(cDSum.data(), cDSum.size());
+    auto x = OverlapSaveConvolver(s, s);
     x.crossCorrelate();
     auto correl = x.extractResult();
 
@@ -101,4 +101,4 @@ auto TempoDetect::operator()(Span<float> input, float sampleRate) -> float
     return bpm;
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

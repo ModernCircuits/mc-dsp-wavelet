@@ -9,7 +9,7 @@
 
 #include <pffft.h>
 
-namespace mc::dsp {
+namespace mc {
 
 struct PFFFT_Deleter
 {
@@ -45,4 +45,4 @@ private:
     Vector<Complex<float>> _tmp;
 };
 
-}  // namespace mc::dsp
+}  // namespace mc

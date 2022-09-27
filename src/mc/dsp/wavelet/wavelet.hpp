@@ -10,7 +10,7 @@
 #include <mc/core/string_view.hpp>
 #include <mc/core/vector.hpp>
 
-namespace mc::dsp {
+namespace mc {
 struct Wavelet
 {
     explicit Wavelet(StringView name);
@@ -29,13 +29,13 @@ private:
     Vector<float> _params;
 };
 
-}  // namespace mc::dsp
+}  // namespace mc
 
 template<>
-struct fmt::formatter<mc::dsp::Wavelet> : formatter<string_view>
+struct fmt::formatter<mc::Wavelet> : formatter<string_view>
 {
     template<typename FormatContext>
-    auto format(mc::dsp::Wavelet const& wavelet, FormatContext& ctx) const
+    auto format(mc::Wavelet const& wavelet, FormatContext& ctx) const
     {
         fmt::format_to(ctx.out(), "Wavelet: {0}\n", wavelet.name());
         fmt::format_to(ctx.out(), "  Filters length: {0}\n", wavelet.size());

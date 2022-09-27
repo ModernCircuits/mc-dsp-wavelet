@@ -10,7 +10,7 @@
 #include <mc/core/cstring.hpp>
 #include <mc/core/string.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 struct DenoiseSet
 {
@@ -77,4 +77,4 @@ auto median(Span<float> signal) -> float;
 
 auto minIndex(Span<float const> signal) -> int;
 
-}  // namespace mc::dsp
+}  // namespace mc

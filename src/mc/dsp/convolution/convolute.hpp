@@ -6,7 +6,7 @@
 #include <mc/core/cstddef.hpp>
 #include <mc/core/span.hpp>
 
-namespace mc::dsp {
+namespace mc {
 template<typename Convolver>
 auto convolute(
     Convolver& c,
@@ -58,4 +58,4 @@ auto convolute(Span<T const> signal, Span<T const> patch, T* output) noexcept ->
         for (auto m = i; m < tmin; m++) { output[k] += patch[m] * signal[k - m]; }
     }
 }
-}  // namespace mc::dsp
+}  // namespace mc

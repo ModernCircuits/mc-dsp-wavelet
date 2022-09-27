@@ -4,7 +4,7 @@
 
 #include <mc/core/algorithm.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 auto toString(SignalExtension ext) -> String
 {
@@ -71,4 +71,4 @@ auto symmetricExtension(Span<double const> in, std::size_t a, double* out) -> st
     return symmetricExtensionImpl<double>(in.data(), in.size(), a, out);
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

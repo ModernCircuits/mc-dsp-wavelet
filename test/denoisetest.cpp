@@ -58,7 +58,7 @@ auto main() -> int
     std::fclose(ifp);
 
     for (i = 0; i < n; ++i) { inp[i] = temp[i]; }
-    auto obj = dsp::DenoiseSet(n, j, wname);
+    auto obj = DenoiseSet(n, j, wname);
     // sureshrink is also the default. The other option with dwt and swt is visushrink.
     setDenoiseMethod(obj, "visushrink");
     // modwt works only with modwtshrink method
@@ -78,12 +78,12 @@ auto main() -> int
     // ofp = std::fopen("test_data/raw/denoiseds.txt", "w");
 
     print("Signal - Noisy Signal Stats \n");
-    print("RMSE {}\n", dsp::rmsError(sig.get(), inp.get(), n));
-    print("Corr Coeff {}\n", dsp::corrcoef(n, sig.get(), inp.get()));
+    print("RMSE {}\n", rmsError(sig.get(), inp.get(), n));
+    print("Corr Coeff {}\n", corrcoef(n, sig.get(), inp.get()));
 
     print("Signal - DeNoised Signal Stats \n");
-    print("RMSE {}\n", dsp::rmsError(sig.get(), oup.get(), n));
-    print("Corr Coeff {}\n", dsp::corrcoef(n, sig.get(), oup.get()));
+    print("RMSE {}\n", rmsError(sig.get(), oup.get(), n));
+    print("Corr Coeff {}\n", corrcoef(n, sig.get(), oup.get()));
 
     return 0;
 }

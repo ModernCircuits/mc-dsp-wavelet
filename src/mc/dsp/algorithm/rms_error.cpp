@@ -4,7 +4,7 @@
 #include <mc/core/numeric.hpp>
 #include <mc/core/span.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 auto rmsError(float const* data, float const* rec, std::size_t n) -> float
 {
@@ -17,4 +17,4 @@ auto rmsError(float const* data, float const* rec, std::size_t n) -> float
     return sqrt(sum / static_cast<float>(n - 1U));
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

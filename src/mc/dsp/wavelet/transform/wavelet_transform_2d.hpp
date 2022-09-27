@@ -11,7 +11,7 @@
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 struct WaveletTransform2D
 {
@@ -66,13 +66,13 @@ auto getWT2Coeffs(
 auto setDWT2Extension(WaveletTransform2D& wt, char const* extension) -> void;
 auto dispWT2Coeffs(float* a, int row, int col) -> void;
 
-}  // namespace mc::dsp
+}  // namespace mc
 
 template<>
-struct fmt::formatter<mc::dsp::WaveletTransform2D> : formatter<string_view>
+struct fmt::formatter<mc::WaveletTransform2D> : formatter<string_view>
 {
     template<typename FormatContext>
-    auto format(mc::dsp::WaveletTransform2D const& wt, FormatContext& ctx) const
+    auto format(mc::WaveletTransform2D const& wt, FormatContext& ctx) const
     {
         fmt::format_to(ctx.out(), "{}\n", wt.wave());
         fmt::format_to(ctx.out(), "Wavelet Transform : {} \n\n", wt.method().c_str());

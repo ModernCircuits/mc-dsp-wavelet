@@ -6,7 +6,7 @@
 
 #include <mc/core/string.hpp>
 
-namespace mc::dsp {
+namespace mc {
 enum struct ConvolutionMethod
 {
     direct,
@@ -18,4 +18,4 @@ enum struct ConvolutionMethod
     if (method == ConvolutionMethod::direct) { return "direct"; }
     return "fft";
 }
-}  // namespace mc::dsp
+}  // namespace mc

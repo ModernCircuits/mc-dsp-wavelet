@@ -15,7 +15,7 @@
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 namespace {
 
@@ -1215,4 +1215,4 @@ auto dispWT2Coeffs(float* a, int row, int col) -> void
     }
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

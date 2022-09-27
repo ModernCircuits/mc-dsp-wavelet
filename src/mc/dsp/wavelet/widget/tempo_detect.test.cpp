@@ -32,7 +32,7 @@ TEST_CASE("dsp/wavelet: TempoDetect", "[dsp][wavelet]")
     for (auto windowNdx{0U}; windowNdx < maxWindowIndex; ++windowNdx) {
         if (sampsNdx + windowSize >= mc::size(channel)) { continue; }
 
-        auto detector  = mc::dsp::TempoDetect{windowSize, 4};
+        auto detector  = mc::TempoDetect{windowSize, 4};
         auto subBuffer = channel.subspan(sampsNdx, windowSize);
         auto bpm       = detector(subBuffer, fs);
 
@@ -46,6 +46,6 @@ TEST_CASE("dsp/wavelet: TempoDetect", "[dsp][wavelet]")
     bpms.erase(ranges::remove_if(bpms, outOfRange), end(bpms));
 
     ranges::sort(bpms);
-    REQUIRE(std::round(mc::dsp::median<float>(bpms)) == 120.0F);
+    REQUIRE(std::round(mc::median<float>(bpms)) == 120.0F);
     // REQUIRE(std::round(mode(bpms)) == 120.0);
 }

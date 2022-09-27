@@ -12,7 +12,7 @@
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 struct WaveletPacketTransform
 {
@@ -53,13 +53,13 @@ auto setDWPTExtension(WaveletPacketTransform& wt, char const* extension) -> void
 auto setDWPTEntropy(WaveletPacketTransform& wt, char const* entropy, float eparam) -> void;
 auto getDWPTNodelength(WaveletPacketTransform& wt, int x) -> int;
 
-}  // namespace mc::dsp
+}  // namespace mc
 
 template<>
-struct fmt::formatter<mc::dsp::WaveletPacketTransform> : formatter<string_view>
+struct fmt::formatter<mc::WaveletPacketTransform> : formatter<string_view>
 {
     template<typename FormatContext>
-    auto format(mc::dsp::WaveletPacketTransform const& wt, FormatContext& ctx) const
+    auto format(mc::WaveletPacketTransform const& wt, FormatContext& ctx) const
     {
         fmt::format_to(ctx.out(), "{}\n", wt.wave());
         fmt::format_to(ctx.out(), "Signal Extension : {0} \n\n", wt.ext.c_str());
@@ -75,9 +75,9 @@ struct fmt::formatter<mc::dsp::WaveletPacketTransform> : formatter<string_view>
 
         auto it1 = 1;
         auto it2 = 0;
-        for (auto i = 0; i < j; ++i) { it1 += mc::dsp::ipow2(i + 1); }
+        for (auto i = 0; i < j; ++i) { it1 += mc::ipow2(i + 1); }
         for (auto i = j; i > 0; --i) {
-            auto p2 = mc::dsp::ipow2(i);
+            auto p2 = mc::ipow2(i);
             it1 -= p2;
             for (auto k = 0; k < p2; ++k) {
                 if (wt.basisvector[it1 + k] == 1) {

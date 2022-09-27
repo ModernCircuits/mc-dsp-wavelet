@@ -14,7 +14,7 @@ using namespace mc;
 
 auto main() -> int
 {
-    auto obj = dsp::Wavelet{"db4"};
+    auto obj = Wavelet{"db4"};
 
     auto const rows = std::size_t{64};
     auto const cols = std::size_t{48};
@@ -25,7 +25,7 @@ auto main() -> int
     auto diff    = makeZeros<float>(n);
     auto const j = std::size_t{2};
 
-    auto wt = dsp::WaveletTransform2D(obj, "swt", rows, cols, j);
+    auto wt = WaveletTransform2D(obj, "swt", rows, cols, j);
 
     for (std::size_t i = 0; i < rows; ++i) {
         for (std::size_t k = 0; k < cols; ++k) {
@@ -40,14 +40,14 @@ auto main() -> int
     int ic{0};
     auto* cLL = getWT2Coeffs(wt, wavecoeffs.get(), j, "A", &ir, &ic);
 
-    dsp::dispWT2Coeffs(cLL, ir, ic);
+    dispWT2Coeffs(cLL, ir, ic);
 
     iswt2(wt, wavecoeffs.get(), oup.get());
 
     for (std::size_t i = 0; i < n; ++i) { diff[i] = oup[i] - inp[i]; }
 
     print("{0}\n", wt);
-    print("Abs Max {} \n", dsp::absmax(diff.get(), n));
+    print("Abs Max {} \n", absmax(diff.get(), n));
 
     return 0;
 }

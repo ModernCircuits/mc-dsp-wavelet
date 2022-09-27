@@ -7,7 +7,7 @@
 #include <mc/core/cmath.hpp>
 #include <mc/core/utility.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 PFFFT_Complex_Float::PFFFT_Complex_Float(std::size_t size)
     : _setup{PFFFT_Handle{pffft_new_setup(static_cast<int>(size), PFFFT_COMPLEX)}}
@@ -65,4 +65,4 @@ auto PFFFT_Real_Float::irfft(Span<Complex<float> const> inp, Span<float> oup) ->
     pffft_transform_ordered(_setup.get(), in, oup.data(), nullptr, PFFFT_BACKWARD);
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

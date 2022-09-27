@@ -6,7 +6,7 @@
 #include <mc/core/span.hpp>
 #include <mc/core/utility.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 template<typename T>
 [[nodiscard]] auto indexOfPeak(Span<T> range) -> std::size_t
@@ -18,4 +18,4 @@ template<typename T>
     return std::distance(ranges::begin(range), max);
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

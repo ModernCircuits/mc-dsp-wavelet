@@ -2,9 +2,9 @@
 
 #include "rfft.hpp"
 
-namespace mc::dsp {
+namespace mc {
 auto makeRFFT(std::size_t size) -> RFFT<float>
 {
     return RFFT<float>{PFFFT_Real_Float{size}};
 }
-}  // namespace mc::dsp
+}  // namespace mc

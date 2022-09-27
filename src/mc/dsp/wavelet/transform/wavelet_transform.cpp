@@ -19,7 +19,7 @@
 #include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 WaveletTransform::WaveletTransform(
     Wavelet& w,
@@ -225,7 +225,7 @@ static auto dwt1(WaveletTransform& wt, float* sig, std::size_t lenSig, float* cA
     if (wt.extension() == SignalExtension::periodic) {
         auto lenAvg  = (wt.wave().lpd().size() + wt.wave().hpd().size()) / 2;
         auto signal  = makeUnique<float[]>(lenSig + lenAvg + (lenSig % 2));
-        lenSig       = dsp::periodicExtension({sig, lenSig}, lenAvg / 2, signal.get());
+        lenSig       = periodicExtension({sig, lenSig}, lenAvg / 2, signal.get());
         auto cAUndec = makeUnique<float[]>(lenSig + lenAvg + wt.wave().lpd().size() - 1);
 
         if (wt.wave().lpd().size() == wt.wave().hpd().size()
@@ -246,7 +246,7 @@ static auto dwt1(WaveletTransform& wt, float* sig, std::size_t lenSig, float* cA
     } else if (wt.extension() == SignalExtension::symmetric) {
         auto lf      = wt.wave().lpd().size();  // lpd and hpd have the same length
         auto signal  = makeUnique<float[]>(lenSig + 2 * (lf - 1));
-        lenSig       = dsp::symmetricExtension({sig, (size_t)lenSig}, lf - 1, signal.get());
+        lenSig       = symmetricExtension({sig, (size_t)lenSig}, lf - 1, signal.get());
         auto cAUndec = makeUnique<float[]>(lenSig + 3 * (lf - 1));
 
         if (wt.wave().lpd().size() == wt.wave().hpd().size()
@@ -374,7 +374,7 @@ static auto idwt1(
 
     upSampleEven(cA, cA + lenCA, cAUp, u);
 
-    dsp::periodicExtension({cAUp, static_cast<std::size_t>(2 * lenCA)}, lenAvg / 2, temp);
+    periodicExtension({cAUp, static_cast<std::size_t>(2 * lenCA)}, lenAvg / 2, temp);
 
     auto n2 = 2 * lenCA + lenAvg;
 
@@ -390,7 +390,7 @@ static auto idwt1(
 
     upSampleEven(cD, cD + lenCD, cAUp, u);
 
-    dsp::periodicExtension({cAUp, static_cast<std::size_t>(2 * lenCD)}, lenAvg / 2, temp);
+    periodicExtension({cAUp, static_cast<std::size_t>(2 * lenCD)}, lenAvg / 2, temp);
 
     n2 = 2 * lenCD + lenAvg;
 
@@ -628,7 +628,7 @@ static auto swtFft(WaveletTransform& wt, float const* inp) -> void
 
         // swt_per(wt,M, wt.params.get(), temp_len, cA, temp_len, cD,temp_len);
 
-        dsp::periodicExtension({wt.params.get(), tempLen}, n / 2, sig.get());
+        periodicExtension({wt.params.get(), tempLen}, n / 2, sig.get());
 
         if (wt.wave().lpd().size() == wt.wave().hpd().size()
             && (wt.convMethod() == ConvolutionMethod::fft)) {
@@ -756,14 +756,14 @@ auto iswt(WaveletTransform& wt, float* swtop) -> void
                 len0++;
             }
             upSampleEven(appx2.get(), appx2.get() + len0, tempx.get(), u);
-            dsp::periodicExtension(
+            periodicExtension(
                 {tempx.get(), static_cast<std::size_t>(2 * len0)},
                 lf / 2,
                 cL0.get()
             );
 
             upSampleEven(det2.get(), det2.get() + len0, tempx.get(), u);
-            dsp::periodicExtension(
+            periodicExtension(
                 {tempx.get(), static_cast<std::size_t>(2 * len0)},
                 lf / 2,
                 cH0.get()
@@ -798,14 +798,14 @@ auto iswt(WaveletTransform& wt, float* swtop) -> void
             }
 
             upSampleEven(appx2.get(), appx2.get() + len0, tempx.get(), u);
-            dsp::periodicExtension(
+            periodicExtension(
                 {tempx.get(), static_cast<std::size_t>(2 * len0)},
                 lf / 2,
                 cL0.get()
             );
 
             upSampleEven(det2.get(), det2.get() + len0, tempx.get(), u);
-            dsp::periodicExtension(
+            periodicExtension(
                 {tempx.get(), static_cast<std::size_t>(2 * len0)},
                 lf / 2,
                 cH0.get()
@@ -1194,4 +1194,4 @@ auto imodwt(WaveletTransform& wt, float* oup) -> void
     imodwtFft(wt, oup);
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

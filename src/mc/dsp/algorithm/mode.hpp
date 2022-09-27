@@ -7,7 +7,7 @@
 #include <mc/core/cstddef.hpp>
 #include <mc/core/span.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 template<typename T>
 [[maybe_unused]] auto mode(Span<float const> v) -> float
@@ -32,4 +32,4 @@ template<typename T>
     return moda;
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

@@ -12,7 +12,7 @@
 
 #include <pffft.h>
 
-namespace mc::dsp {
+namespace mc {
 
 template<typename Engine>
 auto rfft(Engine& engine, Span<float const> input, Span<Complex<float>> output)
@@ -83,13 +83,13 @@ private:
         auto do_rfft(Span<FloatT const> input, Span<Complex<FloatT>> output)
             -> void override
         {
-            ::mc::dsp::rfft(model, input, output);
+            ::mc::rfft(model, input, output);
         }
 
         auto do_irfft(Span<Complex<FloatT> const> input, Span<FloatT> output)
             -> void override
         {
-            ::mc::dsp::irfft(model, input, output);
+            ::mc::irfft(model, input, output);
         }
 
         T model;
@@ -100,4 +100,4 @@ private:
 
 [[nodiscard]] auto makeRFFT(std::size_t size) -> RFFT<float>;
 
-}  // namespace mc::dsp
+}  // namespace mc

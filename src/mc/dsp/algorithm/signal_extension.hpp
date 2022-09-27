@@ -8,7 +8,7 @@
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 enum struct SignalExtension
 {
@@ -24,4 +24,4 @@ auto periodicExtension(Span<double const> in, std::size_t a, double* out) -> std
 auto symmetricExtension(Span<float const> in, std::size_t a, float* out) -> std::size_t;
 auto symmetricExtension(Span<double const> in, std::size_t a, double* out) -> std::size_t;
 
-}  // namespace mc::dsp
+}  // namespace mc

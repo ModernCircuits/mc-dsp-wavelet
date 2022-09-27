@@ -28,15 +28,15 @@ auto main() -> int
     auto const j = 4;
     auto out     = makeUnique<float[]>(n);
 
-    dsp::modwtshrink(sig.data(), n, j, wname, cmethod, ext, thresh, out.get());
+    modwtshrink(sig.data(), n, j, wname, cmethod, ext, thresh, out.get());
 
     mc::print("Signal - Noisy Signal Stats \n");
-    mc::print("RMSE {}\n", dsp::rmsError(sig.data(), inp.data(), n));
-    mc::print("Corr Coeff {}\n", dsp::corrcoef((int)n, sig.data(), inp.data()));
+    mc::print("RMSE {}\n", rmsError(sig.data(), inp.data(), n));
+    mc::print("Corr Coeff {}\n", corrcoef((int)n, sig.data(), inp.data()));
 
     mc::print("Signal - DeNoised Signal Stats \n");
-    mc::print("RMSE {}\n", dsp::rmsError(sig.data(), out.get(), n));
-    mc::print("Corr Coeff {}\n", dsp::corrcoef((int)n, sig.data(), out.get()));
+    mc::print("RMSE {}\n", rmsError(sig.data(), out.get(), n));
+    mc::print("Corr Coeff {}\n", corrcoef((int)n, sig.data(), out.get()));
 
     return 0;
 }

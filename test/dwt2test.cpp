@@ -13,7 +13,7 @@ using namespace mc;
 
 auto main() -> int
 {
-    auto obj = dsp::Wavelet{"db2"};
+    auto obj = Wavelet{"db2"};
 
     auto rows = std::size_t{32};
     auto cols = std::size_t{30};
@@ -25,7 +25,7 @@ auto main() -> int
 
     auto const j = std::size_t{3};
 
-    auto wt = dsp::WaveletTransform2D(obj, "dwt", rows, cols, j);
+    auto wt = WaveletTransform2D(obj, "dwt", rows, cols, j);
 
     for (std::size_t i = 0; i < rows; ++i) {
         for (std::size_t k = 0; k < cols; ++k) {
@@ -38,16 +38,16 @@ auto main() -> int
 
     int ir{0};
     int ic{0};
-    auto* cLL = dsp::getWT2Coeffs(wt, wavecoeffs.get(), 1, "D", &ir, &ic);
+    auto* cLL = getWT2Coeffs(wt, wavecoeffs.get(), 1, "D", &ir, &ic);
 
-    dsp::dispWT2Coeffs(cLL, ir, ic);
+    dispWT2Coeffs(cLL, ir, ic);
 
     idwt(wt, wavecoeffs.get(), oup.get());
 
     for (std::size_t i = 0; i < rows * cols; ++i) { diff[i] = oup[i] - inp[i]; }
 
     print("{0}\n", wt);
-    print("Abs Max {} \n", dsp::absmax(diff.get(), rows * cols));
+    print("Abs Max {} \n", absmax(diff.get(), rows * cols));
 
     return EXIT_SUCCESS;
 }

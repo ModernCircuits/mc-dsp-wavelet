@@ -11,7 +11,7 @@
 #include <mc/core/climits.hpp>
 #include <mc/core/cstring.hpp>
 
-namespace mc::dsp {
+namespace mc {
 namespace {
 auto pow2Ceil(std::size_t x)
 {
@@ -194,4 +194,4 @@ auto OverlapSaveConvolver::execute(bool const crossCorrelate) -> void
         });
     }
 }
-}  // namespace mc::dsp
+}  // namespace mc

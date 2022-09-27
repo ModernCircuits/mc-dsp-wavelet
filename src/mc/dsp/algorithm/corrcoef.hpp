@@ -4,8 +4,8 @@
 
 #include <mc/core/cstddef.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 [[nodiscard]] auto corrcoef(int n, float const* x, float const* y) -> float;
 
-}  // namespace mc::dsp
+}  // namespace mc

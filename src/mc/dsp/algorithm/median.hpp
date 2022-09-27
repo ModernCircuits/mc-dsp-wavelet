@@ -8,7 +8,7 @@
 #include <mc/core/iterator.hpp>
 #include <mc/core/span.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 template<typename T>
 [[maybe_unused]] auto median(Span<T const> data) -> T
@@ -22,4 +22,4 @@ template<typename T>
     return size % 2U == 0U ? (data[mid] + data[mid - 1U]) / 2U : data[mid];
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

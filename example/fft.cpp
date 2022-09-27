@@ -11,7 +11,7 @@ using namespace mc;
 
 auto main() -> int
 {
-    auto engine = dsp::makeRFFT(4);
+    auto engine = makeRFFT(4);
     auto in     = Array<float, 4>{0.0F, 1.0F, 0.3F, 0.0F};
     auto out    = Array<Complex<float>, 4>{};
 

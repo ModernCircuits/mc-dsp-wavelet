@@ -28,14 +28,14 @@ static constexpr auto epsilon = 1e-5F;
         auto n         = 8096;                                                             \
         auto inp       = generateRandomTestData(n);                                        \
         auto out       = makeUnique<float[]>(n);                                           \
-        auto obj       = dsp::Wavelet{waveletName};                                        \
-        auto wt        = dsp::WaveletPacketTransform(&obj, n, levels);                     \
-        dsp::setDWPTExtension(wt, extension);                                              \
-        dsp::setDWPTEntropy(wt, entropy, 0);                                               \
+        auto obj       = Wavelet{waveletName};                                             \
+        auto wt        = WaveletPacketTransform(&obj, n, levels);                          \
+        setDWPTExtension(wt, extension);                                                   \
+        setDWPTEntropy(wt, entropy, 0);                                                    \
         dwpt(wt, data(inp));                                                               \
         idwpt(wt, out.get());                                                              \
         REQUIRE_THAT(                                                                      \
-            dsp::rmsError(out.get(), data(inp), wt.signalLength()),                        \
+            rmsError(out.get(), data(inp), wt.signalLength()),                             \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }

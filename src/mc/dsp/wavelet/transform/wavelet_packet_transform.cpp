@@ -16,7 +16,7 @@
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 namespace {
 auto entropyS(float const* x, int n) -> float
@@ -792,4 +792,4 @@ auto setDWPTEntropy(WaveletPacketTransform& wt, char const* entropy, float epara
     }
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

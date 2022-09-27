@@ -4,7 +4,7 @@
 #include <mc/core/cmath.hpp>
 #include <mc/core/span.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 auto absmax(float const* array, std::size_t n) -> float
 {
@@ -16,4 +16,4 @@ auto absmax(float const* array, std::size_t n) -> float
     MC_ASSERT(max != ranges::end(view));
     return *max;
 }
-}  // namespace mc::dsp
+}  // namespace mc

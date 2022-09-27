@@ -64,7 +64,7 @@ TEST_CASE("dsp/wavelet: dbCoefTests", "[dsp][wavelet]")
     });
 
     for (auto const& name : waveletNames) {
-        auto obj = dsp::Wavelet{name.c_str()};
+        auto obj = Wavelet{name.c_str()};
         auto t1  = sum1(obj.lpr()) - mc::sqrt(2.0F);
         auto t2  = sum2(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
         auto t3  = sum3(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
@@ -92,7 +92,7 @@ TEST_CASE("dsp/wavelet: coifCoefTests", "[dsp][wavelet]")
     }
 
     for (auto const& name : waveletNames) {
-        auto obj      = dsp::Wavelet{name.c_str()};
+        auto obj      = Wavelet{name.c_str()};
         auto const t1 = sum1(obj.lpr()) - mc::sqrt(2.0F);
         auto const t2 = sum2(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
         auto const t3 = sum3(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
@@ -117,7 +117,7 @@ TEST_CASE("dsp/wavelet: symCoefTests", "[dsp][wavelet]")
     }
 
     for (auto const& name : waveletNames) {
-        auto obj      = dsp::Wavelet{name.c_str()};
+        auto obj      = Wavelet{name.c_str()};
         auto const t1 = sum1(obj.lpr()) - mc::sqrt(2.0F);
         auto const t2 = sum2(obj.lpr()) - 1.0F / mc::sqrt(2.0F);
         auto const t3 = sum3(obj.lpr()) - 1.0F / mc::sqrt(2.0F);

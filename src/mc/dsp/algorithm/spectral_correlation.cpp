@@ -4,7 +4,7 @@
 
 #include <mc/core/cassert.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 auto spectralCorrelation(
     Span<Complex<float> const> a,
@@ -16,4 +16,4 @@ auto spectralCorrelation(
     for (std::size_t i{0}; i < a.size(); ++i) { result[i] = a[i] * std::conj(b[i]); }
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

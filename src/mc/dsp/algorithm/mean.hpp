@@ -6,7 +6,7 @@
 #include <mc/core/span.hpp>
 #include <mc/core/utility.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 template<typename T>
 auto mean(Span<T> range) -> T
@@ -16,4 +16,4 @@ auto mean(Span<T> range) -> T
     return sum / static_cast<T>(len);
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

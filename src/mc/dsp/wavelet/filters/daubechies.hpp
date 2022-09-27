@@ -4,7 +4,7 @@
 
 #include <mc/core/array.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 template<typename T>
 inline constexpr auto daubechies1 = Array<T, 2>{
@@ -1639,4 +1639,4 @@ inline constexpr auto const daubechies38 = Array<T, 76>{
     static_cast<T>(4.304596839558790016251867477122791508849697688058169053134463e-17),
     static_cast<T>(-1.716152451088744188732404281737964277713026087224248235541071e-18),
 };
-}  // namespace mc::dsp
+}  // namespace mc

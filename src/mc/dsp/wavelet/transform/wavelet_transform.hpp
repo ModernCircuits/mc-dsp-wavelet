@@ -13,7 +13,7 @@
 #include <mc/core/span.hpp>
 #include <mc/core/string.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 struct WaveletTransform
 {
@@ -70,13 +70,13 @@ auto iswt(WaveletTransform& wt, float* swtop) -> void;
 auto modwt(WaveletTransform& wt, float const* inp) -> void;
 auto imodwt(WaveletTransform& wt, float* oup) -> void;
 
-}  // namespace mc::dsp
+}  // namespace mc
 
 template<>
-struct fmt::formatter<mc::dsp::WaveletTransform> : formatter<string_view>
+struct fmt::formatter<mc::WaveletTransform> : formatter<string_view>
 {
     template<typename FormatContext>
-    auto format(mc::dsp::WaveletTransform const& wt, FormatContext& ctx) const
+    auto format(mc::WaveletTransform const& wt, FormatContext& ctx) const
     {
         auto j = wt.levels();
         fmt::format_to(ctx.out(), "{}\n", wt.wave());

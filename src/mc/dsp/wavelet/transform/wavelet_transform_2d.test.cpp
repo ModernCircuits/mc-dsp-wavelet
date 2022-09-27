@@ -21,24 +21,20 @@ static constexpr auto const epsilon = 6e-7F;
         "[dsp][wavelet]"                                                                   \
     )                                                                                      \
     {                                                                                      \
-        auto extension                                                                     \
-            = GENERATE(dsp::SignalExtension::periodic, dsp::SignalExtension::symmetric);   \
+        auto extension  = GENERATE(SignalExtension::periodic, SignalExtension::symmetric); \
         auto levels     = GENERATE(as<std::size_t>{}, 1);                                  \
         auto const rows = static_cast<std::size_t>(256);                                   \
         auto const cols = static_cast<std::size_t>(200);                                   \
         auto const n    = rows * cols;                                                     \
         auto const inp  = generateRandomTestData(n);                                       \
         auto out        = makeZeros<float>(n);                                             \
-        auto wavelet    = dsp::Wavelet{waveletName};                                       \
-        auto wt         = dsp::WaveletTransform2D(wavelet, "dwt", rows, cols, levels);     \
-        setDWT2Extension(                                                                  \
-            wt,                                                                            \
-            extension == dsp::SignalExtension::symmetric ? "sym" : "per"                   \
-        );                                                                                 \
+        auto wavelet    = Wavelet{waveletName};                                            \
+        auto wt         = WaveletTransform2D(wavelet, "dwt", rows, cols, levels);          \
+        setDWT2Extension(wt, extension == SignalExtension::symmetric ? "sym" : "per");     \
         auto wavecoeffs = dwt(wt, data(inp));                                              \
         idwt(wt, wavecoeffs.get(), out.get());                                             \
         REQUIRE_THAT(                                                                      \
-            dsp::rmsError(out.get(), data(inp), n),                                        \
+            rmsError(out.get(), data(inp), n),                                             \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }
@@ -128,13 +124,13 @@ DWT_IDWT_ROUNDTRIP("sym20")  // NOLINT
         auto const n    = rows * cols;                                                     \
         auto inp        = generateRandomTestData(n);                                       \
         auto out        = makeZeros<float>(n);                                             \
-        auto wavelet    = dsp::Wavelet{waveletName};                                       \
-        auto wt         = dsp::WaveletTransform2D(wavelet, "modwt", rows, cols, levels);   \
+        auto wavelet    = Wavelet{waveletName};                                            \
+        auto wt         = WaveletTransform2D(wavelet, "modwt", rows, cols, levels);        \
         setDWT2Extension(wt, "per");                                                       \
         auto wavecoeffs = modwt(wt, data(inp));                                            \
         imodwt(wt, wavecoeffs.get(), out.get());                                           \
         REQUIRE_THAT(                                                                      \
-            dsp::rmsError(out.get(), data(inp), n),                                        \
+            rmsError(out.get(), data(inp), n),                                             \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }
@@ -224,13 +220,13 @@ MODWT_IMODWT_ROUNDTRIP("sym20")  // NOLINT
         auto const n    = rows * cols;                                                     \
         auto inp        = generateRandomTestData(n);                                       \
         auto out        = makeZeros<float>(n);                                             \
-        auto wavelet    = dsp::Wavelet{waveletName};                                       \
-        auto wt         = dsp::WaveletTransform2D(wavelet, "swt", rows, cols, levels);     \
+        auto wavelet    = Wavelet{waveletName};                                            \
+        auto wt         = WaveletTransform2D(wavelet, "swt", rows, cols, levels);          \
         setDWT2Extension(wt, "per");                                                       \
         auto wavecoeffs = swt2(wt, data(inp));                                             \
         iswt2(wt, wavecoeffs.get(), out.get());                                            \
         REQUIRE_THAT(                                                                      \
-            dsp::rmsError(out.get(), data(inp), n),                                        \
+            rmsError(out.get(), data(inp), n),                                             \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }

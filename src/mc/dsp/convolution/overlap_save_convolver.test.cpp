@@ -22,9 +22,9 @@ TEST_CASE("dsp/convolution: OverlapSaveConvolver", "[dsp][convolution]")
     auto testData = loadTestData(testFile);
     CHECK(testData.size() == 4U);
 
-    auto s = dsp::FloatSignal{testData[0].data(), testData[0].size()};
-    auto p = dsp::FloatSignal{testData[1].data(), testData[1].size()};
-    auto x = dsp::OverlapSaveConvolver{s, p};
+    auto s = FloatSignal{testData[0].data(), testData[0].size()};
+    auto p = FloatSignal{testData[1].data(), testData[1].size()};
+    auto x = OverlapSaveConvolver{s, p};
 
     x.convolute();
     CHECK(approxEqual<float>(x.extractResult(), testData[2]));

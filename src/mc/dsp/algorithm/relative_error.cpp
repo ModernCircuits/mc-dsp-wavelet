@@ -2,7 +2,7 @@
 
 #include <mc/core/cmath.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 auto relError(float const* data, float const* rec, std::size_t n) -> float
 {
@@ -15,4 +15,4 @@ auto relError(float const* data, float const* rec, std::size_t n) -> float
     return sqrt(sum1) / sqrt(sum2);
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

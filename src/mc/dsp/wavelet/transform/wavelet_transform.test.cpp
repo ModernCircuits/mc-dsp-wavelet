@@ -18,7 +18,7 @@ static constexpr auto const epsilon = 6e-6F;
 #define DWT_IDWT_ROUNDTRIP(waveletName)                                                    \
     TEST_CASE("dsp/wavelet: WaveletTransform(dwt/idwt) - " waveletName, "[dsp][wavelet]")  \
     {                                                                                      \
-        using namespace mc::dsp;                                                           \
+        using namespace mc;                                                                \
         auto method    = GENERATE(ConvolutionMethod::fft, ConvolutionMethod::direct);      \
         auto extension = GENERATE(SignalExtension::periodic, SignalExtension::symmetric);  \
         auto levels    = GENERATE(as<std::size_t>{}, 1, 2, 3);                             \
@@ -32,7 +32,7 @@ static constexpr auto const epsilon = 6e-6F;
         dwt(wt, data(inp));                                                                \
         idwt(wt, out.get());                                                               \
         REQUIRE_THAT(                                                                      \
-            dsp::rmsError(out.get(), data(inp), wt.signalLength()),                        \
+            rmsError(out.get(), data(inp), wt.signalLength()),                             \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }
@@ -114,20 +114,20 @@ DWT_IDWT_ROUNDTRIP("sym20")   // NOLINT
     TEST_CASE("dsp/wavelet: WaveletTransform(swt/iswt) - " waveletName, "[dsp][wavelet]")  \
     {                                                                                      \
         auto convolutionMethod                                                             \
-            = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);       \
-        auto extension = GENERATE(dsp::SignalExtension::periodic);                         \
+            = GENERATE(ConvolutionMethod::fft, ConvolutionMethod::direct);                 \
+        auto extension = GENERATE(SignalExtension::periodic);                              \
         auto levels    = GENERATE(as<std::size_t>{}, 1, 2, 3);                             \
         auto const n   = 4096U;                                                            \
         auto const inp = generateRandomTestData(n);                                        \
         auto out       = makeZeros<float>(n);                                              \
-        auto wavelet   = dsp::Wavelet{waveletName};                                        \
-        auto wt        = dsp::WaveletTransform(wavelet, "swt", n, levels);                 \
+        auto wavelet   = Wavelet{waveletName};                                             \
+        auto wt        = WaveletTransform(wavelet, "swt", n, levels);                      \
         wt.extension(extension);                                                           \
         wt.convMethod(convolutionMethod);                                                  \
         swt(wt, data(inp));                                                                \
         iswt(wt, out.get());                                                               \
         REQUIRE_THAT(                                                                      \
-            dsp::rmsError(out.get(), data(inp), wt.signalLength()),                        \
+            rmsError(out.get(), data(inp), wt.signalLength()),                             \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }
@@ -212,20 +212,20 @@ SWT_ISWT_ROUNDTRIP("sym20")   // NOLINT
     )                                                                                      \
     {                                                                                      \
         auto convolutionMethod                                                             \
-            = GENERATE(dsp::ConvolutionMethod::fft, dsp::ConvolutionMethod::direct);       \
-        auto extension = GENERATE(dsp::SignalExtension::periodic);                         \
+            = GENERATE(ConvolutionMethod::fft, ConvolutionMethod::direct);                 \
+        auto extension = GENERATE(SignalExtension::periodic);                              \
         auto levels    = GENERATE(as<std::size_t>{}, 1, 2);                                \
         auto const n   = 4096U;                                                            \
         auto const inp = generateRandomTestData(n);                                        \
         auto out       = makeZeros<float>(n);                                              \
-        auto wavelet   = dsp::Wavelet{waveletName};                                        \
-        auto wt        = dsp::WaveletTransform(wavelet, "modwt", n, levels);               \
+        auto wavelet   = Wavelet{waveletName};                                             \
+        auto wt        = WaveletTransform(wavelet, "modwt", n, levels);                    \
         wt.extension(extension);                                                           \
         wt.convMethod(convolutionMethod);                                                  \
         modwt(wt, data(inp));                                                              \
         imodwt(wt, out.get());                                                             \
         REQUIRE_THAT(                                                                      \
-            dsp::rmsError(out.get(), data(inp), wt.signalLength()),                        \
+            rmsError(out.get(), data(inp), wt.signalLength()),                             \
             Catch::Matchers::WithinAbs(0.0F, epsilon)                                      \
         );                                                                                 \
     }

@@ -6,7 +6,7 @@
 #include <mc/core/cstddef.hpp>
 #include <mc/core/utility.hpp>
 
-namespace mc::dsp {
+namespace mc {
 
 template<typename T>
 auto upSample(T const* x, std::size_t lenx, std::size_t m, T* y) -> void
@@ -27,4 +27,4 @@ auto upSample(T const* x, std::size_t lenx, std::size_t m, T* y) -> void
     }
 }
 
-}  // namespace mc::dsp
+}  // namespace mc

@@ -8,7 +8,7 @@
 #include <mc/core/memory.hpp>
 #include <mc/core/vector.hpp>
 
-namespace mc::dsp {
+namespace mc {
 struct FFTConvolver
 {
     using value_type = float;
@@ -34,4 +34,4 @@ private:
     Vector<Complex<float>> _tmp{};
     Vector<float> _tmpOut{};
 };
-}  // namespace mc::dsp
+}  // namespace mc
