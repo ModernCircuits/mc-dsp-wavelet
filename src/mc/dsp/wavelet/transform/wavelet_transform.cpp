@@ -13,9 +13,9 @@
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/cstring.hpp>
+#include <mc/core/exception.hpp>
 #include <mc/core/format.hpp>
 #include <mc/core/iterator.hpp>
-#include <mc/core/raise.hpp>
 #include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 

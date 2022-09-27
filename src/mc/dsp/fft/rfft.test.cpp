@@ -2,7 +2,6 @@
 
 #include <mc/dsp/fft.hpp>
 
-#include <mc/core/format.hpp>
 #include <mc/core/iterator.hpp>
 #include <mc/testing/test.hpp>
 

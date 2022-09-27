@@ -1,5 +1,5 @@
 [requires]
-mc-dsp/0.9.0@modern-circuits/stable
+mc-core/0.11.0@modern-circuits/stable
 fftw/3.3.9
 pffft/cci.20210511
 catch2/3.1.0

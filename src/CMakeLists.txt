@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(mc-wavelet)
 
-find_package(mc-dsp REQUIRED)
+find_package(mc-core REQUIRED)
 find_package(FFTW3f REQUIRED)
 find_package(pffft REQUIRED)
 
@@ -12,7 +12,7 @@ add_library(mc::wavelet ALIAS mc-wavelet)
 target_include_directories(mc-wavelet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(mc-wavelet
     PUBLIC
-        mc-dsp::mc-dsp
+        mc-core::mc-core
 
         FFTW3::fftw3f
         pffft::pffft
@@ -83,10 +83,10 @@ target_sources(mc-wavelet
         "mc/dsp/wavelet/transform/wavelet_tree.hpp"
 
 
-        "mc/dsp//wavelet/widget/denoise.hpp"
-        "mc/dsp//wavelet/widget/denoise.cpp"
-        "mc/dsp//wavelet/widget/tempo_detect.cpp"
-        "mc/dsp//wavelet/widget/tempo_detect.hpp"
+        "mc/dsp/wavelet/widget/denoise.hpp"
+        "mc/dsp/wavelet/widget/denoise.cpp"
+        "mc/dsp/wavelet/widget/tempo_detect.cpp"
+        "mc/dsp/wavelet/widget/tempo_detect.hpp"
 
         "mc/testing/test.cpp"
         "mc/testing/test.hpp"

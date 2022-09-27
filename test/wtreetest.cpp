@@ -5,8 +5,8 @@
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/cstring.hpp>
-#include <mc/core/format.hpp>
 #include <mc/core/memory.hpp>
+#include <mc/core/print.hpp>
 
 using namespace mc;
 

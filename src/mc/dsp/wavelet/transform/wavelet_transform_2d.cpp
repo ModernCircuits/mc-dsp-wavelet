@@ -9,8 +9,8 @@
 #include <mc/core/cassert.hpp>
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstring.hpp>
-#include <mc/core/format.hpp>
-#include <mc/core/raise.hpp>
+#include <mc/core/exception.hpp>
+#include <mc/core/print.hpp>
 #include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>

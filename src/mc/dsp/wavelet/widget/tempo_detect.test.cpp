@@ -9,7 +9,6 @@
 #include <mc/audio/audio_file.hpp>
 #include <mc/core/algorithm.hpp>
 #include <mc/core/cmath.hpp>
-#include <mc/core/format.hpp>
 #include <mc/core/iterator.hpp>
 #include <mc/core/numeric.hpp>
 #include <mc/core/span.hpp>

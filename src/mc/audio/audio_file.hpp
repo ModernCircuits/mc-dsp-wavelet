@@ -27,10 +27,10 @@
 #include <mc/core/algorithm.hpp>
 #include <mc/core/cassert.hpp>
 #include <mc/core/cstring.hpp>
-#include <mc/core/format.hpp>
 #include <mc/core/fstream.hpp>
 #include <mc/core/iterator.hpp>
 #include <mc/core/limits.hpp>
+#include <mc/core/print.hpp>
 #include <mc/core/string.hpp>
 #include <mc/core/unordered_map.hpp>
 #include <mc/core/vector.hpp>

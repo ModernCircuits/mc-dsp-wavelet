@@ -7,7 +7,6 @@
 
 #include <mc/core/algorithm.hpp>
 #include <mc/core/cmath.hpp>
-#include <mc/core/format.hpp>
 #include <mc/core/numeric.hpp>
 #include <mc/core/utility.hpp>
 

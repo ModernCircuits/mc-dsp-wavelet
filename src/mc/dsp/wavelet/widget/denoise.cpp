@@ -6,11 +6,12 @@
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>
 #include <mc/core/cstring.hpp>
-#include <mc/core/format.hpp>
+#include <mc/core/exception.hpp>
 #include <mc/core/iterator.hpp>
 #include <mc/core/memory.hpp>
 #include <mc/core/numeric.hpp>
-#include <mc/core/raise.hpp>
+#include <mc/core/print.hpp>
+#include <mc/core/stdexcept.hpp>
 #include <mc/core/string_view.hpp>
 #include <mc/core/utility.hpp>
 
@@ -91,9 +92,9 @@ auto visushrink(
         }
 
         sigma = median({dout.get(), dlen}) / 0.6745F;
-        for (auto it = 0; cmp_less(it, j); ++it) { lnoise[it] = sigma; }
+        for (auto it = 0; it < j; ++it) { lnoise[it] = sigma; }
     } else if (level == StringView{"all"}) {
-        for (auto it = 0; cmp_less(it, j); ++it) {
+        for (auto it = 0; it < j; ++it) {
             dlen = wt.length[it + 1];
             for (std::size_t i = 0; i < dlen; ++i) {
                 dout[i] = std::abs(wt.output()[iter + i]);

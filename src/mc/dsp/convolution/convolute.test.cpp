@@ -2,7 +2,6 @@
 
 #include <mc/dsp/convolution.hpp>
 
-#include <mc/core/format.hpp>
 #include <mc/testing/test.hpp>
 
 #include <catch2/catch_test_macros.hpp>

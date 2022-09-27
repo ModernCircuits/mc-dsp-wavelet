@@ -3,7 +3,7 @@
 #include <mc/dsp/wavelet.hpp>
 
 #include <mc/core/cstdlib.hpp>
-#include <mc/core/format.hpp>
+#include <mc/core/print.hpp>
 
 using namespace mc;
 
