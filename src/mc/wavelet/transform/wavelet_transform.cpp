@@ -4,11 +4,11 @@
 
 #include <mc/fft/convolution.hpp>
 
+#include <mc/wavelet/algorithm/down_sample.hpp>
+#include <mc/wavelet/algorithm/up_sample.hpp>
+#include <mc/wavelet/algorithm/up_sample_even.hpp>
 #include <mc/wavelet/transform/common.hpp>
 
-#include <mc/algorithm/down_sample.hpp>
-#include <mc/algorithm/up_sample.hpp>
-#include <mc/algorithm/up_sample_even.hpp>
 #include <mc/core/cassert.hpp>
 #include <mc/core/cmath.hpp>
 #include <mc/core/cstdlib.hpp>

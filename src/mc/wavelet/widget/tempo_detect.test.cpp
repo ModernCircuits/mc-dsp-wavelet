@@ -2,10 +2,10 @@
 
 #include <mc/core/config.hpp>
 
+#include <mc/wavelet/algorithm/median.hpp>
+#include <mc/wavelet/algorithm/mode.hpp>
 #include <mc/wavelet/widget/tempo_detect.hpp>
 
-#include <mc/algorithm/median.hpp>
-#include <mc/algorithm/mode.hpp>
 #include <mc/audio/audio_file.hpp>
 #include <mc/core/algorithm.hpp>
 #include <mc/core/cmath.hpp>

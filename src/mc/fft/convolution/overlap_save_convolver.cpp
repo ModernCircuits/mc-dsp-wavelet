@@ -2,8 +2,9 @@
 
 #include "overlap_save_convolver.hpp"
 
-#include <mc/algorithm/spectral_convolution.hpp>
-#include <mc/algorithm/spectral_correlation.hpp>
+#include <mc/fft/algorithm/spectral_convolution.hpp>
+#include <mc/fft/algorithm/spectral_correlation.hpp>
+
 #include <mc/core/algorithm.hpp>
 #include <mc/core/bit.hpp>
 #include <mc/core/cassert.hpp>

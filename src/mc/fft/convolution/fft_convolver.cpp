@@ -2,7 +2,8 @@
 
 #include "fft_convolver.hpp"
 
-#include <mc/algorithm/spectral_convolution.hpp>
+#include <mc/fft/algorithm/spectral_convolution.hpp>
+
 #include <mc/core/algorithm.hpp>
 #include <mc/core/bit.hpp>
 #include <mc/core/cmath.hpp>

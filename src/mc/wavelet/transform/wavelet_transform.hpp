@@ -6,9 +6,9 @@
 
 #include <mc/fft/convolution.hpp>
 
+#include <mc/wavelet/algorithm/signal_extension.hpp>
 #include <mc/wavelet/wavelet.hpp>
 
-#include <mc/algorithm/signal_extension.hpp>
 #include <mc/core/format.hpp>
 #include <mc/core/memory.hpp>
 #include <mc/core/span.hpp>

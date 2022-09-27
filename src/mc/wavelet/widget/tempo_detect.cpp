@@ -2,9 +2,11 @@
 
 #include "tempo_detect.hpp"
 
+#include <mc/fft/algorithm.hpp>
 #include <mc/fft/convolution.hpp>
 
-#include <mc/algorithm.hpp>
+#include <mc/wavelet/algorithm.hpp>
+
 #include <mc/core/algorithm.hpp>
 #include <mc/core/cmath.hpp>
 #include <mc/core/numeric.hpp>
