@@ -22,7 +22,7 @@ TempoDetect::TempoDetect(size_t n, size_t levels)
     _wt.convMethod(ConvolutionMethod::direct);
 }
 
-auto TempoDetect::operator()(Span<float> input, float sampleRate) -> float
+auto TempoDetect::operator()(Span<float const> input, float sampleRate) -> float
 {
 
     auto const levels        = _wt.levels();

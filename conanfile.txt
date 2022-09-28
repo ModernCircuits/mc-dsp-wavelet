@@ -1,7 +1,13 @@
 [requires]
 mc-core/0.11.0@modern-circuits/stable
+
+drflac/0.12.38
+drmp3/0.6.32
+drwav/0.13.6
+
 fftw/3.3.9
 pffft/cci.20210511
+
 catch2/3.1.0
 benchmark/1.6.2
 

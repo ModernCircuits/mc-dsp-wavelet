@@ -10,7 +10,7 @@ struct TempoDetect
 {
     TempoDetect(size_t n, size_t levels);
 
-    [[nodiscard]] auto operator()(Span<float> input, float sampleRate) -> float;
+    [[nodiscard]] auto operator()(Span<float const> input, float sampleRate) -> float;
 
 private:
     Wavelet _wave;
