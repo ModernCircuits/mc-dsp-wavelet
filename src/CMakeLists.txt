@@ -3,10 +3,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(mc-wavelet)
 
-find_package(mc-core REQUIRED)
-find_package(drflac REQUIRED)
-find_package(drmp3 REQUIRED)
-find_package(drwav REQUIRED)
+find_package(mc-audio REQUIRED)
 find_package(FFTW3f REQUIRED)
 find_package(pffft REQUIRED)
 
@@ -15,11 +12,7 @@ add_library(mc::wavelet ALIAS mc-wavelet)
 target_include_directories(mc-wavelet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(mc-wavelet
     PUBLIC
-        mc-core::mc-core
-
-        drflac::drflac
-        drmp3::drmp3
-        drwav::drwav
+        mc-audio::mc-audio
 
         FFTW3::fftw3f
         pffft::pffft
