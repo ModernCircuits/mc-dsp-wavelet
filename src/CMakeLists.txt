@@ -3,16 +3,16 @@
 cmake_minimum_required(VERSION 3.15)
 project(mc-wavelet)
 
-find_package(mc-audio REQUIRED)
+find_package(mc-core REQUIRED)
 find_package(FFTW3f REQUIRED)
 find_package(pffft REQUIRED)
 
-add_library(mc-wavelet)
-add_library(mc::wavelet ALIAS mc-wavelet)
-target_include_directories(mc-wavelet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(mc-wavelet
+add_library(mc-fft)
+add_library(mc::fft ALIAS mc-fft)
+target_include_directories(mc-fft PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(mc-fft
     PUBLIC
-        mc-audio::mc-audio
+        mc-core::mc-core
 
         FFTW3::fftw3f
         pffft::pffft
@@ -22,7 +22,7 @@ target_link_libraries(mc-wavelet
         mc::CodeCoverage
 )
 
-target_sources(mc-wavelet
+target_sources(mc-fft
     PRIVATE
         "mc/fft/algorithm/corrcoef.hpp"
         "mc/fft/algorithm/corrcoef.cpp"
@@ -50,7 +50,25 @@ target_sources(mc-wavelet
 
         "mc/fft/transform/backend/pffft.hpp"
         "mc/fft/transform/backend/pffft.cpp"
+)
 
+find_package(mc-audio REQUIRED)
+
+add_library(mc-wavelet)
+add_library(mc::wavelet ALIAS mc-wavelet)
+target_include_directories(mc-wavelet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(mc-wavelet
+    PUBLIC
+        mc::fft
+        mc-audio::mc-audio
+
+        mc::CompilerOptions
+        mc::CompilerWarnings
+        mc::CodeCoverage
+)
+
+target_sources(mc-wavelet
+    PRIVATE
         "mc/wavelet.hpp"
         "mc/wavelet/wavelet.cpp"
         "mc/wavelet/wavelet.hpp"
@@ -81,40 +99,14 @@ target_sources(mc-wavelet
         "mc/wavelet/transform/wavelet_tree.cpp"
         "mc/wavelet/transform/wavelet_tree.hpp"
 
-
         "mc/wavelet/widget/denoise.hpp"
         "mc/wavelet/widget/denoise.cpp"
         "mc/wavelet/widget/tempo_detect.cpp"
         "mc/wavelet/widget/tempo_detect.hpp"
-
-        "mc/testing/test.cpp"
-        "mc/testing/test.hpp"
 )
 
-find_package(Catch2 REQUIRED)
-include(Catch)
-
-add_executable(mc-fft_tests)
-catch_discover_tests(mc-fft_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-target_link_libraries(mc-fft_tests PRIVATE mc-wavelet Catch2::Catch2)
-target_sources(mc-fft_tests
-    PRIVATE
-        "mc/fft/convolution/convolute.test.cpp"
-        "mc/fft/convolution/overlap_save_convolver.test.cpp"
-
-        "mc/fft/transform/rfft.test.cpp"
-)
-
-
-add_executable(mc-wavelet_tests)
-catch_discover_tests(mc-wavelet_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-target_link_libraries(mc-wavelet_tests PRIVATE mc-wavelet Catch2::Catch2)
-target_sources(mc-wavelet_tests
-    PRIVATE
-        "mc/wavelet/wavelet.test.cpp"
-        "mc/wavelet/transform/wavelet_packet_transform.test.cpp"
-        "mc/wavelet/transform/wavelet_transform.test.cpp"
-        "mc/wavelet/transform/wavelet_transform_2d.test.cpp"
-
-        "mc/wavelet/widget/tempo_detect.test.cpp"
-)
+add_library(mc-testing)
+add_library(mc::testing ALIAS mc-testing)
+target_include_directories(mc-testing PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(mc-testing PUBLIC mc-core::mc-core)
+target_sources(mc-testing PRIVATE "mc/testing/test.cpp" "mc/testing/test.hpp")
