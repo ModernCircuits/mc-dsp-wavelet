@@ -15,8 +15,6 @@
 
 using namespace mc;
 
-static constexpr auto epsilon = 1e-5F;
-
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define DWT_IDWT_ROUNDTRIP(waveletName)                                                    \
     TEST_CASE(                                                                             \
@@ -24,14 +22,15 @@ static constexpr auto epsilon = 1e-5F;
         "[dsp][wavelet]"                                                                   \
     )                                                                                      \
     {                                                                                      \
-        auto extension = GENERATE("sym", "per");                                           \
-        auto entropy   = GENERATE("shannon", "logenergy");                                 \
-        auto levels    = GENERATE(as<size_t>{}, 1, 2);                                     \
-        auto n         = 8096;                                                             \
-        auto inp       = generateRandomTestData(n);                                        \
-        auto out       = makeUnique<float[]>(n);                                           \
-        auto obj       = Wavelet{waveletName};                                             \
-        auto wt        = WaveletPacketTransform(&obj, n, levels);                          \
+        static constexpr auto epsilon = 1e-5F;                                             \
+        auto extension                = GENERATE("sym", "per");                            \
+        auto entropy                  = GENERATE("shannon", "logenergy");                  \
+        auto levels                   = GENERATE(as<size_t>{}, 1, 2);                      \
+        auto n                        = 8096;                                              \
+        auto inp                      = generateRandomTestData(n);                         \
+        auto out                      = makeUnique<float[]>(n);                            \
+        auto obj                      = Wavelet{waveletName};                              \
+        auto wt                       = WaveletPacketTransform(&obj, n, levels);           \
         setDWPTExtension(wt, extension);                                                   \
         setDWPTEntropy(wt, entropy, 0);                                                    \
         dwpt(wt, data(inp));                                                               \
@@ -113,3 +112,5 @@ DWT_IDWT_ROUNDTRIP("sym17")   // NOLINT
 DWT_IDWT_ROUNDTRIP("sym18")   // NOLINT
 DWT_IDWT_ROUNDTRIP("sym19")   // NOLINT
 DWT_IDWT_ROUNDTRIP("sym20")   // NOLINT
+
+#undef DWT_IDWT_ROUNDTRIP

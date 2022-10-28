@@ -14,13 +14,12 @@
 
 using namespace mc;
 
-static constexpr auto const epsilon = 6e-6F;
-
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define DWT_IDWT_ROUNDTRIP(waveletName)                                                    \
     TEST_CASE("wavelet: WaveletTransform(dwt/idwt) - " waveletName, "[dsp][wavelet]")      \
     {                                                                                      \
         using namespace mc;                                                                \
+        static constexpr auto const epsilon = 6e-6F;                                       \
         auto method    = GENERATE(ConvolutionMethod::fft, ConvolutionMethod::direct);      \
         auto extension = GENERATE(SignalExtension::periodic, SignalExtension::symmetric);  \
         auto levels    = GENERATE(as<size_t>{}, 1, 2, 3);                                  \
@@ -111,10 +110,13 @@ DWT_IDWT_ROUNDTRIP("sym18")   // NOLINT
 DWT_IDWT_ROUNDTRIP("sym19")   // NOLINT
 DWT_IDWT_ROUNDTRIP("sym20")   // NOLINT
 
+#undef DWT_IDWT_ROUNDTRIP
+
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define SWT_ISWT_ROUNDTRIP(waveletName)                                                    \
     TEST_CASE("wavelet: WaveletTransform(swt/iswt) - " waveletName, "[dsp][wavelet]")      \
     {                                                                                      \
+        static constexpr auto const epsilon = 6e-6F;                                       \
         auto convolutionMethod                                                             \
             = GENERATE(ConvolutionMethod::fft, ConvolutionMethod::direct);                 \
         auto extension = GENERATE(SignalExtension::periodic);                              \
@@ -206,10 +208,13 @@ SWT_ISWT_ROUNDTRIP("sym18")   // NOLINT
 SWT_ISWT_ROUNDTRIP("sym19")   // NOLINT
 SWT_ISWT_ROUNDTRIP("sym20")   // NOLINT
 
+#undef SWT_ISWT_ROUNDTRIP
+
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define MODWT_IMODWT_ROUNDTRIP(waveletName)                                                \
     TEST_CASE("wavelet: WaveletTransform(modwt/imodwt) - " waveletName, "[dsp][wavelet]")  \
     {                                                                                      \
+        static constexpr auto const epsilon = 6e-6F;                                       \
         auto convolutionMethod                                                             \
             = GENERATE(ConvolutionMethod::fft, ConvolutionMethod::direct);                 \
         auto extension = GENERATE(SignalExtension::periodic);                              \
@@ -300,3 +305,5 @@ MODWT_IMODWT_ROUNDTRIP("sym17")   // NOLINT
 MODWT_IMODWT_ROUNDTRIP("sym18")   // NOLINT
 MODWT_IMODWT_ROUNDTRIP("sym19")   // NOLINT
 MODWT_IMODWT_ROUNDTRIP("sym20")   // NOLINT
+
+#undef MODWT_IMODWT_ROUNDTRIP

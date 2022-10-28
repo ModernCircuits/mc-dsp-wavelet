@@ -14,12 +14,11 @@
 
 using namespace mc;
 
-static constexpr auto const epsilon = 6e-7F;
-
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define DWT_IDWT_ROUNDTRIP(waveletName)                                                    \
     TEST_CASE("wavelet: WaveletTransform2D(dwt/idwt) - " waveletName, "[dsp][wavelet]")    \
     {                                                                                      \
+        static constexpr auto const epsilon = 6e-7F;                                       \
         auto extension  = GENERATE(SignalExtension::periodic, SignalExtension::symmetric); \
         auto levels     = GENERATE(as<size_t>{}, 1);                                       \
         auto const rows = static_cast<size_t>(256);                                        \
@@ -110,6 +109,8 @@ DWT_IDWT_ROUNDTRIP("sym18")  // NOLINT
 DWT_IDWT_ROUNDTRIP("sym19")  // NOLINT
 DWT_IDWT_ROUNDTRIP("sym20")  // NOLINT
 
+#undef DWT_IDWT_ROUNDTRIP
+
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define MODWT_IMODWT_ROUNDTRIP(waveletName)                                                \
     TEST_CASE(                                                                             \
@@ -117,14 +118,15 @@ DWT_IDWT_ROUNDTRIP("sym20")  // NOLINT
         "[dsp][wavelet]"                                                                   \
     )                                                                                      \
     {                                                                                      \
-        auto levels     = GENERATE(as<size_t>{}, 1);                                       \
-        auto const rows = static_cast<size_t>(256);                                        \
-        auto const cols = static_cast<size_t>(256);                                        \
-        auto const n    = rows * cols;                                                     \
-        auto inp        = generateRandomTestData(n);                                       \
-        auto out        = makeZeros<float>(n);                                             \
-        auto wavelet    = Wavelet{waveletName};                                            \
-        auto wt         = WaveletTransform2D(wavelet, "modwt", rows, cols, levels);        \
+        static constexpr auto const epsilon = 6e-7F;                                       \
+        auto levels                         = GENERATE(as<size_t>{}, 1);                   \
+        auto const rows                     = static_cast<size_t>(256);                    \
+        auto const cols                     = static_cast<size_t>(256);                    \
+        auto const n                        = rows * cols;                                 \
+        auto inp                            = generateRandomTestData(n);                   \
+        auto out                            = makeZeros<float>(n);                         \
+        auto wavelet                        = Wavelet{waveletName};                        \
+        auto wt = WaveletTransform2D(wavelet, "modwt", rows, cols, levels);                \
         setDWT2Extension(wt, "per");                                                       \
         auto wavecoeffs = modwt(wt, data(inp));                                            \
         imodwt(wt, wavecoeffs.get(), out.get());                                           \
@@ -206,18 +208,21 @@ MODWT_IMODWT_ROUNDTRIP("sym18")  // NOLINT
 MODWT_IMODWT_ROUNDTRIP("sym19")  // NOLINT
 MODWT_IMODWT_ROUNDTRIP("sym20")  // NOLINT
 
+#undef MODWT_IMODWT_ROUNDTRIP
+
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define SWT2_ISWT2_ROUNDTRIP(waveletName)                                                  \
     TEST_CASE("wavelet: WaveletTransform2D(swt2/iswt2) - " waveletName, "[dsp][wavelet]")  \
     {                                                                                      \
-        auto levels     = GENERATE(as<size_t>{}, 1, 2);                                    \
-        auto const rows = static_cast<size_t>(512);                                        \
-        auto const cols = static_cast<size_t>(500);                                        \
-        auto const n    = rows * cols;                                                     \
-        auto inp        = generateRandomTestData(n);                                       \
-        auto out        = makeZeros<float>(n);                                             \
-        auto wavelet    = Wavelet{waveletName};                                            \
-        auto wt         = WaveletTransform2D(wavelet, "swt", rows, cols, levels);          \
+        static constexpr auto const epsilon = 6e-7F;                                       \
+        auto levels                         = GENERATE(as<size_t>{}, 1, 2);                \
+        auto const rows                     = static_cast<size_t>(512);                    \
+        auto const cols                     = static_cast<size_t>(500);                    \
+        auto const n                        = rows * cols;                                 \
+        auto inp                            = generateRandomTestData(n);                   \
+        auto out                            = makeZeros<float>(n);                         \
+        auto wavelet                        = Wavelet{waveletName};                        \
+        auto wt = WaveletTransform2D(wavelet, "swt", rows, cols, levels);                  \
         setDWT2Extension(wt, "per");                                                       \
         auto wavecoeffs = swt2(wt, data(inp));                                             \
         iswt2(wt, wavecoeffs.get(), out.get());                                            \
@@ -298,3 +303,5 @@ SWT2_ISWT2_ROUNDTRIP("sym17")  // NOLINT
 SWT2_ISWT2_ROUNDTRIP("sym18")  // NOLINT
 SWT2_ISWT2_ROUNDTRIP("sym19")  // NOLINT
 SWT2_ISWT2_ROUNDTRIP("sym20")  // NOLINT
+
+#undef SWT2_ISWT2_ROUNDTRIP

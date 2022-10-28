@@ -45,7 +45,6 @@ find_package(Catch2 REQUIRED)
 include(Catch)
 
 add_executable(mc-fft_tests)
-set_target_properties(mc-fft_tests PROPERTIES UNITY_BUILD OFF)
 catch_discover_tests(mc-fft_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 target_link_libraries(mc-fft_tests PRIVATE mc::fft mc::testing Catch2::Catch2WithMain)
 target_sources(mc-fft_tests
@@ -58,7 +57,6 @@ target_sources(mc-fft_tests
 
 
 add_executable(mc-wavelet_tests)
-set_target_properties(mc-wavelet_tests PROPERTIES UNITY_BUILD OFF)
 catch_discover_tests(mc-wavelet_tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 target_link_libraries(mc-wavelet_tests PRIVATE mc::wavelet mc::testing Catch2::Catch2WithMain)
 target_sources(mc-wavelet_tests
