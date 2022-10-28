@@ -52,7 +52,7 @@ target_sources(mc-fft
         "mc/fft/transform/backend/pffft.cpp"
 )
 
-find_package(mc-audio REQUIRED)
+find_package(drwav REQUIRED)
 
 add_library(mc-wavelet)
 add_library(mc::wavelet ALIAS mc-wavelet)
@@ -60,7 +60,7 @@ target_include_directories(mc-wavelet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(mc-wavelet
     PUBLIC
         mc::fft
-        mc-audio::mc-audio
+        drwav::drwav
 
         mc::CompilerOptions
         mc::CompilerWarnings
