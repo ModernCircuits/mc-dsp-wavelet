@@ -1,6 +1,6 @@
 [requires]
 drwav/0.13.6
-mc-core/0.12.0@modern-circuits/stable
+mc-core/0.13.0@modern-circuits/stable
 
 fftw/3.3.9
 pffft/cci.20210511
