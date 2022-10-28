@@ -27,7 +27,7 @@ jobs:
           arch: x64
 
       - name: CMake configure -- Release
-        run: cmake -S . -B cmake-build-release -G "Ninja" -D CMAKE_BUILD_TYPE=Release
+        run: cmake -S . -B cmake-build-release -G "Ninja" -D CMAKE_BUILD_TYPE=Release -DCMAKE_UNITY_BUILD=ON
 
       - name: CMake build -- Release
         run: cmake --build cmake-build-release --config "Release"
